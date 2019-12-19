@@ -21,19 +21,19 @@ posts = soup.findAll(class_='blog-entry-content')
 # writing to csv file
 
 with open('articles.csv', 'w') as csv_file:
-    csv_writer = writer(csv_file)
+	csv_writer = writer(csv_file)
 
-    # creating headers in the csv file
-    headers = ['Title', 'Link', 'Date']
+	# creating headers in the csv file
+	headers = ['Title', 'Link', 'Date']
 
-    # writing a row of headers in the csv
-    csv_writer.writerow(headers)
+	# writing a row of headers in the csv
+	csv_writer.writerow(headers)
 
-    # now lets loop through our posts
+	# now lets loop through our posts
 
-    for post in posts:
-        title_class = post.find(class_='blog-entry-title entry-title')
-        title = title_class.get_text().replace('\n', '')
-        link = title_class.find('a')['href']
-        date = post.select('.blog-entry-date.clr')[0].get_text()
-        csv_writer.writerow([title, link, date])
+	for post in posts:
+		title_class = post.find(class_='blog-entry-title entry-title')
+		title = title_class.get_text().replace('\n', '')
+		link = title_class.find('a')['href']
+		date = post.select('.blog-entry-date.clr')[0].get_text()
+		csv_writer.writerow([title, link, date])
