@@ -9,7 +9,7 @@ response = requests.get(url)
 soup = BeautifulSoup(response.text, 'html.parser')
 
 # DataFrame
-columns = ['Name', 'Title', 'URL', 'Year', 'Rating', 'Reviewers']
+columns = ['Movie_Name', 'Title', 'Movie_URL', 'Year', 'Rating', 'Reviewers']
 df = pd.DataFrame(columns=columns)
 
 # Get movies table
@@ -22,14 +22,14 @@ i = 1
 title_td = table.findAll('td', class_ = 'titleColumn')
 for movie in title_td:
 	link = movie.find('a')
-	url = 'https://www.imdb.com/' + link.get('href')
+	movie_url = 'https://www.imdb.com/' + link.get('href')
 	title = link.get('title')
-	name = link.getText()
+	movie_name = link.getText()
 	year = int(movie.find('span').getText().strip("()"))
 
-	df.at[i, 'Name'] = name
+	df.at[i, 'Movie_Name'] = movie_name
 	df.at[i, 'Title'] = title
-	df.at[i, 'URL'] = url
+	df.at[i, 'Movie_URL'] = movie_url
 	df.at[i, 'Year'] = year
 	i += 1
 
@@ -48,4 +48,4 @@ for movie in rating_td:
 	df.at[i, 'Reviewers'] = reviewers
 	i += 1
 
-df.to_csv('Top_250_Movies.csv', index=False, encoding='utf-8')
+df.to_csv('excels\Top_250_Movies.csv', index=False, encoding='utf-8')
