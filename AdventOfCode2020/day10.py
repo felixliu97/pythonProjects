@@ -27,7 +27,7 @@ with open('input-day10.txt', 'r') as f:
         start = essentials[i]
         end = essentials[i+1]
         # print(start, end)
-        if start + 3 >= end:
+        if (start + 2 == end or start + 3 == end):
             for n in optionals:
                 if start < n < end:
                     combinations *= 2
@@ -35,7 +35,8 @@ with open('input-day10.txt', 'r') as f:
                     break
         else:
             window = [x for x in optionals if start < x < end]
-            window_combination = pow(2,len(window) - 1)
-            combinations *= window_combination
+            # print(window)
+            if len(window) > 1:
+                window_combination = pow(2,len(window)) - 1
+                combinations *= window_combination
     print(f'Overall combinations:', combinations)
- 
