@@ -7,10 +7,10 @@ def findCombinations(target, list):
     for i in range(3, max(list) + 1):
         if i in list:
             result[i] = result[i-1] + result[i-2] + result[i-3]
+    return result[target]
 
 with open('input-day10.txt', 'r') as f:
-    nums = [int(line.strip()) for line in f.readlines()]
-    nums.sort()
+    nums = sorted([int(line.strip()) for line in f.readlines()])
     prev, dif1, dif3 = 0, 0, 0
     for num in nums:
         difference = num - prev
@@ -22,5 +22,4 @@ with open('input-day10.txt', 'r') as f:
     dif3 += 1
     print(f'Result is:', dif1 * dif3)
     result = [0] * (max(nums) + 1)
-    findCombinations(max(nums), nums)
-    print(f'Total combinations:', result[-1])
+    print(f'Total combinations:', findCombinations(max(nums), nums))
