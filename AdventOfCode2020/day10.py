@@ -11,16 +11,16 @@ def findCombinations(target, list):
 with open('input-day10.txt', 'r') as f:
     nums = [int(line.strip()) for line in f.readlines()]
     nums.sort()
-    prev, def1, def3 = 0, 0, 0
+    prev, dif1, dif3 = 0, 0, 0
     for num in nums:
-        deference = num - prev
-        if deference == 1:
-            def1 += 1
-        if deference == 3:
-            def3 += 1
+        difference = num - prev
+        if difference == 1:
+            dif1 += 1
+        if difference == 3:
+            dif3 += 1
         prev = num
-    def3 += 1
-    print(f'Result is:', def1 * def3)
+    dif3 += 1
+    print(f'Result is:', dif1 * dif3)
     result = [0] * (max(nums) + 1)
     findCombinations(max(nums), nums)
     print(f'Total combinations:', result[-1])
