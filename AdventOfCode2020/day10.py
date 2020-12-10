@@ -5,11 +5,13 @@ def CountCombinations(target, list):
     if 2 in list:
         result[2] = result[0] + result[1]
     for i in list:
-        result[i] = result[i-1] + result[i-2] + result[i-3]
+        if i >= 3:
+            result[i] = result[i-1] + result[i-2] + result[i-3]
     return result[target]
 
 with open('input-day10.txt', 'r') as f:
     nums = sorted([int(line.strip()) for line in f.readlines()])
+    print(nums)
     prev, dif1, dif3 = 0, 0, 0
     for num in nums:
         if num - prev == 1:
