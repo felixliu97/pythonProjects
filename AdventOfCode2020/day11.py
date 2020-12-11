@@ -3,7 +3,7 @@ adjacent = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)
 def countOccupied(seats, row, col):
     rows = len(seats)
     cols = len(seats[0])
-    return [seats[row + dx][col + dy] for dx, dy in adjacent if 0 <= row + dx < rows and 0 <= col + dy < cols].count('#')
+    return len([seats[row + dx][col + dy] for dx, dy in adjacent if 0 <= row + dx < rows and 0 <= col + dy < cols and seats[row + dx][col + dy] == '#'])
 
 def countOccupiedLine(seats, row, col):
     rows = len(seats)
