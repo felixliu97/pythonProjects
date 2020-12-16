@@ -46,7 +46,6 @@ with open('input-day16.txt', 'r') as f:
     valid_tickets.append(own_ticket)
     #convert cols to rows
     valid_tickets_col = np.array(valid_tickets).T.tolist()
-
     column_mapping = {}
     final_mapping = {}
 
@@ -68,12 +67,12 @@ with open('input-day16.txt', 'r') as f:
     while columns:
         for key, value in column_mapping.items():
             if len(value) == 1:
-                mapping = value.pop(0)
-                final_mapping[key] = mapping
+                field = value.pop(0)
+                final_mapping[key] = field
                 columns.remove(key)
-            for inner_value in column_mapping.values():
-                if mapping in inner_value:
-                    inner_value.remove(mapping)
+                for inner_value in column_mapping.values():
+                    if field in inner_value:
+                        inner_value.remove(field)
 
     final = [key for key, value in final_mapping.items() if 'departure' in value]
     product = 1
