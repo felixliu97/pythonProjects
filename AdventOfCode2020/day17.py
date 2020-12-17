@@ -13,12 +13,9 @@ def count_active(coordinate, active_list):
 def iterate(active_list, dimensions):
     copy = active_list[:]
     if dimensions == 3:
-        min_x = min([x for x, y, z in active_list])
-        max_x = max([x for x, y, z in active_list])
-        min_y = min([y for x, y, z in active_list])
-        max_y = max([y for x, y, z in active_list])
-        min_z = min([z for x, y, z in active_list])
-        max_z = max([z for x, y, z in active_list])
+        min_x, max_x = min([x for x, y, z in active_list]), max([x for x, y, z in active_list])
+        min_y, max_y = min([y for x, y, z in active_list]), max([y for x, y, z in active_list])
+        min_z, max_z = min([z for x, y, z in active_list]), max([z for x, y, z in active_list])
         for x, y, z in active_list:
             if count_active((x, y, z), active_list) not in (2, 3):
                 copy.remove((x, y, z))
@@ -28,14 +25,10 @@ def iterate(active_list, dimensions):
                     if (x, y, z) not in active_list and count_active((x, y, z), active_list) == 3:
                         copy.append((x, y, z))
     else:
-        min_x = min([x for x, y, z, w in active_list])
-        max_x = max([x for x, y, z, w in active_list])
-        min_y = min([y for x, y, z, w in active_list])
-        max_y = max([y for x, y, z, w in active_list])
-        min_z = min([z for x, y, z, w in active_list])
-        max_z = max([z for x, y, z, w in active_list])
-        min_w = min([w for x, y, z, w in active_list])
-        max_w = max([w for x, y, z, w in active_list])
+        min_x, max_x = min([x for x, y, z, w in active_list]), max([x for x, y, z, w in active_list])
+        min_y, max_y = min([y for x, y, z, w in active_list]), max([y for x, y, z, w in active_list])
+        min_z, max_z = min([z for x, y, z, w in active_list]), max([z for x, y, z, w in active_list])
+        min_w, max_w = min([w for x, y, z, w in active_list]), max([w for x, y, z, w in active_list])
         for x, y, z, w in active_list:
             if count_active((x, y, z, w), active_list) not in (2, 3):
                 copy.remove((x, y, z, w))
