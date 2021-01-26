@@ -6,11 +6,17 @@ pygame.font.init()
 
 
 class Grid:
-    board = [[7, 8, 0, 4, 0, 0, 1, 2, 0], [6, 0, 0, 0, 7, 5, 0, 0, 9],
-             [0, 0, 0, 6, 0, 1, 0, 7, 8], [0, 0, 7, 0, 4, 0, 2, 6, 0],
-             [0, 0, 1, 0, 5, 0, 9, 3, 0], [9, 0, 4, 0, 6, 0, 0, 0, 5],
-             [0, 7, 0, 3, 0, 0, 0, 1, 2], [1, 2, 0, 0, 0, 7, 4, 0, 0],
-             [0, 4, 9, 2, 0, 6, 0, 0, 7]]
+    # board = [[7, 8, 0, 4, 0, 0, 1, 2, 0], [6, 0, 0, 0, 7, 5, 0, 0, 9],
+    #          [0, 0, 0, 6, 0, 1, 0, 7, 8], [0, 0, 7, 0, 4, 0, 2, 6, 0],
+    #          [0, 0, 1, 0, 5, 0, 9, 3, 0], [9, 0, 4, 0, 6, 0, 0, 0, 5],
+    #          [0, 7, 0, 3, 0, 0, 0, 1, 2], [1, 2, 0, 0, 0, 7, 4, 0, 0],
+    #          [0, 4, 9, 2, 0, 6, 0, 0, 7]]
+
+    board = [[0, 2, 4, 0, 9, 0, 0, 0, 0], [0, 0, 0, 6, 0, 7, 4, 0, 9],
+             [0, 0, 0, 2, 0, 0, 7, 8, 1], [5, 0, 0, 7, 0, 6, 0, 4, 0],
+             [0, 0, 6, 5, 4, 0, 0, 9, 7], [0, 4, 0, 9, 8, 3, 1, 0, 5],
+             [0, 0, 1, 8, 2, 5, 9, 0, 6], [8, 6, 0, 3, 7, 0, 5, 1, 0],
+             [9, 7, 5, 4, 0, 0, 2, 3, 0]]
 
     def __init__(self, rows, cols, width, height, win):
         self.rows = rows
@@ -23,6 +29,7 @@ class Grid:
         self.model = None
         self.update_model()
         self.selected = None
+        self.selectedValue = None
         self.win = win
 
     def update_model(self):
@@ -66,13 +73,20 @@ class Grid:
                 self.cubes[i][j].draw(self.win)
 
     def select(self, row, col):
+        self.selectedValue = self.cubes[row][col].value
         # Reset all other
         for i in range(self.rows):
             for j in range(self.cols):
                 self.cubes[i][j].selected = False
+                self.cubes[i][j].highlighted = False
+                if self.selectedValue != 0 and self.cubes[i][
+                        j].value == self.selectedValue and (i != row
+                                                            or j != col):
+                    self.cubes[i][j].highlighted = True
 
         self.cubes[row][col].selected = True
         self.selected = (row, col)
+        print(self.selectedValue)
 
     def clear(self):
         row, col = self.selected
@@ -159,6 +173,7 @@ class Cube:
         self.width = width
         self.height = height
         self.selected = False
+        self.highlighted = False
 
     def draw(self, win):
         fnt = pygame.font.SysFont("comicsans", 40)
@@ -177,6 +192,9 @@ class Cube:
 
         if self.selected:
             pygame.draw.rect(win, (255, 0, 0), (x, y, gap, gap), 3)
+
+        if self.highlighted:
+            pygame.draw.rect(win, (255, 255, 0), (x, y, gap, gap), 3)
 
     def draw_change(self, win, g=True):
         fnt = pygame.font.SysFont("comicsans", 40)
@@ -326,7 +344,7 @@ def main():
                         key = None
 
                         if board.is_finished():
-                            print("Game over")
+                            print("You win")
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
@@ -339,6 +357,7 @@ def main():
             board.sketch(key)
 
         redraw_window(win, board, play_time, strikes)
+        # board.highlight_number(1)
         pygame.display.update()
 
 

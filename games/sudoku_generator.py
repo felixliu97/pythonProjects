@@ -127,17 +127,16 @@ def printSudoku(sudoku):
             row8.append(sudoku[i].returnSolved())
         if i in range(72, 81):
             row9.append(sudoku[i].returnSolved())
-    print(row1[0:3], row1[3:6], row1[6:10])
-    print(row2[0:3], row2[3:6], row2[6:10])
-    print(row3[0:3], row3[3:6], row3[6:10])
-    print('')
-    print(row4[0:3], row4[3:6], row4[6:10])
-    print(row5[0:3], row5[3:6], row5[6:10])
-    print(row6[0:3], row6[3:6], row6[6:10])
-    print('')
-    print(row7[0:3], row7[3:6], row7[6:10])
-    print(row8[0:3], row8[3:6], row8[6:10])
-    print(row9[0:3], row9[3:6], row9[6:10])
+
+    print(row1)
+    print(row2)
+    print(row3)
+    print(row4)
+    print(row5)
+    print(row6)
+    print(row7)
+    print(row8)
+    print(row9)
 
 
 def sudokuGen():
