@@ -1,6 +1,7 @@
 # GUI.py
 import pygame
 import time
+import sudoku_generator as gen
 
 pygame.font.init()
 
@@ -12,11 +13,13 @@ class Grid:
     #          [0, 7, 0, 3, 0, 0, 0, 1, 2], [1, 2, 0, 0, 0, 7, 4, 0, 0],
     #          [0, 4, 9, 2, 0, 6, 0, 0, 7]]
 
-    board = [[0, 2, 4, 0, 9, 0, 0, 0, 0], [0, 0, 0, 6, 0, 7, 4, 0, 9],
-             [0, 0, 0, 2, 0, 0, 7, 8, 1], [5, 0, 0, 7, 0, 6, 0, 4, 0],
-             [0, 0, 6, 5, 4, 0, 0, 9, 7], [0, 4, 0, 9, 8, 3, 1, 0, 5],
-             [0, 0, 1, 8, 2, 5, 9, 0, 6], [8, 6, 0, 3, 7, 0, 5, 1, 0],
-             [9, 7, 5, 4, 0, 0, 2, 3, 0]]
+    # board = [[0, 2, 4, 0, 9, 0, 0, 0, 0], [0, 0, 0, 6, 0, 7, 4, 0, 9],
+    #          [0, 0, 0, 2, 0, 0, 7, 8, 1], [5, 0, 0, 7, 0, 6, 0, 4, 0],
+    #          [0, 0, 6, 5, 4, 0, 0, 9, 7], [0, 4, 0, 9, 8, 3, 1, 0, 5],
+    #          [0, 0, 1, 8, 2, 5, 9, 0, 6], [8, 6, 0, 3, 7, 0, 5, 1, 0],
+    #          [9, 7, 5, 4, 0, 0, 2, 3, 0]]
+
+    board = gen.main('Easy')
 
     def __init__(self, rows, cols, width, height, win):
         self.rows = rows
@@ -280,11 +283,14 @@ def main():
     board = Grid(9, 9, 540, 540, win)
     key = None
     run = True
-    start = time.time()
+    start_time = time.time()
+    finish_time = None
     strikes = 0
     while run:
-
-        play_time = round(time.time() - start)
+        if not board.is_finished():
+            play_time = round(time.time() - start_time)
+        else:
+            play_time = round(finish_time - start_time)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -344,6 +350,7 @@ def main():
                         key = None
 
                         if board.is_finished():
+                            finish_time = time.time()
                             print("You win")
 
             if event.type == pygame.MOUSEBUTTONDOWN:

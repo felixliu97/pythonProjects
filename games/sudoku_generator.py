@@ -138,6 +138,8 @@ def printSudoku(sudoku):
     print(row8)
     print(row9)
 
+    return [row1, row2, row3, row4, row5, row6, row7, row8, row9]
+
 
 def sudokuGen():
     '''Generates a completed sudoku. Sudoku is completly random'''
