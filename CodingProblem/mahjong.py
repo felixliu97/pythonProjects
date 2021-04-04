@@ -68,4 +68,7 @@ def check(deck):
         print(f"This deck doesn't win.")
         
 
+check(deck1)
+check(deck2)
+check(deck3)
 check(deck4)
