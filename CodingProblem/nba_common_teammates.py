@@ -42,6 +42,8 @@ sixth_man_teammates_url = {
     'Jordan-Clarkson':'https://basketball.realgm.com/player/Jordan-Clarkson/Teammates/22892',
     'Montrezl-Harrell':'https://basketball.realgm.com/player/Montrezl-Harrell/Teammates/24290',
     'Lou-Williams/':'https://basketball.realgm.com/player/Lou-Williams/Teammates/140',
+    'JR-Smith':'https://basketball.realgm.com/player/JR-Smith/Teammates/386',
+    'James-Harden':'https://basketball.realgm.com/player/James-Harden/Teammates/1598',
     'Eric-Gordon':'https://basketball.realgm.com/player/Eric-Gordon/Teammates/762'
 }
 
