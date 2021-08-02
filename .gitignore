@@ -1,4 +1,5 @@
-excels/Top_250_Movies.csv
+localenv/
 .vscode/settings.json
+excels/Top_250_Movies.csv
 excels/Employees.xlsx
 games/__pycache__
