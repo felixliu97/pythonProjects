@@ -4,3 +4,4 @@ boto3
 # troposphere[policy]==2.7.1
 psycopg2-binary
 loguru
+pyinstaller
