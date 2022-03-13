@@ -1,5 +1,6 @@
 localenv/
 .vscode/settings.json
-excels/Top_250_Movies.csv
-excels/Employees.xlsx
-games/__pycache__
+excels/
+*__pycache__/
+build/
+dist/
