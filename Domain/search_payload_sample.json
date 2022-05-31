@@ -1,0 +1,20 @@
+{
+    "listingType": "Sale",
+    "propertyTypes": [
+        "House",
+        "NewApartments"
+    ],
+    "minBedrooms": 3,
+    "minBathrooms": 2,
+    "minCarspaces": 1,
+    "locations": [
+        {
+            "state": "NSW",
+            "region": "",
+            "area": "",
+            "suburb": "Newtown",
+            "postCode": "",
+            "includeSurroundingSuburbs": false
+        }
+    ]
+}
