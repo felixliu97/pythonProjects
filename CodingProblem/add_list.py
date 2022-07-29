@@ -42,3 +42,6 @@ class TestAddNumbers(unittest.TestCase):
         actual = add_numbers([1,0,9],[9,2,3])
         expected = [0,3,2,1]
         self.assertEqual(actual, expected)
+
+if __name__ == '__main__':
+    unittest.main()
