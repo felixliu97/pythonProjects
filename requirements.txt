@@ -1,6 +1,7 @@
 pylint
 botocore
 boto3
-troposphere[policy]==2.7.1
+# troposphere[policy]==2.7.1
 psycopg2-binary
-streamlit
+loguru
+pyinstaller

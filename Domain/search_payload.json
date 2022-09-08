@@ -1,0 +1,19 @@
+{
+    "listingType": "Sale",
+    "propertyTypes": [
+        "House"
+    ],
+    "minBedrooms": 4,
+    "minBathrooms": 2,
+    "minCarspaces": 1,
+    "locations": [
+        {
+            "state": "NSW",
+            "region": "",
+            "area": "",
+            "suburb": "Cherrybrook",
+            "postCode": "2126",
+            "includeSurroundingSuburbs": false
+        }
+    ]
+}
