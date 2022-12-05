@@ -16,11 +16,11 @@ password = os.environ.get("PYTHON_EMAIL_PASSWORD")
 # Dates to be checked
 subject = 'Tax Invoice - Caxec Pty Ltd - Talenza/Macquarie'
 body = f"""
-Hi,
+Hi Lester team,
 
 Please find the attached tax invoice for the fortnight 21/11/2022 - 04/12/2022.
 
-Regards,
+Best Regards,
 Felix
 """
 
