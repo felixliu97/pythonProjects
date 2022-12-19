@@ -4,3 +4,4 @@ excels/
 *__pycache__/
 build/
 dist/
+/testing/bash/export_password.sh

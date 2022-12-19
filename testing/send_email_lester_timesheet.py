@@ -7,10 +7,10 @@ smtp_server = "smtp.gmail.com"
 sender_email = "liusuqing97@gmail.com"
 
 # Testing email
-receiver_email = "446751316@qq.com"
+# receiver_email = "446751316@qq.com"
 
 # Actual email
-# receiver_email = "timesheets@lester.com.au"
+receiver_email = "timesheets@lester.com.au"
 password = os.environ.get("PYTHON_EMAIL_PASSWORD")
 
 # Dates to be checked
@@ -18,7 +18,7 @@ subject = 'Tax Invoice - Caxec Pty Ltd - Talenza/Macquarie'
 body = f"""
 Hi Lester team,
 
-Please find the attached tax invoice for the fortnight 21/11/2022 - 04/12/2022.
+Please find the attached tax invoice for the fortnight 05/12/2022 - 18/12/2022.
 
 Best Regards,
 Felix
@@ -31,7 +31,7 @@ em['Subject'] = subject
 em.set_content(body)
 
 # Invoice name to be checked
-invoice_name = 'Invoice Mac-20221205.pdf'
+invoice_name = 'Invoice Mac-20221219.pdf'
 with open(f"E:\\files\\Company\\Caxec\\invoice\\unpaid\{invoice_name}", 'rb') as content_file:
     content = content_file.read()
     em.add_attachment(content, maintype='application', subtype='pdf', filename=f"{invoice_name}")
