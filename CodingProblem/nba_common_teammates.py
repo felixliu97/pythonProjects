@@ -51,7 +51,7 @@ sixth_man_teammates_url = {
 
 common_teammates = []
 
-for _, url in player_teammates_url.items():
+for _, url in greens_teammates_url.items():
     response = requests.get(url, headers=headers)
     page = BeautifulSoup(response.text, 'html.parser')
     teammates_table = page.find('tbody')
