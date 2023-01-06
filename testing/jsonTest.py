@@ -13,5 +13,5 @@ x = {
 	]
 }
 
-##print(json.dumps(x, indent=4))
-print(json.dumps(x, indent=4, separators=(". ", " = ")))
+print(json.dumps(x, indent=4))
+# print(json.dumps(x, indent=4, separators=(". ", " = ")))
