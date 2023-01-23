@@ -18,7 +18,7 @@ subject = 'Tax Invoice - Caxec Pty Ltd - Talenza/Macquarie'
 body = f"""
 Hi Lester team,
 
-Please find the attached tax invoice for the fortnight 05/12/2022 - 18/12/2022.
+Please find the attached tax invoice for the fortnight 02/01/2023 - 15/01/2023.
 
 Best Regards,
 Felix
@@ -31,7 +31,7 @@ em['Subject'] = subject
 em.set_content(body)
 
 # Invoice name to be checked
-invoice_name = 'Invoice Mac-20221219.pdf'
+invoice_name = 'Invoice Mac-20230116.pdf'
 with open(f"E:\\files\\Company\\Caxec\\invoice\\unpaid\{invoice_name}", 'rb') as content_file:
     content = content_file.read()
     em.add_attachment(content, maintype='application', subtype='pdf', filename=f"{invoice_name}")

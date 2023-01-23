@@ -4,8 +4,8 @@ excels/
 *__pycache__/
 build/
 dist/
-/testing/bash/export_password.sh
 /terraform/learn-terraform-docker-container/.terraform.lock.hcl
 /terraform/learn-terraform-docker-container/terraform.tfstate
 /terraform/learn-terraform-docker-container/terraform.tfstate.backup
 /terraform/learn-terraform-docker-container/.terraform/providers/registry.terraform.io/kreuzwerker/docker/2.24.0/windows_amd64
+/testing/bash/export_variables.sh
