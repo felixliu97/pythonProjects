@@ -5,4 +5,4 @@ boto3
 psycopg2-binary
 loguru
 pyinstaller
-mysql-connector-python==8.0.32
+mysql-connector-python==8.0.31
