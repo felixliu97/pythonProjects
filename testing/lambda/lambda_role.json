@@ -1,0 +1,16 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "kafka-cluster:*"
+            ],
+            "Resource": [
+                "arn:aws:kafka:ap-southeast-2:539568592879:cluster/demo-cluster-1/a1097bd0-5044-4fbe-97e6-7336847c9e24-2",
+                "arn:aws:kafka:ap-southeast-2:539568592879:topic/demo-cluster-1/a1097bd0-5044-4fbe-97e6-7336847c9e24-2/*",
+                "arn:aws:kafka:ap-southeast-2:539568592879:group/demo-cluster-1/a1097bd0-5044-4fbe-97e6-7336847c9e24-2/*"
+            ]
+        }
+    ]
+}       

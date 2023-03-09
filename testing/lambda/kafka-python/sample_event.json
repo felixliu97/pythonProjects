@@ -1,0 +1,34 @@
+{
+    "eventVersion": "2.1",
+    "eventSource": "aws:s3",
+    "awsRegion": "ap-southeast-2",
+    "eventTime": "2023-02-26T08:57:22.682Z",
+    "eventName": "ObjectCreated:Put",
+    "userIdentity": {
+        "principalId": "AXRI30HGIQGIF"
+    },
+    "requestParameters": {
+        "sourceIPAddress": "61.69.206.130"
+    },
+    "responseElements": {
+        "x-amz-request-id": "W7TQ1Y5YKDZ2RQXR",
+        "x-amz-id-2": "q7sPgiNqGCKTXG2JtF9bjvmGcbYFe7Z6B6ar1GrZIYi9ez0xgu26XcMDrDrq8NtM2QMgrqARMR4gmOxxrI/qA4lJ+93vomkz"
+    },
+    "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "S3toSNS",
+        "bucket": {
+            "name": "fliu8-test",
+            "ownerIdentity": {
+                "principalId": "AXRI30HGIQGIF"
+            },
+            "arn": "arn:aws:s3:::fliu8-test"
+        },
+        "object": {
+            "key": "landing/test.txt",
+            "size": 12,
+            "eTag": "c72b9698fa1927e1dd12d3cf26ed84b2",
+            "sequencer": "0063FB1EF2A559F301"
+        }
+    }
+}
