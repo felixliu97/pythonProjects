@@ -1,0 +1,56 @@
+.App {
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background-color: #8b3dff;
+  padding: 10px;
+  min-width: 200px;
+  height: 100vh;
+}
+
+.sidebar button {
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 4px;
+  color: white;
+}
+
+.sidebar button:hover {
+  background-color: #f8f8f8;
+  color: #8b3dff;
+}
+
+.sidebar button.active {
+  background-color: #f8f8f8;
+  color: #8b3dff;
+}
+
+.content {
+  padding: 20px;
+  width: 100%;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
