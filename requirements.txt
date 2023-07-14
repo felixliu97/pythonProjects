@@ -1,8 +1,9 @@
-pylint
+# pylint
 botocore
 boto3
 # troposphere[policy]==2.7.1
 psycopg2-binary
-loguru
-pyinstaller
+# loguru
+# pyinstaller
 mysql-connector-python==8.0.31
+pyspark
