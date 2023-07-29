@@ -3,13 +3,23 @@
     "roll": 3,
     "name": "Micheal",
     "batch": 29,
-    "department": "CSE"
+    "department": "CSE",
+    "list": [
+      {
+        "a": 123
+      }
+    ]
   },
   {
     "roll": 55,
     "name": "Lisa",
     "batch": 34,
-    "department": "BBA"
+    "department": "BBA",
+    "list": [
+      {
+        "a": 768
+      }
+    ]
   },
   {
     "roll": 12,

@@ -1,10 +1,3 @@
-from itertools import combinations
-
-def unique_combinations(lst):
-    for pair in combinations(lst, 2):
-        print(pair)
-        print(pair[0], pair[1])
-
-# Example usage
-my_list = [3, 2, 1, 4, 5]
-unique_combinations(my_list)
+l = [1,2,3,4,5,6]
+k=3
+print(l[k],l[k+1:])
