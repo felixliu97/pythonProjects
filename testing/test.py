@@ -1,6 +1,12 @@
-import math
+l = [1,2,3,4,5,6,7,8]
 
-dividend = -7
-divisor = 3
-
-print(math.floor(dividend/divisor))
+print(f"l - {l}")
+print(f"l[:2] - {l[:2]}")
+print(f"l[-2:] - {l[-2:]}")
+print(f"l[:-2] - {l[:-2]}")
+print(f"l[2:] - {l[2:]}")
+print(f"l[::-1] - {l[::-1]}")
+print(f"l[::-2] - {l[::-2]}")
+print(f"l[:2][::-1] - {l[:2][::-1]}")
+print(f"l[2:][::-1] - {l[2:][::-1]}")
+print(f"l[2:5] - {l[2:5]}")
