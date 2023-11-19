@@ -1,0 +1,53 @@
+[
+    {
+        "ID": 1,
+        "Location": "BREST",
+        "Country": "DEU",
+        "Latitude": 48.383,
+        "Longitude": -4.495,
+        "Tide-Data": [
+            {
+                "timestamp": "1807-03-01",
+                "tide": 6896
+            }
+        ]
+    },
+    {
+        "ID": 1,
+        "Location": "BREST",
+        "Country": "FRA",
+        "Latitude": 48.383,
+        "Longitude": -4.495,
+        "Tide-Data": [
+            {
+                "timestamp": "1807-01-01",
+                "tide": 6905
+            },
+            {
+                "timestamp": "1807-02-01",
+                "tide": 6931
+            }
+        ]
+    },
+    {
+        "ID": 7,
+        "Location": "CUXHAVEN 2",
+        "Country": "DEU",
+        "Latitude": 53.867,
+        "Longitude": -8.717,
+        "Tide-Data": [
+            {
+                "timestamp": "1843-01-01",
+                "tide": 7093
+            },
+            {
+                "timestamp": "1843-02-01",
+                "tide": 6688
+            },
+            {
+                "timestamp": "1843-03-01",
+                "tide": 6493
+            }
+        ]
+    }
+]

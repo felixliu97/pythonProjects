@@ -1,12 +1,12 @@
-l = [1,2,3,4,5,6,7,8]
+import re
 
-print(f"l - {l}")
-print(f"l[:2] - {l[:2]}")
-print(f"l[-2:] - {l[-2:]}")
-print(f"l[:-2] - {l[:-2]}")
-print(f"l[2:] - {l[2:]}")
-print(f"l[::-1] - {l[::-1]}")
-print(f"l[::-2] - {l[::-2]}")
-print(f"l[:2][::-1] - {l[:2][::-1]}")
-print(f"l[2:][::-1] - {l[2:][::-1]}")
-print(f"l[2:5] - {l[2:5]}")
+con = "''"
+con2 = "1"
+
+m = re.match(r"'\d+'", con)
+if m:
+    print("match m")
+
+m2 = re.match(r"'\d+'", con2)
+if m2:
+    print("match m2")
