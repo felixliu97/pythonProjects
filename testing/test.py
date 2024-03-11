@@ -1,12 +1,8 @@
-import re
+a = None
+b = 1
+c = ''
 
-con = "''"
-con2 = "1"
-
-m = re.match(r"'\d+'", con)
-if m:
-    print("match m")
-
-m2 = re.match(r"'\d+'", con2)
-if m2:
-    print("match m2")
+if c == 2:
+    print("a OK!")
+else:
+    print("a not OK!")
