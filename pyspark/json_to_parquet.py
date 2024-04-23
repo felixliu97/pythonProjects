@@ -8,6 +8,7 @@ def flatten_df(df, prefix=""):
     complex_cols = []
 
     for field in df.schema.fields:
+        print(field.dataType, field.name)
         if isinstance(field.dataType, StructType):
             complex_cols.append(field.name)
         else:
@@ -27,8 +28,7 @@ def main():
     spark = SparkSession.builder.appName("JSON to Parquet").getOrCreate()
 
     try:
-        current_directory = os.getcwd()
-        input_path = os.path.join(current_directory, "input.json")
+        input_path = os.path.join(os.getcwd(), "input.json")
         df = spark.read.json(input_path, multiLine=True)
         print("DataFrame loaded successfully.")
         df.show()
