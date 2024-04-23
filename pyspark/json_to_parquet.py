@@ -1,33 +1,47 @@
-import re, os, glob, sys, json, pyspark
-from pyspark.sql.functions import *
-from pyspark.context import SparkContext
-from pyspark.sql.session import SparkSession
-from pyspark.sql import types as T
-import argparse
-sc = SparkContext('local')
-spark = SparkSession(sc)
-spark.sparkContext.setLogLevel("WARN")
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, explode, explode_outer
+from pyspark.sql.types import StructType
+import os
 
-parser = argparse.ArgumentParser(
-    prog='json_to_parquet.py',
-    description='Converts JSONs to Parquet.'
-)
+def flatten_df(df, prefix=""):
+    flat_cols = []
+    complex_cols = []
 
-parser.add_argument(
-    'input_path',
-    type=str,
-    help='Path of input directory. (Required)'
-)
+    for field in df.schema.fields:
+        if isinstance(field.dataType, StructType):
+            complex_cols.append(field.name)
+        else:
+            flat_cols.append(col(f"{prefix}{field.name}").alias(f"{prefix}{field.name}"))
 
-parser.add_argument(
-    'output_path',
-    type=str,
-    help='Path of output directory. (Required)'
-)
+    for col_name in complex_cols:
+        sub_df = df.select(col_name + ".*")
+        flat_sub_df = flatten_df(sub_df, prefix=col_name + "_")
+        flat_cols.extend(flat_sub_df.columns)
 
-parser.add_argument(
-    'cols_not_to_explode',
-    nargs='?',
-    default=None,
-    help='List of columns to not explode. (Optional)'
-)
+    if complex_cols:
+        df = df.select(*flat_cols)
+    return df
+
+def main():
+    print("json_to_parquet.py started.")
+    spark = SparkSession.builder.appName("JSON to Parquet").getOrCreate()
+
+    try:
+        current_directory = os.getcwd()
+        input_path = os.path.join(current_directory, "input.json")
+        df = spark.read.json(input_path, multiLine=True)
+        print("DataFrame loaded successfully.")
+        df.show()
+        df.printSchema()
+        flat_df = flatten_df(df)
+        print("Flattened DataFrame:")
+        flat_df.show()
+
+        output_path = os.path.join(current_directory, "output")
+        flat_df.write.mode("overwrite").parquet(output_path)
+        print("DataFrame written to Parquet file successfully.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    main()

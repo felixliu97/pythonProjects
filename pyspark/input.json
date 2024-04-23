@@ -1,0 +1,70 @@
+{
+    "users": [
+        {
+            "name": "John Doe",
+            "age": 30,
+            "email": "johndoe@example.com",
+            "address": {
+                "street": "123 Main St",
+                "city": "New York",
+                "state": "NY",
+                "zip": "10001"
+            },
+            "hobbies": [
+                "reading",
+                "hiking",
+                "cooking"
+            ],
+            "isStudent": false,
+            "social": {
+                "twitter": "johndoe",
+                "facebook": "john.doe",
+                "instagram": "johndoe123"
+            }
+        },
+        {
+            "name": "Jane Smith",
+            "age": 25,
+            "email": "janesmith@example.com",
+            "address": {
+                "street": "456 Elm St",
+                "city": "San Francisco",
+                "state": "CA",
+                "zip": "94102"
+            },
+            "hobbies": [
+                "running",
+                "yoga",
+                "traveling"
+            ],
+            "isStudent": true,
+            "social": {
+                "twitter": "janesmith",
+                "facebook": "jane.smith",
+                "instagram": "janesmith456"
+            }
+        },
+        {
+            "name": "Mike Johnson",
+            "age": 35,
+            "email": "mikejohnson@example.com",
+            "address": {
+                "street": "789 Oak St",
+                "city": "Seattle",
+                "state": "WA",
+                "zip": "98101"
+            },
+            "hobbies": [
+                "gaming",
+                "coding",
+                "photography"
+            ],
+            "isStudent": false,
+            "social": {
+                "twitter": "mikejohnson",
+                "facebook": "mike.johnson",
+                "instagram": "mikejohnson789"
+            }
+        }
+    ]
+}
