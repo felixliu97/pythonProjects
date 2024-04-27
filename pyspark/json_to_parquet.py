@@ -1,44 +1,66 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, explode, explode_outer
-from pyspark.sql.types import StructType
-import os
+from pyspark.sql import types as T
+from pyspark.sql.functions import *
+import os, click
 
-def flatten_df(df, prefix=""):
-    flat_cols = []
-    complex_cols = []
+sc = SparkContext('local')
+spark = SparkSession(sc)
+spark.sparkContext.setLogLevel("WARN")
 
-    for field in df.schema.fields:
-        print(field.dataType, field.name)
-        if isinstance(field.dataType, StructType):
-            complex_cols.append(field.name)
-        else:
-            flat_cols.append(col(f"{prefix}{field.name}").alias(f"{prefix}{field.name}"))
+def flatten_df(indf, cols_not_to_explode):
+    df = indf
+    if cols_not_to_explode:
+        complex_cols = dict([(field.name, field.dataType) for field in df.schema.fields if (isinstance(field.dataType, T.StructType) or isinstance(field.dataType, T.ArrayType)) and field.name.lower() not in cols_not_to_explode])
+    else:
+        complex_cols = dict([(field.name, field.dataType) for field in df.schema.fields if (isinstance(field.dataType, T.StructType) or isinstance(field.dataType, T.ArrayType))])
+ 
+    if len(complex_cols) > 0:
+        col_name = list(complex_cols.keys())[0]
+        if isinstance(complex_cols[col_name], T.ArrayType):
+            df = df.withColumn(col_name, explode_outer(col_name))
+            return flatten_df(df, cols_not_to_explode)
+        elif isinstance(complex_cols[col_name], T.StructType):
+            df = df.select("*", *[col(col_name + "." + field.name).alias(col_name + "_" + field.name) for field in complex_cols[col_name].fields]).drop(col_name)
+            return flatten_df(df, cols_not_to_explode)
+    else:
+        return df
 
-    for col_name in complex_cols:
-        sub_df = df.select(col_name + ".*")
-        flat_sub_df = flatten_df(sub_df, prefix=col_name + "_")
-        flat_cols.extend(flat_sub_df.columns)
+"""
+Command line interface for converting a JSON file to a Parquet file.
 
-    if complex_cols:
-        df = df.select(*flat_cols)
-    return df
+Args:
+    mode (str): The mode of flattening to apply to the DataFrame. Must be either "cartesian" or "nested". Defaults to "cartesian".
+    cols_not_to_explode (str): Comma-separated list of columns to exclude from exploding. Defaults to an empty string.
 
-def main():
+Returns:
+    None
+
+Raises:
+    Exception: If an error occurs during the conversion process.
+
+Example:
+    $ python json_to_parquet.py --mode cartesian --cols_not_to_explode col1,col2
+"""
+@click.command()
+@click.option("--mode", default="cartesian", required=False, type=click.Choice(["cartesian", "nested"]), help="Mode of flattening")
+@click.option("--cols_not_to_explode", default="", required=False, help="Columns to exclude from exploding")
+def main(mode, cols_not_to_explode):
     print("json_to_parquet.py started.")
-    spark = SparkSession.builder.appName("JSON to Parquet").getOrCreate()
 
     try:
         input_path = os.path.join(os.getcwd(), "input.json")
-        df = spark.read.json(input_path, multiLine=True)
+        df = spark.read.option("multiLine", "true").option("mode", "FAILFAST").option("primitivesAsString", "true").option("inferSchema", "false").json(input_path)
         print("DataFrame loaded successfully.")
-        df.show()
         df.printSchema()
-        flat_df = flatten_df(df)
+        if mode == "cartesian":
+            flat_df = flatten_df(df, cols_not_to_explode.split(","))
+        elif mode == "nested":
+            flat_df = df
         print("Flattened DataFrame:")
-        flat_df.show()
+        flat_df.printSchema()
 
-        output_path = os.path.join(current_directory, "output")
-        flat_df.write.mode("overwrite").parquet(output_path)
+        output_path = os.path.join(os.getcwd(), "output")
+        flat_df.coalesce(1).write.mode("overwrite").parquet(output_path)
         print("DataFrame written to Parquet file successfully.")
     except Exception as e:
         print(f"An error occurred: {e}")

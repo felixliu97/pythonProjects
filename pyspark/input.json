@@ -1,70 +1,41 @@
 {
-    "users": [
-        {
-            "name": "John Doe",
-            "age": 30,
-            "email": "johndoe@example.com",
-            "address": {
-                "street": "123 Main St",
-                "city": "New York",
-                "state": "NY",
-                "zip": "10001"
+    "person": {
+        "name": "John Doe",
+        "date_of_birth": "1990-07-12T14:30:00.000Z",
+        "date_of_hire": "2015-02-15T10:45:00.000Z",
+        "orders": [
+            {
+                "order_id": 1,
+                "products": [
+                    {
+                        "product_name": "Product A",
+                        "quantity": 2,
+                        "date_ordered": "2020-03-12T09:30:00.000Z"
+                    },
+                    {
+                        "product_name": "Product B",
+                        "quantity": 3,
+                        "date_ordered": "2020-04-15T11:45:00.000Z"
+                    }
+                ],
+                "total_cost": 100.00
             },
-            "hobbies": [
-                "reading",
-                "hiking",
-                "cooking"
-            ],
-            "isStudent": false,
-            "social": {
-                "twitter": "johndoe",
-                "facebook": "john.doe",
-                "instagram": "johndoe123"
+            {
+                "order_id": 2,
+                "products": [
+                    {
+                        "product_name": "Product C",
+                        "quantity": 1,
+                        "date_ordered": "2020-06-20T14:30:00.000Z"
+                    },
+                    {
+                        "product_name": "Product D",
+                        "quantity": 2,
+                        "date_ordered": "2020-07-22T16:45:00.000Z"
+                    }
+                ],
+                "total_cost": 150.00
             }
-        },
-        {
-            "name": "Jane Smith",
-            "age": 25,
-            "email": "janesmith@example.com",
-            "address": {
-                "street": "456 Elm St",
-                "city": "San Francisco",
-                "state": "CA",
-                "zip": "94102"
-            },
-            "hobbies": [
-                "running",
-                "yoga",
-                "traveling"
-            ],
-            "isStudent": true,
-            "social": {
-                "twitter": "janesmith",
-                "facebook": "jane.smith",
-                "instagram": "janesmith456"
-            }
-        },
-        {
-            "name": "Mike Johnson",
-            "age": 35,
-            "email": "mikejohnson@example.com",
-            "address": {
-                "street": "789 Oak St",
-                "city": "Seattle",
-                "state": "WA",
-                "zip": "98101"
-            },
-            "hobbies": [
-                "gaming",
-                "coding",
-                "photography"
-            ],
-            "isStudent": false,
-            "social": {
-                "twitter": "mikejohnson",
-                "facebook": "mike.johnson",
-                "instagram": "mikejohnson789"
-            }
-        }
-    ]
+        ]
+    }
 }
