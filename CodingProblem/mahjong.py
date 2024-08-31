@@ -1,74 +1,102 @@
-decks = ([1,1,1,2,2,2,3,3,3,4,4,4,5,5]
-    ,[1,1,1,1,2,3,4,5,6,7,8,9,9,9]
-    ,[1,1,1,2,2,3,3,5,5,5,6,6,6,8]
-    ,[1,1,2,2,3,3,5,5,5,6,6,6,9,9]
-    ,[1,2,3,3,3,3,4,5,6,6,6,7,8,9])
+from collections import Counter
+import unittest
 
-def check(deck):
-    deck.sort()
-    assert(len(deck) == 14)
-    cards = {}
-    possiblePair = []
+# Check if tile is valid
+def is_valid_tile(tile):
+    if not ((len(tile) == 2) and tile[0].isdigit() and (0 <= int(tile[0]) <= 9) and tile[1] in ['万', '筒', '条']):
+        print(f"{tile} is not a valid tile")
+        return False
+    return True
 
-    # Put numbers into original dictionary
-    for num in deck:
-        if num not in cards:
-            cards[num] = 1
-        else:
-            cards[num] += 1
+def add_tile(tile, increment:int):
+    number, category = list(tile)
+    return f"{int(number)+increment}{category}"
+# Check if the set of tiles win
+def is_winning_hand(tiles):
+    if len(tiles) != 14:
+        print(f"Got {len(tiles)} tiles which is not equal to 14")
+        return False, None, None
+    
+    for tile in tiles:
+        if not is_valid_tile(tile):
+            return False, None, None
 
-    print(f"Cards:", cards)
+    tile_counts = Counter(tiles)
+    print(f"tile_counts:{tile_counts}")
+    
+    # Check pairs
+    pair = None
+    for tile, count in tile_counts.items():
+        if count >= 2:
+            pair = tile
+            triplets = []
+            # create a copy of original tiles
+            remaining = tile_counts.copy()
+            win = True
+            remaining[tile] -= 2
+            if remaining[tile] == 0:
+                del remaining[tile]
+            print(f"Trying 2*({tile}) as pair")
+            # Check if remaining tiles are 4 triplets
+            for _ in range(4):
+                # Find minimum tile and try to remove 1 triplet from remaining
+                min_tile = min(remaining.keys())
+                # If has 3 or more same tile
+                if remaining[min_tile] >= 3:
+                    remaining[min_tile] -= 3
+                    triplets.append((min_tile, min_tile, min_tile))
+                    if remaining[min_tile] == 0:
+                        del remaining[min_tile]
+                # If less than 3 of same tiles, but next 2 adjacent tiles
+                elif add_tile(min_tile,1) in remaining.keys() and add_tile(min_tile,2) in remaining.keys():
+                    remaining[min_tile] -= 1
+                    remaining[add_tile(min_tile,1)] -= 1
+                    remaining[add_tile(min_tile,2)] -= 1
+                    triplets.append((min_tile, add_tile(min_tile,1), add_tile(min_tile,2)))
+                    if remaining[min_tile] == 0:
+                        del remaining[min_tile]
+                    if remaining[add_tile(min_tile,1)] == 0:
+                        del remaining[add_tile(min_tile,1)]
+                    if remaining[add_tile(min_tile,2)] == 0:
+                        del remaining[add_tile(min_tile,2)]
+                # Can not find triplet
+                else:
+                    print(f"\033[33mThis pair doesn't win!\033[0m")
+                    win = False
+                    break
+    if win:
+        print(f"\033[32mThis pair wins! Pair:{pair}, triplets:{triplets}!\033[0m")
+        return True, pair, triplets
+    else:
+        return False, None, None
 
-    # Find possible pairs
-    for key, value in cards.items():
-        if value > 1:
-            possiblePair.append(key)
+class TestMahjongWinningHand(unittest.TestCase):
+    def test_add_tile_1(self):
+        tile = "1万"
+        assert(add_tile(tile, 1) == "2万")
+    def test_winning_hand_1(self):
+        tiles = ["1万", "1万", "1万", "2筒", "3筒", "4筒", "5条", "6条", "7条", "9万", "9万", "9万", "1筒", "1筒"]
+        result, pair, combinations = is_winning_hand(tiles)
+        self.assertTrue(result)
+        self.assertEqual(pair, "1筒")
+        self.assertEqual(len(combinations), 4)
 
-    # print(f"Possible Pair:", possiblePair)
+    def test_winning_hand_2(self):
+        tiles = ["1万", "2万", "3万", "2筒", "3筒", "4筒", "5条", "6条", "7条", "7万", "8万", "9万", "1筒", "1筒"]
+        result, pair, combinations = is_winning_hand(tiles)
+        self.assertTrue(result)
+        self.assertEqual(pair, "1筒")
+        self.assertEqual(len(combinations), 4)
 
-    # Iterate through each possible pair
-    for pair_card in possiblePair:
-        remaining = cards.copy()
-        win = True
-        remaining[pair_card] -= 2
-        if remaining[pair_card] == 0:
-            del remaining[pair_card]
-        # print(f"Remaining cards:", remaining)
-        triplets = []
-        # Find 4 triplets
-        for i in range(4):
-            min_card = min(remaining.keys())
-            # print(f"Minimum Key:", min(remaining.keys()))
-            if remaining[min_card] >= 3:
-                remaining[min_card] -= 3
-                triplets.append((min_card, min_card, min_card))
-                if remaining[min_card] == 0:
-                    del remaining[min_card]
-            elif min_card + 1 in remaining.keys() and min_card + 2 in remaining.keys():
-                remaining[min_card] -= 1
-                remaining[min_card + 1] -= 1
-                remaining[min_card + 2] -= 1
-                triplets.append((min_card, min_card + 1, min_card + 2))
-                if remaining[min_card] == 0:
-                    del remaining[min_card]
-                if remaining[min_card + 1] == 0:
-                    del remaining[min_card + 1]
-                if remaining[min_card + 2] == 0:
-                    del remaining[min_card + 2]
-            else:
-                print(f"No Result found in this pair:", pair_card)
-                win = False
-                break
+    def test_not_winning_hand_1(self):
+        tiles = ["1万", "1万", "1万", "2筒", "3筒", "4筒", "5条", "6条", "7条", "9万", "9万", "9万", "1筒", "2筒"]
+        result, pair, combinations = is_winning_hand(tiles)
+        self.assertFalse(result)
 
-        if win:
-            print(f"This deck wins!")
-            print(f"Triplets:", triplets, "Pair:", (pair_card, pair_card))
-            break
+    def test_invalid_hand_size(self):
+        tiles = ["1万", "1万", "1万", "2筒", "3筒", "4筒", "5条", "6条", "7条", "9万", "9万", "9万", "1筒"]
+        result, pair, combinations = is_winning_hand(tiles)
+        self.assertFalse(result)
 
-    if not win:
-        print(f"This deck doesn't win.")
-        
-
-for deck in decks:
-    print()
-    check(deck)
+if __name__ == "__main__":
+    unittest.main()
