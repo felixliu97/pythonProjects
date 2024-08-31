@@ -11,5 +11,5 @@ for num in range(2, number - 1):
 
 for i in prime_numbers:
     if number - i in prime_numbers:
-        print(f"Output: %s + %s = %s" % (i, number - i, number))
+        print(f"Output: {i} + {number-i} = {number}")
         break

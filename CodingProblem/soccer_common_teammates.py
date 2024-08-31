@@ -4,13 +4,14 @@ import requests
 headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'}
 
 player_teammates_url = {
-    'cristiano-ronaldo':'https://www.transfermarkt.com/cristiano-ronaldo/gemeinsamespiele/spieler/8198',
-    'lionel-messi':'https://www.transfermarkt.com/lionel-messi/gemeinsameSpiele/spieler/28003',
-    'zlatan-ibrahimovic':'https://www.transfermarkt.com/zlatan-ibrahimovic/gemeinsameSpiele/spieler/3455'
+    'Cristiano Ronaldo':'https://www.transfermarkt.com/cristiano-ronaldo/gemeinsamespiele/spieler/8198',
+    'Lionel Messi':'https://www.transfermarkt.com/lionel-messi/gemeinsameSpiele/spieler/28003',
+    'Zlatan Ibrahimovic':'https://www.transfermarkt.com/zlatan-ibrahimovic/gemeinsameSpiele/spieler/3455'
 }
 
 common_teammates = []
 
+print(f"Finding common teammates of {[_ for _ in player_teammates_url.keys()]}")
 for _, url in player_teammates_url.items():
     response = requests.get(url, headers=headers)
     page = BeautifulSoup(response.text, 'html.parser')
@@ -23,11 +24,13 @@ for _, url in player_teammates_url.items():
         teammate = player.getText()
         if teammate != 'All teammates':
             teammates_list.append(teammate)
-    # print(teammates_list)
 
     if len(common_teammates) == 0:
         common_teammates = teammates_list
     else:
         common_teammates = set(common_teammates).intersection(teammates_list)
 
-print(common_teammates)
+if len(common_teammates) > 0:
+    print(f"Common teammate(s): {[_ for _ in common_teammates]}")
+else:
+    print(f"No common teammates found!")
