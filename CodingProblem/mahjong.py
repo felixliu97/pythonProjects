@@ -25,12 +25,11 @@ def is_winning_hand(tiles):
     print(f"tile_counts:{tile_counts}")
     
     # Check pairs
-    pair = None
     for tile, count in tile_counts.items():
         if count >= 2:
             pair = tile
             triplets = []
-            # create a copy of original tiles
+            # Create a copy of original tiles
             remaining = tile_counts.copy()
             win = True
             remaining[tile] -= 2
