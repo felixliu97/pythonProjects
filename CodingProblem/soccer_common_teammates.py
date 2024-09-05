@@ -6,7 +6,11 @@ headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleW
 player_teammates_url = {
     'Cristiano Ronaldo':'https://www.transfermarkt.com/cristiano-ronaldo/gemeinsamespiele/spieler/8198',
     'Lionel Messi':'https://www.transfermarkt.com/lionel-messi/gemeinsameSpiele/spieler/28003',
-    'Zlatan Ibrahimovic':'https://www.transfermarkt.com/zlatan-ibrahimovic/gemeinsameSpiele/spieler/3455'
+    # 'Zlatan Ibrahimovic':'https://www.transfermarkt.com/zlatan-ibrahimovic/gemeinsameSpiele/spieler/3455',
+    'Karim Benzema':'https://www.transfermarkt.com/karim-benzema/gemeinsameSpiele/spieler/18922',
+    'Luka Modric':'https://www.transfermarkt.com/luka-modric/gemeinsameSpiele/spieler/27992',
+    'Kaká':'https://www.transfermarkt.com/kaka/gemeinsameSpiele/spieler/3366',
+    'Fabio Cannavaro':'https://www.transfermarkt.com/fabio-cannavaro/gemeinsameSpiele/spieler/5775'
 }
 
 common_teammates = []
