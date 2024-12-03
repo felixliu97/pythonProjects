@@ -1,9 +1,13 @@
 # pylint
-botocore
-boto3
+# botocore
+# boto3
 # troposphere[policy]==2.7.1
-psycopg2-binary
+# psycopg2-binary
 # loguru
 # pyinstaller
-mysql-connector-python==8.0.31
-pyspark
+# mysql-connector-python==8.0.31
+# pyspark
+pandas
+pandas_ta
+yfinance
+numpy

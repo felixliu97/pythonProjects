@@ -1,48 +1,55 @@
 import pandas as pd
 
-# Read the CSV file into a DataFrame
-df = pd.read_csv('market-index-highest-dividend-yield-09-11-2024.csv')
+def analyze_stocks(file_path):
+    # Read the CSV file
+    # Handle the dollar signs in the Price column by treating it as a string initially
+    df = pd.read_csv(file_path)
+    
+    # Convert 1yr Return from string percentage to float
+    # Remove the % sign and + sign, then convert to float
+    df['1yr Return'] = df['1yr Return'].str.replace('%', '').str.replace('+', '').astype(float)
+    
+    # Convert Franking from string percentage to float
+    df['Franking'] = df['Franking'].str.replace('%', '').astype(float)
+    
+    # Convert Yield from string percentage to float
+    df['Yield'] = df['Yield'].str.replace('%', '').astype(float)
+    
+    # Filter the stocks based on the criteria:
+    # DRP = Yes, 1yr Return > 0, Franking = 100%
+    filtered_stocks = df[
+        (df['DRP'] == 'Yes') & 
+        (df['1yr Return'] > 0) & 
+        (df['Franking'] == 100.0)
+    ]
+    
+    # Sort by 1yr Return first (descending), then by Yield (descending)
+    filtered_stocks = filtered_stocks.sort_values(['1yr Return', 'Yield'], ascending=[False, False])
+    
+    # Select relevant columns for display
+    result = filtered_stocks[['Code', 'Company', 'Price', 'Yield', '1yr Return']]
+    
+    return result
 
-# Display the first few rows of the DataFrame
-print("Original DataFrame:")
-print(df.head())
+# File path
+file_path = 'market-index-highest-dividend-yield-09-11-2024.csv'
 
-# # Display basic information about the DataFrame
-# print("\nDataFrame Info:")
-# print(df.info())
-
-# Perform some filtering operations
-
-# # 1. Filter rows based on a condition
-# filtered_df = df[df['Price'] > 3.0]
-# print("\nFiltered DataFrame (Price > 3.0):")
-# print(filtered_df)
-
-# # 2. Select specific columns
-# selected_columns = ['Code', 'Company', 'Price', 'Yield']
-# selected_df = df[selected_columns]
-# print("\nSelected Columns:")
-# print(selected_df)
-
-# # 3. Sort the DataFrame by a column
-# sorted_df = df.sort_values('Yield', ascending=False)
-# print("\nSorted by Yield (Descending):")
-# print(sorted_df)
-
-# # 4. Filter rows with multiple conditions
-# multi_condition_df = df[(df['Franking'] == '100%') & (df['DRP'] == 'Yes')]
-# print("\nFiltered with multiple conditions (100% Franking and DRP available):")
-# print(multi_condition_df)
-
-# # 5. Calculate some statistics
-# print("\nStatistics:")
-# print(df['Yield'].describe())
-
-# # 6. Group by a column and calculate mean
-# grouped_df = df.groupby('Franking')['Yield'].mean()
-# print("\nMean Yield grouped by Franking:")
-# print(grouped_df)
-
-# # Save the filtered DataFrame to a new CSV file
-# filtered_df.to_csv('filtered_data.csv', index=False)
-# print("\nFiltered data saved to 'filtered_data.csv'")
+# Analyze stocks
+try:
+    result = analyze_stocks(file_path)
+    
+    print("\nStocks matching criteria (DRP=Yes, 1yr Return>0, Franking=100%):")
+    print(f"Total matches found: {len(result)}")
+    print("=" * 120)
+    
+    if len(result) > 0:
+        # Format the output
+        for _, row in result.iterrows():
+            print(f"Code: {row['Code']}, Company: {row['Company']}")
+            print(f"Price: {row['Price']}, Yield: {row['Yield']:.2f}%, 1 Year Return: +{row['1yr Return']:.2f}%")
+            print("-" * 120)
+    else:
+        print("No stocks found matching the criteria.")
+        
+except Exception as e:
+    print(f"Error: {e}")
