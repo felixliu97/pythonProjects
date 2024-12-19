@@ -7,16 +7,16 @@
 # @lc code=start
 class Solution:
     def jump(self, nums: List[int]) -> int:
-        # size of list
         n = len(nums)
-        jump, current_end, farthest = 0, 0, 0
-        for i in range(n-1):
-            farthest = max(farthest, i + nums[i])
-            if i == current_end:
-                jump += 1
-                current_end = farthest
-            # print(f"i:{i}, farthest:{farthest}, jump:{jump}, current_end:{current_end}")
-        return jump
+        dp = [float('inf')] * n
+        dp[n-1] = 0
+
+        for i in range(n-2,-1,-1):
+            for j in range(1, min(nums[i]+1, n-i)):
+                dp[i] = min(dp[i], dp[i+j]+1)
+                # print(f"i:{i},j:{j},nums[i]:{nums[i]},n-i:{n-i}")
+                # print(dp)
+        return dp[0]
         
 # @lc code=end
 

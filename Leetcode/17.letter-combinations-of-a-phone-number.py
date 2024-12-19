@@ -11,7 +11,7 @@ class Solution:
         all_lists = []
         for digit in digits:
             all_lists.append([l for l in dict[digit]])
-        return [] if len(all_lists) == 0 else ["".join(letters) for letters in itertools.product(*all_lists)]
+        return [] if len(all_lists) == 0 else ["".join(l) for l in itertools.product(*all_lists)]
         
 # @lc code=end
 
