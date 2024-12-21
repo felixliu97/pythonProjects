@@ -22,10 +22,10 @@ class Solution:
         prev = None
         curr = head
         for _ in range(k):
-            nxt = curr.next
+            next = curr.next
             curr.next = prev
             prev = curr
-            curr = nxt
+            curr = next
 		
         # After reverse, we know that `head` is the tail of the group.
 		# And `curr` is the next pointer in original linked list order

@@ -8,36 +8,32 @@
 class Solution:
     def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
         nums.sort()
-        result = set()
-        # list size
-        L = len(nums)
-        # larget number
-        R = nums[-1]
-        # first number
-        for i in range(L-3):
-            a = nums[i]
-            # go to next number
-            if a + 3*R < target: continue
-            # no result
-            if 4*a > target: break
-            # second number
-            for j in range(i+1, L-2):
-                b = nums[j]
-                # go to next number
-                if a + b + 2*R < target: continue
-                # no result
-                if a + 3*b > target: break
-                # third number
-                for k in range(j+1, L-1):
-                    c = nums[k]
-                    # fourth number
-                    d = target - (a+b+c)
-                    # go to next number
-                    if d > R: continue
-                    # no result
-                    if d < c: break
-                    if d in nums[k+1:]:
-                        result.add((a,b,c,d))
+        n = len(nums)
+        result = []
+        for i in range(n-3): # first number
+            if nums[i] > target/4:
+                break
+            if (i > 0 and nums[i] == nums[i-1]): # skip same first number
+                continue
+            for j in range(i+1,n-2): # second number
+                if j > i+1 and nums[j] == nums[j-1]:
+                    continue # skip same second number
+                k = j+1 # third number
+                l = n-1 # fourth number
+                while k < l:
+                    current_sum = nums[i] + nums[j] + nums[k] + nums[l]
+                    if current_sum == target:
+                        result.append([nums[i],nums[j],nums[k],nums[l]])
+                        while k < l and nums[k] == nums[k+1]: # skip same third number
+                            k += 1
+                        while k < l and nums[l] == nums[l-1]: # skip same fourth number
+                            l -= 1
+                        k += 1
+                        l -= 1
+                    elif current_sum > target:
+                        l -= 1
+                    else:
+                        k += 1
         return result
         
 # @lc code=end

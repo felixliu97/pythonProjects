@@ -13,13 +13,12 @@ class Solution:
         maxArea = 0
 
         while left < right:
-            currentArea = min(height[left], height[right]) * (right - left)
-            maxArea = max(currentArea, maxArea)
-            if height[left] > height[right]:
-                right -= 1
-            else:
+            area = min(height[left], height[right]) * (right - left)
+            maxArea = max(area, maxArea)
+            if height[left] < height[right]:
                 left += 1
-
+            else:
+                right -= 1
         return maxArea
         
 # @lc code=end
