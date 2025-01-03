@@ -10,12 +10,12 @@ class Solution:
         need = Counter(t)
         missing = len(t)
         left = start = end = 0
-        for right, char in enumerate(s, 1):
+        for right, char in enumerate(s, 1): # starting from 1 instead
             if need[char] > 0:
                 missing -= 1
             need[char] -= 1
             if not missing:
-                while left < right and need[s[left]] < 0: # proceed to 
+                while left < right and need[s[left]] < 0: # shrink if needed
                     need[s[left]] += 1
                     left += 1
                 if not end or right - left < end - start:

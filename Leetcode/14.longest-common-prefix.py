@@ -11,7 +11,10 @@ class Solution:
         for str in strs:
             while not str.startswith(pre):
                 pre = pre[:-1]
-        return pre     
+                if not pre:
+                    return ""
+        return pre
+    
         
 # @lc code=end
 

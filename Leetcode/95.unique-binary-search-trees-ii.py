@@ -16,7 +16,6 @@ class Solution:
         def generate(start, end):
             if start > end:
                 return [None]
-            
             all_trees = []
             for i in range(start, end + 1):
                 left_trees = generate(start, i - 1)
@@ -24,13 +23,11 @@ class Solution:
                 
                 for l in left_trees:
                     for r in right_trees:
-                        current_tree = TreeNode(i)
-                        current_tree.left = l
-                        current_tree.right = r
-                        all_trees.append(current_tree)
-            
+                        current = TreeNode(i)
+                        current.left = l
+                        current.right = r
+                        all_trees.append(current)
             return all_trees
-        
         return generate(1, n) if n else []
         
         
