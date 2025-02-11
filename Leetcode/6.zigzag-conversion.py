@@ -7,22 +7,22 @@
 # @lc code=start
 class Solution:
     def convert(self, s: str, numRows: int) -> str:
-        if numRows >= len(s) or numRows == 1:
+        if numRows == 1 or numRows >= len(s):
             return s
-        dict = {}
-        cur,increment = 0,1
-        for c in s:
-            if cur not in dict:
-                dict[cur] = []
-            dict[cur].append(c)
-            if (increment > 0 and cur == (numRows-1)) or (increment < 0 and cur == 0):
-                increment *= -1
-            cur += increment
-        result = ""
-        for i in range(numRows):
-            s = "".join(dict[i])
-            result += s
-        return result
-        
+
+        rows = [''] * numRows
+        current_row = 0
+        step = 1
+
+        for char in s:
+            rows[current_row] += char
+            if current_row == 0:
+                step = 1
+            elif current_row == numRows - 1:
+                step = -1
+            current_row += step
+
+        return ''.join(rows)
+            
 # @lc code=end
 
