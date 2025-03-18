@@ -8,33 +8,52 @@
 class Solution:
     def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
         nums.sort()
-        n = len(nums)
-        result = []
-        for i in range(n-3): # first number
-            if nums[i] > target/4:
-                break
-            if (i > 0 and nums[i] == nums[i-1]): # skip same first number
+        results = []
+        for i in range(len(nums) - 3):
+            if i > 0 and nums[i] == nums[i-1]:
                 continue
-            for j in range(i+1,n-2): # second number
+            for j in range(i+1, len(nums)-2):
                 if j > i+1 and nums[j] == nums[j-1]:
-                    continue # skip same second number
-                k = j+1 # third number
-                l = n-1 # fourth number
+                    continue
+                k, l = j+1, len(nums)-1
                 while k < l:
-                    current_sum = nums[i] + nums[j] + nums[k] + nums[l]
-                    if current_sum == target:
-                        result.append([nums[i],nums[j],nums[k],nums[l]])
-                        while k < l and nums[k] == nums[k+1]: # skip same third number
+                    sum = nums[i] + nums[j] + nums[k] + nums[l]
+                    if sum == target:
+                        results.append([nums[i],nums[j],nums[k],nums[l]])
+                        while k < l and nums[k] == nums[k+1]:
                             k += 1
-                        while k < l and nums[l] == nums[l-1]: # skip same fourth number
+                        while k < l and nums[l] == nums[l-1]:
                             l -= 1
                         k += 1
                         l -= 1
-                    elif current_sum > target:
-                        l -= 1
-                    else:
+                    elif sum < target:
                         k += 1
-        return result
+                    else:
+                        l -= 1
+        return results
+        # nums.sort()
+        # results = []
+        # for a in range(len(nums)-3):
+        #     if a > 0 and nums[a] == nums[a-1]:
+        #         continue
+        #     for b in range(a+1, len(nums)-2):
+        #         c = b+1
+        #         d = len(nums)-1
+        #         while c < d:
+        #             sum = nums[a] + nums[b] + nums[c] + nums[d]
+        #             if sum == target:
+        #                 results.append([nums[a], nums[b], nums[c], nums[d]])
+        #                 while c < d and nums[c] == nums[c+1]:
+        #                     c += 1
+        #                 while c < d and nums[d] == nums[d-1]:
+        #                     d -= 1
+        #                 c += 1
+        #                 d -= 1
+        #             elif sum < target:
+        #                 c += 1
+        #             else:
+        #                 d -= 1
+        # return results
         
 # @lc code=end
 
