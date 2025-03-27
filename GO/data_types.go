@@ -23,9 +23,23 @@ func main() {
 	var arr [3]int = [3]int{1, 2, 3}
 	fmt.Println("Array:", arr)
 
+	arr2 := [...]int32{1, 2, 3, 4, 5}
+	fmt.Println("Array2:", arr2)
+
 	// Slice
 	var slice []int = []int{1, 2, 3}
 	fmt.Println("Slice:", slice)
+	slice = append(slice, 5)
+	fmt.Println("Slice:", slice)
+
+	//Rune
+	// var my_str = "Résumés"
+	var my_str = []rune("Résumés")
+	var indexed = my_str[1]
+	fmt.Printf("Rune: %v, %T\n", indexed, indexed)
+	for i, v := range my_str {
+		fmt.Println(i, v)
+	}
 
 	// Map
 	var m map[string]int = map[string]int{"one": 1, "two": 2}
