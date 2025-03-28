@@ -7,13 +7,13 @@
 # @lc code=start
 class Solution:
     def longestCommonPrefix(self, strs: List[str]) -> str:
-        pre = min(strs, key=len)
+        prefix = min(strs, key=len)
         for str in strs:
-            while not str.startswith(pre):
-                pre = pre[:-1]
-                if not pre:
-                    return ""
-        return pre
+            while not str.startswith(prefix):
+                prefix = prefix[:-1]
+            if not prefix:
+                return ""
+        return prefix
     
         
 # @lc code=end
