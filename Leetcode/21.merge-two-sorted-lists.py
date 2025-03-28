@@ -13,7 +13,7 @@
 class Solution:
     def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
         merged = head = ListNode()
-        while list1 and list2:               
+        while list1 and list2:
             if list1.val < list2.val:
                 merged.next = list1
                 merged = merged.next
@@ -22,7 +22,6 @@ class Solution:
                 merged.next = list2
                 merged = merged.next
                 list2 = list2.next
-       
         merged.next = list1 if list1 else list2
         return head.next
         
