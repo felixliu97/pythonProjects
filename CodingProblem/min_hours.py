@@ -6,7 +6,7 @@ def min_hours_to_equalize(servers):
     total_odd = total_even = 0
     for server in servers:
         diff = max_band - server
-        # print(f"diff:{diff}")
+        # print(f"diff:{diff}") 
         odd_needed = diff % 2
         even_needed = diff // 2
         total_odd += odd_needed
