@@ -18,17 +18,12 @@ MARGIN = 50
 PLAYER_COLORS = [
     (231, 76, 60),    # 红
     (41, 128, 185),   # 蓝 
-    (39, 174, 96),    # 绿
-    (243, 156, 18),   # 黄
-    (142, 68, 173),   # 紫
-    (192, 57, 43),    # 深红
-    (52, 152, 219),   # 浅蓝
-    (241, 196, 15)    # 金色
+    (39, 174, 96)     # 绿
 ]
 PLAYER_AVATARS = [
     "♟",  # 红色玩家
     "♞",  # 蓝色玩家
-    "♜",  # 绿色玩家
+    "♜"   # 绿色玩家
 ]
 BACKGROUND_COLOR = (44, 62, 80)
 BOARD_COLOR = (236, 240, 241)
@@ -475,11 +470,15 @@ def handle_landing(player):
     
     game.message = f"{player['name']}掷出了{game.dice_values[0]}+{game.dice_values[1]}={total}, 到达了{prop['name']}"
     
-    # 特殊格子处理
-    if prop["name"] == "起点":
+    # 检查是否经过或到达起点
+    if current_pos == 0 or (player["position"] - total) % 40 > current_pos:
         player["money"] += 200
-        game.message += ", 获得200元"
-    elif prop["name"] in ["机会", "命运"]:
+        game.rent_message = f"{player['name']}经过起点，获得$200"
+        game.show_rent_message = True
+        game.message += ", 获得$200"
+    
+    # 特殊格子处理
+    if prop["name"] in ["机会", "命运"]:
         if prop["name"] == "机会":
             card = game.draw_chance_card()
             game.card_type = "机会"
@@ -1233,26 +1232,13 @@ def draw_start_cell(x, y, size):
     """绘制起点格子"""
     # 绘制GO格子的特殊样式
     cell_rect = pygame.Rect(x, y, size, size)
-    pygame.draw.rect(screen, SPECIAL_CELL_COLORS["起点"], cell_rect, 0, 5)
-    pygame.draw.rect(screen, (189, 195, 199), cell_rect, 1, 5)
+    pygame.draw.rect(screen, (255, 255, 255), cell_rect, 0, 5)  # 白色背景
+    pygame.draw.rect(screen, (0, 0, 0), cell_rect, 2, 5)  # 黑色边框
     
     # 添加GO标志
     go_font = pygame.font.SysFont('arial', int(size * 0.5), bold=True)
-    go_text = go_font.render("GO", True, (255, 255, 255))
-    screen.blit(go_text, (x + size//2 - go_text.get_width()//2, y + size//4))
-    
-    # 添加箭头标志
-    arrow_points = [
-        (x + size//4, y + size//2),
-        (x + size//2, y + size//4),
-        (x + 3*size//4, y + size//2),
-        (x + size//2, y + 3*size//4)
-    ]
-    pygame.draw.polygon(screen, (255, 255, 255), arrow_points)
-    
-    # 添加奖励提示
-    bonus_text = font_small.render("+$200", True, (255, 255, 255))
-    screen.blit(bonus_text, (x + size//2 - bonus_text.get_width()//2, y + 2*size//3))
+    go_text = go_font.render("GO", True, (0, 0, 0))  # 黑色文字
+    screen.blit(go_text, (x + size//2 - go_text.get_width()//2, y + size//2 - go_text.get_height()//2))
 
 def draw_board_center():
     # 计算中心区域
@@ -2121,6 +2107,9 @@ def draw_purchase_choice():
 
 def handle_owned_property(player, prop):
     """处理玩家到达他人地产的情况"""
+    if prop["owner"] is None:
+        return
+        
     owner = game.players[prop["owner"]]
     if owner["bankrupt"]:
         return
@@ -2157,9 +2146,11 @@ def handle_owned_property(player, prop):
     if player["money"] >= rent:
         player["money"] -= rent
         owner["money"] += rent
-        game.message = f"{player['name']}支付{rent}元租金给{owner['name']}"
+        game.rent_message = f"{player['name']}支付{rent}元租金给{owner['name']}"
+        game.show_rent_message = True
     else:
-        game.message = f"{player['name']}无法支付{rent}元租金，破产!"
+        game.rent_message = f"{player['name']}无法支付{rent}元租金，破产!"
+        game.show_rent_message = True
         handle_bankruptcy(player, owner)
 
 if __name__ == "__main__":
