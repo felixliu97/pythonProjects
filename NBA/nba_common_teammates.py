@@ -1,7 +1,13 @@
 from bs4 import BeautifulSoup
-import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import time
 
-headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'}
+# Configure Selenium to run in headless mode
+chrome_options = Options()
+chrome_options.add_argument("--headless")  # Run in background
+chrome_options.add_argument("--disable-blink-features=AutomationControlled") # Try to hide automation
+chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
 player_teammates_url = {
     # 'Kobe Bryant':'https://basketball.realgm.com/player/Kobe-Bryant/Teammates/613',
@@ -51,21 +57,51 @@ sixth_man_teammates_url = {
 
 common_teammates = []
 
-print(f"Finding common teammates of {[_ for _ in player_teammates_url.keys()]}")
-for _, url in player_teammates_url.items():
-    response = requests.get(url, headers=headers)
-    page = BeautifulSoup(response.text, 'html.parser')
-    teammates_table = page.find('tbody')
-    teammates = teammates_table.find_all('tr')
-    teammates_list = []
-    for player in teammates:
-        teammate = player.find('td').find('a').getText()
-        teammates_list.append(teammate)
+print("Initializing Selenium WebDriver...")
+try:
+    driver = webdriver.Chrome(options=chrome_options)
+except Exception as e:
+    print(f"Error initializing WebDriver: {e}")
+    print("Please ensure you have Chrome and ChromeDriver installed.")
+    exit(1)
 
-    if len(common_teammates) == 0:
-        common_teammates = teammates_list
-    else:
-        common_teammates = set(common_teammates).intersection(teammates_list)
+print(f"Finding common teammates of {[_ for _ in player_teammates_url.keys()]}")
+
+try:
+    for player_name, url in player_teammates_url.items():
+        print(f"Fetching data for {player_name}...")
+        driver.get(url)
+        
+        # Wait a bit for Cloudflare/JS to load
+        time.sleep(5)
+        
+        page_source = driver.page_source
+        page = BeautifulSoup(page_source, 'html.parser')
+        teammates_table = page.find('tbody')
+        
+        if not teammates_table:
+            print(f"Could not find teammates table for {player_name}")
+            # Check title to see if still blocked
+            if page.title:
+                print(f"Page title: {page.title.string}")
+            continue
+            
+        teammates = teammates_table.find_all('tr')
+        teammates_list = []
+        for player in teammates:
+            try:
+                teammate = player.find('td').find('a').getText()
+                teammates_list.append(teammate)
+            except AttributeError:
+                continue
+
+        if len(common_teammates) == 0:
+            common_teammates = teammates_list
+        else:
+            common_teammates = set(common_teammates).intersection(teammates_list)
+
+finally:
+    driver.quit()
 
 if len(common_teammates) > 0:
     print(f"Common teammate(s): {[_ for _ in common_teammates]}")
