@@ -191,5 +191,5 @@ psql -f schema.sql
 # \q        : Quit psql
 
 # Backup & Restore
-# pg_dump -U <user> <dbname> > backup.sql    # Backup
-# psql -U <user> <dbname> < backup.sql       # Restore
+pg_dump -U <user> <dbname> > backup.sql    # Backup
+psql -U <user> <dbname> < backup.sql       # Restore
