@@ -10,4 +10,4 @@ dist/
 /terraform/learn-terraform-docker-container/.terraform/providers/registry.terraform.io/kreuzwerker/docker/2.24.0/windows_amd64
 /testing/bash/export_variables.sh
 node_modules/
-/testing/*.txt
+/testing/*.log
