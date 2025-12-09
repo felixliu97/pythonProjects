@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"time"
 
@@ -14,11 +13,15 @@ import (
 func main() {
 	var name = flag.String("name", "worker", "name of the worker")
 	var ttl = flag.Int("ttl", 5, "ttl for the session")
+	var endpoint = flag.String("endpoint", "localhost:2379", "etcd endpoint")
 	flag.Parse()
 
+	log.Println("Worker starting...")
+
 	// 1. Connect to etcd
+	log.Printf("[%s] Connecting to etcd at %s with %ds timeout...", *name, *endpoint, 5)
 	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   []string{"localhost:2379"},
+		Endpoints:   []string{*endpoint},
 		DialTimeout: 5 * time.Second,
 	})
 	if err != nil {
@@ -37,23 +40,23 @@ func main() {
 	// 3. Create a mutex on a shared key
 	m := concurrency.NewMutex(s, "/my-distributed-lock")
 
-	fmt.Printf("[%s] trying to acquire lock\n", *name)
+	log.Printf("[%s] trying to acquire lock", *name)
 	ctx := context.Background()
 
 	// 4. Acquire lock (blocking)
 	if err := m.Lock(ctx); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("[%s] ACQUIRED lock\n", *name)
+	log.Printf("[%s] ACQUIRED lock", *name)
 
 	// 5. Critical section (simulate work)
 	workDuration := 5 * time.Second
-	fmt.Printf("[%s] doing work for %v...\n", *name, workDuration)
+	log.Printf("[%s] doing work for %v...", *name, workDuration)
 	time.Sleep(workDuration)
 
 	// 6. Release lock
 	if err := m.Unlock(ctx); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("[%s] RELEASED lock\n", *name)
+	log.Printf("[%s] RELEASED lock", *name)
 }

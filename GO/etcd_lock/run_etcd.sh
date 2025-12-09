@@ -4,6 +4,6 @@ docker run -d --rm \
   -p 2379:2379 \
   -p 2380:2380 \
   --env ALLOW_NONE_AUTHENTICATION=yes \
-  bitnami/etcd:3.5.18
+  quay.io/coreos/etcd:v3.5.0
 
 echo "Etcd server started on localhost:2379"
