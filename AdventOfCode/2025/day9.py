@@ -1,11 +1,17 @@
+import sys
+
 def parse_input(filename):
     points = []
-    with open(filename, 'r') as f:
-        for line in f:
-            if line.strip():
-                x, y = map(int, line.strip().split(','))
-                points.append((x, y))
-    return points
+    try:
+        with open(filename, 'r') as f:
+            for line in f:
+                if line.strip():
+                    x, y = map(int, line.strip().split(','))
+                    points.append((x, y))
+        return points
+    except FileNotFoundError:
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
 
 def calculate_max_area(points):
     max_area = 0
@@ -93,12 +99,9 @@ def calculate_max_area_part2(points):
     # Pre-calculate poly edges
     poly = points # The points are already in order
 
-    print(f"Checking {len(rects)} candidate rectangles...")
+    # print(f"Checking {len(rects)} candidate rectangles...")
     
     for r in rects:
-        # Optimization: Don't check tiny ones if we already found a big one? 
-        # But we return the first one found since we sorted by area.
-        
         # A. Center point check
         cx = (r['min_x'] + r['max_x']) / 2.0
         cy = (r['min_y'] + r['max_y']) / 2.0
@@ -124,38 +127,44 @@ def calculate_max_area_part2(points):
             
     return 0
 
-
-def run_example():
+def run_tests():
+    print("Running tests...")
     example_data = [
         (7,1), (11,1), (11,7), (9,7),
         (9,5), (2,5), (2,3), (7,3)
     ]
-    print("Running Part 1 Example...")
-    area = calculate_max_area(example_data)
-    print(f"Example Max Area: {area} (Expected 50)")
-
-    print("Running Part 2 Example...")
-    area_p2 = calculate_max_area_part2(example_data)
-    print(f"Example Part 2 Max Area: {area_p2} (Expected 24)")
-    if area_p2 == 24:
-        print("✅ Part 2 verification passed!")
-    else:
-        print("❌ Part 2 verification FAILED")
-
-def main():
-    run_example()
     
-    print("\nRunning Full Input...")
-    try:
-        points = parse_input('input-day9.txt')
-        result_p1 = calculate_max_area(points)
-        print(f"Part 1 Result: {result_p1}")
+    print("Verifying Part 1 Example...")
+    area = calculate_max_area(example_data)
+    expected_p1 = 50
+    if area == expected_p1:
+        print(f"✅ Part 1 Passed")
+    else:
+        print(f"❌ Part 1 Failed: Expected {expected_p1}, Got {area}")
+
+    print("Verifying Part 2 Example...")
+    area_p2 = calculate_max_area_part2(example_data)
+    expected_p2 = 24
+    if area_p2 == expected_p2:
+        print(f"✅ Part 2 Passed")
+    else:
+        print(f"❌ Part 2 Failed: Expected {expected_p2}, Got {area_p2}")
         
-        result_p2 = calculate_max_area_part2(points)
-        print(f"Part 2 Result: {result_p2}")
-        
-    except FileNotFoundError:
-        print("input-day9.txt not found. Make sure it is in the same directory.")
+    print("✅ Tests completed!")
+
+def solve_part1():
+    print("--- Part 1 ---")
+    points = parse_input('input-day9.txt')
+    result_p1 = calculate_max_area(points)
+    print(f"Result: {result_p1}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    points = parse_input('input-day9.txt')
+    result_p2 = calculate_max_area_part2(points)
+    print(f"Result: {result_p2}")
 
 if __name__ == "__main__":
-    main()
+    run_tests()
+    solve_part1()
+    solve_part2()

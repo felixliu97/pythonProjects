@@ -1,4 +1,13 @@
+import sys
 import math
+
+def parse_input(filename):
+    try:
+        with open(filename, 'r') as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
 
 def solve(input_text):
     rotations = input_text.strip().splitlines()
@@ -50,7 +59,8 @@ def solve(input_text):
             
     return zeros_part1, zeros_part2
 
-def test_example():
+def run_tests():
+    print("Running tests...")
     example_input = """
 L68
 L30
@@ -66,19 +76,34 @@ L82
     p1, p2 = solve(example_input)
     print(f"Example Part 1: {p1}")
     print(f"Example Part 2: {p2}")
-    assert p1 == 3, f"Expected P1=3, got {p1}"
-    assert p2 == 6, f"Expected P2=6, got {p2}"
+    
+    expected_p1 = 3
+    if p1 == expected_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print(f"❌ Part 1 Example failed: Expected {expected_p1}, Got {p1}")
+    
+    expected_p2 = 6
+    if p2 == expected_p2:
+        print("✅ Part 2 Example passed!")
+    else:
+        print(f"❌ Part 2 Example failed: Expected {expected_p2}, Got {p2}")
+    
+    print("✅ Tests completed!")
+
+def solve_part1():
+    print("--- Part 1 ---")
+    input_text = parse_input("input-day1.txt")
+    p1, _ = solve(input_text)
+    print(f"Result: {p1}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    input_text = parse_input("input-day1.txt")
+    _, p2 = solve(input_text)
+    print(f"Result: {p2}")
 
 if __name__ == "__main__":
-    # Run example test
-    test_example()
-    
-    # Run on full input
-    try:
-        with open("input-day1.txt", "r") as f:
-            input_text = f.read()
-        p1, p2 = solve(input_text)
-        print(f"Puzzle Part 1: {p1}")
-        print(f"Puzzle Part 2: {p2}")
-    except FileNotFoundError:
-        print("Error: input-day1.txt not found.")
+    run_tests()
+    solve_part1()
+    solve_part2()

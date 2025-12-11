@@ -1,3 +1,14 @@
+import sys
+
+def parse_input(filename):
+    try:
+        with open(filename, 'r') as f:
+            lines = [line.strip() for line in f.readlines() if line.strip()]
+        return lines
+    except FileNotFoundError:
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
+
 def count_accessible_rolls(grid):
     rows = len(grid)
     cols = len(grid[0])
@@ -24,7 +35,7 @@ def count_accessible_rolls(grid):
                     
     return accessible_count
 
-def solve_part2(grid_input):
+def count_removed_rolls(grid_input):
     # Convert to mutable grid (list of lists)
     grid = [list(row) for row in grid_input]
     rows = len(grid)
@@ -64,21 +75,8 @@ def solve_part2(grid_input):
             
     return total_removed
 
-def solve():
-    try:
-        with open('input-day4.txt', 'r') as f:
-            lines = [line.strip() for line in f.readlines() if line.strip()]
-    except FileNotFoundError:
-        print("Error: input-day4.txt not found.")
-        return
-
-    result_p1 = count_accessible_rolls(lines)
-    print(f"Part 1 - Total accessible rolls: {result_p1}")
-    
-    result_p2 = solve_part2(lines)
-    print(f"Part 2 - Total removed rolls: {result_p2}")
-
-def test_example():
+def run_tests():
+    print("Running tests...")
     example_input = [
         "..@@.@@@@.",
         "@@@.@.@.@@",
@@ -92,16 +90,37 @@ def test_example():
         "@.@.@@@.@."
     ]
     
+    print("Verifying Part 1 Example...")
     expected_p1 = 13
     result_p1 = count_accessible_rolls(example_input)
-    print(f"Test Example Part 1: Expected {expected_p1}, Got {result_p1}, Pass: {result_p1 == expected_p1}")
+    if result_p1 == expected_p1:
+        print(f"✅ Part 1 Passed")
+    else:
+        print(f"❌ Part 1 Failed: Expected {expected_p1}, Got {result_p1}")
     
+    print("Verifying Part 2 Example...")
     expected_p2 = 43
-    result_p2 = solve_part2(example_input)
-    print(f"Test Example Part 2: Expected {expected_p2}, Got {result_p2}, Pass: {result_p2 == expected_p2}")
+    result_p2 = count_removed_rolls(example_input)
+    if result_p2 == expected_p2:
+        print(f"✅ Part 2 Passed")
+    else:
+        print(f"❌ Part 2 Failed: Expected {expected_p2}, Got {result_p2}")
+        
+    print("✅ Tests completed!")
+
+def solve_part1():
+    print("--- Part 1 ---")
+    lines = parse_input('input-day4.txt')
+    result_p1 = count_accessible_rolls(lines)
+    print(f"Result: {result_p1}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    lines = parse_input('input-day4.txt')
+    result_p2 = count_removed_rolls(lines)
+    print(f"Result: {result_p2}")
 
 if __name__ == "__main__":
-    print("Running examples...")
-    test_example()
-    print("\nRunning solution...")
-    solve()
+    run_tests()
+    solve_part1()
+    solve_part2()
