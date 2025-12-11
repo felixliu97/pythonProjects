@@ -1,0 +1,284 @@
+{
+    "stocks": [
+        {
+            "symbol": "AGL.AX",
+            "name": "AGL Energy Limited",
+            "industry": "Utilities"
+        },
+        {
+            "symbol": "ALD.AX",
+            "name": "Ampol Limited",
+            "industry": "Energy"
+        },
+        {
+            "symbol": "ALL.AX",
+            "name": "Aristocrat Leisure Limited",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "AMP.AX",
+            "name": "AMP Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "ANZ.AX",
+            "name": "ANZ Group Holdings Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "APX.AX",
+            "name": "Appen Limited",
+            "industry": "Technology"
+        },
+        {
+            "symbol": "BBN.AX",
+            "name": "Baby Bunting Group Limited",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "BHP.AX",
+            "name": "BHP Group Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "BXB.AX",
+            "name": "Brambles Limited",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "CAA.AX",
+            "name": "Capral Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "CAR.AX",
+            "name": "CAR Group Limited",
+            "industry": "Communication Services"
+        },
+        {
+            "symbol": "CBA.AX",
+            "name": "Commonwealth Bank of Australia",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "COL.AX",
+            "name": "Coles Group Limited",
+            "industry": "Consumer Defensive"
+        },
+        {
+            "symbol": "CSL.AX",
+            "name": "CSL Limited",
+            "industry": "Healthcare"
+        },
+        {
+            "symbol": "DRO.AX",
+            "name": "DroneShield Limited",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "EVN.AX",
+            "name": "Evolution Mining Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "FMG.AX",
+            "name": "Fortescue Ltd",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "IAG.AX",
+            "name": "Insurance Australia Group Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "IEL.AX",
+            "name": "IDP Education Limited",
+            "industry": "Consumer Defensive"
+        },
+        {
+            "symbol": "IGO.AX",
+            "name": "IGO Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "KAR.AX",
+            "name": "Karoon Energy Ltd",
+            "industry": "Energy"
+        },
+        {
+            "symbol": "KGN.AX",
+            "name": "Kogan.com Ltd",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "LYC.AX",
+            "name": "Lynas Rare Earths Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "MIN.AX",
+            "name": "Mineral Resources Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "MQG.AX",
+            "name": "Macquarie Group Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "NAB.AX",
+            "name": "National Australia Bank Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "NST.AX",
+            "name": "Northern Star Resources Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "NWH.AX",
+            "name": "NRW Holdings Limited",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "ORG.AX",
+            "name": "Origin Energy Limited",
+            "industry": "Utilities"
+        },
+        {
+            "symbol": "PLS.AX",
+            "name": "PLS Group Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "QAN.AX",
+            "name": "Qantas Airways Limited",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "QBE.AX",
+            "name": "QBE Insurance Group Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "REA.AX",
+            "name": "REA Group Limited",
+            "industry": "Communication Services"
+        },
+        {
+            "symbol": "RIO.AX",
+            "name": "Rio Tinto Group",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "RRL.AX",
+            "name": "Regis Resources Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "SEK.AX",
+            "name": "SEEK Limited",
+            "industry": "Communication Services"
+        },
+        {
+            "symbol": "SOL.AX",
+            "name": "WHSP Holdings Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "SPZ.AX",
+            "name": "Smart Parking Limited",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "STO.AX",
+            "name": "Santos Limited",
+            "industry": "Energy"
+        },
+        {
+            "symbol": "SUN.AX",
+            "name": "Suncorp Group Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "TAH.AX",
+            "name": "Tabcorp Holdings Limited",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "TCL.AX",
+            "name": "Transurban Group",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "TLS.AX",
+            "name": "Telstra Group Limited",
+            "industry": "Communication Services"
+        },
+        {
+            "symbol": "TPW.AX",
+            "name": "Temple & Webster Group Ltd",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "TWE.AX",
+            "name": "Treasury Wine Estates Limited",
+            "industry": "Consumer Defensive"
+        },
+        {
+            "symbol": "VCX.AX",
+            "name": "Vicinity Centres",
+            "industry": "Real Estate"
+        },
+        {
+            "symbol": "WBC.AX",
+            "name": "Westpac Banking Corporation",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "WES.AX",
+            "name": "Wesfarmers Limited",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "WOW.AX",
+            "name": "Woolworths Group Limited",
+            "industry": "Consumer Defensive"
+        },
+        {
+            "symbol": "WTC.AX",
+            "name": "WiseTech Global Limited",
+            "industry": "Technology"
+        },
+        {
+            "symbol": "XRO.AX",
+            "name": "Xero Limited",
+            "industry": "Technology"
+        },
+        {
+            "symbol": "ZIP.AX",
+            "name": "Zip Co Limited",
+            "industry": "Financial Services"
+        }
+    ],
+    "weights": {
+        "price_1d": 0.3,
+        "price_5d": 0.25,
+        "price_20d": 0.15,
+        "volume_change": 0.2,
+        "momentum": 0.1
+    },
+    "settings": {
+        "period": "1mo",
+        "min_data_points": 10,
+        "rsi_period": 14,
+        "volatility_window": 252,
+        "display_limit": null
+    },
+    "thresholds": {
+        "rsi_upper": 70,
+        "rsi_lower": 30,
+        "price_change_alert": 5.0,
+        "volume_change_alert": 50.0
+    }
+}
