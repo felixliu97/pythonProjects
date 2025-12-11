@@ -1,3 +1,4 @@
+import sys
 from collections import defaultdict
 
 def parse_input(filename):
@@ -12,7 +13,8 @@ def parse_input(filename):
                         adj[u].add(v)
                         adj[v].add(u)
     except FileNotFoundError:
-        return None
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
     return adj
 
 def parse_example(example_str):
@@ -26,65 +28,9 @@ def parse_example(example_str):
                 adj[v].add(u)
     return adj
 
-def find_triangles(adj):
-    triangles = set()
+def run_tests():
+    print("Running tests...")
     
-    # Iterate over all nodes
-    nodes = sorted(list(adj.keys()))
-    
-    for i in range(len(nodes)):
-        u = nodes[i]
-        neighbors_u = list(adj[u])
-        
-        # Check pairs of neighbors
-        for j in range(len(neighbors_u)):
-            v = neighbors_u[j]
-            
-            # Optimization: enforce order to avoid duplicates early?
-            # Or just check if they are connected and add frozenset
-            if v > u: # Enforce u < v
-                if v in adj: # Should be
-                     for w in adj[v]:
-                         if w > v: # Enforce v < w
-                             if w in adj[u]:
-                                 # Found triangle u-v-w where u < v < w
-                                 triangles.add((u, v, w))
-                                 
-    return triangles
-
-def bron_kerbosch(R, P, X, adj, max_clique):
-    if not P and not X:
-        if len(R) > len(max_clique[0]):
-            max_clique[0] = R
-        return
-
-    # Pivot: choose an element u from P U X to minimize branching
-    # u = next(iter(P.union(X))) # simple pivot
-    # Better pivot: u in P U X that maximizes |P over neighbors(u)|
-    
-    # Simple pivot is often enough for AoC, but let's try to be slightly safe
-    pivot = max(P | X, key=lambda u: len(adj[u] & P))
-    
-    for v in list(P - adj[pivot]):
-        bron_kerbosch(R | {v}, P & adj[v], X & adj[v], adj, max_clique)
-        P.remove(v)
-        X.add(v)
-
-def find_largest_clique(adj):
-    # Bron-Kerbosch with pivoting
-    P = set(adj.keys())
-    R = set()
-    X = set()
-    max_clique = [set()]
-    
-    bron_kerbosch(R, P, X, adj, max_clique)
-    return max_clique[0]
-
-def get_password(clique):
-    return ",".join(sorted(list(clique)))
-
-def solve():
-    # Example
     example_input = """kh-tc
 qp-kh
 de-cg
@@ -120,35 +66,98 @@ td-yn"""
     
     adj_ex = parse_example(example_input)
     triangles_ex = find_triangles(adj_ex)
-    print(f"Example Triangles Found: {len(triangles_ex)} (Expected 12)")
-    assert len(triangles_ex) == 12
+    print(f"Test Example Triangles Found: {len(triangles_ex)} (Exp 12)")
     
     t_triangles_ex = [t for t in triangles_ex if any(name.startswith('t') for name in t)]
-    print(f"Example 't' Triangles: {len(t_triangles_ex)} (Expected 7)")
-    assert len(t_triangles_ex) == 7
-    print("Example Part 1 passed!")
+    print(f"Test Example 't' Triangles: {len(t_triangles_ex)} (Exp 7)")
+    
+    expected_p1 = 7
+    if len(t_triangles_ex) == expected_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print(f"❌ Part 1 Example failed: Expected {expected_p1}, Got {len(t_triangles_ex)}")
     
     # Part 2 Example
     largest_clique_ex = find_largest_clique(adj_ex)
     password_ex = get_password(largest_clique_ex)
-    print(f"Example Part 2 Password: {password_ex} (Expected: co,de,ka,ta)")
-    assert password_ex == "co,de,ka,ta"
-    print("Example Part 2 passed!")
-
-    # Real Input
-    adj_real = parse_input('input-day23.txt')
-    if adj_real:
-        # Part 1
-        triangles_real = find_triangles(adj_real)
-        t_triangles_real = [t for t in triangles_real if any(name.startswith('t') for name in t)]
-        print(f"\nPart 1 Final Count: {len(t_triangles_real)}")
-        
-        # Part 2
-        largest_clique_real = find_largest_clique(adj_real)
-        password_real = get_password(largest_clique_real)
-        print(f"Part 2 Final Password: {password_real}")
+    print(f"Test Example Part 2 Password: {password_ex} (Exp: co,de,ka,ta)")
+    
+    expected_p2 = "co,de,ka,ta"
+    if password_ex == expected_p2:
+        print("✅ Part 2 Example passed!")
     else:
-        print("input-day23.txt not found. Skipping real input run.")
+        print(f"❌ Part 2 Example failed: Expected {expected_p2}, Got {password_ex}")
+        
+    print("✅ Tests completed!")
 
-if __name__ == '__main__':
-    solve()
+def find_triangles(adj):
+    triangles = set()
+    nodes = sorted(list(adj.keys()))
+    
+    for i in range(len(nodes)):
+        u = nodes[i]
+        neighbors_u = list(adj[u])
+        
+        for j in range(len(neighbors_u)):
+            v = neighbors_u[j]
+            if v > u: 
+                if v in adj: 
+                     for w in adj[v]:
+                         if w > v: 
+                             if w in adj[u]:
+                                 triangles.add((u, v, w))
+                                 
+    return triangles
+
+def bron_kerbosch(R, P, X, adj, max_clique):
+    if not P and not X:
+        if len(R) > len(max_clique[0]):
+            max_clique[0] = R
+        return
+
+    # Pivot: choose an element u from P U X to minimize branching
+    if not (P | X):
+        return
+
+    pivot = max(P | X, key=lambda u: len(adj[u] & P))
+    
+    for v in list(P - adj[pivot]):
+        bron_kerbosch(R | {v}, P & adj[v], X & adj[v], adj, max_clique)
+        P.remove(v)
+        X.add(v)
+
+def find_largest_clique(adj):
+    # Bron-Kerbosch with pivoting
+    P = set(adj.keys())
+    R = set()
+    X = set()
+    max_clique = [set()]
+    
+    bron_kerbosch(R, P, X, adj, max_clique)
+    return max_clique[0]
+
+def get_password(clique):
+    return ",".join(sorted(list(clique)))
+
+def solve_part1():
+    print("--- Part 1 ---")
+    adj_real = parse_input("input-day23.txt")
+    if not adj_real: return
+    
+    triangles_real = find_triangles(adj_real)
+    t_triangles_real = [t for t in triangles_real if any(name.startswith('t') for name in t)]
+    print(f"Result: {len(t_triangles_real)}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    adj_real = parse_input("input-day23.txt")
+    if not adj_real: return
+    
+    largest_clique_real = find_largest_clique(adj_real)
+    password_real = get_password(largest_clique_real)
+    print(f"Result: {password_real}")
+
+if __name__ == "__main__":
+    run_tests()
+    solve_part1()
+    solve_part2()

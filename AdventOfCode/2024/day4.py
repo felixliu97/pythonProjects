@@ -1,3 +1,45 @@
+import sys
+
+def parse_input(filename):
+    try:
+        with open(filename, 'r') as f:
+            return [line.strip() for line in f.readlines()]
+    except FileNotFoundError:
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
+
+def run_tests():
+    print("Running tests...")
+    
+    example_input = [
+        "MMMSXXMASM",
+        "MSAMXMSMSA",
+        "AMXSXMAAMM",
+        "MSAMASMSMX",
+        "XMASAMXAMM",
+        "XXAMMXXAMA",
+        "SMSMSASXSS",
+        "SAXAMASAAA",
+        "MAMMMXMMMM",
+        "MXMXAXMASX"
+    ]
+    
+    p1_result = count_xmas(example_input)
+    expected_p1 = 18
+    if p1_result == expected_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print(f"❌ Part 1 Example failed: Expected {expected_p1}, Got {p1_result}")
+
+    p2_result = count_x_mas(example_input)
+    expected_p2 = 9
+    if p2_result == expected_p2:
+        print("✅ Part 2 Example passed!")
+    else:
+        print(f"❌ Part 2 Example failed: Expected {expected_p2}, Got {p2_result}")
+        
+    print("✅ Tests completed!")
+
 def count_xmas(grid):
     rows = len(grid)
     cols = len(grid[0])
@@ -19,12 +61,10 @@ def count_xmas(grid):
 
     for r in range(rows):
         for c in range(cols):
-            # Optimization: only check starting from 'X'
             if grid[r][c] != 'X':
                 continue
             
             for dr, dc in directions:
-                # Check if the word fits in this direction
                 if 0 <= r + dr * (word_len - 1) < rows and \
                    0 <= c + dc * (word_len - 1) < cols:
                     match = True
@@ -41,17 +81,13 @@ def count_x_mas(grid):
     cols = len(grid[0])
     count = 0
     
-    # We need the 'A' to be at least one step away from the borders
     for r in range(1, rows - 1):
         for c in range(1, cols - 1):
             if grid[r][c] == 'A':
-                # Check diagonals
-                # Diagonal 1: Top-Left to Bottom-Right
                 tl = grid[r-1][c-1]
                 br = grid[r+1][c+1]
                 d1_valid = (tl == 'M' and br == 'S') or (tl == 'S' and br == 'M')
                 
-                # Diagonal 2: Top-Right to Bottom-Left
                 tr = grid[r-1][c+1]
                 bl = grid[r+1][c-1]
                 d2_valid = (tr == 'M' and bl == 'S') or (tr == 'S' and bl == 'M')
@@ -60,41 +96,19 @@ def count_x_mas(grid):
                     count += 1
     return count
 
-def solve(filename):
-    try:
-        with open(filename, 'r') as f:
-            grid = [line.strip() for line in f.readlines()]
-        part1 = count_xmas(grid)
-        part2 = count_x_mas(grid)
-        return part1, part2
-    except FileNotFoundError:
-        print(f"Error: File {filename} not found.")
-        return 0, 0
+def solve_part1():
+    print("--- Part 1 ---")
+    grid = parse_input("input-day4.txt")
+    result = count_xmas(grid)
+    print(f"Result: {result}")
 
-def test():
-    example_input = [
-        "MMMSXXMASM",
-        "MSAMXMSMSA",
-        "AMXSXMAAMM",
-        "MSAMASMSMX",
-        "XMASAMXAMM",
-        "XXAMMXXAMA",
-        "SMSMSASXSS",
-        "SAXAMASAAA",
-        "MAMMMXMMMM",
-        "MXMXAXMASX"
-    ]
-    p1_result = count_xmas(example_input)
-    print(f"Part 1 Test Result: {p1_result}")
-    assert p1_result == 18, f"Expected 18, got {p1_result}"
-
-    p2_result = count_x_mas(example_input)
-    print(f"Part 2 Test Result: {p2_result}")
-    assert p2_result == 9, f"Expected 9, got {p2_result}"
+def solve_part2():
+    print("--- Part 2 ---")
+    grid = parse_input("input-day4.txt")
+    result = count_x_mas(grid)
+    print(f"Result: {result}")
 
 if __name__ == "__main__":
-    test()
-    print("Tests passed!")
-    p1, p2 = solve("input-day4.txt")
-    print(f"Part 1 Result: {p1}")
-    print(f"Part 2 Result: {p2}")
+    run_tests()
+    solve_part1()
+    solve_part2()

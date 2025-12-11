@@ -1,3 +1,4 @@
+import sys
 from collections import deque
 
 def parse_input(filename):
@@ -6,8 +7,84 @@ def parse_input(filename):
             grid = [line.strip() for line in f.readlines()]
         return grid
     except FileNotFoundError:
-        print(f"Error: File {filename} not found.")
-        return []
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
+
+def run_tests():
+    print("Running tests...")
+    
+    # Test Case 1
+    grid1 = [
+        "AAAA",
+        "BBCD",
+        "BBCC",
+        "EEEC"
+    ]
+    p1, p2 = solve_logic(grid1)
+    if p1 == 140: print("✅ Test 1 P1 Passed")
+    else: print(f"❌ Test 1 P1 Failed: Exp 140, Got {p1}")
+    if p2 == 80: print("✅ Test 1 P2 Passed")
+    else: print(f"❌ Test 1 P2 Failed: Exp 80, Got {p2}")
+    
+    # Test Case 2
+    grid2 = [
+        "OOOOO",
+        "OXOXO",
+        "OOOOO",
+        "OXOXO",
+        "OOOOO"
+    ]
+    p1, p2 = solve_logic(grid2)
+    if p1 == 772: print("✅ Test 2 P1 Passed")
+    else: print(f"❌ Test 2 P1 Failed: Exp 772, Got {p1}")
+    if p2 == 436: print("✅ Test 2 P2 Passed")
+    else: print(f"❌ Test 2 P2 Failed: Exp 436, Got {p2}")
+
+    # Test Case 3
+    grid3 = [
+        "EEEEE",
+        "EXXXX",
+        "EEEEE",
+        "EXXXX",
+        "EEEEE"
+    ]
+    _, p2 = solve_logic(grid3)
+    if p2 == 236: print("✅ Test 3 P2 Passed")
+    else: print(f"❌ Test 3 P2 Failed: Exp 236, Got {p2}")
+
+    # Test Case 4
+    grid4 = [
+        "AAAAAA",
+        "AAABBA",
+        "AAABBA",
+        "ABBAAA",
+        "ABBAAA",
+        "AAAAAA"
+    ]
+    _, p2 = solve_logic(grid4)
+    if p2 == 368: print("✅ Test 4 P2 Passed")
+    else: print(f"❌ Test 4 P2 Failed: Exp 368, Got {p2}")
+
+    # Test Case 5 (Large)
+    grid5 = [
+        "RRRRIICCFF",
+        "RRRRIICCCF",
+        "VVRRRCCFFF",
+        "VVRCCCJFFF",
+        "VVVVCJJCFE",
+        "VVIVCCJJEE",
+        "VVIIICJJEE",
+        "MIIIIIJJEE",
+        "MIIISIJEEE",
+        "MMMISSJEEE"
+    ]
+    p1, p2 = solve_logic(grid5)
+    if p1 == 1930: print("✅ Test 5 P1 Passed")
+    else: print(f"❌ Test 5 P1 Failed: Exp 1930, Got {p1}")
+    if p2 == 1206: print("✅ Test 5 P2 Passed")
+    else: print(f"❌ Test 5 P2 Failed: Exp 1206, Got {p2}")
+
+    print("✅ Tests completed!")
 
 def count_corners(grid, r, c):
     rows = len(grid)
@@ -45,11 +122,7 @@ def count_corners(grid, r, c):
     
     return corners
 
-def solve(filename):
-    grid = parse_input(filename)
-    if not grid:
-        return 0, 0
-    
+def solve_logic(grid):
     rows = len(grid)
     cols = len(grid[0])
     visited = set()
@@ -59,11 +132,10 @@ def solve(filename):
     for r in range(rows):
         for c in range(cols):
             if (r, c) not in visited:
-                # Start new region
                 plant_type = grid[r][c]
                 area = 0
                 perimeter = 0
-                sides = 0 # equivalent to corners
+                sides = 0 
                 
                 queue = deque([(r, c)])
                 visited.add((r, c))
@@ -72,10 +144,8 @@ def solve(filename):
                     curr_r, curr_c = queue.popleft()
                     area += 1
                     
-                    # Count corners for Part 2
                     sides += count_corners(grid, curr_r, curr_c)
                     
-                    # Check neighbors for Part 1 perimeter and traversal
                     for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                         nr, nc = curr_r + dr, curr_c + dc
                         
@@ -94,102 +164,19 @@ def solve(filename):
                 
     return total_price_p1, total_price_p2
 
-def test():
-    # Helper to run test on simple grid strings
-    def verify(grid_str_list, expected_p1, expected_p2):
-        # Create temporary file or just modify solve to accept list?
-        # Let's modify solve to accept grid directly for testing, or just copy-paste logic
-        # For simplicity, implementing mini-solver here
-        grid = grid_str_list
-        rows = len(grid)
-        cols = len(grid[0])
-        visited = set()
-        p1 = 0
-        p2 = 0
-        for r in range(rows):
-            for c in range(cols):
-                if (r, c) not in visited:
-                    plant_type = grid[r][c]
-                    area = 0
-                    perim = 0
-                    sides = 0
-                    q = deque([(r,c)])
-                    visited.add((r,c))
-                    while q:
-                        cr, cc = q.popleft()
-                        area += 1
-                        sides += count_corners(grid, cr, cc)
-                        for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]:
-                            nr, nc = cr+dr, cc+dc
-                            if 0 <= nr < rows and 0 <= nc < cols:
-                                if grid[nr][nc] == plant_type:
-                                    if (nr, nc) not in visited:
-                                        visited.add((nr, nc))
-                                        q.append((nr, nc))
-                                else:
-                                    perim += 1
-                            else:
-                                perim += 1
-                    p1 += area * perim
-                    p2 += area * sides
-        
-        print(f"Test P1: {p1} (Exp: {expected_p1}) | P2: {p2} (Exp: {expected_p2})")
-        if expected_p1 is not None: assert p1 == expected_p1
-        if expected_p2 is not None: assert p2 == expected_p2
+def solve_part1():
+    print("--- Part 1 ---")
+    grid = parse_input("input-day12.txt")
+    p1, _ = solve_logic(grid)
+    print(f"Result: {p1}")
 
-    print("--- Test Case 1 ---")
-    verify([
-        "AAAA",
-        "BBCD",
-        "BBCC",
-        "EEEC"
-    ], 140, 80)
-
-    print("--- Test Case 2 ---")
-    verify([
-        "OOOOO",
-        "OXOXO",
-        "OOOOO",
-        "OXOXO",
-        "OOOOO"
-    ], 772, 436)
-    
-    print("--- Test Case 3 ---")
-    verify([
-        "EEEEE",
-        "EXXXX",
-        "EEEEE",
-        "EXXXX",
-        "EEEEE"
-    ], None, 236)
-
-    print("--- Test Case 4 ---")
-    verify([
-        "AAAAAA",
-        "AAABBA",
-        "AAABBA",
-        "ABBAAA",
-        "ABBAAA",
-        "AAAAAA"
-    ], None, 368)
-
-    print("--- Test Case 5 (Large) ---")
-    verify([
-        "RRRRIICCFF",
-        "RRRRIICCCF",
-        "VVRRRCCFFF",
-        "VVRCCCJFFF",
-        "VVVVCJJCFE",
-        "VVIVCCJJEE",
-        "VVIIICJJEE",
-        "MIIIIIJJEE",
-        "MIIISIJEEE",
-        "MMMISSJEEE"
-    ], 1930, 1206)
+def solve_part2():
+    print("--- Part 2 ---")
+    grid = parse_input("input-day12.txt")
+    _, p2 = solve_logic(grid)
+    print(f"Result: {p2}")
 
 if __name__ == "__main__":
-    test()
-    print("Tests passed!")
-    p1, p2 = solve("input-day12.txt")
-    print(f"Part 1 Result: {p1}")
-    print(f"Part 2 Result: {p2}")
+    run_tests()
+    solve_part1()
+    solve_part2()

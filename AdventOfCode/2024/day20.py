@@ -1,9 +1,14 @@
+import sys
 from collections import deque
 
 def parse_input(filename):
-    with open(filename, 'r') as f:
-        grid = [list(line.strip()) for line in f if line.strip()]
-    return grid
+    try:
+        with open(filename, 'r') as f:
+            grid = [list(line.strip()) for line in f if line.strip()]
+        return grid
+    except FileNotFoundError:
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
 
 def find_start_end(grid):
     start = None
@@ -90,8 +95,9 @@ def solve_cheats(grid, min_saving=100, max_duration=2):
                             
     return count, cheat_savings
 
-def solve():
-    # Example
+def run_tests():
+    print("Running tests...")
+    
     example_map = """###############
 #...#...#.....#
 #.#.#.#.#.###.#
@@ -117,12 +123,15 @@ def solve():
         2: 14, 4: 14, 6: 2, 8: 4, 10: 2, 12: 3, 20: 1, 36: 1, 38: 1, 40: 1, 64: 1
     }
     
+    passed_p1 = True
     for k, v in sorted(savings.items()):
         if k in expected_p1:
-            print(f"Saving {k}: {v} (Expected {expected_p1[k]})")
-            assert v == expected_p1[k]
-    print("Part 1 Example passed!")
-
+            if v != expected_p1[k]:
+                print(f"❌ Saving {k}: Got {v}, Expected {expected_p1[k]}")
+                passed_p1 = False
+    if passed_p1:
+        print("✅ Part 1 Example passed!")
+    
     # Verify example counts Part 2
     print("\n--- Example Part 2 Verification (Duration 20, Saving >= 50) ---")
     _, savings_p2 = solve_cheats(grid, min_saving=50, max_duration=20)
@@ -132,30 +141,32 @@ def solve():
         66: 12, 68: 14, 70: 12, 72: 22, 74: 4, 76: 3
     }
     
-    saved_ge_50 = 0
+    passed_p2 = True
     for k, v in sorted(savings_p2.items()):
         if k >= 50:
-            saved_ge_50 += v
             if k in expected_p2:
-                print(f"Saving {k}: {v} (Expected {expected_p2[k]})")
-                assert v == expected_p2[k]
-                
-    print("Part 2 Example passed!")
+                 if v != expected_p2[k]:
+                     print(f"❌ Saving {k}: Got {v}, Expected {expected_p2[k]}")
+                     passed_p2 = False
+    
+    if passed_p2:
+         print("✅ Part 2 Example passed!")
+         
+    print("✅ Tests completed!")
 
-    # Real Input
-    try:
-        grid = parse_input('input-day20.txt')
-        
-        # Part 1 Real
-        count_p1, _ = solve_cheats(grid, min_saving=100, max_duration=2)
-        print(f"\nPart 1 (Savings >= 100, Max Duration 2): {count_p1}")
-        
-        # Part 2 Real
-        count_p2, _ = solve_cheats(grid, min_saving=100, max_duration=20)
-        print(f"Part 2 (Savings >= 100, Max Duration 20): {count_p2}")
-        
-    except FileNotFoundError:
-        print("input-day20.txt not found. Skipping real input run.")
+def solve_part1():
+    print("\n--- Part 1 ---")
+    grid = parse_input("input-day20.txt")
+    count_p1, _ = solve_cheats(grid, min_saving=100, max_duration=2)
+    print(f"Result: {count_p1}")
 
-if __name__ == '__main__':
-    solve()
+def solve_part2():
+    print("\n--- Part 2 ---")
+    grid = parse_input("input-day20.txt")
+    count_p2, _ = solve_cheats(grid, min_saving=100, max_duration=20)
+    print(f"Result: {count_p2}")
+
+if __name__ == "__main__":
+    run_tests()
+    solve_part1()
+    solve_part2()

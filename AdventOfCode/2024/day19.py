@@ -5,7 +5,8 @@ def parse_input(filename):
         with open(filename, 'r') as f:
             content = f.read().strip()
     except FileNotFoundError:
-        return [], []
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
 
     if not content:
         return [], []
@@ -15,27 +16,9 @@ def parse_input(filename):
     designs = parts[1].split('\n')
     return patterns, designs
 
-def count_ways(design, patterns_set, max_len, memo):
-    if design in memo:
-        return memo[design]
+def run_tests():
+    print("Running tests...")
     
-    if not design:
-        return 1
-    
-    total_ways = 0
-    limit = min(len(design), max_len)
-    
-    for i in range(limit, 0, -1):
-        prefix = design[:i]
-        if prefix in patterns_set:
-            ways = count_ways(design[i:], patterns_set, max_len, memo)
-            total_ways += ways
-    
-    memo[design] = total_ways
-    return total_ways
-
-def solve():
-    # Example Verification
     example_patterns_str = "r, wr, b, g, bwu, rb, gb, br"
     example_designs_str = """brwrr
 bggr
@@ -61,35 +44,74 @@ bbrgwb"""
             part1_count += 1
         part2_total += ways
             
-    print(f"Example Part 1: {part1_count}")
-    print(f"Example Part 2: {part2_total}")
-    assert part1_count == 6, f"Expected 6, got {part1_count}"
-    assert part2_total == 16, f"Expected 16, got {part2_total}"
+    print(f"Test Part 1 Count: {part1_count} (Exp: 6)")
+    expected_p1 = 6
+    if part1_count == expected_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print(f"❌ Part 1 Example failed: Expected {expected_p1}, Got {part1_count}")
+        
+    print(f"Test Part 2 Total: {part2_total} (Exp: 16)")
+    expected_p2 = 16
+    if part2_total == expected_p2:
+        print("✅ Part 2 Example passed!")
+    else:
+        print(f"❌ Part 2 Example failed: Expected {expected_p2}, Got {part2_total}")
+        
+    print("✅ Tests completed!")
 
-    # Real Input
-    patterns, designs = parse_input('input-day19.txt')
-    if not patterns:
-        print("Input file not found or empty.")
-        return
+def count_ways(design, patterns_set, max_len, memo):
+    if design in memo:
+        return memo[design]
+    
+    if not design:
+        return 1
+    
+    total_ways = 0
+    limit = min(len(design), max_len)
+    
+    for i in range(limit, 0, -1):
+        prefix = design[:i]
+        if prefix in patterns_set:
+            ways = count_ways(design[i:], patterns_set, max_len, memo)
+            total_ways += ways
+    
+    memo[design] = total_ways
+    return total_ways
 
+def solve_part1():
+    print("--- Part 1 ---")
+    patterns, designs = parse_input("input-day19.txt")
+    if not patterns: return
+    
     patterns_set = set(patterns)
     max_len = max(len(p) for p in patterns)
-    
     memo = {}
     part1_count = 0
+    
+    for design in designs:
+        if count_ways(design, patterns_set, max_len, memo) > 0:
+            part1_count += 1
+            
+    print(f"Result: {part1_count}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    patterns, designs = parse_input("input-day19.txt")
+    if not patterns: return
+    
+    patterns_set = set(patterns)
+    max_len = max(len(p) for p in patterns)
+    memo = {}
     part2_total = 0
     
     for design in designs:
-        ways = count_ways(design, patterns_set, max_len, memo)
-        if ways > 0:
-            part1_count += 1
-        part2_total += ways
+        part2_total += count_ways(design, patterns_set, max_len, memo)
             
-    print(f"Part 1 Count: {part1_count}")
-    print(f"Part 2 Total: {part2_total}")
+    print(f"Result: {part2_total}")
 
-if __name__ == '__main__':
-    # Increase recursion limit just in case, though DP usually avoids deep recursion if done bottom up? 
-    # But this is top-down. String slicing is fine.
+if __name__ == "__main__":
     sys.setrecursionlimit(20000)
-    solve()
+    run_tests()
+    solve_part1()
+    solve_part2()

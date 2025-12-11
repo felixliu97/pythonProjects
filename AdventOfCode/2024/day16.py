@@ -1,9 +1,79 @@
+import sys
 import heapq
 from collections import defaultdict, deque
 
 def parse_input(filename):
-    with open(filename, 'r') as f:
-        return [list(line.strip()) for line in f if line.strip()]
+    try:
+        with open(filename, 'r') as f:
+            return [list(line.strip()) for line in f if line.strip()]
+    except FileNotFoundError:
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
+
+def run_tests():
+    print("Running tests...")
+    
+    # Small Example 1
+    example1_map = """###############
+#.......#....E#
+#.#.###.#.###.#
+#.....#.#...#.#
+#.###.#####.#.#
+#.#.#.......#.#
+#.#.#####.###.#
+#...........#.#
+###.#.#####.#.#
+#...#.....#.#.#
+#.#.#.###.#.#.#
+#.....#...#.#.#
+#.###.#.#.#.#.#
+#S..#.....#...#
+###############"""
+    grid1 = [list(line.strip()) for line in example1_map.strip().split('\n')]
+    score1, tiles1 = solve_maze(grid1)
+    
+    print(f"Test Example 1: Score {score1} (Exp 7036), Tiles {tiles1} (Exp 45)")
+    expected_score1 = 7036
+    expected_tiles1 = 45
+    
+    if score1 == expected_score1: print("✅ Example 1 Score Passed")
+    else: print(f"❌ Example 1 Score Failed: Expected {expected_score1}, Got {score1}")
+    
+    if tiles1 == expected_tiles1: print("✅ Example 1 Tiles Passed")
+    else: print(f"❌ Example 1 Tiles Failed: Expected {expected_tiles1}, Got {tiles1}")
+
+    # Small Example 2
+    example2_map = """#################
+#...#...#...#..E#
+#.#.#.#.#.#.#.#.#
+#.#.#.#...#...#.#
+#.#.#.#.###.#.#.#
+#...#.#.#.....#.#
+#.#.#.#.#.#####.#
+#.#...#.#.#.....#
+#.#.#####.#.###.#
+#.#.#.......#...#
+#.#.###.#####.###
+#.#.#...#.....#.#
+#.#.#.#####.###.#
+#.#.#.........#.#
+#.#.#.#########.#
+#S#.............#
+#################"""
+    grid2 = [list(line.strip()) for line in example2_map.strip().split('\n')]
+    score2, tiles2 = solve_maze(grid2)
+    
+    print(f"Test Example 2: Score {score2} (Exp 11048), Tiles {tiles2} (Exp 64)")
+    expected_score2 = 11048
+    expected_tiles2 = 64
+    
+    if score2 == expected_score2: print("✅ Example 2 Score Passed")
+    else: print(f"❌ Example 2 Score Failed: Expected {expected_score2}, Got {score2}")
+    
+    if tiles2 == expected_tiles2: print("✅ Example 2 Tiles Passed")
+    else: print(f"❌ Example 2 Tiles Failed: Expected {expected_tiles2}, Got {tiles2}")
+
+    print("✅ Tests completed!")
 
 def find_start_end(grid):
     start = None
@@ -43,8 +113,6 @@ def solve_maze(grid):
         if cost > min_cost[(r, c, dr, dc)]:
             continue
         
-        # Optimization: if we already found a path to end cheaper than this state, optimization
-        # But we need ALL best paths, so we can't prune strictly unless cost > best_end_cost
         if cost > best_end_cost:
             continue
 
@@ -97,58 +165,19 @@ def solve_maze(grid):
         
     return best_end_cost, len(unique_tiles)
 
-def solve():
-    # Small Example 1
-    example1_map = """###############
-#.......#....E#
-#.#.###.#.###.#
-#.....#.#...#.#
-#.###.#####.#.#
-#.#.#.......#.#
-#.#.#####.###.#
-#...........#.#
-###.#.#####.#.#
-#...#.....#.#.#
-#.#.#.###.#.#.#
-#.....#...#.#.#
-#.###.#.#.#.#.#
-#S..#.....#...#
-###############"""
-    grid = [list(line.strip()) for line in example1_map.strip().split('\n')]
-    score, tiles = solve_maze(grid)
-    print(f"Example 1 Score: {score}, Tiles: {tiles}")
-    assert score == 7036, f"Expected 7036, got {score}"
-    assert tiles == 45, f"Expected 45, got {tiles}"
+def solve_part1():
+    print("--- Part 1 ---")
+    grid = parse_input("input-day16.txt")
+    score, _ = solve_maze(grid)
+    print(f"Result: {score}")
 
-    # Small Example 2
-    example2_map = """#################
-#...#...#...#..E#
-#.#.#.#.#.#.#.#.#
-#.#.#.#...#...#.#
-#.#.#.#.###.#.#.#
-#...#.#.#.....#.#
-#.#.#.#.#.#####.#
-#.#...#.#.#.....#
-#.#.#####.#.###.#
-#.#.#.......#...#
-#.#.###.#####.###
-#.#.#...#.....#.#
-#.#.#.#####.###.#
-#.#.#.........#.#
-#.#.#.#########.#
-#S#.............#
-#################"""
-    grid = [list(line.strip()) for line in example2_map.strip().split('\n')]
-    score, tiles = solve_maze(grid)
-    print(f"Example 2 Score: {score}, Tiles: {tiles}")
-    assert score == 11048, f"Expected 11048, got {score}"
-    assert tiles == 64, f"Expected 64, got {tiles}"
+def solve_part2():
+    print("--- Part 2 ---")
+    grid = parse_input("input-day16.txt")
+    _, tiles = solve_maze(grid)
+    print(f"Result: {tiles}")
 
-    # Real Input
-    grid = parse_input('input-day16.txt')
-    score, tiles = solve_maze(grid)
-    print(f"Part 1 Score: {score}")
-    print(f"Part 2 Tiles: {tiles}")
-
-if __name__ == '__main__':
-    solve()
+if __name__ == "__main__":
+    run_tests()
+    solve_part1()
+    solve_part2()

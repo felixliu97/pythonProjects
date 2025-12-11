@@ -1,3 +1,4 @@
+import sys
 from collections import deque
 
 def parse_input(filename):
@@ -10,12 +11,48 @@ def parse_input(filename):
                     if char.isdigit():
                         row.append(int(char))
                     else:
-                        row.append(-1) # Handle potential impassable dots if any
+                        row.append(-1)
                 grid.append(row)
         return grid
     except FileNotFoundError:
-        print(f"Error: File {filename} not found.")
-        return []
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
+
+def run_tests():
+    print("Running tests...")
+    
+    example_input = [
+        "89010123",
+        "78121874",
+        "87430965",
+        "96549874",
+        "45678903",
+        "32019012",
+        "01329801",
+        "10456732"
+    ]
+    
+    grid = []
+    for line in example_input:
+        grid.append([int(c) if c != '.' else -1 for c in line])
+        
+    p1, p2 = solve_logic(grid)
+    
+    print(f"Test Part 1: {p1}")
+    expected_p1 = 36
+    if p1 == expected_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print(f"❌ Part 1 Example failed: Expected {expected_p1}, Got {p1}")
+    
+    print(f"Test Part 2: {p2}")
+    expected_p2 = 81
+    if p2 == expected_p2:
+        print("✅ Part 2 Example passed!")
+    else:
+        print(f"❌ Part 2 Example failed: Expected {expected_p2}, Got {p2}")
+
+    print("✅ Tests completed!")
 
 def get_score(grid, start_r, start_c):
     rows = len(grid)
@@ -63,20 +100,11 @@ def get_rating(grid, r, c, memo):
     memo[(r, c)] = total
     return total
 
-def solve(filename):
-    grid = parse_input(filename)
-    if not grid:
-        return 0, 0
-        
+def solve_logic(grid):
     rows = len(grid)
     cols = len(grid[0])
     total_score = 0
     total_rating = 0
-    
-    # Memoization cache for Part 2
-    # Though it depends on the path, wait.
-    # Actually, since it's a DAG (strictly increasing), the number of paths from (r,c) to any 9
-    # is independent of how we got to (r,c). So global memoization works.
     memo = {} 
     
     for r in range(rows):
@@ -87,43 +115,19 @@ def solve(filename):
                 
     return total_score, total_rating
 
-def test():
-    example_input = [
-        "89010123",
-        "78121874",
-        "87430965",
-        "96549874",
-        "45678903",
-        "32019012",
-        "01329801",
-        "10456732"
-    ]
-    
-    grid = []
-    for line in example_input:
-        grid.append([int(c) if c != '.' else -1 for c in line])
-        
-    rows = len(grid)
-    cols = len(grid[0])
-    total_score = 0
-    total_rating = 0
-    memo = {}
-    
-    for r in range(rows):
-        for c in range(cols):
-            if grid[r][c] == 0:
-                total_score += get_score(grid, r, c)
-                total_rating += get_rating(grid, r, c, memo)
-                
-    print(f"Test Part 1: {total_score}")
-    assert total_score == 36, f"Expected 36, got {total_score}"
-    
-    print(f"Test Part 2: {total_rating}")
-    assert total_rating == 81, f"Expected 81, got {total_rating}"
+def solve_part1():
+    print("--- Part 1 ---")
+    grid = parse_input("input-day10.txt")
+    p1, _ = solve_logic(grid)
+    print(f"Result: {p1}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    grid = parse_input("input-day10.txt")
+    _, p2 = solve_logic(grid)
+    print(f"Result: {p2}")
 
 if __name__ == "__main__":
-    test()
-    print("Tests passed!")
-    p1, p2 = solve("input-day10.txt")
-    print(f"Part 1 Result: {p1}")
-    print(f"Part 2 Result: {p2}")
+    run_tests()
+    solve_part1()
+    solve_part2()

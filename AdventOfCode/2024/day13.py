@@ -1,3 +1,4 @@
+import sys
 import re
 
 def parse_input(filename):
@@ -18,58 +19,17 @@ def parse_input(filename):
                 px, py = map(int, re.findall(r'X=(\d+), Y=(\d+)', lines[2])[0])
                 machines.append({'Ax': ax, 'Ay': ay, 'Bx': bx, 'By': by, 'Px': px, 'Py': py})
     except FileNotFoundError:
-        print(f"Error: File {filename} not found.")
-        return []
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
     except Exception as e:
         print(f"Error parsing input: {e}")
-        return []
+        sys.exit(1)
         
     return machines
 
-def solve_machine(m, offset=0, limit=None):
-    # Cramer's Rule
-    # a * Ax + b * Bx = Px
-    # a * Ay + b * By = Py
+def run_tests():
+    print("Running tests...")
     
-    Px = m['Px'] + offset
-    Py = m['Py'] + offset
-    
-    det = m['Ax'] * m['By'] - m['Ay'] * m['Bx']
-    
-    if det == 0:
-        return 0 # No unique solution (parallel vectors)
-        
-    # Numerators
-    num_a = Px * m['By'] - Py * m['Bx']
-    num_b = m['Ax'] * Py - m['Ay'] * Px
-    
-    # Check if integer solution exists
-    if num_a % det == 0 and num_b % det == 0:
-        a = num_a // det
-        b = num_b // det
-        
-        # Check constraints
-        if a >= 0 and b >= 0:
-            if limit is not None:
-                if a <= limit and b <= limit:
-                    return 3 * a + b
-            else:
-                return 3 * a + b
-            
-    return 0
-
-def solve(filename):
-    machines = parse_input(filename)
-    total_tokens_p1 = 0
-    total_tokens_p2 = 0
-    
-    for m in machines:
-        total_tokens_p1 += solve_machine(m, offset=0, limit=100)
-        total_tokens_p2 += solve_machine(m, offset=10000000000000, limit=None)
-            
-    return total_tokens_p1, total_tokens_p2
-
-def test():
     example_input = """Button A: X+94, Y+34
 Button B: X+22, Y+67
 Prize: X=8400, Y=5400
@@ -100,25 +60,71 @@ Prize: X=18641, Y=10279"""
     for m in machines:
         total += solve_machine(m, offset=0, limit=100)
     print(f"Test Part 1 Result: {total}")
-    assert total == 480, f"Expected 480, got {total}"
+    expected_p1 = 480
+    if total == expected_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print(f"❌ Part 1 Example failed: Expected {expected_p1}, Got {total}")
     
-    # Test Part 2 (Manual check on specific known winnable cases from prompt if detailed)
-    # The prompt says: "Now, it is only possible to win a prize on the second and fourth claw machines."
-    # Let's verify we get a positive cost for 2nd and 4th, and 0 for others.
-    
+    # Test Part 2 (Manual verification logic from original file)
     costs = []
     for m in machines:
         costs.append(solve_machine(m, offset=10000000000000, limit=None))
         
     print(f"Test Part 2 Costs: {costs}")
-    assert costs[0] == 0  # 1st
-    assert costs[1] > 0   # 2nd
-    assert costs[2] == 0  # 3rd
-    assert costs[3] > 0   # 4th
+    if costs[0] == 0 and costs[1] > 0 and costs[2] == 0 and costs[3] > 0:
+        print("✅ Part 2 Checks passed!")
+    else:
+        print("❌ Part 2 Checks failed")
+        
+    print("✅ Tests completed!")
+
+def solve_machine(m, offset=0, limit=None):
+    # Cramer's Rule
+    # a * Ax + b * Bx = Px
+    # a * Ay + b * By = Py
+    
+    Px = m['Px'] + offset
+    Py = m['Py'] + offset
+    
+    det = m['Ax'] * m['By'] - m['Ay'] * m['Bx']
+    
+    if det == 0:
+        return 0 
+        
+    num_a = Px * m['By'] - Py * m['Bx']
+    num_b = m['Ax'] * Py - m['Ay'] * Px
+    
+    if num_a % det == 0 and num_b % det == 0:
+        a = num_a // det
+        b = num_b // det
+        
+        if a >= 0 and b >= 0:
+            if limit is not None:
+                if a <= limit and b <= limit:
+                    return 3 * a + b
+            else:
+                return 3 * a + b
+            
+    return 0
+
+def solve_part1():
+    print("--- Part 1 ---")
+    machines = parse_input("input-day13.txt")
+    total = 0
+    for m in machines:
+        total += solve_machine(m, offset=0, limit=100)
+    print(f"Result: {total}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    machines = parse_input("input-day13.txt")
+    total = 0
+    for m in machines:
+        total += solve_machine(m, offset=10000000000000, limit=None)
+    print(f"Result: {total}")
 
 if __name__ == "__main__":
-    test()
-    print("Tests passed!")
-    p1, p2 = solve("input-day13.txt")
-    print(f"Part 1 Result: {p1}")
-    print(f"Part 2 Result: {p2}")
+    run_tests()
+    solve_part1()
+    solve_part2()

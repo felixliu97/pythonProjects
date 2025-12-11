@@ -1,11 +1,58 @@
+import sys
+
 def parse_input(filename):
     try:
         with open(filename, 'r') as f:
             grid = [list(line.strip()) for line in f.readlines()]
         return grid
     except FileNotFoundError:
-        print(f"Error: File {filename} not found.")
-        return []
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
+
+def run_tests():
+    print("Running tests...")
+    
+    example_input = [
+        "....#.....",
+        ".........#",
+        "..........",
+        "..#.......",
+        ".......#..",
+        "..........",
+        ".#..^.....",
+        "........#.",
+        "#.........",
+        "......#..."
+    ]
+    grid = [list(line) for line in example_input]
+    start_r, start_c = get_start_pos(grid)
+    
+    # Part 1 Test
+    path_set = get_visited_path(grid, start_r, start_c)
+    p1 = len(path_set)
+    expected_p1 = 41
+    
+    if p1 == expected_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print(f"❌ Part 1 Example failed: Expected {expected_p1}, Got {p1}")
+        
+    # Part 2 Test
+    # We need to re-parse grid or reset it because get_visited_path doesn't modify it, but let's be safe.
+    # Actually get_visited_path logic is clean.
+    # But for Part 2 logic, we define solve_logic_part2
+    
+    # Clean grid for Part 2 check
+    grid = [list(line) for line in example_input]
+    p2 = solve_logic_part2(grid, start_r, start_c, path_set)
+    expected_p2 = 6
+    
+    if p2 == expected_p2:
+        print("✅ Part 2 Example passed!")
+    else:
+        print(f"❌ Part 2 Example failed: Expected {expected_p2}, Got {p2}")
+
+    print("✅ Tests completed!")
 
 def get_start_pos(grid):
     rows = len(grid)
@@ -49,7 +96,6 @@ def check_loop(grid, start_r, start_c):
     r, c = start_r, start_c
     
     visited_states = set()
-    # State is (r, c, direction)
     
     while True:
         state = (r, c, direction)
@@ -68,21 +114,7 @@ def check_loop(grid, start_r, start_c):
         else:
             r, c = next_r, next_c
 
-def solve(filename):
-    grid = parse_input(filename)
-    if not grid: return 0, 0
-    
-    start_r, start_c = get_start_pos(grid)
-    if start_r == -1: return 0, 0
-    
-    # Part 1
-    path_set = get_visited_path(grid, start_r, start_c)
-    part1_result = len(path_set)
-    
-    # Part 2
-    # Identify possible positions for obstruction.
-    # Obstructions can only be placed on the original path (except likely not start)
-    # Actually, placing an obstacle outside the path is useless.
+def solve_logic_part2(grid, start_r, start_c, path_set):
     candidates = path_set.copy()
     if (start_r, start_c) in candidates:
         candidates.remove((start_r, start_c))
@@ -99,44 +131,33 @@ def solve(filename):
         # Backtrack
         grid[r][c] = '.'
         
-    return part1_result, loop_count
+    return loop_count
 
-def test():
-    example_input = [
-        "....#.....",
-        ".........#",
-        "..........",
-        "..#.......",
-        ".......#..",
-        "..........",
-        ".#..^.....",
-        "........#.",
-        "#.........",
-        "......#..."
-    ]
-    grid = [list(line) for line in example_input]
+def solve_part1():
+    print("--- Part 1 ---")
+    grid = parse_input("input-day6.txt")
+    if not grid: return
+    
     start_r, start_c = get_start_pos(grid)
+    if start_r == -1: return
     
     path_set = get_visited_path(grid, start_r, start_c)
-    print(f"Test Part 1: {len(path_set)}")
-    assert len(path_set) == 41
+    print(f"Result: {len(path_set)}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    grid = parse_input("input-day6.txt")
+    if not grid: return
     
-    candidates = path_set.copy()
-    candidates.remove((start_r, start_c))
-    
-    loop_count = 0
-    for r, c in candidates:
-        grid[r][c] = '#'
-        if check_loop(grid, start_r, start_c):
-            loop_count += 1
-        grid[r][c] = '.'
-        
-    print(f"Test Part 2: {loop_count}")
-    assert loop_count == 6
+    start_r, start_c = get_start_pos(grid)
+    if start_r == -1: return
+
+    # Need path from part 1 for optimization
+    path_set = get_visited_path(grid, start_r, start_c)
+    result = solve_logic_part2(grid, start_r, start_c, path_set)
+    print(f"Result: {result}")
 
 if __name__ == "__main__":
-    test()
-    print("Tests passed!")
-    p1, p2 = solve("input-day6.txt")
-    print(f"Part 1 Result: {p1}")
-    print(f"Part 2 Result: {p2}")
+    run_tests()
+    solve_part1()
+    solve_part2()

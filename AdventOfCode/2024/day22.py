@@ -1,4 +1,56 @@
+import sys
 from collections import defaultdict
+
+def parse_input(filename):
+    try:
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+        
+        real_initials = [int(line.strip()) for line in lines if line.strip()]
+        return real_initials
+    except FileNotFoundError:
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
+
+def run_tests():
+    print("Running tests...")
+    
+    # Example Part 1
+    example_initials_p1 = [1, 10, 100, 2024]
+    expected_2000th = {
+        1: 8685429,
+        10: 4700978,
+        100: 15273692,
+        2024: 8667524
+    }
+    
+    print("--- Example Part 1 Verification ---")
+    example_sum = 0
+    passed_p1 = True
+    for init_val in example_initials_p1:
+        result = get_2000th_secret(init_val)
+        if result != expected_2000th[init_val]:
+            print(f"❌ Initial {init_val}: Got {result}, Expected {expected_2000th[init_val]}")
+            passed_p1 = False
+        example_sum += result
+        
+    print(f"Test Example Part 1 Sum: {example_sum} (Exp: 37327623)")
+    if example_sum == 37327623 and passed_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print("❌ Part 1 Example failed!")
+    
+    # Example Part 2
+    example_initials_p2 = [1, 2, 3, 2024]
+    print("\n--- Example Part 2 Verification ---")
+    best_bananas = solve_logic_part2(example_initials_p2)
+    print(f"Test Example Part 2 Best Bananas: {best_bananas} (Exp: 23)")
+    if best_bananas == 23:
+        print("✅ Part 2 Example passed!")
+    else:
+        print(f"❌ Part 2 Example failed!")
+        
+    print("✅ Tests completed!")
 
 def evolve_secret(secret):
     # Step 1: Multiply by 64, mix, prune
@@ -29,18 +81,12 @@ def get_prices(initial_secret, count=2000):
         prices.append(secret % 10)
     return prices
 
-def solve_part2(initials):
+def solve_logic_part2(initials):
     sequence_scores = defaultdict(int)
     
     for init_val in initials:
         prices = get_prices(init_val)
         seen_sequences = set()
-        # We need sequences of 4 changes.
-        # Prices length is 2001 (0 to 2000).
-        # Changes length is 2000.
-        # Sequence windows:
-        # i goes from 0 to len(prices) - 5 (inclusive)
-        # because at i, we look at prices[i], i+1, i+2, i+3, i+4 (5 prices -> 4 changes)
         
         for i in range(len(prices) - 4):
             # Calculate changes
@@ -57,55 +103,21 @@ def solve_part2(initials):
                 
     return max(sequence_scores.values()) if sequence_scores else 0
 
-def solve():
-    # Example Part 1
-    example_initials_p1 = [1, 10, 100, 2024]
-    expected_2000th = {
-        1: 8685429,
-        10: 4700978,
-        100: 15273692,
-        2024: 8667524
-    }
-    
-    print("--- Example Part 1 Verification ---")
-    example_sum = 0
-    for init_val in example_initials_p1:
-        result = get_2000th_secret(init_val)
-        # print(f"Initial: {init_val}, 2000th: {result} (Expected: {expected_2000th[init_val]})")
-        assert result == expected_2000th[init_val]
-        example_sum += result
-        
-    print(f"Example Part 1 Sum: {example_sum} (Expected: 37327623)")
-    assert example_sum == 37327623
-    print("Example Part 1 passed!")
-    
-    # Example Part 2
-    example_initials_p2 = [1, 2, 3, 2024]
-    print("\n--- Example Part 2 Verification ---")
-    best_bananas = solve_part2(example_initials_p2)
-    print(f"Example Part 2 Best Bananas: {best_bananas} (Expected: 23)")
-    assert best_bananas == 23
-    print("Example Part 2 passed!")
+def solve_part1():
+    print("--- Part 1 ---")
+    real_initials = parse_input("input-day22.txt")
+    total_sum = 0
+    for init_val in real_initials:
+        total_sum += get_2000th_secret(init_val)
+    print(f"Result: {total_sum}")
 
-    # Real Input
-    try:
-        with open('input-day22.txt', 'r') as f:
-            lines = f.readlines()
-        
-        real_initials = [int(line.strip()) for line in lines if line.strip()]
-        
-        # Part 1 Real
-        total_sum = 0
-        for init_val in real_initials:
-            total_sum += get_2000th_secret(init_val)
-        print(f"\nPart 1 Final Sum: {total_sum}")
-        
-        # Part 2 Real
-        best_bananas_real = solve_part2(real_initials)
-        print(f"Part 2 Final Best Bananas: {best_bananas_real}")
-        
-    except FileNotFoundError:
-        print("input-day22.txt not found. Skipping real input run.")
+def solve_part2():
+    print("--- Part 2 ---")
+    real_initials = parse_input("input-day22.txt")
+    best_bananas = solve_logic_part2(real_initials)
+    print(f"Result: {best_bananas}")
 
-if __name__ == '__main__':
-    solve()
+if __name__ == "__main__":
+    run_tests()
+    solve_part1()
+    solve_part2()

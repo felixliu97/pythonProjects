@@ -1,14 +1,52 @@
+import sys
 from collections import deque
 
 def parse_input(filename):
-    with open(filename, 'r') as f:
-        lines = f.readlines()
-    coords = []
-    for line in lines:
-        if line.strip():
-            x, y = map(int, line.strip().split(','))
-            coords.append((x, y))
-    return coords
+    try:
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+        coords = []
+        for line in lines:
+            if line.strip():
+                x, y = map(int, line.strip().split(','))
+                coords.append((x, y))
+        return coords
+    except FileNotFoundError:
+        print(f"Error: {filename} not found.")
+        sys.exit(1)
+
+def run_tests():
+    print("Running tests...")
+    
+    # Grid 0-6 (size 6), 12 bytes
+    example_coords = [
+        (5,4), (4,2), (4,5), (3,0), (2,1), (6,3),
+        (2,4), (1,5), (0,6), (3,3), (2,6), (5,1),
+        (1,2), (5,5), (2,5), (6,5), (1,4), (0,4),
+        (6,4), (1,1), (6,1), (1,0), (0,5), (1,6), (2,0)
+    ]
+    
+    # Test Part 1
+    ex_12 = example_coords[:12]
+    dist = shortest_path(6, ex_12)
+    print(f"Test Part 1 (Size 6, 12 bytes): {dist}")
+    
+    expected_p1 = 22
+    if dist == expected_p1:
+        print("✅ Part 1 Example passed!")
+    else:
+        print(f"❌ Part 1 Example failed: Expected {expected_p1}, Got {dist}")
+        
+    # Test Part 2
+    cutoff = find_cutoff_byte(6, example_coords)
+    print(f"Test Part 2 Cutoff: {cutoff}")
+    expected_p2 = (6,1)
+    if cutoff == expected_p2:
+        print("✅ Part 2 Example passed!")
+    else:
+        print(f"❌ Part 2 Example failed: Expected {expected_p2}, Got {cutoff}")
+        
+    print("✅ Tests completed!")
 
 def shortest_path(grid_size, corrupted_coords):
     start = (0, 0)
@@ -44,25 +82,11 @@ def find_cutoff_byte(grid_size, coords):
     low = 0
     high = len(coords) - 1
     
-    # We want to find the first index 'i' such that coords[:i+1] blocks the path.
-    # This means path exists for coords[:i] but NOT for coords[:i+1].
-    
-    # Invariant: path is possible at 'low' (actually we need to be careful with range)
-    # Let's search for the *first failing* index.
-    
-    # Boundary check: If 0 blocks it? Or if all preserve it?
-    # We assume it eventually gets blocked.
-    
-    # If mid is blocked, answer is <= mid.
-    # If mid is open, answer is > mid.
-    
     result_idx = -1
     
     while low <= high:
         mid = (low + high) // 2
         
-        # Check if path exists with bytes 0..mid (inclusive count is mid+1)
-        # Using subset
         current_corrupted = coords[:mid+1]
         dist = shortest_path(grid_size, current_corrupted)
         
@@ -78,40 +102,28 @@ def find_cutoff_byte(grid_size, coords):
         return coords[result_idx]
     return None
 
-def solve():
-    # Example Verification
-    # Grid 0-6 (size 6), 12 bytes
-    example_coords = [
-        (5,4), (4,2), (4,5), (3,0), (2,1), (6,3),
-        (2,4), (1,5), (0,6), (3,3), (2,6), (5,1),
-        (1,2), (5,5), (2,5), (6,5), (1,4), (0,4),
-        (6,4), (1,1), (6,1), (1,0), (0,5), (1,6), (2,0)
-    ]
-    # Take first 12
-    ex_12 = example_coords[:12]
-    dist = shortest_path(6, ex_12)
-    print(f"Example (Grid 6, 12 bytes): {dist}")
-    assert dist == 22, f"Expected 22, got {dist}"
+def solve_part1():
+    print("--- Part 1 ---")
+    all_coords = parse_input("input-day18.txt")
+    if not all_coords: return
     
-    # Part 2 Example
-    cutoff = find_cutoff_byte(6, example_coords)
-    print(f"Example Cutoff: {cutoff}")
-    assert cutoff == (6,1), f"Expected (6,1), got {cutoff}"
-
-    # Real Input
     # Grid 0-70 (size 70), 1024 bytes
-    all_coords = parse_input('input-day18.txt')
     first_1024 = all_coords[:1024]
-    
     dist = shortest_path(70, first_1024)
-    print(f"Part 1 (Grid 70, 1024 bytes): {dist}")
+    print(f"Result: {dist}")
+
+def solve_part2():
+    print("--- Part 2 ---")
+    all_coords = parse_input("input-day18.txt")
+    if not all_coords: return
     
-    # Part 2 Real
     cutoff = find_cutoff_byte(70, all_coords)
     if cutoff:
-        print(f"Part 2 Cutoff: {cutoff[0]},{cutoff[1]}")
+        print(f"Result: {cutoff[0]},{cutoff[1]}")
     else:
-        print("Part 2: No cutoff found!")
+        print("Result: No cutoff found")
 
-if __name__ == '__main__':
-    solve()
+if __name__ == "__main__":
+    run_tests()
+    solve_part1()
+    solve_part2()
