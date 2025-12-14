@@ -1,6 +1,26 @@
 # Project Structure Guidelines
 
-All Python solution files (`.py`) in the `2025` directory must adhere to the following structure to ensure consistency.
+All Python solution files (`.py`) in the `AdventOfCode` directory must adhere to the following structure to ensure consistency.
+
+## Prerequisites & structure
+
+### Event Details
+- **Start Year**: 2015
+- **Duration**: 
+  - Most years: 25 days (Dec 1 - Dec 25).
+  - 2025: 12 days.
+- **Problem Structure**:
+  - Most days have 2 parts. 
+  - Part 2 depends on completing Part 1.
+  - The final day (Day 25) of some years may only have Part 1 (often requires 49 stars to complete).
+
+### URLs
+- **Problem URL**: `https://adventofcode.com/{year}/day/{day}` (e.g., `https://adventofcode.com/2021/day/1)
+- **Input URL**: `https://adventofcode.com/{year}/day/{day}/input` (e.g., `https://adventofcode.com/2021/day/1/input)
+
+### Naming Conventions
+- **Input File**: `{year}-day{day}.txt` (e.g., `2021-day1.txt`). Must be downloaded from the **Input URL**.
+- **Script File**: `{year}-day{day}.py` (e.g., `2021-day1.py`)
 
 ## Required Functions
 
