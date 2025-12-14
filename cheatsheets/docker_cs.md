@@ -1,13 +1,14 @@
+# Docker Cheatsheet
+
+``` bash
 #!/bin/bash
+```
 
-# ==============================================================================
-# DOCKER CHEATSHEET
-# ==============================================================================
+## DOCKER CHEATSHEET
 
-# ------------------------------------------------------------------------------
-# 1. CONTAINER MANAGEMENT
-# ------------------------------------------------------------------------------
+## 1. CONTAINER MANAGEMENT
 
+``` bash
 # List running containers
 docker ps
 
@@ -56,11 +57,11 @@ docker exec -it <container_id_or_name> sh
 docker cp <container_id_or_name>:/path/to/file ./local/path
 # From host to container:
 docker cp ./local/file <container_id_or_name>:/path/to/destination
+```
 
-# ------------------------------------------------------------------------------
-# 2. IMAGE MANAGEMENT
-# ------------------------------------------------------------------------------
+## 2. IMAGE MANAGEMENT
 
+``` bash
 # List local images
 docker images
 
@@ -88,11 +89,11 @@ docker save -o <path_for_generated_tar_file> <image_name>
 
 # Load an image from a tar archive
 docker load -i <path_to_image_tar_file>
+```
 
-# ------------------------------------------------------------------------------
-# 3. VOLUMES & NETWORKS
-# ------------------------------------------------------------------------------
+## 3. VOLUMES & NETWORKS
 
+``` bash
 # List volumes
 docker volume ls
 
@@ -116,11 +117,11 @@ docker network connect <network_name> <container_name>
 
 # Disconnect a container from a network
 docker network disconnect <network_name> <container_name>
+```
 
-# ------------------------------------------------------------------------------
-# 4. DOCKER COMPOSE
-# ------------------------------------------------------------------------------
+## 4. DOCKER COMPOSE
 
+``` bash
 # Start services defined in docker-compose.yml
 # -d: detach mode
 docker-compose up -d
@@ -139,11 +140,11 @@ docker-compose build
 
 # Restart services
 docker-compose restart
+```
 
-# ------------------------------------------------------------------------------
-# 5. CLEANUP & ONE-LINERS (USE WITH CAUTION)
-# ------------------------------------------------------------------------------
+## 5. CLEANUP & ONE-LINERS (USE WITH CAUTION)
 
+``` bash
 # Stop ALL running containers
 docker stop $(docker ps -q)
 
@@ -157,11 +158,11 @@ docker rmi $(docker images -q)
 # -a: Remove all unused images not just dangling ones
 # --volumes: Prune volumes
 docker system prune -a --volumes
+```
 
-# ------------------------------------------------------------------------------
-# 6. STATS & INFO
-# ------------------------------------------------------------------------------
+## 6. STATS & INFO
 
+``` bash
 # Display a live stream of container(s) resource usage statistics
 docker stats
 
@@ -170,3 +171,5 @@ docker system df
 
 # Show system wide information
 docker info
+```
+

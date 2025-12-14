@@ -1,5 +1,5 @@
-"""
-Machine Learning Cheatsheet (Python / Scikit-Learn)
+# Ml Cheatsheet
+
 ===================================================
 Prerequisites:
 pip install numpy pandas scikit-learn matplotlib seaborn torch xgboost
@@ -12,8 +12,8 @@ Sections:
 5. Dimensionality Reduction
 6. Model Evaluation
 7. Deep Learning Basics (PyTorch)
-"""
 
+``` python
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
@@ -21,15 +21,15 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
+```
 
-# ==============================================================================
-# 1. DATA PREPROCESSING
-# ==============================================================================
+## 1. DATA PREPROCESSING
 
+``` python
 def preprocess_data(df, target_col):
     """
-    Standard preprocessing pipeline.
-    USE CASE: Preparing raw data for ML models. Most models cannot handle missing values or strings.
+        USE CASE: Preparing raw data for ML models. Most models cannot handle missing values or strings.
+
     """
     X = df.drop(target_col, axis=1)
     y = df[target_col]
@@ -65,17 +65,20 @@ def preprocess_data(df, target_col):
         ])
         
     return X_train, X_test, y_train, y_test, preprocessor
+```
 
-# ==============================================================================
-# 2. REGRESSION ALGORITHMS (Predict Continuous Value)
-# ==============================================================================
+## 2. REGRESSION ALGORITHMS (Predict Continuous Value)
 
+``` python
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.svm import SVR
 import xgboost as xgb
 
 def regression_examples(X_train, y_train):
+    """
+    Function regression_examples
+    """
     # 1. Linear Regression
     # USE CASE: Baseline model, determining feature importance (coefficients).
     # EXAMPLE: Predicting house price based on square footage.
@@ -110,11 +113,11 @@ def regression_examples(X_train, y_train):
     # PROS: State-of-the-art performance, handles missing values. CONS: Many hyperparameters to tune.
     xg_reg = xgb.XGBRegressor(objective ='reg:squarederror', n_estimators=100)
     xg_reg.fit(X_train, y_train)
+```
 
-# ==============================================================================
-# 3. CLASSIFICATION ALGORITHMS (Predict Category)
-# ==============================================================================
+## 3. CLASSIFICATION ALGORITHMS (Predict Category)
 
+``` python
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
@@ -123,6 +126,9 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 
 def classification_examples(X_train, y_train):
+    """
+    Function classification_examples
+    """
     # 1. Logistic Regression
     # USE CASE: Binary classification, need probabilities.
     # EXAMPLE: Will a user click an ad? (Yes/No)
@@ -164,14 +170,17 @@ def classification_examples(X_train, y_train):
     # PROS: Very fast, works well with high-dimensional sparse data (text). CONS: Assumes feature independence.
     nb = GaussianNB()
     nb.fit(X_train, y_train)
+```
 
-# ==============================================================================
-# 4. CLUSTERING ALGORITHMS (Unsupervised)
-# ==============================================================================
+## 4. CLUSTERING ALGORITHMS (Unsupervised)
 
+``` python
 from sklearn.cluster import KMeans, DBSCAN, AgglomerativeClustering
 
 def clustering_examples(X):
+    """
+    Function clustering_examples
+    """
     # 1. K-Means
     # USE CASE: General purpose clustering, customer segmentation.
     # EXAMPLE: Grouping customers by purchasing behavior (High spenders, Frequent buyers).
@@ -192,15 +201,18 @@ def clustering_examples(X):
     # PROS: Visualizable (Dendrogram). CONS: Computationally expensive O(N^3) or O(N^2).
     agg = AgglomerativeClustering(n_clusters=3)
     labels_agg = agg.fit_predict(X)
+```
 
-# ==============================================================================
-# 5. DIMENSIONALITY REDUCTION
-# ==============================================================================
+## 5. DIMENSIONALITY REDUCTION
 
+``` python
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 def dim_reduction_examples(X):
+    """
+    Function dim_reduction_examples
+    """
     # 1. PCA (Principal Component Analysis)
     # USE CASE: Visualization, noise reduction, pre-processing to speed up training.
     # EXAMPLE: Reducing 100 image features to 10 principal components.
@@ -215,16 +227,19 @@ def dim_reduction_examples(X):
     # NOTE: Non-linear. Preserves local structure (neighbors). Computationally heavy.
     tsne = TSNE(n_components=2, perplexity=30)
     X_tsne = tsne.fit_transform(X)
+```
 
-# ==============================================================================
-# 6. MODEL EVALUATION
-# ==============================================================================
+## 6. MODEL EVALUATION
 
+``` python
 from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score, 
                              confusion_matrix, classification_report, roc_auc_score,
                              mean_squared_error, r2_score)
 
 def evaluate_model(model, X_test, y_test, task='classification'):
+    """
+    Function evaluate_model
+    """
     y_pred = model.predict(X_test)
     
     if task == 'classification':
@@ -249,21 +264,24 @@ def evaluate_model(model, X_test, y_test, task='classification'):
         print("RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))
         # R2 Score: Goodness of fit. 1.0 = Perfect, 0.0 = Baseline (mean).
         print("R2 Score:", r2_score(y_test, y_pred))
+```
 
-# ==============================================================================
-# 7. DEEP LEARNING BASICS (PyTorch)
-# ==============================================================================
+## 7. DEEP LEARNING BASICS (PyTorch)
 
+``` python
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
 class SimpleNN(nn.Module):
     """
-    Simple Feed-Forward Neural Network.
-    USE CASE: Complex non-linear patterns, unstructured data (images, audio).
+        USE CASE: Complex non-linear patterns, unstructured data (images, audio).
+
     """
     def __init__(self, input_dim, hidden_dim, output_dim):
+        """
+        Function __init__
+        """
         super(SimpleNN, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
         self.relu = nn.ReLU() # Activation function (introduces non-linearity)
@@ -271,6 +289,9 @@ class SimpleNN(nn.Module):
         self.sigmoid = nn.Sigmoid() # Output activation for binary classification (0-1)
         
     def forward(self, x):
+        """
+        Function forward
+        """
         out = self.fc1(x)
         out = self.relu(out)
         out = self.fc2(out)
@@ -278,6 +299,9 @@ class SimpleNN(nn.Module):
         return out
 
 def train_torch_model(X_train, y_train):
+    """
+    Function train_torch_model
+    """
     # Convert numpy arrays to PyTorch tensors
     X_tensor = torch.FloatTensor(X_train)
     y_tensor = torch.FloatTensor(y_train).view(-1, 1)
@@ -303,3 +327,5 @@ def train_torch_model(X_train, y_train):
 
 if __name__ == "__main__":
     print("This is a cheatsheet. Import functions or copy code snippets as needed.")
+```
+

@@ -1,13 +1,14 @@
+# K8S Cheatsheet
+
+``` bash
 #!/bin/bash
+```
 
-# ==============================================================================
-# KUBERNETES (K8S) CHEATSHEET
-# ==============================================================================
+## KUBERNETES (K8S) CHEATSHEET
 
-# ------------------------------------------------------------------------------
-# 1. CLUSTER INFO & CONTEXT
-# ------------------------------------------------------------------------------
+## 1. CLUSTER INFO & CONTEXT
 
+``` bash
 # Display cluster info
 kubectl cluster-info
 
@@ -25,11 +26,11 @@ kubectl config use-context <context_name>
 
 # Set default namespace for current context
 kubectl config set-context --current --namespace=<namespace>
+```
 
-# ------------------------------------------------------------------------------
-# 2. POD MANAGEMENT
-# ------------------------------------------------------------------------------
+## 2. POD MANAGEMENT
 
+``` bash
 # List pods in current namespace
 kubectl get pods
 
@@ -62,11 +63,11 @@ kubectl logs <pod_name> -c <container_name>
 
 # Execute command in a running pod
 kubectl exec -it <pod_name> -- /bin/bash
+```
 
-# ------------------------------------------------------------------------------
-# 3. DEPLOYMENTS & SCALING
-# ------------------------------------------------------------------------------
+## 3. DEPLOYMENTS & SCALING
 
+``` bash
 # List deployments
 kubectl get deployments
 
@@ -87,11 +88,11 @@ kubectl rollout undo deployment/<deployment_name>
 
 # History of rollouts
 kubectl rollout history deployment/<deployment_name>
+```
 
-# ------------------------------------------------------------------------------
-# 4. SERVICES & NETWORKING
-# ------------------------------------------------------------------------------
+## 4. SERVICES & NETWORKING
 
+``` bash
 # List services
 kubectl get services
 
@@ -106,11 +107,11 @@ kubectl expose deployment <deployment_name> --type=LoadBalancer --port=80
 
 # Port forward local port to pod port
 kubectl port-forward <pod_name> 8080:80
+```
 
-# ------------------------------------------------------------------------------
-# 5. CONFIGMAPS & SECRETS
-# ------------------------------------------------------------------------------
+## 5. CONFIGMAPS & SECRETS
 
+``` bash
 # List ConfigMaps
 kubectl get configmaps
 
@@ -125,11 +126,11 @@ kubectl create secret generic <name> --from-literal=username=admin --from-litera
 
 # Decode a secret (linux)
 kubectl get secret <secret_name> -o jsonpath="{.data.password}" | base64 --decode
+```
 
-# ------------------------------------------------------------------------------
-# 6. DEBUGGING & DIAGNOSTICS
-# ------------------------------------------------------------------------------
+## 6. DEBUGGING & DIAGNOSTICS
 
+``` bash
 # Get events in the namespace
 kubectl get events --sort-by='.lastTimestamp'
 
@@ -141,13 +142,15 @@ kubectl top nodes
 
 # Run a temporary busybox pod for debugging
 kubectl run -it --rm debug --image=busybox --restart=Never -- sh
+```
 
-# ------------------------------------------------------------------------------
-# 7. USEFUL ALIASES
-# ------------------------------------------------------------------------------
+## 7. USEFUL ALIASES
 
+``` bash
 alias k='kubectl'
 alias kgp='kubectl get pods'
 alias kgd='kubectl get deployments'
 alias kgs='kubectl get services'
 alias kdp='kubectl describe pod'
+```
+

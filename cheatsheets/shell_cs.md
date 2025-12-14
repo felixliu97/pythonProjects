@@ -1,13 +1,14 @@
+# Shell Cheatsheet
+
+``` bash
 #!/bin/bash
+```
 
-# ==============================================================================
-# SHELL / BASH CHEATSHEET
-# ==============================================================================
+## SHELL / BASH CHEATSHEET
 
-# ------------------------------------------------------------------------------
-# 1. FILE SYSTEM OPERATIONS
-# ------------------------------------------------------------------------------
+## 1. FILE SYSTEM OPERATIONS
 
+``` bash
 # List files
 ls -la          # List all files (including hidden) with details
 ls -lh          # List with human-readable sizes
@@ -33,22 +34,22 @@ mv old_name new_name
 rm file         # Remove file
 rm -r dir       # Remove directory recursively
 rm -rf dir      # Force remove directory (careful!)
+```
 
-# ------------------------------------------------------------------------------
-# 2. VIEWING & EDITING FILES
-# ------------------------------------------------------------------------------
+## 2. VIEWING & EDITING FILES
 
+``` bash
 # View content
 cat file.txt
 less file.txt   # View with pagination (q to quit)
 head -n 10 file # View first 10 lines
 tail -n 10 file # View last 10 lines
 tail -f log.txt # Follow log file updates
+```
 
-# ------------------------------------------------------------------------------
-# 3. SEARCHING & FINDING (GREP ENHANCED)
-# ------------------------------------------------------------------------------
+## 3. SEARCHING & FINDING (GREP ENHANCED)
 
+``` bash
 # Grep (Global Regular Expression Print)
 grep "pattern" file.txt        # Basic search
 grep -r "pattern" dir/         # Recursive search in directory
@@ -70,11 +71,11 @@ find . -type f -size +10M      # Find files larger than 10MB
 find . -mtime -7               # Find files modified in last 7 days
 find . -name "*.log" -delete   # Find and delete files (careful!)
 find . -name "*.py" -exec grep "import" {} + # Find files and grep inside them
+```
 
-# ------------------------------------------------------------------------------
-# 4. TEXT PROCESSING (SED ENHANCED, AWK, CUT)
-# ------------------------------------------------------------------------------
+## 4. TEXT PROCESSING (SED ENHANCED, AWK, CUT)
 
+``` bash
 # SED (Stream Editor)
 sed 's/foo/bar/' file.txt      # Replace first 'foo' with 'bar' per line (prints to stdout)
 sed 's/foo/bar/g' file.txt     # Replace ALL 'foo' with 'bar' per line
@@ -100,11 +101,11 @@ sort file.txt | uniq           # Remove adjacent duplicates
 sort file.txt | uniq -c        # Count occurrences
 sort -n file.txt               # Numeric sort
 sort -r file.txt               # Reverse sort
+```
 
-# ------------------------------------------------------------------------------
-# 5. PERMISSIONS & OWNERSHIP
-# ------------------------------------------------------------------------------
+## 5. PERMISSIONS & OWNERSHIP
 
+``` bash
 # Change permissions
 chmod 755 script.sh       # rwx for owner, rx for others
 chmod +x script.sh        # Make executable
@@ -112,11 +113,11 @@ chmod +x script.sh        # Make executable
 # Change owner
 chown user:group file
 chown -R user:group dir   # Recursive change
+```
 
-# ------------------------------------------------------------------------------
-# 6. SYSTEM INFO & PROCESSES
-# ------------------------------------------------------------------------------
+## 6. SYSTEM INFO & PROCESSES
 
+``` bash
 # Disk usage
 df -h                     # Disk space usage
 du -sh folder/            # Size of a directory
@@ -134,11 +135,11 @@ killall <process_name>
 
 # Memory
 free -h
+```
 
-# ------------------------------------------------------------------------------
-# 7. ARCHIVES & COMPRESSION
-# ------------------------------------------------------------------------------
+## 7. ARCHIVES & COMPRESSION
 
+``` bash
 # Tar
 tar -czvf archive.tar.gz dir/  # Create compressed archive
 tar -xzvf archive.tar.gz       # Extract archive
@@ -146,11 +147,11 @@ tar -xzvf archive.tar.gz       # Extract archive
 # Zip
 zip -r archive.zip dir/        # Create zip
 unzip archive.zip              # Extract zip
+```
 
-# ------------------------------------------------------------------------------
-# 8. NETWORKING
-# ------------------------------------------------------------------------------
+## 8. NETWORKING
 
+``` bash
 # Download files
 wget http://example.com/file
 curl -O http://example.com/file
@@ -166,11 +167,11 @@ ss -tulpn
 # DNS lookup
 nslookup google.com
 dig google.com
+```
 
-# ------------------------------------------------------------------------------
-# 9. DATABASES (POSTGRESQL - PSQL)
-# ------------------------------------------------------------------------------
+## 9. DATABASES (POSTGRESQL - PSQL)
 
+``` bash
 # Connect to database
 # psql -h <host> -p <port> -U <username> -d <dbname>
 psql -h localhost -U postgres -d my_db
@@ -193,3 +194,5 @@ psql -f schema.sql
 # Backup & Restore
 pg_dump -U <user> <dbname> > backup.sql    # Backup
 psql -U <user> <dbname> < backup.sql       # Restore
+```
+

@@ -1,5 +1,5 @@
-"""
-RAG (Retrieval-Augmented Generation) Cheatsheet
+# Rag Cheatsheet
+
 ===============================================
 This file serves as a reference for building RAG pipelines using Python.
 Primary libraries assumed: LangChain, OpenAI, ChromaDB/FAISS.
@@ -13,11 +13,10 @@ Sections:
 6. Retrieval
 7. Generation (LLM)
 8. Full Pipeline Example
-"""
 
-# ==============================================================================
-# 1. SETUP & IMPORTS
-# ==============================================================================
+## 1. SETUP & IMPORTS
+
+``` python
 import os
 from typing import List
 
@@ -33,14 +32,16 @@ from langchain_core.runnables import RunnablePassthrough
 
 # Set API Key
 # os.environ["OPENAI_API_KEY"] = "sk-..."
+```
 
-# ==============================================================================
-# 2. DOCUMENT LOADING
-# ==============================================================================
+## 2. DOCUMENT LOADING
 
+``` python
 def load_documents():
-    """Examples of loading different document types."""
-    
+    """
+    Examples of loading different document types.
+
+    """
     # Text File
     loader_txt = TextLoader("./data/sample.txt")
     docs_txt = loader_txt.load()
@@ -54,17 +55,16 @@ def load_documents():
     docs_web = loader_web.load()
     
     return docs_txt + docs_pdf + docs_web
+```
 
-# ==============================================================================
-# 3. TEXT SPLITTING (CHUNKING)
-# ==============================================================================
+## 3. TEXT SPLITTING (CHUNKING)
 
+``` python
 def split_text(documents):
     """
-    Split documents into smaller chunks for embedding.
-    RecursiveCharacterTextSplitter is generally recommended for text.
+        RecursiveCharacterTextSplitter is generally recommended for text.
+
     """
-    
     # Recursive Splitter (Tries to split by paragraph, then newline, then space)
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,      # Characters per chunk
@@ -74,14 +74,16 @@ def split_text(documents):
     
     splits = text_splitter.split_documents(documents)
     return splits
+```
 
-# ==============================================================================
-# 4. EMBEDDINGS
-# ==============================================================================
+## 4. EMBEDDINGS
 
+``` python
 def get_embeddings_model():
-    """Initialize the embedding model."""
-    
+    """
+    Initialize the embedding model.
+
+    """
     # OpenAI Embeddings (ada-002 or v3-small)
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     
@@ -90,14 +92,16 @@ def get_embeddings_model():
     # embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     
     return embeddings
+```
 
-# ==============================================================================
-# 5. VECTOR STORES
-# ==============================================================================
+## 5. VECTOR STORES
 
+``` python
 def create_vector_store(splits, embeddings):
-    """Create a vector store from document splits."""
-    
+    """
+    Create a vector store from document splits.
+
+    """
     # ChromaDB (Persistent)
     vectorstore = Chroma.from_documents(
         documents=splits,
@@ -109,14 +113,16 @@ def create_vector_store(splits, embeddings):
     # vectorstore = FAISS.from_documents(splits, embeddings)
     
     return vectorstore
+```
 
-# ==============================================================================
-# 6. RETRIEVAL
-# ==============================================================================
+## 6. RETRIEVAL
 
+``` python
 def get_retriever(vectorstore):
-    """Configure the retriever."""
-    
+    """
+    Configure the retriever.
+
+    """
     # Basic Similarity Search
     # k: Number of documents to return
     retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 4})
@@ -128,14 +134,16 @@ def get_retriever(vectorstore):
     # )
     
     return retriever
+```
 
-# ==============================================================================
-# 7. GENERATION (LLM & CHAIN)
-# ==============================================================================
+## 7. GENERATION (LLM & CHAIN)
 
+``` python
 def create_rag_chain(retriever):
-    """Create the RAG chain combining retrieval and generation."""
-    
+    """
+    Create the RAG chain combining retrieval and generation.
+
+    """
     # Initialize LLM
     llm = ChatOpenAI(model="gpt-4o", temperature=0)
     
@@ -145,12 +153,11 @@ def create_rag_chain(retriever):
     
     Question: {question}
     """
-    prompt = ChatPromptTemplate.from_template(template)
-    
+
     # Helper to format documents
     def format_docs(docs):
         return "\n\n".join(doc.page_content for doc in docs)
-    
+
     # Construct the Chain (LCEL - LangChain Expression Language)
     rag_chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
@@ -158,35 +165,35 @@ def create_rag_chain(retriever):
         | llm
         | StrOutputParser()
     )
-    
+
     return rag_chain
+```
 
-# ==============================================================================
-# 8. FULL PIPELINE EXAMPLE
-# ==============================================================================
+## 8. FULL PIPELINE EXAMPLE
 
+``` python
 def main():
     # 1. Load
     # docs = load_documents() # Assuming files exist
     # For demo, creating dummy doc
     from langchain_core.documents import Document
     docs = [Document(page_content="RAG stands for Retrieval-Augmented Generation. It combines retrieval with LLMs.")]
-    
+
     # 2. Split
     splits = split_text(docs)
-    
+
     # 3. Embed
     embeddings = get_embeddings_model()
-    
+
     # 4. Store
     vectorstore = create_vector_store(splits, embeddings)
-    
+
     # 5. Retrieve
     retriever = get_retriever(vectorstore)
-    
+
     # 6. Generate
     rag_chain = create_rag_chain(retriever)
-    
+
     # 7. Run
     response = rag_chain.invoke("What does RAG stand for?")
     print(f"Response: {response}")
@@ -197,3 +204,5 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         print(f"Execution failed (likely missing API key or dependencies): {e}")
+```
+

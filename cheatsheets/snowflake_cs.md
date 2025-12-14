@@ -1,11 +1,10 @@
--- ==============================================================================
--- SNOWFLAKE CHEATSHEET
--- ==============================================================================
+# Snowflake Cheatsheet
 
--- ------------------------------------------------------------------------------
--- 1. CONTEXT & CONNECTION
--- ------------------------------------------------------------------------------
+## SNOWFLAKE CHEATSHEET
 
+## 1. CONTEXT & CONNECTION
+
+``` sql
 -- Set context
 USE ROLE sysadmin;
 USE WAREHOUSE compute_wh;
@@ -14,11 +13,11 @@ USE SCHEMA my_schema;
 
 -- Show current context
 SELECT CURRENT_ROLE(), CURRENT_WAREHOUSE(), CURRENT_DATABASE(), CURRENT_SCHEMA();
+```
 
--- ------------------------------------------------------------------------------
--- 2. WAREHOUSE MANAGEMENT
--- ------------------------------------------------------------------------------
+## 2. WAREHOUSE MANAGEMENT
 
+``` sql
 -- Create Warehouse
 CREATE WAREHOUSE my_wh
 WITH WAREHOUSE_SIZE = 'X-SMALL'
@@ -32,11 +31,11 @@ ALTER WAREHOUSE my_wh SET WAREHOUSE_SIZE = 'LARGE';
 -- Suspend/Resume
 ALTER WAREHOUSE my_wh SUSPEND;
 ALTER WAREHOUSE my_wh RESUME;
+```
 
--- ------------------------------------------------------------------------------
--- 3. DATABASES, SCHEMAS & TABLES
--- ------------------------------------------------------------------------------
+## 3. DATABASES, SCHEMAS & TABLES
 
+``` sql
 -- Create Database
 CREATE DATABASE IF NOT EXISTS my_db;
 
@@ -58,11 +57,11 @@ CREATE TRANSIENT TABLE my_transient_table (id INT);
 
 -- Temporary Table (Session only)
 CREATE TEMPORARY TABLE my_temp_table (id INT);
+```
 
--- ------------------------------------------------------------------------------
--- 4. DATA LOADING (COPY INTO)
--- ------------------------------------------------------------------------------
+## 4. DATA LOADING (COPY INTO)
 
+``` sql
 -- 1. Create File Format
 CREATE OR REPLACE FILE FORMAT my_csv_format
 TYPE = 'CSV'
@@ -77,11 +76,11 @@ FILE_FORMAT = my_csv_format;
 COPY INTO my_table
 FROM @my_stage/data.csv
 ON_ERROR = 'CONTINUE'; -- Options: ABORT_STATEMENT, SKIP_FILE, CONTINUE
+```
 
--- ------------------------------------------------------------------------------
--- 5. SEMI-STRUCTURED DATA (JSON)
--- ------------------------------------------------------------------------------
+## 5. SEMI-STRUCTURED DATA (JSON)
 
+``` sql
 -- Create table with VARIANT column
 CREATE TABLE json_table (json_data VARIANT);
 
@@ -98,11 +97,11 @@ SELECT
     value:name::STRING
 FROM json_table,
 LATERAL FLATTEN(input => json_data:items);
+```
 
--- ------------------------------------------------------------------------------
--- 6. TIME TRAVEL & FAIL-SAFE
--- ------------------------------------------------------------------------------
+## 6. TIME TRAVEL & FAIL-SAFE
 
+``` sql
 -- Query data as of 10 minutes ago
 SELECT * FROM my_table AT(OFFSET => -60*10);
 
@@ -114,32 +113,32 @@ UNDROP TABLE my_table;
 
 -- Set Retention Period (Days)
 ALTER TABLE my_table SET DATA_RETENTION_TIME_IN_DAYS = 90;
+```
 
--- ------------------------------------------------------------------------------
--- 7. CACHING
--- ------------------------------------------------------------------------------
+## 7. CACHING
 
+``` sql
 -- Result Cache (24 hours, exact query match)
 -- Metadata Cache (Near instant counts)
 SELECT COUNT(*) FROM my_table; -- Uses metadata cache
 
 -- Warehouse Cache (Local Disk / SSD)
 -- Data loaded into warehouse SSDs during processing
+```
 
--- ------------------------------------------------------------------------------
--- 8. SYSTEM FUNCTIONS
--- ------------------------------------------------------------------------------
+## 8. SYSTEM FUNCTIONS
 
+``` sql
 -- Generate Cluster Key info
 SELECT SYSTEM$CLUSTERING_INFORMATION('my_table');
 
 -- Current User
 SELECT CURRENT_USER();
+```
 
--- ------------------------------------------------------------------------------
--- 9. USER & ROLE MANAGEMENT
--- ------------------------------------------------------------------------------
+## 9. USER & ROLE MANAGEMENT
 
+``` sql
 -- Create Role
 CREATE ROLE my_role;
 
@@ -149,11 +148,11 @@ GRANT SELECT ON ALL TABLES IN SCHEMA my_db.my_schema TO ROLE my_role;
 
 -- Grant Role to User
 GRANT ROLE my_role TO USER my_user;
+```
 
--- ------------------------------------------------------------------------------
--- 10. DATA SHARING (SECURE DATA SHARING)
--- ------------------------------------------------------------------------------
+## 10. DATA SHARING (SECURE DATA SHARING)
 
+``` sql
 -- Create Share
 CREATE SHARE my_share;
 
@@ -167,11 +166,11 @@ ALTER SHARE my_share ADD ACCOUNTS = xy12345; -- Account Locator
 
 -- Show Shares
 SHOW SHARES;
+```
 
--- ------------------------------------------------------------------------------
--- 11. ACCOUNT USAGE & MONITORING
--- ------------------------------------------------------------------------------
+## 11. ACCOUNT USAGE & MONITORING
 
+``` sql
 -- Query Account Usage (SNOWFLAKE database)
 -- Note: Latency of ~45 mins to 2 hours
 SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
@@ -189,11 +188,11 @@ ORDER BY USAGE_DATE DESC;
 -- Information Schema (Real-time, less history)
 SELECT * FROM INFORMATION_SCHEMA.QUERY_HISTORY
 ORDER BY START_TIME DESC;
+```
 
--- ------------------------------------------------------------------------------
--- 12. ADVANCED OBJECTS (STREAMS & TASKS)
--- ------------------------------------------------------------------------------
+## 12. ADVANCED OBJECTS (STREAMS & TASKS)
 
+``` sql
 -- Create Stream (CDC - Change Data Capture)
 CREATE STREAM my_stream ON TABLE my_table;
 
@@ -209,11 +208,11 @@ AS
 
 -- Resume Task (Created in suspended state)
 ALTER TASK my_task RESUME;
+```
 
--- ------------------------------------------------------------------------------
--- 13. SNOWPARK & ML & CORTEX
--- ------------------------------------------------------------------------------
+## 13. SNOWPARK & ML & CORTEX
 
+``` sql
 -- Snowpark (Python/Java/Scala DataFrame API)
 -- (Conceptual: Use Python worksheet or local environment)
 -- import snowflake.snowpark as snowpark
@@ -235,11 +234,11 @@ $$;
 -- Snowflake Cortex (LLM Functions)
 -- SELECT SNOWFLAKE.CORTEX.COMPLETE('llama2-70b-chat', 'Tell me a joke');
 -- SELECT SNOWFLAKE.CORTEX.SUMMARIZE(email_body);
+```
 
--- ------------------------------------------------------------------------------
--- 14. SECURITY & GOVERNANCE
--- ------------------------------------------------------------------------------
+## 14. SECURITY & GOVERNANCE
 
+``` sql
 -- Dynamic Data Masking
 CREATE OR REPLACE MASKING POLICY email_mask AS (val string) RETURNS string ->
   CASE
@@ -265,11 +264,11 @@ ALTER ACCOUNT SET NETWORK POLICY = my_policy;
 -- Data Classification & Tagging
 CREATE TAG cost_center;
 ALTER TABLE my_table SET TAG cost_center = 'finance';
+```
 
--- ------------------------------------------------------------------------------
--- 15. PERFORMANCE OPTIMIZATION
--- ------------------------------------------------------------------------------
+## 15. PERFORMANCE OPTIMIZATION
 
+``` sql
 -- Materialized Views (Pre-computed results)
 CREATE MATERIALIZED VIEW my_mv AS
 SELECT id, COUNT(*) as cnt FROM my_table GROUP BY id;
@@ -279,11 +278,11 @@ ALTER TABLE my_table ADD SEARCH OPTIMIZATION;
 
 -- Query Acceleration Service (Offload processing)
 ALTER WAREHOUSE my_wh SET ENABLE_QUERY_ACCELERATION = TRUE;
+```
 
--- ------------------------------------------------------------------------------
--- 16. TABLE TYPES & STORAGE
--- ------------------------------------------------------------------------------
+## 16. TABLE TYPES & STORAGE
 
+``` sql
 -- Iceberg Tables (Open Table Format)
 CREATE ICEBERG TABLE my_iceberg
   CATALOG = 'SNOWFLAKE'
@@ -295,11 +294,11 @@ CREATE HYBRID TABLE my_hybrid (
     id INT PRIMARY KEY,
     name STRING
 );
+```
 
--- ------------------------------------------------------------------------------
--- 17. REPLICATION & FAILOVER
--- ------------------------------------------------------------------------------
+## 17. REPLICATION & FAILOVER
 
+``` sql
 -- Enable Replication for Database
 ALTER DATABASE my_db ENABLE REPLICATION TO ACCOUNTS xy12345;
 
@@ -308,22 +307,22 @@ CREATE FAILOVER GROUP my_fg
   OBJECT_TYPES = DATABASES, WAREHOUSES, ROLES
   ALLOWED_ACCOUNTS = xy12345
   REPLICATION_SCHEDULE = '10 MINUTE';
+```
 
--- ------------------------------------------------------------------------------
--- 18. RESOURCE MONITORS
--- ------------------------------------------------------------------------------
+## 18. RESOURCE MONITORS
 
+``` sql
 -- Create Monitor (Limit credit usage)
 CREATE RESOURCE MONITOR my_monitor WITH CREDIT_QUOTA = 100
 TRIGGERS ON 90 PERCENT DO NOTIFY
          ON 100 PERCENT DO SUSPEND;
 
 ALTER WAREHOUSE my_wh SET RESOURCE_MONITOR = my_monitor;
+```
 
--- ------------------------------------------------------------------------------
--- 19. OTHER FEATURES
--- ------------------------------------------------------------------------------
+## 19. OTHER FEATURES
 
+``` sql
 -- Snowpipe Auto-Ingest (Continuous Loading)
 CREATE PIPE my_pipe AUTO_INGEST = TRUE AS
 COPY INTO my_table FROM @my_stage;
@@ -336,5 +335,5 @@ COPY INTO my_table FROM @my_stage;
 
 -- Tri-Secret Secure
 -- Double encryption (Snowflake key + Customer managed key).
-
+```
 
