@@ -6,6 +6,11 @@
             "industry": "Utilities"
         },
         {
+            "symbol": "AIA.AX",
+            "name": "Auckland International Airport",
+            "industry": "Industrials"
+        },
+        {
             "symbol": "ALD.AX",
             "name": "Ampol Limited",
             "industry": "Energy"
@@ -16,9 +21,24 @@
             "industry": "Consumer Cyclical"
         },
         {
-            "symbol": "AMP.AX",
-            "name": "AMP Limited",
-            "industry": "Financial Services"
+            "symbol": "ALQ.AX",
+            "name": "ALS Limited",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "ALX.AX",
+            "name": "Atlas Arteria",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "AMC.AX",
+            "name": "Amcor PLC",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "ANN.AX",
+            "name": "Ansell Limited",
+            "industry": "Healthcare"
         },
         {
             "symbol": "ANZ.AX",
@@ -26,14 +46,24 @@
             "industry": "Financial Services"
         },
         {
-            "symbol": "APX.AX",
-            "name": "Appen Limited",
-            "industry": "Technology"
+            "symbol": "APA.AX",
+            "name": "APA Group",
+            "industry": "Utilities"
         },
         {
-            "symbol": "BBN.AX",
-            "name": "Baby Bunting Group Limited",
+            "symbol": "ARB.AX",
+            "name": "ARB Corporation Limited",
             "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "ASX.AX",
+            "name": "ASX Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "AZJ.AX",
+            "name": "Aurizon Holdings",
+            "industry": "Industrials"
         },
         {
             "symbol": "BHP.AX",
@@ -41,14 +71,24 @@
             "industry": "Basic Materials"
         },
         {
+            "symbol": "BPT.AX",
+            "name": "Beach Energy",
+            "industry": "Energy"
+        },
+        {
+            "symbol": "BRG.AX",
+            "name": "Breville Group",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "BSL.AX",
+            "name": "BlueScope Steel",
+            "industry": "Basic Materials"
+        },
+        {
             "symbol": "BXB.AX",
             "name": "Brambles Limited",
             "industry": "Industrials"
-        },
-        {
-            "symbol": "CAA.AX",
-            "name": "Capral Limited",
-            "industry": "Basic Materials"
         },
         {
             "symbol": "CAR.AX",
@@ -61,9 +101,34 @@
             "industry": "Financial Services"
         },
         {
+            "symbol": "CGF.AX",
+            "name": "Challenger Limited",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "CHC.AX",
+            "name": "Charter Hall Group",
+            "industry": "Real Estate"
+        },
+        {
+            "symbol": "CNU.AX",
+            "name": "Chorus Limited",
+            "industry": "Communication Services"
+        },
+        {
+            "symbol": "COH.AX",
+            "name": "Cochlear Limited",
+            "industry": "Healthcare"
+        },
+        {
             "symbol": "COL.AX",
             "name": "Coles Group Limited",
             "industry": "Consumer Defensive"
+        },
+        {
+            "symbol": "CPU.AX",
+            "name": "Computershare Limited",
+            "industry": "Financial Services"
         },
         {
             "symbol": "CSL.AX",
@@ -71,14 +136,34 @@
             "industry": "Healthcare"
         },
         {
-            "symbol": "DRO.AX",
-            "name": "DroneShield Limited",
+            "symbol": "CWY.AX",
+            "name": "Cleanaway Waste Management",
             "industry": "Industrials"
         },
         {
+            "symbol": "DOW.AX",
+            "name": "Downer EDI",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "DXS.AX",
+            "name": "Dexus",
+            "industry": "Real Estate"
+        },
+        {
+            "symbol": "EDV.AX",
+            "name": "Endeavour Group Limited",
+            "industry": "Consumer Defensive"
+        },
+        {
             "symbol": "EVN.AX",
-            "name": "Evolution Mining Limited",
+            "name": "Evolution Mining",
             "industry": "Basic Materials"
+        },
+        {
+            "symbol": "FLT.AX",
+            "name": "Flight Centre Travel Group",
+            "industry": "Consumer Cyclical"
         },
         {
             "symbol": "FMG.AX",
@@ -86,14 +171,34 @@
             "industry": "Basic Materials"
         },
         {
-            "symbol": "IAG.AX",
-            "name": "Insurance Australia Group Limited",
+            "symbol": "FPH.AX",
+            "name": "Fisher & Paykel Healthcare",
+            "industry": "Healthcare"
+        },
+        {
+            "symbol": "GMG.AX",
+            "name": "Goodman Group",
+            "industry": "Real Estate"
+        },
+        {
+            "symbol": "GPT.AX",
+            "name": "The GPT Group",
+            "industry": "Real Estate"
+        },
+        {
+            "symbol": "HUB.AX",
+            "name": "HUB24 Limited",
             "industry": "Financial Services"
         },
         {
-            "symbol": "IEL.AX",
-            "name": "IDP Education Limited",
-            "industry": "Consumer Defensive"
+            "symbol": "HVN.AX",
+            "name": "Harvey Norman Holdings",
+            "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "IAG.AX",
+            "name": "Insurance Australia Group Limited",
+            "industry": "Financial Services"
         },
         {
             "symbol": "IGO.AX",
@@ -101,14 +206,14 @@
             "industry": "Basic Materials"
         },
         {
-            "symbol": "KAR.AX",
-            "name": "Karoon Energy Ltd",
-            "industry": "Energy"
+            "symbol": "JBH.AX",
+            "name": "JB Hi-Fi Limited",
+            "industry": "Consumer Cyclical"
         },
         {
-            "symbol": "KGN.AX",
-            "name": "Kogan.com Ltd",
-            "industry": "Consumer Cyclical"
+            "symbol": "LLC.AX",
+            "name": "Lendlease Group",
+            "industry": "Real Estate"
         },
         {
             "symbol": "LYC.AX",
@@ -116,9 +221,19 @@
             "industry": "Basic Materials"
         },
         {
+            "symbol": "MGR.AX",
+            "name": "Mirvac Group",
+            "industry": "Real Estate"
+        },
+        {
             "symbol": "MIN.AX",
             "name": "Mineral Resources Limited",
             "industry": "Basic Materials"
+        },
+        {
+            "symbol": "MPL.AX",
+            "name": "Medibank Private Limited",
+            "industry": "Financial Services"
         },
         {
             "symbol": "MQG.AX",
@@ -126,9 +241,24 @@
             "industry": "Financial Services"
         },
         {
+            "symbol": "MTS.AX",
+            "name": "Metcash Limited",
+            "industry": "Consumer Defensive"
+        },
+        {
             "symbol": "NAB.AX",
             "name": "National Australia Bank Limited",
             "industry": "Financial Services"
+        },
+        {
+            "symbol": "NHC.AX",
+            "name": "New Hope Corporation",
+            "industry": "Energy"
+        },
+        {
+            "symbol": "NSR.AX",
+            "name": "National Storage REIT",
+            "industry": "Real Estate"
         },
         {
             "symbol": "NST.AX",
@@ -136,9 +266,19 @@
             "industry": "Basic Materials"
         },
         {
-            "symbol": "NWH.AX",
-            "name": "NRW Holdings Limited",
-            "industry": "Industrials"
+            "symbol": "NWL.AX",
+            "name": "Netwealth Group",
+            "industry": "Financial Services"
+        },
+        {
+            "symbol": "NXT.AX",
+            "name": "Nextdc Limited",
+            "industry": "Technology"
+        },
+        {
+            "symbol": "ORA.AX",
+            "name": "Orora Limited",
+            "industry": "Consumer Cyclical"
         },
         {
             "symbol": "ORG.AX",
@@ -146,9 +286,19 @@
             "industry": "Utilities"
         },
         {
-            "symbol": "PLS.AX",
-            "name": "PLS Group Limited",
+            "symbol": "ORI.AX",
+            "name": "Orica Limited",
             "industry": "Basic Materials"
+        },
+        {
+            "symbol": "PLS.AX",
+            "name": "Pilbara Minerals Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "PME.AX",
+            "name": "Pro Medicus Limited",
+            "industry": "Healthcare"
         },
         {
             "symbol": "QAN.AX",
@@ -161,9 +311,29 @@
             "industry": "Financial Services"
         },
         {
+            "symbol": "QUB.AX",
+            "name": "Qube Holdings",
+            "industry": "Industrials"
+        },
+        {
             "symbol": "REA.AX",
             "name": "REA Group Limited",
             "industry": "Communication Services"
+        },
+        {
+            "symbol": "REH.AX",
+            "name": "Reece Limited",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "RGN.AX",
+            "name": "Region Group",
+            "industry": "Real Estate"
+        },
+        {
+            "symbol": "RHC.AX",
+            "name": "Ramsay Health Care Limited",
+            "industry": "Healthcare"
         },
         {
             "symbol": "RIO.AX",
@@ -171,9 +341,29 @@
             "industry": "Basic Materials"
         },
         {
-            "symbol": "RRL.AX",
-            "name": "Regis Resources Limited",
+            "symbol": "RMD.AX",
+            "name": "ResMed Inc.",
+            "industry": "Healthcare"
+        },
+        {
+            "symbol": "RWC.AX",
+            "name": "Reliance Worldwide Corp",
+            "industry": "Industrials"
+        },
+        {
+            "symbol": "S32.AX",
+            "name": "South32 Limited",
             "industry": "Basic Materials"
+        },
+        {
+            "symbol": "SCG.AX",
+            "name": "Scentre Group",
+            "industry": "Real Estate"
+        },
+        {
+            "symbol": "SDF.AX",
+            "name": "Steadfast Group",
+            "industry": "Financial Services"
         },
         {
             "symbol": "SEK.AX",
@@ -181,14 +371,34 @@
             "industry": "Communication Services"
         },
         {
+            "symbol": "SFR.AX",
+            "name": "Sandfire Resources",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "SGM.AX",
+            "name": "Sims Limited",
+            "industry": "Basic Materials"
+        },
+        {
+            "symbol": "SGP.AX",
+            "name": "Stockland",
+            "industry": "Real Estate"
+        },
+        {
+            "symbol": "SHL.AX",
+            "name": "Sonic Healthcare Limited",
+            "industry": "Healthcare"
+        },
+        {
             "symbol": "SOL.AX",
-            "name": "WHSP Holdings Limited",
+            "name": "Washington H. Soul Pattinson",
             "industry": "Financial Services"
         },
         {
-            "symbol": "SPZ.AX",
-            "name": "Smart Parking Limited",
-            "industry": "Industrials"
+            "symbol": "SPK.AX",
+            "name": "Spark New Zealand",
+            "industry": "Communication Services"
         },
         {
             "symbol": "STO.AX",
@@ -196,14 +406,14 @@
             "industry": "Energy"
         },
         {
+            "symbol": "SUL.AX",
+            "name": "Super Retail Group",
+            "industry": "Consumer Cyclical"
+        },
+        {
             "symbol": "SUN.AX",
             "name": "Suncorp Group Limited",
             "industry": "Financial Services"
-        },
-        {
-            "symbol": "TAH.AX",
-            "name": "Tabcorp Holdings Limited",
-            "industry": "Consumer Cyclical"
         },
         {
             "symbol": "TCL.AX",
@@ -211,14 +421,19 @@
             "industry": "Industrials"
         },
         {
+            "symbol": "TLC.AX",
+            "name": "The Lottery Corporation",
+            "industry": "Consumer Cyclical"
+        },
+        {
             "symbol": "TLS.AX",
             "name": "Telstra Group Limited",
             "industry": "Communication Services"
         },
         {
-            "symbol": "TPW.AX",
-            "name": "Temple & Webster Group Ltd",
-            "industry": "Consumer Cyclical"
+            "symbol": "TNE.AX",
+            "name": "Technology One",
+            "industry": "Technology"
         },
         {
             "symbol": "TWE.AX",
@@ -231,14 +446,39 @@
             "industry": "Real Estate"
         },
         {
+            "symbol": "VEA.AX",
+            "name": "Viva Energy Group",
+            "industry": "Energy"
+        },
+        {
+            "symbol": "VNT.AX",
+            "name": "Ventia Services Group",
+            "industry": "Industrials"
+        },
+        {
             "symbol": "WBC.AX",
             "name": "Westpac Banking Corporation",
             "industry": "Financial Services"
         },
         {
+            "symbol": "WDS.AX",
+            "name": "Woodside Energy Group Ltd",
+            "industry": "Energy"
+        },
+        {
             "symbol": "WES.AX",
             "name": "Wesfarmers Limited",
             "industry": "Consumer Cyclical"
+        },
+        {
+            "symbol": "WHC.AX",
+            "name": "Whitehaven Coal",
+            "industry": "Energy"
+        },
+        {
+            "symbol": "WOR.AX",
+            "name": "Worley Limited",
+            "industry": "Energy"
         },
         {
             "symbol": "WOW.AX",
@@ -256,9 +496,161 @@
             "industry": "Technology"
         },
         {
-            "symbol": "ZIP.AX",
-            "name": "Zip Co Limited",
-            "industry": "Financial Services"
+            "symbol": "YAL.AX",
+            "name": "Yancoal Australia Ltd",
+            "industry": "Energy"
+        }
+    ],
+    "etfs": [
+        {
+            "symbol": "A200.AX",
+            "name": "BetaShares Australia 200 ETF",
+            "industry": "ETF - Australia"
+        },
+        {
+            "symbol": "AAA.AX",
+            "name": "BetaShares Aus High Interest Cash",
+            "industry": "ETF - Cash/Currency"
+        },
+        {
+            "symbol": "ACDC.AX",
+            "name": "Global X Battery Tech & Lithium",
+            "industry": "ETF - Thematic"
+        },
+        {
+            "symbol": "ASIA.AX",
+            "name": "BetaShares Asia Technology Tigers",
+            "industry": "ETF - Asia"
+        },
+        {
+            "symbol": "ATEC.AX",
+            "name": "BetaShares S&P/ASX Australian Tech",
+            "industry": "ETF - Australia"
+        },
+        {
+            "symbol": "BGBL.AX",
+            "name": "BetaShares Global Shares ETF",
+            "industry": "ETF - Global"
+        },
+        {
+            "symbol": "BILL.AX",
+            "name": "iShares Core Cash ETF",
+            "industry": "ETF - Cash/Currency"
+        },
+        {
+            "symbol": "CRYP.AX",
+            "name": "BetaShares Crypto Innovators",
+            "industry": "ETF - Thematic"
+        },
+        {
+            "symbol": "DHHF.AX",
+            "name": "BetaShares Diversified High Growth",
+            "industry": "ETF - Diversified"
+        },
+        {
+            "symbol": "ETHI.AX",
+            "name": "BetaShares Global Sustainability Leaders",
+            "industry": "ETF - Ethical/ESG"
+        },
+        {
+            "symbol": "FANG.AX",
+            "name": "Global X FANG+ ETF",
+            "industry": "ETF - US Tech"
+        },
+        {
+            "symbol": "GOLD.AX",
+            "name": "Global X Physical Gold",
+            "industry": "ETF - Commodities"
+        },
+        {
+            "symbol": "HACK.AX",
+            "name": "BetaShares Global Cybersecurity",
+            "industry": "ETF - Thematic"
+        },
+        {
+            "symbol": "IOO.AX",
+            "name": "iShares Global 100",
+            "industry": "ETF - Global"
+        },
+        {
+            "symbol": "IOZ.AX",
+            "name": "iShares Core S&P/ASX 200",
+            "industry": "ETF - Australia"
+        },
+        {
+            "symbol": "IVV.AX",
+            "name": "iShares S&P 500",
+            "industry": "ETF - US Equity"
+        },
+        {
+            "symbol": "IXJ.AX",
+            "name": "iShares Global Healthcare",
+            "industry": "ETF - Thematic"
+        },
+        {
+            "symbol": "MOAT.AX",
+            "name": "VanEck Morningstar Wide Moat",
+            "industry": "ETF - US Equity"
+        },
+        {
+            "symbol": "MVW.AX",
+            "name": "VanEck Australian Equal Weight",
+            "industry": "ETF - Australia"
+        },
+        {
+            "symbol": "NDQ.AX",
+            "name": "BetaShares Nasdaq 100",
+            "industry": "ETF - US Tech"
+        },
+        {
+            "symbol": "QUAL.AX",
+            "name": "VanEck MSCI International Quality",
+            "industry": "ETF - Global"
+        },
+        {
+            "symbol": "RBTZ.AX",
+            "name": "BetaShares Global Robotics & AI",
+            "industry": "ETF - Thematic"
+        },
+        {
+            "symbol": "SEMI.AX",
+            "name": "Global X Semiconductor ETF",
+            "industry": "ETF - Thematic"
+        },
+        {
+            "symbol": "STW.AX",
+            "name": "SPDR S&P/ASX 200",
+            "industry": "ETF - Australia"
+        },
+        {
+            "symbol": "VAS.AX",
+            "name": "Vanguard Australian Shares Index",
+            "industry": "ETF - Australia"
+        },
+        {
+            "symbol": "VDHG.AX",
+            "name": "Vanguard Diversified High Growth",
+            "industry": "ETF - Diversified"
+        },
+        {
+            "symbol": "VEU.AX",
+            "name": "Vanguard All-World ex-US",
+            "industry": "ETF - Global"
+        },
+        {
+            "symbol": "VGS.AX",
+            "name": "Vanguard MSCI Index International",
+            "industry": "ETF - Global"
+        },
+        {
+            "symbol": "VHY.AX",
+            "name": "Vanguard Australian Shares High Yield",
+            "industry": "ETF - Income"
+        },
+        {
+            "symbol": "VTS.AX",
+            "name": "Vanguard US Total Market",
+            "industry": "ETF - US Equity"
         }
     ],
     "weights": {

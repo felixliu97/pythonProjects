@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ASX Trending Stocks & ETFs Report</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #1a1a1a; color: #e0e0e0; margin: 0; padding: 20px; }
+        .header { background-color: #2d2d2d; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #007acc; }
+        h1 { margin: 0; color: #007acc; }
+        .timestamp { color: #888; font-size: 0.9em; margin-top: 5px; }
+        .tab { overflow: hidden; border: 1px solid #444; background-color: #333; border-radius: 8px 8px 0 0; }
+        .tab button { background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; color: #ccc; font-size: 17px; }
+        .tab button:hover { background-color: #444; }
+        .tab button.active { background-color: #007acc; color: white; }
+        .tabcontent { display: none; padding: 20px; border: 1px solid #444; border-top: none; background-color: #252526; border-radius: 0 0 8px 8px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: 0.9em; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #333; }
+        th { background-color: #333; color: white; cursor: pointer; }
+        th:hover { background-color: #444; }
+        tr:hover { background-color: #2d2d2d; }
+        .positive { color: #4caf50; font-weight: bold; }
+        .negative { color: #f44336; font-weight: bold; }
+        .neutral { color: #888; }
+        .highlight { color: #00bcd4; font-weight: bold; }
+        .section { margin-top: 20px; padding: 15px; background-color: #2d2d2d; border-radius: 8px; }
+        h3 { border-bottom: 1px solid #444; padding-bottom: 10px; color: #007acc; }
+        h4 { margin-top: 15px; margin-bottom: 5px; color: #ccc; }
+        .score-box { display: inline-block; padding: 2px 8px; border-radius: 4px; background-color: #333; font-weight: bold; }
+    </style>
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) { tablinks[i].className = tablinks[i].className.replace(" active", ""); }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        function sortTable(n, tableId) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById(tableId);
+            switching = true; dir = "asc"; 
+            
+            function parseMoney(str) {
+                if (!str) return -1;
+                var clean = str.replace(/[$,]/g, "").trim();
+                var mult = 1;
+                if (clean.endsWith("B")) { mult = 1e9; clean = clean.slice(0, -1); }
+                else if (clean.endsWith("M")) { mult = 1e6; clean = clean.slice(0, -1); }
+                else if (clean.endsWith("K")) { mult = 1e3; clean = clean.slice(0, -1); }
+                else if (clean.endsWith("%")) { clean = clean.slice(0, -1); }
+                
+                var val = parseFloat(clean);
+                if (isNaN(val)) return -999999;
+                return val * mult;
+            }
+
+            while (switching) {
+                switching = false; rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    
+                    var xContent = x.textContent.trim();
+                    var yContent = y.textContent.trim();
+                    
+                    var xVal = parseMoney(xContent);
+                    var yVal = parseMoney(yContent);
+                    
+                    if (xVal !== -999999 && yVal !== -999999) {
+                        if (dir == "asc") { if (xVal > yVal) { shouldSwitch = true; break; } }
+                        else { if (xVal < yVal) { shouldSwitch = true; break; } }
+                    } else {
+                        if (dir == "asc") { if (xContent.toLowerCase() > yContent.toLowerCase()) { shouldSwitch = true; break; } }
+                        else { if (xContent.toLowerCase() < yContent.toLowerCase()) { shouldSwitch = true; break; } }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true; switchcount ++; 
+                } else {
+                    if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; }
+                }
+            }
+        }
+    </script>
+</head>
+<body onload="document.getElementById('defaultOpen').click();">
+    <div class="header">
+        <h1>ASX Trending Stocks & ETFs</h1>
+        <div class="timestamp">Generated on 2025-12-14 13:34:37</div>
+    </div>
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'Stocks')" id="defaultOpen">Stocks</button>
+        <button class="tablinks" onclick="openTab(event, 'ETFs')">ETFs</button>
+    </div>
+    <div id="Stocks" class="tabcontent">
+    <h2>Analysed Stocks (100)</h2>
+    <table id="stockTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0, 'stockTable')">Symbol</th>
+                <th onclick="sortTable(1, 'stockTable')">Name</th>
+                <th onclick="sortTable(2, 'stockTable')">Industry</th>
+                <th onclick="sortTable(3, 'stockTable')">MC</th>
+                <th onclick="sortTable(4, 'stockTable')">Price</th>
+                <th onclick="sortTable(5, 'stockTable')">PE</th>
+                <th onclick="sortTable(6, 'stockTable')">PS</th>
+                <th onclick="sortTable(7, 'stockTable')">Score</th>
+                <th onclick="sortTable(8, 'stockTable')">1D Change</th>
+                <th onclick="sortTable(9, 'stockTable')">5D Change</th>
+                <th onclick="sortTable(10, 'stockTable')">Momentum</th>
+                <th onclick="sortTable(11, 'stockTable')">Volatility</th>
+                <th onclick="sortTable(12, 'stockTable')">RSI</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td><b>AGL.AX</b></td>
+                <td>AGL Energy Limited</td>
+                <td>Utilities</td>
+                <td>$6.3B</td>
+                <td>$9.39</td>
+                <td>-</td>
+                <td>0.44</td>
+                <td><span class="score-box">-2.39</span></td>
+                <td class="positive">+0.13 (+1.40%)</td>
+                <td class="neutral">+0.00 (+0.00%)</td>
+                <td class="positive">+0.54%</td>
+                <td>21.58%</td>
+                <td class="neutral">65.63</td>
+            </tr>
+            
+            <tr>
+                <td><b>AIA.AX</b></td>
+                <td>Auckland International Airport</td>
+                <td>Industrials</td>
+                <td>$11.9B</td>
+                <td>$7.06</td>
+                <td>30.70</td>
+                <td>12.53</td>
+                <td><span class="score-box">-7.33</span></td>
+                <td class="positive">+0.06 (+0.86%)</td>
+                <td class="positive">+0.09 (+1.29%)</td>
+                <td class="positive">+2.02%</td>
+                <td>15.75%</td>
+                <td class="neutral">59.09</td>
+            </tr>
+            
+            <tr>
+                <td><b>ALD.AX</b></td>
+                <td>Ampol Limited</td>
+                <td>Energy</td>
+                <td>$7.8B</td>
+                <td>$32.65</td>
+                <td>-</td>
+                <td>0.24</td>
+                <td><span class="score-box">-4.46</span></td>
+                <td class="positive">+0.18 (+0.55%)</td>
+                <td class="positive">+0.63 (+1.97%)</td>
+                <td class="positive">+2.77%</td>
+                <td>22.57%</td>
+                <td class="negative">70.97</td>
+            </tr>
+            
+            <tr>
+                <td><b>ALL.AX</b></td>
+                <td>Aristocrat Leisure Limited</td>
+                <td>Consumer Cyclical</td>
+                <td>$35.0B</td>
+                <td>$56.71</td>
+                <td>30.01</td>
+                <td>5.56</td>
+                <td><span class="score-box">-6.84</span></td>
+                <td class="negative">-0.18 (-0.32%)</td>
+                <td class="negative">-0.69 (-1.20%)</td>
+                <td class="negative">-1.80%</td>
+                <td>19.76%</td>
+                <td class="neutral">39.72</td>
+            </tr>
+            
+            <tr>
+                <td><b>ALQ.AX</b></td>
+                <td>ALS Limited</td>
+                <td>Industrials</td>
+                <td>$11.1B</td>
+                <td>$21.79</td>
+                <td>39.62</td>
+                <td>3.46</td>
+                <td><span class="score-box">1.54</span></td>
+                <td class="positive">+0.50 (+2.35%)</td>
+                <td class="negative">-0.36 (-1.63%)</td>
+                <td class="negative">-0.95%</td>
+                <td>25.08%</td>
+                <td class="neutral">55.60</td>
+            </tr>
+            
+            <tr>
+                <td><b>ALX.AX</b></td>
+                <td>Atlas Arteria</td>
+                <td>Industrials</td>
+                <td>$7.0B</td>
+                <td>$4.82</td>
+                <td>24.10</td>
+                <td>45.47</td>
+                <td><span class="score-box">-3.67</span></td>
+                <td class="positive">+0.04 (+0.84%)</td>
+                <td class="negative">-0.05 (-1.03%)</td>
+                <td class="negative">-1.23%</td>
+                <td>11.71%</td>
+                <td class="positive">21.95</td>
+            </tr>
+            
+            <tr>
+                <td><b>AMC.AX</b></td>
+                <td>Amcor PLC</td>
+                <td>Consumer Cyclical</td>
+                <td>$28.9B</td>
+                <td>$12.50</td>
+                <td>27.78</td>
+                <td>1.66</td>
+                <td><span class="score-box">-7.72</span></td>
+                <td class="positive">+0.23 (+1.87%)</td>
+                <td class="negative">-0.10 (-0.79%)</td>
+                <td class="negative">-0.56%</td>
+                <td>14.56%</td>
+                <td class="neutral">35.26</td>
+            </tr>
+            
+            <tr>
+                <td><b>ANN.AX</b></td>
+                <td>Ansell Limited</td>
+                <td>Healthcare</td>
+                <td>$5.2B</td>
+                <td>$35.88</td>
+                <td>34.50</td>
+                <td>2.59</td>
+                <td><span class="score-box">-6.25</span></td>
+                <td class="positive">+0.22 (+0.62%)</td>
+                <td class="negative">-0.13 (-0.36%)</td>
+                <td class="negative">-0.66%</td>
+                <td>16.51%</td>
+                <td class="neutral">42.98</td>
+            </tr>
+            
+            <tr>
+                <td><b>ANZ.AX</b></td>
+                <td>ANZ Group Holdings Limited</td>
+                <td>Financial Services</td>
+                <td>$106.8B</td>
+                <td>$35.81</td>
+                <td>18.18</td>
+                <td>4.91</td>
+                <td><span class="score-box">-4.81</span></td>
+                <td class="positive">+0.42 (+1.19%)</td>
+                <td class="positive">+0.48 (+1.36%)</td>
+                <td class="positive">+2.11%</td>
+                <td>19.76%</td>
+                <td class="neutral">63.14</td>
+            </tr>
+            
+            <tr>
+                <td><b>APA.AX</b></td>
+                <td>APA Group</td>
+                <td>Utilities</td>
+                <td>$12.0B</td>
+                <td>$9.12</td>
+                <td>114.00</td>
+                <td>3.74</td>
+                <td><span class="score-box">-8.54</span></td>
+                <td class="positive">+0.03 (+0.33%)</td>
+                <td class="negative">-0.20 (-2.15%)</td>
+                <td class="negative">-1.41%</td>
+                <td>14.51%</td>
+                <td class="positive">28.40</td>
+            </tr>
+            
+            <tr>
+                <td><b>ARB.AX</b></td>
+                <td>ARB Corporation Limited</td>
+                <td>Consumer Cyclical</td>
+                <td>$2.6B</td>
+                <td>$31.64</td>
+                <td>26.81</td>
+                <td>3.60</td>
+                <td><span class="score-box">-13.06</span></td>
+                <td class="positive">+0.04 (+0.13%)</td>
+                <td class="negative">-0.52 (-1.62%)</td>
+                <td class="negative">-2.38%</td>
+                <td>28.92%</td>
+                <td class="positive">28.46</td>
+            </tr>
+            
+            <tr>
+                <td><b>ASX.AX</b></td>
+                <td>ASX Limited</td>
+                <td>Financial Services</td>
+                <td>$11.1B</td>
+                <td>$56.89</td>
+                <td>21.97</td>
+                <td>9.90</td>
+                <td><span class="score-box">-6.02</span></td>
+                <td class="negative">-0.23 (-0.40%)</td>
+                <td class="negative">-0.28 (-0.49%)</td>
+                <td class="negative">-0.91%</td>
+                <td>12.63%</td>
+                <td class="neutral">35.80</td>
+            </tr>
+            
+            <tr>
+                <td><b>AZJ.AX</b></td>
+                <td>Aurizon Holdings</td>
+                <td>Industrials</td>
+                <td>$6.2B</td>
+                <td>$3.57</td>
+                <td>21.00</td>
+                <td>1.58</td>
+                <td><span class="score-box">-2.65</span></td>
+                <td class="neutral">+0.00 (+0.00%)</td>
+                <td class="negative">-0.04 (-1.11%)</td>
+                <td class="negative">-0.56%</td>
+                <td>15.08%</td>
+                <td class="neutral">57.14</td>
+            </tr>
+            
+            <tr>
+                <td><b>BHP.AX</b></td>
+                <td>BHP Group Limited</td>
+                <td>Basic Materials</td>
+                <td>$231.5B</td>
+                <td>$45.59</td>
+                <td>17.14</td>
+                <td>4.52</td>
+                <td><span class="score-box">0.87</span></td>
+                <td class="positive">+0.49 (+1.09%)</td>
+                <td class="positive">+0.75 (+1.67%)</td>
+                <td class="positive">+2.52%</td>
+                <td>25.58%</td>
+                <td class="negative">89.13</td>
+            </tr>
+            
+            <tr>
+                <td><b>BPT.AX</b></td>
+                <td>Beach Energy</td>
+                <td>Energy</td>
+                <td>$2.6B</td>
+                <td>$1.15</td>
+                <td>-</td>
+                <td>1.25</td>
+                <td><span class="score-box">-12.15</span></td>
+                <td class="neutral">+0.00 (+0.00%)</td>
+                <td class="negative">-0.02 (-1.71%)</td>
+                <td class="negative">-1.29%</td>
+                <td>24.70%</td>
+                <td class="neutral">35.71</td>
+            </tr>
+            
+            <tr>
+                <td><b>BRG.AX</b></td>
+                <td>Breville Group</td>
+                <td>Consumer Cyclical</td>
+                <td>$4.2B</td>
+                <td>$28.94</td>
+                <td>31.12</td>
+                <td>2.47</td>
+                <td><span class="score-box">32.86</span></td>
+                <td class="positive">+0.43 (+1.51%)</td>
+                <td class="negative">-0.48 (-1.63%)</td>
+                <td class="negative">-2.66%</td>
+                <td>26.97%</td>
+                <td class="neutral">34.17</td>
+            </tr>
+            
+            <tr>
+                <td><b>BSL.AX</b></td>
+                <td>BlueScope Steel</td>
+                <td>Basic Materials</td>
+                <td>$10.5B</td>
+                <td>$23.97</td>
+                <td>141.00</td>
+                <td>0.64</td>
+                <td><span class="score-box">-14.08</span></td>
+                <td class="positive">+0.31 (+1.31%)</td>
+                <td class="positive">+0.19 (+0.80%)</td>
+                <td class="positive">+1.14%</td>
+                <td>28.87%</td>
+                <td class="neutral">68.78</td>
+            </tr>
+            
+            <tr>
+                <td><b>BXB.AX</b></td>
+                <td>Brambles Limited</td>
+                <td>Industrials</td>
+                <td>$31.3B</td>
+                <td>$22.99</td>
+                <td>24.72</td>
+                <td>4.57</td>
+                <td><span class="score-box">-6.08</span></td>
+                <td class="positive">+0.18 (+0.79%)</td>
+                <td class="negative">-0.19 (-0.82%)</td>
+                <td class="negative">-0.09%</td>
+                <td>11.81%</td>
+                <td class="neutral">33.86</td>
+            </tr>
+            
+            <tr>
+                <td><b>CAR.AX</b></td>
+                <td>CAR Group Limited</td>
+                <td>Communication Services</td>
+                <td>$11.7B</td>
+                <td>$30.89</td>
+                <td>42.32</td>
+                <td>9.87</td>
+                <td><span class="score-box">0.65</span></td>
+                <td class="negative">-0.51 (-1.62%)</td>
+                <td class="negative">-1.73 (-5.30%)</td>
+                <td class="negative">-5.71%</td>
+                <td>22.10%</td>
+                <td class="positive">28.21</td>
+            </tr>
+            
+            <tr>
+                <td><b>CBA.AX</b></td>
+                <td>Commonwealth Bank of Australia</td>
+                <td>Financial Services</td>
+                <td>$260.8B</td>
+                <td>$155.96</td>
+                <td>25.78</td>
+                <td>9.46</td>
+                <td><span class="score-box">-3.14</span></td>
+                <td class="positive">+3.22 (+2.11%)</td>
+                <td class="positive">+1.75 (+1.13%)</td>
+                <td class="positive">+0.35%</td>
+                <td>16.62%</td>
+                <td class="neutral">53.21</td>
+            </tr>
+            
+            <tr>
+                <td><b>CGF.AX</b></td>
+                <td>Challenger Limited</td>
+                <td>Financial Services</td>
+                <td>$6.3B</td>
+                <td>$9.12</td>
+                <td>32.57</td>
+                <td>2.18</td>
+                <td><span class="score-box">-4.31</span></td>
+                <td class="positive">+0.08 (+0.88%)</td>
+                <td class="positive">+0.01 (+0.11%)</td>
+                <td class="positive">+0.33%</td>
+                <td>16.26%</td>
+                <td class="negative">73.61</td>
+            </tr>
+            
+            <tr>
+                <td><b>CHC.AX</b></td>
+                <td>Charter Hall Group</td>
+                <td>Real Estate</td>
+                <td>$11.9B</td>
+                <td>$25.07</td>
+                <td>36.87</td>
+                <td>17.24</td>
+                <td><span class="score-box">-3.38</span></td>
+                <td class="positive">+0.48 (+1.95%)</td>
+                <td class="positive">+0.56 (+2.28%)</td>
+                <td class="positive">+3.13%</td>
+                <td>31.90%</td>
+                <td class="neutral">53.85</td>
+            </tr>
+            
+            <tr>
+                <td><b>CNU.AX</b></td>
+                <td>Chorus Limited</td>
+                <td>Communication Services</td>
+                <td>$3.5B</td>
+                <td>$8.13</td>
+                <td>813.00</td>
+                <td>3.48</td>
+                <td><span class="score-box">-8.50</span></td>
+                <td class="positive">+0.03 (+0.37%)</td>
+                <td class="positive">+0.17 (+2.14%)</td>
+                <td class="positive">+1.37%</td>
+                <td>13.12%</td>
+                <td class="neutral">50.00</td>
+            </tr>
+            
+            <tr>
+                <td><b>COH.AX</b></td>
+                <td>Cochlear Limited</td>
+                <td>Healthcare</td>
+                <td>$17.2B</td>
+                <td>$263.46</td>
+                <td>44.28</td>
+                <td>7.35</td>
+                <td><span class="score-box">-4.16</span></td>
+                <td class="positive">+0.61 (+0.23%)</td>
+                <td class="negative">-6.01 (-2.23%)</td>
+                <td class="negative">-2.82%</td>
+                <td>19.22%</td>
+                <td class="neutral">33.95</td>
+            </tr>
+            
+            <tr>
+                <td><b>COL.AX</b></td>
+                <td>Coles Group Limited</td>
+                <td>Consumer Defensive</td>
+                <td>$29.2B</td>
+                <td>$21.79</td>
+                <td>26.90</td>
+                <td>0.66</td>
+                <td><span class="score-box">-2.04</span></td>
+                <td class="negative">-0.05 (-0.23%)</td>
+                <td class="negative">-0.06 (-0.27%)</td>
+                <td class="positive">+0.09%</td>
+                <td>9.61%</td>
+                <td class="positive">27.61</td>
+            </tr>
+            
+            <tr>
+                <td><b>CPU.AX</b></td>
+                <td>Computershare Limited</td>
+                <td>Financial Services</td>
+                <td>$19.8B</td>
+                <td>$33.83</td>
+                <td>21.97</td>
+                <td>6.35</td>
+                <td><span class="score-box">-8.67</span></td>
+                <td class="positive">+0.04 (+0.12%)</td>
+                <td class="negative">-1.09 (-3.12%)</td>
+                <td class="negative">-3.12%</td>
+                <td>24.77%</td>
+                <td class="neutral">34.51</td>
+            </tr>
+            
+            <tr>
+                <td><b>CSL.AX</b></td>
+                <td>CSL Limited</td>
+                <td>Healthcare</td>
+                <td>$89.2B</td>
+                <td>$183.93</td>
+                <td>19.88</td>
+                <td>5.74</td>
+                <td><span class="score-box">2.48</span></td>
+                <td class="positive">+5.12 (+2.86%)</td>
+                <td class="negative">-0.17 (-0.09%)</td>
+                <td class="negative">-0.85%</td>
+                <td>20.12%</td>
+                <td class="neutral">51.81</td>
+            </tr>
+            
+            <tr>
+                <td><b>CWY.AX</b></td>
+                <td>Cleanaway Waste Management</td>
+                <td>Industrials</td>
+                <td>$5.9B</td>
+                <td>$2.63</td>
+                <td>37.57</td>
+                <td>1.53</td>
+                <td><span class="score-box">-4.68</span></td>
+                <td class="neutral">+0.00 (+0.00%)</td>
+                <td class="negative">-0.02 (-0.75%)</td>
+                <td class="negative">-0.75%</td>
+                <td>15.47%</td>
+                <td class="neutral">54.17</td>
+            </tr>
+            
+            <tr>
+                <td><b>DOW.AX</b></td>
+                <td>Downer EDI</td>
+                <td>Industrials</td>
+                <td>$5.3B</td>
+                <td>$7.98</td>
+                <td>39.90</td>
+                <td>0.51</td>
+                <td><span class="score-box">-3.65</span></td>
+                <td class="positive">+0.04 (+0.50%)</td>
+                <td class="positive">+0.10 (+1.27%)</td>
+                <td class="positive">+1.01%</td>
+                <td>16.48%</td>
+                <td class="neutral">68.18</td>
+            </tr>
+            
+            <tr>
+                <td><b>DXS.AX</b></td>
+                <td>Dexus</td>
+                <td>Real Estate</td>
+                <td>$7.5B</td>
+                <td>$6.96</td>
+                <td>46.40</td>
+                <td>5.83</td>
+                <td><span class="score-box">-5.54</span></td>
+                <td class="negative">-0.05 (-0.71%)</td>
+                <td class="negative">-0.11 (-1.56%)</td>
+                <td class="negative">-1.97%</td>
+                <td>24.53%</td>
+                <td class="positive">27.55</td>
+            </tr>
+            
+            <tr>
+                <td><b>EDV.AX</b></td>
+                <td>Endeavour Group Limited</td>
+                <td>Consumer Defensive</td>
+                <td>$6.7B</td>
+                <td>$3.74</td>
+                <td>15.58</td>
+                <td>0.56</td>
+                <td><span class="score-box">3.80</span></td>
+                <td class="positive">+0.05 (+1.36%)</td>
+                <td class="positive">+0.04 (+1.08%)</td>
+                <td class="positive">+1.36%</td>
+                <td>15.03%</td>
+                <td class="neutral">58.54</td>
+            </tr>
+            
+            <tr>
+                <td><b>EVN.AX</b></td>
+                <td>Evolution Mining</td>
+                <td>Basic Materials</td>
+                <td>$25.9B</td>
+                <td>$12.76</td>
+                <td>27.74</td>
+                <td>5.95</td>
+                <td><span class="score-box">4.33</span></td>
+                <td class="positive">+0.51 (+4.16%)</td>
+                <td class="positive">+0.76 (+6.33%)</td>
+                <td class="positive">+8.60%</td>
+                <td>43.18%</td>
+                <td class="negative">74.62</td>
+            </tr>
+            
+            <tr>
+                <td><b>FLT.AX</b></td>
+                <td>Flight Centre Travel Group</td>
+                <td>Consumer Cyclical</td>
+                <td>$3.2B</td>
+                <td>$14.81</td>
+                <td>30.22</td>
+                <td>1.14</td>
+                <td><span class="score-box">6.31</span></td>
+                <td class="positive">+0.09 (+0.61%)</td>
+                <td class="positive">+1.16 (+8.50%)</td>
+                <td class="positive">+8.98%</td>
+                <td>45.47%</td>
+                <td class="negative">86.85</td>
+            </tr>
+            
+            <tr>
+                <td><b>FMG.AX</b></td>
+                <td>Fortescue Ltd</td>
+                <td>Basic Materials</td>
+                <td>$70.8B</td>
+                <td>$22.98</td>
+                <td>14.01</td>
+                <td>4.55</td>
+                <td><span class="score-box">-2.06</span></td>
+                <td class="positive">+0.24 (+1.06%)</td>
+                <td class="positive">+0.87 (+3.93%)</td>
+                <td class="positive">+4.08%</td>
+                <td>31.62%</td>
+                <td class="negative">86.71</td>
+            </tr>
+            
+            <tr>
+                <td><b>FPH.AX</b></td>
+                <td>Fisher & Paykel Healthcare</td>
+                <td>Healthcare</td>
+                <td>$19.1B</td>
+                <td>$32.57</td>
+                <td>50.89</td>
+                <td>8.86</td>
+                <td><span class="score-box">-1.97</span></td>
+                <td class="negative">-0.32 (-0.97%)</td>
+                <td class="negative">-0.52 (-1.57%)</td>
+                <td class="negative">-2.05%</td>
+                <td>23.13%</td>
+                <td class="neutral">54.29</td>
+            </tr>
+            
+            <tr>
+                <td><b>GMG.AX</b></td>
+                <td>Goodman Group</td>
+                <td>Real Estate</td>
+                <td>$60.2B</td>
+                <td>$29.44</td>
+                <td>34.64</td>
+                <td>17.65</td>
+                <td><span class="score-box">-3.75</span></td>
+                <td class="positive">+0.24 (+0.82%)</td>
+                <td class="negative">-0.07 (-0.24%)</td>
+                <td class="negative">-0.74%</td>
+                <td>24.72%</td>
+                <td class="neutral">53.05</td>
+            </tr>
+            
+            <tr>
+                <td><b>GPT.AX</b></td>
+                <td>The GPT Group</td>
+                <td>Real Estate</td>
+                <td>$10.5B</td>
+                <td>$5.47</td>
+                <td>27.35</td>
+                <td>9.84</td>
+                <td><span class="score-box">2.10</span></td>
+                <td class="positive">+0.06 (+1.11%)</td>
+                <td class="neutral">+0.00 (+0.00%)</td>
+                <td class="positive">+0.37%</td>
+                <td>24.88%</td>
+                <td class="neutral">32.79</td>
+            </tr>
+            
+            <tr>
+                <td><b>HUB.AX</b></td>
+                <td>HUB24 Limited</td>
+                <td>Financial Services</td>
+                <td>$8.1B</td>
+                <td>$99.10</td>
+                <td>103.23</td>
+                <td>20.12</td>
+                <td><span class="score-box">-8.18</span></td>
+                <td class="positive">+1.70 (+1.75%)</td>
+                <td class="negative">-0.85 (-0.85%)</td>
+                <td class="positive">+1.07%</td>
+                <td>40.74%</td>
+                <td class="neutral">40.09</td>
+            </tr>
+            
+            <tr>
+                <td><b>HVN.AX</b></td>
+                <td>Harvey Norman Holdings</td>
+                <td>Consumer Cyclical</td>
+                <td>$8.7B</td>
+                <td>$7.00</td>
+                <td>16.67</td>
+                <td>2.99</td>
+                <td><span class="score-box">-7.29</span></td>
+                <td class="negative">-0.02 (-0.28%)</td>
+                <td class="negative">-0.25 (-3.45%)</td>
+                <td class="negative">-4.37%</td>
+                <td>24.78%</td>
+                <td class="neutral">36.36</td>
+            </tr>
+            
+            <tr>
+                <td><b>IAG.AX</b></td>
+                <td>Insurance Australia Group Limited</td>
+                <td>Financial Services</td>
+                <td>$18.5B</td>
+                <td>$7.81</td>
+                <td>13.70</td>
+                <td>1.06</td>
+                <td><span class="score-box">-0.44</span></td>
+                <td class="positive">+0.06 (+0.77%)</td>
+                <td class="positive">+0.07 (+0.90%)</td>
+                <td class="negative">-0.13%</td>
+                <td>17.12%</td>
+                <td class="neutral">48.57</td>
+            </tr>
+            
+            <tr>
+                <td><b>IGO.AX</b></td>
+                <td>IGO Limited</td>
+                <td>Basic Materials</td>
+                <td>$5.4B</td>
+                <td>$7.12</td>
+                <td>-</td>
+                <td>10.22</td>
+                <td><span class="score-box">-9.45</span></td>
+                <td class="positive">+0.14 (+2.01%)</td>
+                <td class="positive">+0.19 (+2.74%)</td>
+                <td class="positive">+1.57%</td>
+                <td>69.35%</td>
+                <td class="negative">71.43</td>
+            </tr>
+            
+            <tr>
+                <td><b>JBH.AX</b></td>
+                <td>JB Hi-Fi Limited</td>
+                <td>Consumer Cyclical</td>
+                <td>$10.0B</td>
+                <td>$91.81</td>
+                <td>21.81</td>
+                <td>0.95</td>
+                <td><span class="score-box">-6.50</span></td>
+                <td class="positive">+2.40 (+2.68%)</td>
+                <td class="negative">-2.97 (-3.13%)</td>
+                <td class="negative">-3.02%</td>
+                <td>19.41%</td>
+                <td class="neutral">35.97</td>
+            </tr>
+            
+            <tr>
+                <td><b>LLC.AX</b></td>
+                <td>Lendlease Group</td>
+                <td>Real Estate</td>
+                <td>$3.6B</td>
+                <td>$5.20</td>
+                <td>15.76</td>
+                <td>0.46</td>
+                <td><span class="score-box">-5.69</span></td>
+                <td class="positive">+0.05 (+0.97%)</td>
+                <td class="positive">+0.04 (+0.78%)</td>
+                <td class="positive">+1.17%</td>
+                <td>22.27%</td>
+                <td class="neutral">47.73</td>
+            </tr>
+            
+            <tr>
+                <td><b>LYC.AX</b></td>
+                <td>Lynas Rare Earths Limited</td>
+                <td>Basic Materials</td>
+                <td>$12.9B</td>
+                <td>$12.85</td>
+                <td>1285.00</td>
+                <td>23.24</td>
+                <td><span class="score-box">-14.10</span></td>
+                <td class="positive">+0.19 (+1.50%)</td>
+                <td class="negative">-1.29 (-9.12%)</td>
+                <td class="negative">-5.58%</td>
+                <td>50.88%</td>
+                <td class="positive">22.69</td>
+            </tr>
+            
+            <tr>
+                <td><b>MGR.AX</b></td>
+                <td>Mirvac Group</td>
+                <td>Real Estate</td>
+                <td>$8.1B</td>
+                <td>$2.05</td>
+                <td>102.50</td>
+                <td>3.03</td>
+                <td><span class="score-box">9.87</span></td>
+                <td class="positive">+0.02 (+0.99%)</td>
+                <td class="positive">+0.02 (+0.99%)</td>
+                <td class="neutral">+0.00%</td>
+                <td>23.75%</td>
+                <td class="positive">17.14</td>
+            </tr>
+            
+            <tr>
+                <td><b>MIN.AX</b></td>
+                <td>Mineral Resources Limited</td>
+                <td>Basic Materials</td>
+                <td>$10.3B</td>
+                <td>$52.03</td>
+                <td>-</td>
+                <td>2.30</td>
+                <td><span class="score-box">-6.69</span></td>
+                <td class="positive">+0.37 (+0.72%)</td>
+                <td class="positive">+1.88 (+3.75%)</td>
+                <td class="positive">+1.09%</td>
+                <td>41.14%</td>
+                <td class="neutral">66.64</td>
+            </tr>
+            
+            <tr>
+                <td><b>MPL.AX</b></td>
+                <td>Medibank Private Limited</td>
+                <td>Financial Services</td>
+                <td>$12.9B</td>
+                <td>$4.69</td>
+                <td>26.06</td>
+                <td>1.51</td>
+                <td><span class="score-box">-4.53</span></td>
+                <td class="positive">+0.02 (+0.43%)</td>
+                <td class="positive">+0.19 (+4.22%)</td>
+                <td class="positive">+3.53%</td>
+                <td>22.33%</td>
+                <td class="neutral">37.31</td>
+            </tr>
+            
+            <tr>
+                <td><b>MQG.AX</b></td>
+                <td>Macquarie Group Limited</td>
+                <td>Financial Services</td>
+                <td>$77.6B</td>
+                <td>$201.57</td>
+                <td>18.36</td>
+                <td>4.21</td>
+                <td><span class="score-box">0.71</span></td>
+                <td class="positive">+5.22 (+2.66%)</td>
+                <td class="positive">+5.78 (+2.95%)</td>
+                <td class="positive">+2.47%</td>
+                <td>21.71%</td>
+                <td class="neutral">64.67</td>
+            </tr>
+            
+            <tr>
+                <td><b>MTS.AX</b></td>
+                <td>Metcash Limited</td>
+                <td>Consumer Defensive</td>
+                <td>$3.6B</td>
+                <td>$3.26</td>
+                <td>12.54</td>
+                <td>0.21</td>
+                <td><span class="score-box">-8.74</span></td>
+                <td class="negative">-0.01 (-0.46%)</td>
+                <td class="negative">-0.03 (-1.05%)</td>
+                <td class="negative">-1.92%</td>
+                <td>36.68%</td>
+                <td class="positive">20.11</td>
+            </tr>
+            
+            <tr>
+                <td><b>NAB.AX</b></td>
+                <td>National Australia Bank Limited</td>
+                <td>Financial Services</td>
+                <td>$128.7B</td>
+                <td>$42.13</td>
+                <td>19.06</td>
+                <td>6.42</td>
+                <td><span class="score-box">0.89</span></td>
+                <td class="positive">+0.75 (+1.81%)</td>
+                <td class="positive">+1.27 (+3.11%)</td>
+                <td class="positive">+3.77%</td>
+                <td>15.87%</td>
+                <td class="neutral">68.43</td>
+            </tr>
+            
+            <tr>
+                <td><b>NHC.AX</b></td>
+                <td>New Hope Corporation</td>
+                <td>Energy</td>
+                <td>$3.4B</td>
+                <td>$4.04</td>
+                <td>8.08</td>
+                <td>1.90</td>
+                <td><span class="score-box">0.12</span></td>
+                <td class="positive">+0.06 (+1.51%)</td>
+                <td class="positive">+0.05 (+1.25%)</td>
+                <td class="positive">+0.75%</td>
+                <td>28.79%</td>
+                <td class="neutral">69.81</td>
+            </tr>
+            
+            <tr>
+                <td><b>NSR.AX</b></td>
+                <td>National Storage REIT</td>
+                <td>Real Estate</td>
+                <td>$3.9B</td>
+                <td>$2.78</td>
+                <td>139.00</td>
+                <td>10.00</td>
+                <td><span class="score-box">9.02</span></td>
+                <td class="neutral">+0.00 (+0.00%)</td>
+                <td class="positive">+0.05 (+1.83%)</td>
+                <td class="negative">-0.36%</td>
+                <td>67.04%</td>
+                <td class="negative">89.23</td>
+            </tr>
+            
+            <tr>
+                <td><b>NST.AX</b></td>
+                <td>Northern Star Resources Limited</td>
+                <td>Basic Materials</td>
+                <td>$39.1B</td>
+                <td>$27.33</td>
+                <td>24.40</td>
+                <td>6.10</td>
+                <td><span class="score-box">0.80</span></td>
+                <td class="positive">+0.76 (+2.86%)</td>
+                <td class="positive">+1.00 (+3.80%)</td>
+                <td class="positive">+5.24%</td>
+                <td>41.40%</td>
+                <td class="neutral">63.16</td>
+            </tr>
+            
+            <tr>
+                <td><b>NWL.AX</b></td>
+                <td>Netwealth Group</td>
+                <td>Financial Services</td>
+                <td>$6.6B</td>
+                <td>$26.86</td>
+                <td>55.96</td>
+                <td>20.31</td>
+                <td><span class="score-box">-12.32</span></td>
+                <td class="positive">+0.11 (+0.41%)</td>
+                <td class="positive">+0.42 (+1.59%)</td>
+                <td class="positive">+0.56%</td>
+                <td>44.12%</td>
+                <td class="neutral">41.51</td>
+            </tr>
+            
+            <tr>
+                <td><b>NXT.AX</b></td>
+                <td>Nextdc Limited</td>
+                <td>Technology</td>
+                <td>$8.7B</td>
+                <td>$13.51</td>
+                <td>-</td>
+                <td>20.29</td>
+                <td><span class="score-box">-11.49</span></td>
+                <td class="negative">-0.05 (-0.37%)</td>
+                <td class="negative">-0.35 (-2.53%)</td>
+                <td class="negative">-4.52%</td>
+                <td>36.56%</td>
+                <td class="neutral">48.10</td>
+            </tr>
+            
+            <tr>
+                <td><b>ORA.AX</b></td>
+                <td>Orora Limited</td>
+                <td>Consumer Cyclical</td>
+                <td>$2.7B</td>
+                <td>$2.18</td>
+                <td>43.60</td>
+                <td>1.29</td>
+                <td><span class="score-box">-3.17</span></td>
+                <td class="positive">+0.01 (+0.46%)</td>
+                <td class="neutral">+0.00 (+0.00%)</td>
+                <td class="neutral">+0.00%</td>
+                <td>14.48%</td>
+                <td class="neutral">40.00</td>
+            </tr>
+            
+            <tr>
+                <td><b>ORG.AX</b></td>
+                <td>Origin Energy Limited</td>
+                <td>Utilities</td>
+                <td>$20.1B</td>
+                <td>$11.66</td>
+                <td>13.56</td>
+                <td>1.16</td>
+                <td><span class="score-box">-8.27</span></td>
+                <td class="positive">+0.12 (+1.04%)</td>
+                <td class="negative">-0.03 (-0.26%)</td>
+                <td class="positive">+0.78%</td>
+                <td>14.78%</td>
+                <td class="neutral">47.62</td>
+            </tr>
+            
+            <tr>
+                <td><b>ORI.AX</b></td>
+                <td>Orica Limited</td>
+                <td>Basic Materials</td>
+                <td>$11.1B</td>
+                <td>$23.65</td>
+                <td>71.67</td>
+                <td>1.36</td>
+                <td><span class="score-box">6.57</span></td>
+                <td class="positive">+0.24 (+1.03%)</td>
+                <td class="negative">-0.26 (-1.09%)</td>
+                <td class="negative">-0.76%</td>
+                <td>16.97%</td>
+                <td class="neutral">58.06</td>
+            </tr>
+            
+            <tr>
+                <td><b>PLS.AX</b></td>
+                <td>Pilbara Minerals Limited</td>
+                <td>Basic Materials</td>
+                <td>$13.2B</td>
+                <td>$4.10</td>
+                <td>-</td>
+                <td>17.17</td>
+                <td><span class="score-box">-2.35</span></td>
+                <td class="negative">-0.02 (-0.49%)</td>
+                <td class="positive">+0.30 (+7.89%)</td>
+                <td class="positive">+1.74%</td>
+                <td>65.34%</td>
+                <td class="neutral">61.97</td>
+            </tr>
+            
+            <tr>
+                <td><b>PME.AX</b></td>
+                <td>Pro Medicus Limited</td>
+                <td>Healthcare</td>
+                <td>$24.5B</td>
+                <td>$234.43</td>
+                <td>213.12</td>
+                <td>115.04</td>
+                <td><span class="score-box">-9.02</span></td>
+                <td class="positive">+1.44 (+0.62%)</td>
+                <td class="negative">-14.57 (-5.85%)</td>
+                <td class="negative">-4.96%</td>
+                <td>31.25%</td>
+                <td class="positive">20.65</td>
+            </tr>
+            
+            <tr>
+                <td><b>QAN.AX</b></td>
+                <td>Qantas Airways Limited</td>
+                <td>Industrials</td>
+                <td>$14.9B</td>
+                <td>$9.84</td>
+                <td>9.46</td>
+                <td>0.63</td>
+                <td><span class="score-box">-5.85</span></td>
+                <td class="positive">+0.08 (+0.82%)</td>
+                <td class="positive">+0.03 (+0.31%)</td>
+                <td class="positive">+0.41%</td>
+                <td>22.36%</td>
+                <td class="neutral">64.23</td>
+            </tr>
+            
+            <tr>
+                <td><b>QBE.AX</b></td>
+                <td>QBE Insurance Group Limited</td>
+                <td>Financial Services</td>
+                <td>$29.3B</td>
+                <td>$19.37</td>
+                <td>9.73</td>
+                <td>1.26</td>
+                <td><span class="score-box">-5.53</span></td>
+                <td class="positive">+0.22 (+1.15%)</td>
+                <td class="positive">+0.54 (+2.87%)</td>
+                <td class="positive">+1.79%</td>
+                <td>20.20%</td>
+                <td class="neutral">40.55</td>
+            </tr>
+            
+            <tr>
+                <td><b>QUB.AX</b></td>
+                <td>Qube Holdings</td>
+                <td>Industrials</td>
+                <td>$8.3B</td>
+                <td>$4.71</td>
+                <td>78.50</td>
+                <td>2.00</td>
+                <td><span class="score-box">-9.43</span></td>
+                <td class="positive">+0.01 (+0.21%)</td>
+                <td class="positive">+0.10 (+2.17%)</td>
+                <td class="positive">+1.29%</td>
+                <td>70.41%</td>
+                <td class="neutral">38.10</td>
+            </tr>
+            
+            <tr>
+                <td><b>REA.AX</b></td>
+                <td>REA Group Limited</td>
+                <td>Communication Services</td>
+                <td>$24.8B</td>
+                <td>$188.09</td>
+                <td>36.66</td>
+                <td>13.10</td>
+                <td><span class="score-box">-10.17</span></td>
+                <td class="positive">+0.09 (+0.05%)</td>
+                <td class="negative">-2.16 (-1.14%)</td>
+                <td class="negative">-2.99%</td>
+                <td>19.27%</td>
+                <td class="positive">26.49</td>
+            </tr>
+            
+            <tr>
+                <td><b>REH.AX</b></td>
+                <td>Reece Limited</td>
+                <td>Industrials</td>
+                <td>$7.8B</td>
+                <td>$12.56</td>
+                <td>25.63</td>
+                <td>0.86</td>
+                <td><span class="score-box">-4.63</span></td>
+                <td class="positive">+0.23 (+1.87%)</td>
+                <td class="positive">+0.15 (+1.21%)</td>
+                <td class="negative">-1.26%</td>
+                <td>50.96%</td>
+                <td class="neutral">53.61</td>
+            </tr>
+            
+            <tr>
+                <td><b>RGN.AX</b></td>
+                <td>Region Group</td>
+                <td>Real Estate</td>
+                <td>$2.8B</td>
+                <td>$2.44</td>
+                <td>13.56</td>
+                <td>7.36</td>
+                <td><span class="score-box">-3.45</span></td>
+                <td class="positive">+0.01 (+0.41%)</td>
+                <td class="positive">+0.06 (+2.52%)</td>
+                <td class="positive">+2.09%</td>
+                <td>15.38%</td>
+                <td class="neutral">57.14</td>
+            </tr>
+            
+            <tr>
+                <td><b>RHC.AX</b></td>
+                <td>Ramsay Health Care Limited</td>
+                <td>Healthcare</td>
+                <td>$8.2B</td>
+                <td>$35.48</td>
+                <td>354.80</td>
+                <td>0.46</td>
+                <td><span class="score-box">-7.76</span></td>
+                <td class="positive">+0.11 (+0.31%)</td>
+                <td class="negative">-0.77 (-2.12%)</td>
+                <td class="negative">-0.62%</td>
+                <td>49.30%</td>
+                <td class="neutral">67.76</td>
+            </tr>
+            
+            <tr>
+                <td><b>RIO.AX</b></td>
+                <td>Rio Tinto Group</td>
+                <td>Basic Materials</td>
+                <td>$233.1B</td>
+                <td>$143.40</td>
+                <td>15.24</td>
+                <td>4.34</td>
+                <td><span class="score-box">10.29</span></td>
+                <td class="positive">+3.45 (+2.47%)</td>
+                <td class="positive">+4.93 (+3.56%)</td>
+                <td class="positive">+4.53%</td>
+                <td>27.62%</td>
+                <td class="negative">78.19</td>
+            </tr>
+            
+            <tr>
+                <td><b>RMD.AX</b></td>
+                <td>ResMed Inc.</td>
+                <td>Healthcare</td>
+                <td>$55.3B</td>
+                <td>$37.91</td>
+                <td>25.97</td>
+                <td>10.53</td>
+                <td><span class="score-box">-8.72</span></td>
+                <td class="positive">+0.04 (+0.11%)</td>
+                <td class="negative">-0.90 (-2.32%)</td>
+                <td class="negative">-1.30%</td>
+                <td>28.50%</td>
+                <td class="neutral">45.44</td>
+            </tr>
+            
+            <tr>
+                <td><b>RWC.AX</b></td>
+                <td>Reliance Worldwide Corp</td>
+                <td>Industrials</td>
+                <td>$3.0B</td>
+                <td>$3.86</td>
+                <td>16.08</td>
+                <td>2.25</td>
+                <td><span class="score-box">-15.56</span></td>
+                <td class="positive">+0.03 (+0.78%)</td>
+                <td class="negative">-0.21 (-5.16%)</td>
+                <td class="negative">-5.62%</td>
+                <td>33.08%</td>
+                <td class="neutral">34.57</td>
+            </tr>
+            
+            <tr>
+                <td><b>S32.AX</b></td>
+                <td>South32 Limited</td>
+                <td>Basic Materials</td>
+                <td>$16.0B</td>
+                <td>$3.56</td>
+                <td>32.36</td>
+                <td>2.67</td>
+                <td><span class="score-box">11.12</span></td>
+                <td class="positive">+0.13 (+3.79%)</td>
+                <td class="positive">+0.07 (+2.01%)</td>
+                <td class="positive">+4.40%</td>
+                <td>35.44%</td>
+                <td class="negative">79.17</td>
+            </tr>
+            
+            <tr>
+                <td><b>SCG.AX</b></td>
+                <td>Scentre Group</td>
+                <td>Real Estate</td>
+                <td>$21.9B</td>
+                <td>$4.20</td>
+                <td>15.56</td>
+                <td>8.19</td>
+                <td><span class="score-box">1.86</span></td>
+                <td class="positive">+0.04 (+0.96%)</td>
+                <td class="positive">+0.11 (+2.69%)</td>
+                <td class="positive">+2.44%</td>
+                <td>24.11%</td>
+                <td class="neutral">57.38</td>
+            </tr>
+            
+            <tr>
+                <td><b>SDF.AX</b></td>
+                <td>Steadfast Group</td>
+                <td>Financial Services</td>
+                <td>$5.7B</td>
+                <td>$5.09</td>
+                <td>16.97</td>
+                <td>2.74</td>
+                <td><span class="score-box">-1.25</span></td>
+                <td class="neutral">+0.00 (+0.00%)</td>
+                <td class="positive">+0.03 (+0.59%)</td>
+                <td class="positive">+1.19%</td>
+                <td>22.68%</td>
+                <td class="neutral">37.14</td>
+            </tr>
+            
+            <tr>
+                <td><b>SEK.AX</b></td>
+                <td>SEEK Limited</td>
+                <td>Communication Services</td>
+                <td>$8.2B</td>
+                <td>$22.88</td>
+                <td>34.15</td>
+                <td>7.45</td>
+                <td><span class="score-box">17.06</span></td>
+                <td class="negative">-0.02 (-0.09%)</td>
+                <td class="negative">-0.99 (-4.15%)</td>
+                <td class="negative">-4.23%</td>
+                <td>25.22%</td>
+                <td class="positive">16.75</td>
+            </tr>
+            
+            <tr>
+                <td><b>SFR.AX</b></td>
+                <td>Sandfire Resources</td>
+                <td>Basic Materials</td>
+                <td>$7.9B</td>
+                <td>$17.11</td>
+                <td>57.03</td>
+                <td>6.64</td>
+                <td><span class="score-box">10.44</span></td>
+                <td class="positive">+0.36 (+2.15%)</td>
+                <td class="positive">+0.23 (+1.36%)</td>
+                <td class="positive">+1.30%</td>
+                <td>35.56%</td>
+                <td class="negative">81.29</td>
+            </tr>
+            
+            <tr>
+                <td><b>SGM.AX</b></td>
+                <td>Sims Limited</td>
+                <td>Basic Materials</td>
+                <td>$3.5B</td>
+                <td>$18.26</td>
+                <td>1826.00</td>
+                <td>0.47</td>
+                <td><span class="score-box">9.59</span></td>
+                <td class="positive">+0.43 (+2.41%)</td>
+                <td class="positive">+0.44 (+2.47%)</td>
+                <td class="positive">+3.46%</td>
+                <td>34.93%</td>
+                <td class="negative">83.16</td>
+            </tr>
+            
+            <tr>
+                <td><b>SGP.AX</b></td>
+                <td>Stockland</td>
+                <td>Real Estate</td>
+                <td>$14.1B</td>
+                <td>$5.84</td>
+                <td>17.18</td>
+                <td>4.41</td>
+                <td><span class="score-box">-9.22</span></td>
+                <td class="positive">+0.02 (+0.34%)</td>
+                <td class="positive">+0.03 (+0.52%)</td>
+                <td class="positive">+0.69%</td>
+                <td>20.81%</td>
+                <td class="positive">18.46</td>
+            </tr>
+            
+            <tr>
+                <td><b>SHL.AX</b></td>
+                <td>Sonic Healthcare Limited</td>
+                <td>Healthcare</td>
+                <td>$11.5B</td>
+                <td>$23.19</td>
+                <td>21.67</td>
+                <td>1.19</td>
+                <td><span class="score-box">-8.17</span></td>
+                <td class="positive">+0.20 (+0.87%)</td>
+                <td class="positive">+0.08 (+0.35%)</td>
+                <td class="positive">+0.65%</td>
+                <td>27.22%</td>
+                <td class="neutral">41.71</td>
+            </tr>
+            
+            <tr>
+                <td><b>SOL.AX</b></td>
+                <td>Washington H. Soul Pattinson</td>
+                <td>Financial Services</td>
+                <td>$13.5B</td>
+                <td>$35.62</td>
+                <td>32.09</td>
+                <td>9.57</td>
+                <td><span class="score-box">-3.98</span></td>
+                <td class="positive">+0.44 (+1.25%)</td>
+                <td class="negative">-0.62 (-1.71%)</td>
+                <td class="negative">-1.79%</td>
+                <td>19.43%</td>
+                <td class="neutral">32.10</td>
+            </tr>
+            
+            <tr>
+                <td><b>SPK.AX</b></td>
+                <td>Spark New Zealand</td>
+                <td>Communication Services</td>
+                <td>$3.7B</td>
+                <td>$1.97</td>
+                <td>16.38</td>
+                <td>1.00</td>
+                <td><span class="score-box">-6.66</span></td>
+                <td class="negative">-0.01 (-0.51%)</td>
+                <td class="negative">-0.01 (-0.51%)</td>
+                <td class="negative">-1.75%</td>
+                <td>15.55%</td>
+                <td class="neutral">51.16</td>
+            </tr>
+            
+            <tr>
+                <td><b>STO.AX</b></td>
+                <td>Santos Limited</td>
+                <td>Energy</td>
+                <td>$20.3B</td>
+                <td>$6.26</td>
+                <td>13.32</td>
+                <td>3.87</td>
+                <td><span class="score-box">2.41</span></td>
+                <td class="negative">-0.03 (-0.48%)</td>
+                <td class="negative">-0.26 (-3.99%)</td>
+                <td class="negative">-3.69%</td>
+                <td>19.69%</td>
+                <td class="neutral">34.67</td>
+            </tr>
+            
+            <tr>
+                <td><b>SUL.AX</b></td>
+                <td>Super Retail Group</td>
+                <td>Consumer Cyclical</td>
+                <td>$3.5B</td>
+                <td>$15.47</td>
+                <td>15.95</td>
+                <td>0.86</td>
+                <td><span class="score-box">-6.21</span></td>
+                <td class="positive">+0.04 (+0.26%)</td>
+                <td class="negative">-0.76 (-4.68%)</td>
+                <td class="negative">-4.86%</td>
+                <td>20.95%</td>
+                <td class="neutral">30.56</td>
+            </tr>
+            
+            <tr>
+                <td><b>SUN.AX</b></td>
+                <td>Suncorp Group Limited</td>
+                <td>Financial Services</td>
+                <td>$18.7B</td>
+                <td>$17.30</td>
+                <td>12.72</td>
+                <td>1.25</td>
+                <td><span class="score-box">-3.80</span></td>
+                <td class="positive">+0.23 (+1.35%)</td>
+                <td class="positive">+0.40 (+2.37%)</td>
+                <td class="positive">+2.00%</td>
+                <td>18.88%</td>
+                <td class="positive">23.08</td>
+            </tr>
+            
+            <tr>
+                <td><b>TCL.AX</b></td>
+                <td>Transurban Group</td>
+                <td>Industrials</td>
+                <td>$45.6B</td>
+                <td>$14.65</td>
+                <td>366.25</td>
+                <td>12.10</td>
+                <td><span class="score-box">-4.69</span></td>
+                <td class="positive">+0.03 (+0.21%)</td>
+                <td class="negative">-0.34 (-2.27%)</td>
+                <td class="negative">-1.88%</td>
+                <td>12.76%</td>
+                <td class="positive">27.62</td>
+            </tr>
+            
+            <tr>
+                <td><b>TLC.AX</b></td>
+                <td>The Lottery Corporation</td>
+                <td>Consumer Cyclical</td>
+                <td>$11.7B</td>
+                <td>$5.26</td>
+                <td>32.88</td>
+                <td>3.12</td>
+                <td><span class="score-box">-8.01</span></td>
+                <td class="positive">+0.03 (+0.57%)</td>
+                <td class="negative">-0.06 (-1.13%)</td>
+                <td class="negative">-0.38%</td>
+                <td>14.44%</td>
+                <td class="neutral">36.54</td>
+            </tr>
+            
+            <tr>
+                <td><b>TLS.AX</b></td>
+                <td>Telstra Group Limited</td>
+                <td>Communication Services</td>
+                <td>$55.0B</td>
+                <td>$4.87</td>
+                <td>25.63</td>
+                <td>2.38</td>
+                <td><span class="score-box">-1.89</span></td>
+                <td class="negative">-0.01 (-0.20%)</td>
+                <td class="negative">-0.02 (-0.41%)</td>
+                <td class="negative">-1.62%</td>
+                <td>13.56%</td>
+                <td class="neutral">36.36</td>
+            </tr>
+            
+            <tr>
+                <td><b>TNE.AX</b></td>
+                <td>Technology One</td>
+                <td>Technology</td>
+                <td>$8.9B</td>
+                <td>$27.20</td>
+                <td>64.76</td>
+                <td>14.88</td>
+                <td><span class="score-box">-8.65</span></td>
+                <td class="negative">-0.45 (-1.63%)</td>
+                <td class="negative">-1.53 (-5.33%)</td>
+                <td class="negative">-5.72%</td>
+                <td>66.00%</td>
+                <td class="positive">29.89</td>
+            </tr>
+            
+            <tr>
+                <td><b>TWE.AX</b></td>
+                <td>Treasury Wine Estates Limited</td>
+                <td>Consumer Defensive</td>
+                <td>$4.4B</td>
+                <td>$5.49</td>
+                <td>10.17</td>
+                <td>1.48</td>
+                <td><span class="score-box">-5.99</span></td>
+                <td class="negative">-0.04 (-0.72%)</td>
+                <td class="negative">-0.20 (-3.51%)</td>
+                <td class="negative">-4.36%</td>
+                <td>19.85%</td>
+                <td class="neutral">40.00</td>
+            </tr>
+            
+            <tr>
+                <td><b>VCX.AX</b></td>
+                <td>Vicinity Centres</td>
+                <td>Real Estate</td>
+                <td>$11.9B</td>
+                <td>$2.58</td>
+                <td>11.73</td>
+                <td>8.60</td>
+                <td><span class="score-box">21.82</span></td>
+                <td class="positive">+0.06 (+2.38%)</td>
+                <td class="positive">+0.11 (+4.45%)</td>
+                <td class="positive">+4.45%</td>
+                <td>27.74%</td>
+                <td class="neutral">60.00</td>
+            </tr>
+            
+            <tr>
+                <td><b>VEA.AX</b></td>
+                <td>Viva Energy Group</td>
+                <td>Energy</td>
+                <td>$3.6B</td>
+                <td>$2.19</td>
+                <td>-</td>
+                <td>0.12</td>
+                <td><span class="score-box">-8.99</span></td>
+                <td class="positive">+0.01 (+0.46%)</td>
+                <td class="positive">+0.03 (+1.39%)</td>
+                <td class="positive">+0.92%</td>
+                <td>20.95%</td>
+                <td class="negative">80.77</td>
+            </tr>
+            
+            <tr>
+                <td><b>VNT.AX</b></td>
+                <td>Ventia Services Group</td>
+                <td>Industrials</td>
+                <td>$4.8B</td>
+                <td>$5.80</td>
+                <td>20.00</td>
+                <td>0.79</td>
+                <td><span class="score-box">-7.28</span></td>
+                <td class="positive">+0.08 (+1.40%)</td>
+                <td class="negative">-0.09 (-1.53%)</td>
+                <td class="negative">-1.02%</td>
+                <td>21.74%</td>
+                <td class="neutral">56.72</td>
+            </tr>
+            
+            <tr>
+                <td><b>WBC.AX</b></td>
+                <td>Westpac Banking Corporation</td>
+                <td>Financial Services</td>
+                <td>$132.6B</td>
+                <td>$38.80</td>
+                <td>19.50</td>
+                <td>6.04</td>
+                <td><span class="score-box">-1.79</span></td>
+                <td class="positive">+0.54 (+1.41%)</td>
+                <td class="positive">+0.71 (+1.86%)</td>
+                <td class="positive">+1.46%</td>
+                <td>19.72%</td>
+                <td class="neutral">61.26</td>
+            </tr>
+            
+            <tr>
+                <td><b>WDS.AX</b></td>
+                <td>Woodside Energy Group Ltd</td>
+                <td>Energy</td>
+                <td>$47.0B</td>
+                <td>$24.73</td>
+                <td>10.71</td>
+                <td>3.41</td>
+                <td><span class="score-box">-1.02</span></td>
+                <td class="negative">-0.02 (-0.08%)</td>
+                <td class="negative">-0.42 (-1.67%)</td>
+                <td class="negative">-1.87%</td>
+                <td>18.51%</td>
+                <td class="neutral">42.01</td>
+            </tr>
+            
+            <tr>
+                <td><b>WES.AX</b></td>
+                <td>Wesfarmers Limited</td>
+                <td>Consumer Cyclical</td>
+                <td>$91.5B</td>
+                <td>$80.62</td>
+                <td>31.25</td>
+                <td>2.00</td>
+                <td><span class="score-box">-8.47</span></td>
+                <td class="negative">-0.40 (-0.49%)</td>
+                <td class="negative">-0.54 (-0.67%)</td>
+                <td class="positive">+0.04%</td>
+                <td>12.47%</td>
+                <td class="neutral">53.49</td>
+            </tr>
+            
+            <tr>
+                <td><b>WHC.AX</b></td>
+                <td>Whitehaven Coal</td>
+                <td>Energy</td>
+                <td>$6.4B</td>
+                <td>$7.73</td>
+                <td>9.66</td>
+                <td>1.10</td>
+                <td><span class="score-box">7.71</span></td>
+                <td class="positive">+0.10 (+1.31%)</td>
+                <td class="negative">-0.09 (-1.15%)</td>
+                <td class="positive">+2.11%</td>
+                <td>33.05%</td>
+                <td class="negative">73.37</td>
+            </tr>
+            
+            <tr>
+                <td><b>WOR.AX</b></td>
+                <td>Worley Limited</td>
+                <td>Energy</td>
+                <td>$6.6B</td>
+                <td>$12.55</td>
+                <td>16.30</td>
+                <td>0.59</td>
+                <td><span class="score-box">-0.88</span></td>
+                <td class="negative">-0.08 (-0.63%)</td>
+                <td class="negative">-0.62 (-4.71%)</td>
+                <td class="negative">-4.78%</td>
+                <td>16.83%</td>
+                <td class="positive">20.69</td>
+            </tr>
+            
+            <tr>
+                <td><b>WOW.AX</b></td>
+                <td>Woolworths Group Limited</td>
+                <td>Consumer Defensive</td>
+                <td>$36.1B</td>
+                <td>$29.56</td>
+                <td>37.90</td>
+                <td>0.52</td>
+                <td><span class="score-box">-4.43</span></td>
+                <td class="positive">+0.17 (+0.58%)</td>
+                <td class="positive">+0.19 (+0.65%)</td>
+                <td class="positive">+0.96%</td>
+                <td>14.69%</td>
+                <td class="negative">80.50</td>
+            </tr>
+            
+            <tr>
+                <td><b>WTC.AX</b></td>
+                <td>WiseTech Global Limited</td>
+                <td>Technology</td>
+                <td>$23.8B</td>
+                <td>$70.97</td>
+                <td>78.86</td>
+                <td>30.63</td>
+                <td><span class="score-box">-9.12</span></td>
+                <td class="negative">-0.02 (-0.03%)</td>
+                <td class="negative">-2.35 (-3.21%)</td>
+                <td class="negative">-3.94%</td>
+                <td>46.45%</td>
+                <td class="neutral">59.06</td>
+            </tr>
+            
+            <tr>
+                <td><b>XRO.AX</b></td>
+                <td>Xero Limited</td>
+                <td>Technology</td>
+                <td>$19.6B</td>
+                <td>$112.84</td>
+                <td>75.73</td>
+                <td>8.51</td>
+                <td><span class="score-box">-13.58</span></td>
+                <td class="negative">-0.52 (-0.46%)</td>
+                <td class="negative">-6.04 (-5.08%)</td>
+                <td class="negative">-4.48%</td>
+                <td>35.98%</td>
+                <td class="positive">24.53</td>
+            </tr>
+            
+            <tr>
+                <td><b>YAL.AX</b></td>
+                <td>Yancoal Australia Ltd</td>
+                <td>Energy</td>
+                <td>$7.0B</td>
+                <td>$5.28</td>
+                <td>7.23</td>
+                <td>1.09</td>
+                <td><span class="score-box">26.26</span></td>
+                <td class="positive">+0.02 (+0.38%)</td>
+                <td class="negative">-0.46 (-8.01%)</td>
+                <td class="negative">-5.55%</td>
+                <td>29.48%</td>
+                <td class="neutral">50.00</td>
+            </tr>
+            
+        </tbody>
+    </table>
+<div class="section"><h3>Stock Market Insights</h3><h4>Top 3 Gainers (24h)</h4><ul><li><b>EVN.AX</b>: <span class='positive'>+4.16%</span></li><li><b>S32.AX</b>: <span class='positive'>+3.79%</span></li><li><b>CSL.AX</b>: <span class='positive'>+2.86%</span></li></ul><h4>Top 3 Decliners (24h)</h4><ul><li><b>TNE.AX</b>: <span class='negative'>-1.63%</span></li><li><b>CAR.AX</b>: <span class='negative'>-1.62%</span></li><li><b>FPH.AX</b>: <span class='negative'>-0.97%</span></li></ul><h4>Sector Performance (Avg 1D)</h4><ul><li>Best: <b>Basic Materials</b> (<span class='positive'>+1.86%</span>)</li><li>Worst: <b>Technology</b> (<span class='negative'>-0.62%</span>)</li></ul><h4>Significant Volume Spikes</h4><ul><li><b>BRG.AX</b>: <span class='highlight'>+170.41%</span> vs avg</li><li><b>YAL.AX</b>: <span class='highlight'>+148.32%</span> vs avg</li><li><b>SEK.AX</b>: <span class='highlight'>+99.49%</span> vs avg</li></ul><h4>RSI Alerts</h4><p>Overbought (>70): <span class='negative'><b>NSR.AX</b> (89.2), <b>BHP.AX</b> (89.1), <b>FLT.AX</b> (86.8), <b>FMG.AX</b> (86.7), <b>SGM.AX</b> (83.2), <b>SFR.AX</b> (81.3), <b>VEA.AX</b> (80.8), <b>WOW.AX</b> (80.5), <b>S32.AX</b> (79.2), <b>RIO.AX</b> (78.2), <b>EVN.AX</b> (74.6), <b>CGF.AX</b> (73.6), <b>WHC.AX</b> (73.4), <b>IGO.AX</b> (71.4), <b>ALD.AX</b> (71.0)</span></p><p>Oversold (<30): <span class='positive'><b>SEK.AX</b> (16.8), <b>MGR.AX</b> (17.1), <b>SGP.AX</b> (18.5), <b>MTS.AX</b> (20.1), <b>PME.AX</b> (20.6), <b>WOR.AX</b> (20.7), <b>ALX.AX</b> (21.9), <b>LYC.AX</b> (22.7), <b>SUN.AX</b> (23.1), <b>XRO.AX</b> (24.5), <b>REA.AX</b> (26.5), <b>DXS.AX</b> (27.6), <b>COL.AX</b> (27.6), <b>TCL.AX</b> (27.6), <b>CAR.AX</b> (28.2), <b>APA.AX</b> (28.4), <b>ARB.AX</b> (28.5), <b>TNE.AX</b> (29.9)</span></p></div></div>
+    <div id="ETFs" class="tabcontent">
+    <h2>Analysed ETFs (24)</h2>
+    <table id="etfTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0, 'etfTable')">Symbol</th>
+                <th onclick="sortTable(1, 'etfTable')">Name</th>
+                <th onclick="sortTable(2, 'etfTable')">Category</th>
+                <th onclick="sortTable(3, 'etfTable')">AUM</th>
+                <th onclick="sortTable(4, 'etfTable')">Price</th>
+                <th onclick="sortTable(5, 'etfTable')">PE</th>
+                <th onclick="sortTable(6, 'etfTable')">Yield</th>
+                <th onclick="sortTable(7, 'etfTable')">Score</th>
+                <th onclick="sortTable(8, 'etfTable')">1D %</th>
+                <th onclick="sortTable(9, 'etfTable')">5D %</th>
+                <th onclick="sortTable(10, 'etfTable')">1Y %</th>
+                <th onclick="sortTable(11, 'etfTable')">Momentum</th>
+                <th onclick="sortTable(12, 'etfTable')">Volatility</th>
+                <th onclick="sortTable(13, 'etfTable')">RSI</th>
+            </tr>
+        </thead>
+        <tbody>
+
+             <tr>
+                 <td><b>A200.AX</b></td>
+                 <td>BetaShares Australia 200 ETF</td>
+                 <td>ETF - Australia</td>
+                 <td>$8.5B</td>
+                 <td>$145.67</td>
+                 <td>21.12</td>
+                 <td>3.37%</td>
+                 <td><span class="score-box">-6.68</span></td>
+                 <td class="positive">+1.30%</td>
+                 <td class="positive">+0.87%</td>
+                 <td class="positive">+8.38%</td>
+                 <td class="positive">+0.94%</td>
+                 <td>12.60%</td>
+                 <td class="negative">73.85</td>
+             </tr>
+             
+             <tr>
+                 <td><b>AAA.AX</b></td>
+                 <td>BetaShares Aus High Interest Cash</td>
+                 <td>ETF - Cash/Currency</td>
+                 <td>$4.7B</td>
+                 <td>$50.13</td>
+                 <td>-</td>
+                 <td>4.13%</td>
+                 <td><span class="score-box">-6.59</span></td>
+                 <td class="neutral">+0.00%</td>
+                 <td class="positive">+0.04%</td>
+                 <td class="positive">+4.04%</td>
+                 <td class="positive">+0.02%</td>
+                 <td>0.32%</td>
+                 <td class="negative">90.23</td>
+             </tr>
+             
+             <tr>
+                 <td><b>BGBL.AX</b></td>
+                 <td>BetaShares Global Shares ETF</td>
+                 <td>ETF - Global</td>
+                 <td>$3.3B</td>
+                 <td>$81.78</td>
+                 <td>25.09</td>
+                 <td>1.54%</td>
+                 <td><span class="score-box">-14.55</span></td>
+                 <td class="positive">+0.75%</td>
+                 <td class="negative">-0.02%</td>
+                 <td class="positive">+13.71%</td>
+                 <td class="positive">+0.25%</td>
+                 <td>14.05%</td>
+                 <td class="neutral">64.76</td>
+             </tr>
+             
+             <tr>
+                 <td><b>BILL.AX</b></td>
+                 <td>iShares Core Cash ETF</td>
+                 <td>ETF - Cash/Currency</td>
+                 <td>$1.1B</td>
+                 <td>$100.55</td>
+                 <td>-</td>
+                 <td>4.00%</td>
+                 <td><span class="score-box">7.27</span></td>
+                 <td class="positive">+0.02%</td>
+                 <td class="positive">+0.06%</td>
+                 <td class="positive">+4.10%</td>
+                 <td class="positive">+0.02%</td>
+                 <td>0.36%</td>
+                 <td class="negative">91.18</td>
+             </tr>
+             
+             <tr>
+                 <td><b>DHHF.AX</b></td>
+                 <td>BetaShares Diversified High Growth</td>
+                 <td>ETF - Diversified</td>
+                 <td>$1.0B</td>
+                 <td>$40.10</td>
+                 <td>22.39</td>
+                 <td>2.14%</td>
+                 <td><span class="score-box">-4.80</span></td>
+                 <td class="positive">+0.91%</td>
+                 <td class="positive">+0.43%</td>
+                 <td class="positive">+11.46%</td>
+                 <td class="positive">+0.73%</td>
+                 <td>12.53%</td>
+                 <td class="neutral">68.54</td>
+             </tr>
+             
+             <tr>
+                 <td><b>ETHI.AX</b></td>
+                 <td>BetaShares Global Sustainability Leaders</td>
+                 <td>ETF - Ethical/ESG</td>
+                 <td>$3.8B</td>
+                 <td>$16.68</td>
+                 <td>23.67</td>
+                 <td>2.10%</td>
+                 <td><span class="score-box">1.91</span></td>
+                 <td class="positive">+0.91%</td>
+                 <td class="positive">+1.09%</td>
+                 <td class="positive">+5.72%</td>
+                 <td class="positive">+1.09%</td>
+                 <td>14.74%</td>
+                 <td class="negative">71.43</td>
+             </tr>
+             
+             <tr>
+                 <td><b>FANG.AX</b></td>
+                 <td>Global X FANG+ ETF</td>
+                 <td>ETF - US Tech</td>
+                 <td>$1.6B</td>
+                 <td>$36.29</td>
+                 <td>38.49</td>
+                 <td>4.83%</td>
+                 <td><span class="score-box">0.47</span></td>
+                 <td class="positive">+0.33%</td>
+                 <td class="negative">-1.33%</td>
+                 <td class="positive">+16.98%</td>
+                 <td class="negative">-1.22%</td>
+                 <td>26.85%</td>
+                 <td class="neutral">52.62</td>
+             </tr>
+             
+             <tr>
+                 <td><b>GOLD.AX</b></td>
+                 <td>Global X Physical Gold</td>
+                 <td>ETF - Commodities</td>
+                 <td>-</td>
+                 <td>$58.71</td>
+                 <td>-</td>
+                 <td>-</td>
+                 <td><span class="score-box">-8.34</span></td>
+                 <td class="positive">+0.88%</td>
+                 <td class="positive">+0.57%</td>
+                 <td class="positive">+51.00%</td>
+                 <td class="positive">+1.07%</td>
+                 <td>18.96%</td>
+                 <td class="neutral">60.84</td>
+             </tr>
+             
+             <tr>
+                 <td><b>HACK.AX</b></td>
+                 <td>BetaShares Global Cybersecurity</td>
+                 <td>ETF - Thematic</td>
+                 <td>$1.4B</td>
+                 <td>$14.96</td>
+                 <td>28.87</td>
+                 <td>2.92%</td>
+                 <td><span class="score-box">7.61</span></td>
+                 <td class="positive">+0.07%</td>
+                 <td class="positive">+0.40%</td>
+                 <td class="positive">+9.36%</td>
+                 <td class="positive">+0.40%</td>
+                 <td>20.62%</td>
+                 <td class="neutral">60.61</td>
+             </tr>
+             
+             <tr>
+                 <td><b>IOO.AX</b></td>
+                 <td>iShares Global 100</td>
+                 <td>ETF - Global</td>
+                 <td>$5.5B</td>
+                 <td>$188.63</td>
+                 <td>27.22</td>
+                 <td>1.06%</td>
+                 <td><span class="score-box">14.06</span></td>
+                 <td class="positive">+0.52%</td>
+                 <td class="negative">-0.60%</td>
+                 <td class="positive">+19.25%</td>
+                 <td class="negative">-0.14%</td>
+                 <td>16.78%</td>
+                 <td class="neutral">51.86</td>
+             </tr>
+             
+             <tr>
+                 <td><b>IOZ.AX</b></td>
+                 <td>iShares Core S&P/ASX 200</td>
+                 <td>ETF - Australia</td>
+                 <td>$7.7B</td>
+                 <td>$34.97</td>
+                 <td>21.31</td>
+                 <td>3.43%</td>
+                 <td><span class="score-box">-12.64</span></td>
+                 <td class="positive">+1.22%</td>
+                 <td class="positive">+0.78%</td>
+                 <td class="positive">+8.14%</td>
+                 <td class="positive">+0.84%</td>
+                 <td>12.60%</td>
+                 <td class="negative">73.68</td>
+             </tr>
+             
+             <tr>
+                 <td><b>IVV.AX</b></td>
+                 <td>iShares S&P 500</td>
+                 <td>ETF - US Equity</td>
+                 <td>$13.1B</td>
+                 <td>$69.10</td>
+                 <td>27.36</td>
+                 <td>0.99%</td>
+                 <td><span class="score-box">-8.93</span></td>
+                 <td class="positive">+0.68%</td>
+                 <td class="negative">-0.19%</td>
+                 <td class="positive">+9.97%</td>
+                 <td class="positive">+0.06%</td>
+                 <td>16.74%</td>
+                 <td class="neutral">59.49</td>
+             </tr>
+             
+             <tr>
+                 <td><b>IXJ.AX</b></td>
+                 <td>iShares Global Healthcare</td>
+                 <td>ETF - Thematic</td>
+                 <td>$1.5B</td>
+                 <td>$144.09</td>
+                 <td>24.76</td>
+                 <td>1.43%</td>
+                 <td><span class="score-box">-10.30</span></td>
+                 <td class="positive">+0.40%</td>
+                 <td class="negative">-0.46%</td>
+                 <td class="positive">+5.33%</td>
+                 <td class="positive">+0.13%</td>
+                 <td>15.72%</td>
+                 <td class="neutral">35.79</td>
+             </tr>
+             
+             <tr>
+                 <td><b>MOAT.AX</b></td>
+                 <td>VanEck Morningstar Wide Moat</td>
+                 <td>ETF - US Equity</td>
+                 <td>$1.0B</td>
+                 <td>$132.03</td>
+                 <td>23.83</td>
+                 <td>5.79%</td>
+                 <td><span class="score-box">-9.39</span></td>
+                 <td class="positive">+0.64%</td>
+                 <td class="positive">+0.37%</td>
+                 <td class="positive">+4.74%</td>
+                 <td class="positive">+0.48%</td>
+                 <td>17.06%</td>
+                 <td class="neutral">69.88</td>
+             </tr>
+             
+             <tr>
+                 <td><b>MVW.AX</b></td>
+                 <td>VanEck Australian Equal Weight</td>
+                 <td>ETF - Australia</td>
+                 <td>$3.2B</td>
+                 <td>$38.54</td>
+                 <td>22.29</td>
+                 <td>4.45%</td>
+                 <td><span class="score-box">-6.07</span></td>
+                 <td class="positive">+0.16%</td>
+                 <td class="negative">-0.82%</td>
+                 <td class="positive">+5.91%</td>
+                 <td class="negative">-0.75%</td>
+                 <td>17.37%</td>
+                 <td class="neutral">45.82</td>
+             </tr>
+             
+             <tr>
+                 <td><b>NDQ.AX</b></td>
+                 <td>BetaShares Nasdaq 100</td>
+                 <td>ETF - US Tech</td>
+                 <td>$8.4B</td>
+                 <td>$56.74</td>
+                 <td>35.37</td>
+                 <td>0.91%</td>
+                 <td><span class="score-box">-13.40</span></td>
+                 <td class="positive">+0.34%</td>
+                 <td class="negative">-0.75%</td>
+                 <td class="positive">+12.85%</td>
+                 <td class="negative">-0.72%</td>
+                 <td>21.32%</td>
+                 <td class="neutral">63.29</td>
+             </tr>
+             
+             <tr>
+                 <td><b>QUAL.AX</b></td>
+                 <td>VanEck MSCI International Quality</td>
+                 <td>ETF - Global</td>
+                 <td>$8.0B</td>
+                 <td>$62.06</td>
+                 <td>27.08</td>
+                 <td>1.97%</td>
+                 <td><span class="score-box">-5.17</span></td>
+                 <td class="positive">+1.34%</td>
+                 <td class="negative">-0.11%</td>
+                 <td class="positive">+7.68%</td>
+                 <td class="positive">+0.21%</td>
+                 <td>13.66%</td>
+                 <td class="neutral">56.37</td>
+             </tr>
+             
+             <tr>
+                 <td><b>STW.AX</b></td>
+                 <td>SPDR S&P/ASX 200</td>
+                 <td>ETF - Australia</td>
+                 <td>$6.1B</td>
+                 <td>$78.41</td>
+                 <td>21.76</td>
+                 <td>3.59%</td>
+                 <td><span class="score-box">1.54</span></td>
+                 <td class="positive">+1.19%</td>
+                 <td class="positive">+0.68%</td>
+                 <td class="positive">+8.28%</td>
+                 <td class="positive">+0.78%</td>
+                 <td>12.53%</td>
+                 <td class="negative">72.45</td>
+             </tr>
+             
+             <tr>
+                 <td><b>VAS.AX</b></td>
+                 <td>Vanguard Australian Shares Index</td>
+                 <td>ETF - Australia</td>
+                 <td>$22.0B</td>
+                 <td>$108.33</td>
+                 <td>21.13</td>
+                 <td>3.22%</td>
+                 <td><span class="score-box">-8.90</span></td>
+                 <td class="positive">+1.17%</td>
+                 <td class="positive">+0.73%</td>
+                 <td class="positive">+8.53%</td>
+                 <td class="positive">+0.83%</td>
+                 <td>12.59%</td>
+                 <td class="negative">72.95</td>
+             </tr>
+             
+             <tr>
+                 <td><b>VDHG.AX</b></td>
+                 <td>Vanguard Diversified High Growth</td>
+                 <td>ETF - Diversified</td>
+                 <td>$3.5B</td>
+                 <td>$74.15</td>
+                 <td>21.91</td>
+                 <td>3.98%</td>
+                 <td><span class="score-box">-2.64</span></td>
+                 <td class="positive">+0.79%</td>
+                 <td class="positive">+0.50%</td>
+                 <td class="positive">+11.00%</td>
+                 <td class="positive">+0.42%</td>
+                 <td>12.10%</td>
+                 <td class="negative">73.48</td>
+             </tr>
+             
+             <tr>
+                 <td><b>VEU.AX</b></td>
+                 <td>Vanguard All-World ex-US</td>
+                 <td>ETF - Global</td>
+                 <td>-</td>
+                 <td>$111.55</td>
+                 <td>4.44</td>
+                 <td>1.10%</td>
+                 <td><span class="score-box">-4.46</span></td>
+                 <td class="positive">+0.92%</td>
+                 <td class="positive">+0.46%</td>
+                 <td class="positive">+21.84%</td>
+                 <td class="positive">+0.61%</td>
+                 <td>9.74%</td>
+                 <td class="neutral">63.97</td>
+             </tr>
+             
+             <tr>
+                 <td><b>VGS.AX</b></td>
+                 <td>Vanguard MSCI Index International</td>
+                 <td>ETF - Global</td>
+                 <td>$45.4B</td>
+                 <td>$154.48</td>
+                 <td>25.40</td>
+                 <td>2.47%</td>
+                 <td><span class="score-box">-4.26</span></td>
+                 <td class="positive">+0.84%</td>
+                 <td class="positive">+0.03%</td>
+                 <td class="positive">+12.99%</td>
+                 <td class="positive">+0.25%</td>
+                 <td>14.23%</td>
+                 <td class="neutral">64.88</td>
+             </tr>
+             
+             <tr>
+                 <td><b>VHY.AX</b></td>
+                 <td>Vanguard Australian Shares High Yield</td>
+                 <td>ETF - Income</td>
+                 <td>$6.0B</td>
+                 <td>$78.73</td>
+                 <td>17.44</td>
+                 <td>8.54%</td>
+                 <td><span class="score-box">2.82</span></td>
+                 <td class="positive">+1.17%</td>
+                 <td class="positive">+1.01%</td>
+                 <td class="positive">+14.08%</td>
+                 <td class="positive">+1.10%</td>
+                 <td>12.43%</td>
+                 <td class="negative">78.71</td>
+             </tr>
+             
+             <tr>
+                 <td><b>VTS.AX</b></td>
+                 <td>Vanguard US Total Market</td>
+                 <td>ETF - US Equity</td>
+                 <td>-</td>
+                 <td>$510.57</td>
+                 <td>-</td>
+                 <td>-</td>
+                 <td><span class="score-box">-7.22</span></td>
+                 <td class="positive">+0.76%</td>
+                 <td class="negative">-0.01%</td>
+                 <td class="positive">+9.57%</td>
+                 <td class="positive">+0.26%</td>
+                 <td>16.92%</td>
+                 <td class="neutral">63.16</td>
+             </tr>
+             
+        </tbody>
+    </table>
+<div class="section"><h3>ETF Market Insights</h3><h4>Top 3 Gainers (24h)</h4><ul><li><b>QUAL.AX</b>: <span class='positive'>+1.34%</span></li><li><b>A200.AX</b>: <span class='positive'>+1.30%</span></li><li><b>IOZ.AX</b>: <span class='positive'>+1.22%</span></li></ul><h4>Top 3 Decliners (24h)</h4><ul><li><b>AAA.AX</b>: <span class='negative'>+0.00%</span></li><li><b>BILL.AX</b>: <span class='negative'>+0.02%</span></li><li><b>HACK.AX</b>: <span class='negative'>+0.07%</span></li></ul><h4>Category Performance (Avg 1D)</h4><ul><li>Best: <b>ETF - Income</b> (<span class='positive'>+1.17%</span>)</li><li>Worst: <b>ETF - Cash/Currency</b> (<span class='positive'>+0.01%</span>)</li></ul><h4>Significant Volume Spikes</h4><ul><li><b>IOO.AX</b>: <span class='highlight'>+70.32%</span> vs avg</li><li><b>HACK.AX</b>: <span class='highlight'>+38.19%</span> vs avg</li><li><b>BILL.AX</b>: <span class='highlight'>+36.04%</span> vs avg</li></ul><h4>RSI Alerts</h4><p>Overbought (>70): <span class='negative'><b>BILL.AX</b> (91.2), <b>AAA.AX</b> (90.2), <b>VHY.AX</b> (78.7), <b>A200.AX</b> (73.8), <b>IOZ.AX</b> (73.7), <b>VDHG.AX</b> (73.5), <b>VAS.AX</b> (73.0), <b>STW.AX</b> (72.5), <b>ETHI.AX</b> (71.4)</span></p></div></div></body></html>
