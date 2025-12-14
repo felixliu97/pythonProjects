@@ -4,6 +4,11 @@ All Python solution files (`.py`) in the `AdventOfCode` directory must adhere to
 
 ## Prerequisites & structure
 
+### Folder Structure
+- **Base Directory**: `AdventOfCode`
+- **Yearly Subdirectories**: `AdventOfCode/{year}` (e.g., `2024`, `2025`)
+  - Contains all solution scripts and input files for that specific year.
+
 ### Event Details
 - **Start Year**: 2015
 - **Duration**: 
