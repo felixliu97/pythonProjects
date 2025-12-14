@@ -1,0 +1,116 @@
+[
+    {
+        "id": 1001,
+        "user": {
+            "name": "Alice Wonderland",
+            "email": "alice@example.com",
+            "profile": {
+                "age": 28,
+                "preferences": {
+                    "notifications": {
+                        "email": true,
+                        "sms": false,
+                        "push": true
+                    },
+                    "theme": "dark"
+                }
+            }
+        },
+        "transactions": [
+            {
+                "tx_id": "tx_001",
+                "amount": 150.50,
+                "currency": "USD",
+                "items": [
+                    {
+                        "sku": "A100",
+                        "qty": 1,
+                        "price": 50.0
+                    },
+                    {
+                        "sku": "B200",
+                        "qty": 2,
+                        "price": 50.25
+                    }
+                ],
+                "timestamp": "2023-01-15T08:30:00Z"
+            },
+            {
+                "tx_id": "tx_002",
+                "amount": 20.00,
+                "currency": "USD",
+                "items": [],
+                "timestamp": "2023-01-16T10:00:00Z"
+            }
+        ],
+        "tags": [
+            "premium",
+            "early-adopter"
+        ],
+        "meta": {
+            "login_history": [
+                {
+                    "ip": "192.168.1.1",
+                    "device": "mobile",
+                    "lat": 34.05,
+                    "lon": -118.25
+                },
+                {
+                    "ip": "10.0.0.5",
+                    "device": "desktop",
+                    "lat": null,
+                    "lon": null
+                }
+            ]
+        }
+    },
+    {
+        "id": 1002,
+        "user": {
+            "name": "Bob Builder",
+            "email": "bob@example.com",
+            "profile": null
+        },
+        "transactions": [],
+        "tags": [
+            "free",
+            "new"
+        ],
+        "meta": {
+            "login_history": []
+        }
+    },
+    {
+        "id": 1003,
+        "user": {
+            "name": "Charlie Chocolate",
+            "email": "charlie@example.com",
+            "profile": {
+                "age": 35,
+                "preferences": {
+                    "notifications": null,
+                    "theme": "light"
+                }
+            }
+        },
+        "transactions": [
+            {
+                "tx_id": "tx_005",
+                "amount": 5000.00,
+                "currency": "EUR",
+                "items": [
+                    {
+                        "sku": "X999",
+                        "qty": 1,
+                        "price": 5000.00
+                    }
+                ],
+                "timestamp": "2023-02-01T12:00:00Z"
+            }
+        ],
+        "tags": [
+            "vip"
+        ],
+        "meta": null
+    }
+]

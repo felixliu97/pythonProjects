@@ -1,0 +1,85 @@
+<library>
+    <book id="1">
+        <title>Data Science for Beginners</title>
+        <author>
+            <name>John Doe</name>
+            <contact>
+                <email>john@example.com</email>
+                <phone>555-1234</phone>
+            </contact>
+            <awards>
+                <award>Best New Author</award>
+                <award>Data Viz 2023</award>
+            </awards>
+        </author>
+        <publisher>
+            <name>TechBooks Publishing</name>
+            <address>
+                <street>123 Tech Lane</street>
+                <city>Silicon Valley</city>
+                <zip>94000</zip>
+            </address>
+        </publisher>
+        <genres>
+            <genre>Education</genre>
+            <genre>Technology</genre>
+        </genres>
+        <chapters>
+            <chapter>
+                <title>Introduction</title>
+                <pages>10</pages>
+                <sections>
+                    <section>
+                        <heading>What is Data Science?</heading>
+                        <paragraphs>3</paragraphs>
+                    </section>
+                    <section>
+                        <heading>History</heading>
+                        <paragraphs>5</paragraphs>
+                    </section>
+                </sections>
+            </chapter>
+            <chapter>
+                <title>Advanced Topics</title>
+                <pages>25</pages>
+                <sections>
+                    <section>
+                        <heading>Machine Learning</heading>
+                        <paragraphs>10</paragraphs>
+                    </section>
+                </sections>
+            </chapter>
+        </chapters>
+    </book>
+    <book id="2">
+        <title>Cooking with Spark</title>
+        <author>
+            <name>Jane Smith</name>
+            <contact>
+                <email>jane@example.com</email>
+            </contact>
+        </author>
+        <publisher>
+            <name>Culinary Press</name>
+             <address>
+                <street>456 Flavor St</street>
+                <city>New York</city>
+            </address>
+        </publisher>
+        <genres>
+            <genre>Cooking</genre>
+        </genres>
+        <chapters>
+            <chapter>
+                <title>Appetizers</title>
+                <pages>15</pages>
+                <sections>
+                    <section>
+                        <heading>Cold Apps</heading>
+                         <paragraphs>2</paragraphs>
+                    </section>
+                </sections>
+            </chapter>
+        </chapters>
+    </book>
+</library>
