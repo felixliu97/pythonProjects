@@ -55,15 +55,30 @@ class ASXTrendingStocks:
             self.thresholds = {}
         
     def get_stock_bundle(self, symbol: str, period: str = '1mo') -> tuple:
-        """Fetch stock history and metadata info"""
-        try:
-            stock = yf.Ticker(symbol)
-            data = stock.history(period=period)
-            info = stock.info
-            return data, info
-        except Exception as e:
-            print(f"Error fetching data for {symbol}: {e}")
-            return pd.DataFrame(), {}
+        """Fetch stock history and metadata info with retry logic"""
+        max_retries = 3
+        base_delay = 1
+        
+        for attempt in range(max_retries):
+            try:
+                stock = yf.Ticker(symbol)
+                data = stock.history(period=period)
+                
+                if data.empty:
+                     # For valid tickers like ACDC.AX that fail under load, treat empty as a retry-able error
+                     raise ValueError("Received empty data")
+                     
+                info = stock.info
+                return data, info
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    sleep_time = base_delay * (2 ** attempt)
+                    # print(f"Retry {attempt+1}/{max_retries} for {symbol} after error: {e}")
+                    time.sleep(sleep_time)
+                else:
+                    print(f"Error fetching data for {symbol} after {max_retries} attempts: {e}")
+                    return pd.DataFrame(), {}
+        return pd.DataFrame(), {}
     
     def calculate_trending_score(self, data: pd.DataFrame) -> Dict:
         """Calculate trending score based on multiple factors"""
@@ -168,9 +183,9 @@ class ASXTrendingStocks:
                 }
                 
                 if is_etf:
-                    # Filter out small ETFs (< $1B AUM)
+                    # Filter out small ETFs (< $500M AUM)
                     t_assets = info.get('totalAssets')
-                    if t_assets and t_assets < 1_000_000_000:
+                    if t_assets and t_assets < 500_000_000:
                         return None
 
                     result['totalAssets'] = t_assets
