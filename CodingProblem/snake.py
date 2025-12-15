@@ -44,7 +44,6 @@ class Snake:
                     self.remaining_moves = 5
                 self.body.append(new_head)
 
-    
 def main():
     snake = Snake()
     snake.print_snake()
