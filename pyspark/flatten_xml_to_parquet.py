@@ -358,7 +358,7 @@ def main(file_path, row_tag, cols_not_to_explode, mode, clean):
     """
     Flattens an XML file to Parquet, exploding arrays and flattening structs.
     """
-    output_path = file_path.replace(".xml", "") + "_flat.parquet"
+    output_path = file_path.replace(".xml", "") + ".parquet"
     
     # Pre-process cleaning if requested
     temp_cleaned_file = None
