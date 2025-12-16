@@ -5,7 +5,8 @@ import os
 
 # --- Helper Functions ---
 def load_data(filename):
-    filepath = os.path.join("data", filename)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(current_dir, "data", filename)
     with open(filepath, "r") as f:
         return json.load(f)
 
