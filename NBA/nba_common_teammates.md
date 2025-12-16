@@ -18,7 +18,7 @@ This project automates the process of finding common teammates between a group o
 The script `nba_common_teammates.py` performs the following steps:
 
 1.  **Configuration**: Defines groups of players to analyze.
-2.  **Scraping**: Uses **Playwright** (headed mode for stealth) to navigate to each player's URL. It employs implicit waits to ensure data loads dynamically.
+2.  **Scraping**: Uses **Playwright** (headless mode) to navigate to each player's URL. It employs explicit waits to ensure data loads dynamically.
 3.  **Parsing**: Uses **BeautifulSoup** to parse the HTML and extract the list of teammates from the table.
 4.  **Intersection**: Compares the lists of teammates for all specified players and finds the intersection (players who played with *everyone* in the group).
 5.  **Output**: Prints the list of common teammates to the console.
