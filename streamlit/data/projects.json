@@ -1,0 +1,54 @@
+[
+    {
+        "title": "Streamlit Portfolio",
+        "description": "A modern, data-driven personal portfolio website built with Streamlit.",
+        "category": "Web App",
+        "tags": [
+            "Python",
+            "Streamlit",
+            "CSS"
+        ],
+        "image": "https://picsum.photos/id/1/400/250",
+        "github": "#",
+        "demo": "#"
+    },
+    {
+        "title": "FastAPI Microservice",
+        "description": "High-performance REST API for data processing using Python and Go.",
+        "category": "Backend",
+        "tags": [
+            "FastAPI",
+            "Go",
+            "Docker"
+        ],
+        "image": "https://picsum.photos/id/2/400/250",
+        "github": "#",
+        "demo": "#"
+    },
+    {
+        "title": "Customer Churn Prediction",
+        "description": "Machine Learning model to predict customer churn using XGboost.",
+        "category": "Machine Learning",
+        "tags": [
+            "Python",
+            "Scikit-Learn",
+            "Pandas"
+        ],
+        "image": "https://picsum.photos/id/3/400/250",
+        "github": "#",
+        "demo": "#"
+    },
+    {
+        "title": "Crypto Trading Bot",
+        "description": "Automated trading bot interacting with exchange APIs.",
+        "category": "Automation",
+        "tags": [
+            "Python",
+            "API",
+            "AsyncIO"
+        ],
+        "image": "https://picsum.photos/id/4/400/250",
+        "github": "#",
+        "demo": "#"
+    }
+]

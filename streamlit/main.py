@@ -1,39 +1,69 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
+import json
+import os
 
-# 1. Page Config
+# --- Helper Functions ---
+def load_data(filename):
+    filepath = os.path.join("data", filename)
+    with open(filepath, "r") as f:
+        return json.load(f)
+
+# --- Load Data ---
+profile = load_data("profile.json")
+skills = load_data("skills.json")
+projects = load_data("projects.json")
+
+# --- Page Config ---
 st.set_page_config(
-    page_title="Streamlit Modern UI",
-    page_icon="✨",
+    page_title=f"{profile['name']} - Portfolio",
+    page_icon="👨‍💻",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# 2. Custom CSS for "Nice UI"
+# --- Custom CSS ---
 st.markdown("""
 <style>
     /* Global Font */
     html, body, [class*="css"] {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Hero Section Styling */
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: #666;
+        margin-bottom: 2rem;
     }
     
     /* Card Styling */
-    .stMetric {
-        background-color: #f0f2f6;
-        padding: 1rem;
+    .project-card {
+        background-color: #ffffff;
+        padding: 1.5rem;
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+        border: 1px solid #e0e0e0;
     }
     
-    /* Header Styling */
-    h1, h2, h3 {
-        color: #0e1117;
+    /* Social Links */
+    .social-link {
+        margin-right: 15px;
+        text-decoration: none;
+        font-size: 1.2rem;
     }
     
-    /* Sidebar Styling */
-    .css-1d391kg {
-        background-color: #fafafa;
+    /* Experience Timeline Styling */
+    .timeline-item {
+        border-left: 2px solid #3182ce;
+        padding-left: 20px;
+        margin-bottom: 20px;
     }
     
     /* Hide Default Footer */
@@ -42,115 +72,141 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 3. Sidebar Navigation
-st.sidebar.title("Navigation")
-st.sidebar.markdown("Explore the app sections below.")
-
-tab_list = ['Home', 'Resources', 'Gallery', 'Vision', 'About']
-icons = ['🏠', '📚', '🖼️', '👁️', '👤']
-
-if "tab_index" not in st.session_state:
-    st.session_state.tab_index = 0
-
-def next_tab():
-    st.session_state.tab_index = (st.session_state.tab_index + 1) % len(tab_list)
-
-# Navigation Menu
-selected_tab = st.sidebar.radio(
-    "Go to",
-    tab_list,
-    index=st.session_state.tab_index,
-    format_func=lambda x: f"{icons[tab_list.index(x)]} {x}"
-)
-
-# Update session state if radio changes (optional sync)
-st.session_state.tab_index = tab_list.index(selected_tab)
+# --- Sidebar ---
+st.sidebar.image("https://api.dicebear.com/7.x/avataaars/svg?seed=Felix", width=150)
+st.sidebar.title(profile["name"])
+st.sidebar.caption(profile["title"])
 
 st.sidebar.markdown("---")
-st.sidebar.button('Next Page ➡️', on_click=next_tab, use_container_width=True)
+st.sidebar.subheader("Navigation")
 
+# Navigation state
+if "page" not in st.session_state:
+    st.session_state.page = "About"
 
-# 4. Main Content Area
-if selected_tab == 'Home':
-    st.title("🏠 Dashboard Home")
-    st.markdown("Welcome to the **Modern Streamlit Dashboard**. Here is an overview of your key metrics.")
+def set_page(page_name):
+    st.session_state.page = page_name
+
+st.sidebar.button("👤 About Me", on_click=set_page, args=("About",), use_container_width=True)
+st.sidebar.button("🛠️ Skills", on_click=set_page, args=("Skills",), use_container_width=True)
+st.sidebar.button("🚀 Projects", on_click=set_page, args=("Projects",), use_container_width=True)
+st.sidebar.button("📬 Contact", on_click=set_page, args=("Contact",), use_container_width=True)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown(f"""
+<div style='text-align: center;'>
+    <a href="{profile['socials']['github']}" class="social-link">GitHub</a>
+    <a href="{profile['socials']['linkedin']}" class="social-link">LinkedIn</a>
+    <a href="{profile['socials']['twitter']}" class="social-link">Twitter</a>
+</div>
+""", unsafe_allow_html=True)
+
+# --- Main Content ---
+page = st.session_state.page
+
+if page == "About":
+    col1, col2 = st.columns([2, 1])
     
-    # KPIs
-    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Total Users", "1,234", "+5%")
+        st.markdown(f"<div class='hero-title'>Hi, I'm {profile['name'].split()[0]} 👋</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='hero-subtitle'>{profile['tagline']}</div>", unsafe_allow_html=True)
+        st.write(profile["bio"])
+        
+        st.divider()
+        st.subheader("Experience")
+        for job in profile["timeline"]:
+            st.markdown(f"""
+            <div class="timeline-item">
+                <strong>{job['role']}</strong> @ {job['company']}<br>
+                <span style="color: grey; font-size: 0.9em;">{job['year']}</span><br>
+                {job['description']}
+            </div>
+            """, unsafe_allow_html=True)
+            
     with col2:
-        st.metric("Revenue", "$12,345", "+12%")
-    with col3:
-        st.metric("Conversion", "3.2%", "-0.5%")
-    with col4:
-        st.metric("Active Sessions", "456", "+18%")
+        # Placeholder for 3D element or illustration
+        st.image("https://picsum.photos/400/600", caption="Creating the future", use_column_width=True)
+
+elif page == "Skills":
+    st.title("🛠️ Skills & Expertise")
+    st.markdown("Here is a breakdown of my technical arsenal.")
+    
+    df_skills = pd.DataFrame(skills)
+    
+    # Categorize skills
+    categories = df_skills["category"].unique()
+    
+    for cat in categories:
+        st.subheader(cat)
+        cat_skills = df_skills[df_skills["category"] == cat]
         
-    st.markdown("### 📈 Performance Trend")
-    chart_data = pd.DataFrame(
-        np.random.randn(20, 3),
-        columns=['a', 'b', 'c']
-    )
-    st.area_chart(chart_data)
+        cols = st.columns(len(cat_skills))
+        for idx, (_, skill) in enumerate(cat_skills.iterrows()):
+            with cols[idx]:
+                st.metric(label=skill["name"], value=f"{skill['level']}%")
+                st.progress(skill["level"])
 
-elif selected_tab == 'Resources':
-    st.title("📚 Resources")
-    st.markdown("Access helpful documentation and external links.")
+elif page == "Projects":
+    st.title("🚀 Project Gallery")
+    st.markdown("A selection of my recent work.")
     
-    c1, c2 = st.columns(2)
-    with c1:
-        st.info("**Documentation**\n\nRead the full docs to get started.")
-        st.markdown("[View Docs >](#)")
-    with c2:
-        st.success("**API Reference**\n\nEndpoints and usage examples.")
-        st.markdown("[View API >](#)")
-        
-    st.markdown("### Downloads")
-    data = pd.DataFrame({'File': ['Report_Q1.pdf', 'Data_Summary.csv'], 'Size': ['1.2 MB', '450 KB']})
-    st.table(data)
+    # Filter
+    all_categories = ["All"] + list(set([p["category"] for p in projects]))
+    selected_cat = st.selectbox("Filter by Category", all_categories)
+    
+    filtered_projects = projects if selected_cat == "All" else [p for p in projects if p["category"] == selected_cat]
+    
+    # Grid Layout
+    cols = st.columns(2)
+    for idx, project in enumerate(filtered_projects):
+        with cols[idx % 2]:
+            with st.container():
+                st.image(project["image"], use_column_width=True)
+                st.subheader(project["title"])
+                st.caption(f"{project['category']} | {' • '.join(project['tags'])}")
+                st.write(project["description"])
+                
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.link_button("View Code", project["github"], use_container_width=True)
+                with c2:
+                    st.link_button("Live Demo", project["demo"], use_container_width=True)
+                st.divider()
 
-elif selected_tab == 'Gallery':
-    st.title("🖼️ Gallery")
-    st.markdown("A collection of visuals and placeholders.")
+elif page == "Contact":
+    st.title("📬 Get in Touch")
     
-    # Masonry-like grid
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.image("https://picsum.photos/300/200", caption="Project Alpha", use_column_width=True)
-        st.image("https://picsum.photos/300/300", caption="Team Event", use_column_width=True)
-    with c2:
-        st.image("https://picsum.photos/300/250", caption="Design Mockup", use_column_width=True)
-        st.image("https://picsum.photos/300/200", caption="Architecture", use_column_width=True)
-    with c3:
-        st.image("https://picsum.photos/300/300", caption="Product Launch", use_column_width=True)
-        st.image("https://picsum.photos/300/250", caption="Analytics", use_column_width=True)
-
-elif selected_tab == 'Vision':
-    st.title("👁️ The Vision")
-    
-    st.markdown("""
-    > "To empower every developer to build beautiful data apps in minutes."
-    
-    ### Our Mission
-    We believe in **simplicity**, **speed**, and **aesthetics**. Our goal is to reduce the barrier to entry for creates of all backgrounds.
-    
-    ### Road Map
-    - [x] Phase 1: MVP
-    - [ ] Phase 2: Enhanced UI
-    - [ ] Phase 3: Global Scale
-    """)
-
-elif selected_tab == 'About':
-    st.title("👤 About Us")
-    
-    col1, col2 = st.columns([1, 3])
+    col1, col2 = st.columns(2)
     with col1:
-        st.image("https://api.dicebear.com/7.x/avataaars/svg?seed=Felix", width=150)
-    with col2:
-        st.subheader("Felix Liu")
-        st.caption("Lead Developer")
-        st.write("Passionate about Python, AI, and building clean user interfaces.")
-        st.markdown("[GitHub](https://github.com) | [Twitter](https://twitter.com)")
+        st.markdown("Have a question or want to work together? Feel free to reach out!")
+        st.markdown(f"📧 **Email:** [{profile['email']}](mailto:{profile['email']})")
+        
+        st.subheader("Send a Message")
+        with st.form("contact_form"):
+            name = st.text_input("Name")
+            email = st.text_input("Email")
+            message = st.text_area("Message")
+            submit = st.form_submit_button("Send Message")
+            
+            if submit:
+                st.success("Thanks! I'll get back to you soon.")
     
-    st.divider()
-    st.caption("© 2025 Streamlit Modern App. All rights reserved.")
+    with col2:
+        # Resume Download
+        st.subheader("Resume")
+        st.markdown("Interested in my professional background? Download my comprehensive resume.")
+        
+        # In a real app, read binary file
+        # with open("assets/resume.pdf", "rb") as pdf:
+        #    st.download_button(...)
+        st.download_button(
+            label="📄 Download Resume (PDF)",
+            data="Fake Resume Content",
+            file_name="resume.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+
+# Footer
+st.markdown("---")
+st.markdown(f"<div style='text-align: center; color: grey;'>© 2025 {profile['name']}. Built with Streamlit & Python.</div>", unsafe_allow_html=True)
