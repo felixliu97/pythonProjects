@@ -1,7 +1,5 @@
 # FastAPI Cheatsheet
 
-## FASTAPI CHEATSHEET
-
 ## 1. SETUP & BASICS
 
 ```python

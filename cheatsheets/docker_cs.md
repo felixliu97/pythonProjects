@@ -4,8 +4,6 @@
 #!/bin/bash
 ```
 
-## DOCKER CHEATSHEET
-
 ## 1. CONTAINER MANAGEMENT
 
 ``` bash

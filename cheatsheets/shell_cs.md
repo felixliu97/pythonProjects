@@ -1,10 +1,8 @@
-# Shell Cheatsheet
+# Shell/Bash Cheatsheet
 
 ``` bash
 #!/bin/bash
 ```
-
-## SHELL / BASH CHEATSHEET
 
 ## 1. FILE SYSTEM OPERATIONS
 

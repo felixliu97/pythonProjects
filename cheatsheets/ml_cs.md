@@ -1,4 +1,4 @@
-# Ml Cheatsheet
+# ML Cheatsheet
 
 ===================================================
 Prerequisites:

@@ -4,8 +4,6 @@
 #!/bin/bash
 ```
 
-## KUBERNETES (K8S) CHEATSHEET
-
 ## 1. CLUSTER INFO & CONTEXT
 
 ``` bash

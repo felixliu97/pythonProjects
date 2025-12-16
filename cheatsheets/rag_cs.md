@@ -1,4 +1,4 @@
-# Rag Cheatsheet
+# RAG Cheatsheet
 
 ===============================================
 This file serves as a reference for building RAG pipelines using Python.

@@ -1,7 +1,5 @@
 # Snowflake Cheatsheet
 
-## SNOWFLAKE CHEATSHEET
-
 ## 1. CONTEXT & CONNECTION
 
 ``` sql

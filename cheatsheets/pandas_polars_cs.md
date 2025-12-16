@@ -1,6 +1,4 @@
-# Pandas vs Polars Cheatsheet
-
-## PANDAS & POLARS CHEATSHEET
+# Pandas & Polars Cheatsheet
 
 ## 1. SETUP & BASICS
 

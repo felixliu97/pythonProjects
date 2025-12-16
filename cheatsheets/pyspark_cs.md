@@ -4,8 +4,6 @@
 #!/bin/bash
 ```
 
-## PYSPARK CHEATSHEET
-
 ## 0. SETUP & KERNEL
 
 ``` bash
