@@ -2,8 +2,8 @@ from playwright.sync_api import sync_playwright
 import pandas as pd
 import time
 import re
+from datetime import datetime
 
-# ANSI Color Codes
 GREEN = "\033[92m"
 RED = "\033[91m"
 RESET = "\033[0m"
@@ -241,9 +241,12 @@ def main():
                     print_fail(f"Error extracting item {index}: {e}")
 
             # Save
+            today = datetime.now().strftime('%Y-%m-%d')
+            csv_filename = f'IMDB_top250_{today}.csv'
+            
             df = pd.DataFrame(movies_data)
-            df.to_csv('Top_250_Movies.csv', index=False)
-            print("Saved Top_250_Movies.csv")
+            df.to_csv(csv_filename, index=False)
+            print(f"Saved {csv_filename}")
             
         except Exception as e:
             print_fail(f"Global Error: {e}")

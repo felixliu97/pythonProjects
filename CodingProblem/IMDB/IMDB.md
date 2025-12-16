@@ -48,4 +48,4 @@
    ```
 
 4. **Save Data**
-   Save the extracted data to a CSV file.
+   Save the extracted data to a CSV file named `IMDB_top250_YYYY-MM-DD.csv` (e.g., `IMDB_top250_2025-12-16.csv`).
