@@ -26,6 +26,7 @@ node_modules/
 # Streamlit
 .streamlit/secrets.toml
 .streamlit/config.toml
+**/.streamlit/secrets.toml
 
 # Environments
 .env
