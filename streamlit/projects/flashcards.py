@@ -86,6 +86,8 @@ def render_flashcard_generator():
     st.title("🧠 AI Flashcard Generator")
     st.markdown("Enter your study notes below and let AI generate flashcards for you.")
     
+    # Inject Custom CSS for Flashcards (REMOVED - Using Native Widgets)
+    
     # API Key Handling
     if "GEMINI_API_KEY" in st.secrets:
         raw_key = st.secrets["GEMINI_API_KEY"]
@@ -100,7 +102,8 @@ def render_flashcard_generator():
     # Model Selection
     selected_model = "gemini-2.5-flash"
 
-    notes = st.text_area("Study Notes", height=200, placeholder="Paste your notes here...")
+    default_text = "Sydney, Australia is the country's largest and most iconic city, home to over 5 million people on the southeastern coast. Built around the stunning Sydney Harbour, it's instantly recognizable for landmarks like the Sydney Opera House and Harbour Bridge, as well as world-famous beaches like Bondi. Founded in 1788 as a British penal colony, Sydney has evolved into Australia's financial and economic powerhouse with a vibrant multicultural population. The city seamlessly blends urban sophistication with natural beauty, offering a lifestyle centered around outdoor activities, harbor culture, and year-round sunshine. Known for its high quality of life, Sydney combines cosmopolitan energy with laid-back beach culture, making it one of the world's most desirable cities to live in and visit."
+    notes = st.text_area("Study Notes", height=200, placeholder="Paste your notes here...", value=default_text)
     
     generate_btn = st.button("Generate Flashcards", type="primary")
 
@@ -135,21 +138,21 @@ def render_flashcard_generator():
                 if card_key not in st.session_state:
                     st.session_state[card_key] = False
                 
-                # Container for the card
-                card_container = st.container()
+                # Determine content and styling based on state
+                is_flipped = st.session_state[card_key]
+                content = card['back'] if is_flipped else card['front']
                 
-                # Determine what to show based on flip state
-                if st.session_state[card_key]:
-                    # Showing Back (Answer)
-                    with card_container:
-                        st.info(f"**Answer:**\n\n{card['back']}")
-                        if st.button("Show Question", key=f"btn_{i}"):
-                            st.session_state[card_key] = False
-                            st.rerun()
+                # Use Native Streamlit Containers for Guaranteed Colors
+                # st.info = Blue (Front/Question)
+                # st.warning = Yellow (Back/Answer)
+                
+                if is_flipped:
+                    st.warning(f"**Answer:**\n\n{content}")
                 else:
-                    # Showing Front (Question)
-                    with card_container:
-                        st.warning(f"**Question:**\n\n{card['front']}")
-                        if st.button("Show Answer", key=f"btn_{i}"):
-                            st.session_state[card_key] = True
-                            st.rerun()
+                    st.info(f"**Question:**\n\n{content}")
+                
+                # Toggle Button (Full Width below card)
+                btn_label = "Show Question" if is_flipped else "Show Answer"
+                if st.button(btn_label, key=f"btn_{i}", use_container_width=True):
+                    st.session_state[card_key] = not st.session_state[card_key]
+                    st.rerun()

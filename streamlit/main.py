@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import json
 import os
-import requests
 from projects import asx_monitor
 from projects import flashcards
 
@@ -17,8 +16,6 @@ def load_data(filename):
 profile = load_data("profile.json")
 skills = load_data("skills.json")
 projects = load_data("projects.json")
-
-
 
 # --- Page Config ---
 st.set_page_config(
