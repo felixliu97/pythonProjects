@@ -203,33 +203,26 @@ elif page == "Projects":
 
             # Prepare Dataframe for display
             df_display = df.copy()
-            
-            # --- Sorting Logic Removed (Handled by JS now) ---
 
-            # --- Formatting for HTML Table ---
-            # Apply formatting programmatically since we are converting to HTML
-            df_display['MC'] = (df_display['MC'] / 1e9).map('${:,.2f} B'.format)
-            df_display['Price'] = df_display['Price'].map('${:,.2f}'.format)
-            df_display['PE'] = df_display['PE'].map('{:.1f}'.format)
-            df_display['PS'] = df_display['PS'].map('{:.2f}'.format)
-            df_display['1D Change'] = df_display['1D Change'].map('{:+.2f}%'.format)
-            df_display['5D Change'] = df_display['5D Change'].map('{:+.2f}%'.format)
-            df_display['Momentum'] = df_display['Momentum'].map('{:+.2f}%'.format)
-            df_display['Volatility'] = df_display['Volatility'].map('{:.2f}%'.format)
-            df_display['RSI'] = df_display['RSI'].map('{:.1f}'.format)
-            df_display['Score'] = df_display['Score'].map('{:.0f}'.format)
+            # --- Formatting for Native Dataframe ---
+            # Keep numeric values for sorting, but scale large numbers
+            df_display['MC'] = df_display['MC'] / 1e9  # Convert to Billions
 
             # Select and Rename Columns
             cols_to_show = ["Symbol", "Name", "Industry", "MC", "Price", "PE", "PS", "Score", "1D Change", "5D Change", "Momentum", "Volatility", "RSI"]
             df_final = df_display[cols_to_show].copy()
 
             # --- Styling API ---
-            def color_change_html(val):
-                if '+' in val: return 'color: #28a745'
-                if '-' in val: return 'color: #dc3545'
+            # Apply color mapping (Green/Red)
+            def color_change(val):
+                try:
+                    v = float(val)
+                    if v > 0: return 'color: #28a745'
+                    if v < 0: return 'color: #dc3545'
+                except: pass
                 return ''
             
-            def color_rsi_html(val):
+            def color_rsi(val):
                 try:
                     v = float(val)
                     if v >= 70: return 'color: #dc3545; font-weight: bold'
@@ -237,129 +230,52 @@ elif page == "Projects":
                 except: pass
                 return ''
 
-            styler = df_final.style.map(color_change_html, subset=['1D Change', '5D Change', 'Momentum'])\
-                                   .map(color_rsi_html, subset=['RSI'])\
-                                   .hide(axis="index")
+            styler = df_final.style.map(color_change, subset=['1D Change', '5D Change', 'Momentum'])\
+                                   .map(color_rsi, subset=['RSI'])\
+                                   .format({
+                                       "PE": "{:.1f}", 
+                                       "PS": "{:.2f}", 
+                                       "RSI": "{:.1f}",
+                                       "Score": "{:.0f}"
+                                   })
 
-            # Render HTML with pandas
-            html_table = styler.to_html(table_id="asx-table")
-            # Inject Header Click Events directly into HTML for reliability
-            import re
-            
-            # 1. Force ID to "asx-table" to ensure JS and CSS target it correctly
-            # Remove any existing id attributes from the table tag and simple force our own
-            html_table = re.sub(r'<table[^>]*>', '<table id="asx-table">', html_table, count=1)
-            
-            # 2. Inject onclick handlers for sorting
-            # Matches <th class="..."> or <th>
-            html_table = re.sub(
-                r'<th(\s+[^>]*)?>', 
-                r'<th\1 onclick="sortTable(this.cellIndex, \'asx-table\')" style="cursor:pointer" title="Click to sort">', 
-                html_table
-            )
-            
-            # Custom CSS for Sticky Header and Colors
-            custom_css = """
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-                body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-                table { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
-                thead th { 
-                    background-color: #0066cc !important; 
-                    color: white !important; 
-                    position: sticky; top: 0; z-index: 100;
-                    padding: 12px; text-align: left;
-                    cursor: pointer;
-                }
-                thead th:hover { background-color: #0056b3 !important; }
-                tbody td { padding: 8px 12px; border-bottom: 1px solid #ddd; }
-                tbody tr:nth-child(even) { background-color: #f2f2f2; }
-                tbody tr:hover { background-color: #e6e6e6; transition: background 0.2s; }
-            </style>
-            """
-
-            # JS for Sorting (Adapted from asx_report reference)
-            sort_script = """
-            <script>
-            function sortTable(n, tableId) {
-                var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-                table = document.getElementById(tableId);
-                if (!table) return;
-                
-                switching = true; dir = "asc"; 
-                
-                function parseMoney(str) {
-                    if (!str) return -1;
-                    var clean = str.replace(/[$,]/g, "").trim();
-                    var mult = 1;
-                    if (clean.endsWith("B")) { mult = 1e9; clean = clean.slice(0, -1); }
-                    else if (clean.endsWith("M")) { mult = 1e6; clean = clean.slice(0, -1); }
-                    else if (clean.endsWith("K")) { mult = 1e3; clean = clean.slice(0, -1); }
-                    else if (clean.endsWith("%")) { clean = clean.slice(0, -1); }
-                    
-                    var val = parseFloat(clean);
-                    if (isNaN(val)) return -999999;
-                    return val * mult;
-                }
-
-                while (switching) {
-                    switching = false; 
-                    rows = table.rows;
-                    // Try to identify body rows. Pandas `to_html` typically outputs <thead> and <tbody>.
-                    // If <tbody> exists, use it.
-                    var body = table.tBodies[0];
-                    var bodyRows = body ? body.rows : rows; 
-                    
-                    // If using rows directly, we need to skip header. 
-                    // If using tBodies[0], it usually contains only data rows.
-                    // Let's assume tBodies[0] is safe as pandas generates it.
-                    
-                    for (i = 0; i < (bodyRows.length - 1); i++) {
-                        shouldSwitch = false;
-                        x = bodyRows[i].getElementsByTagName("TD")[n];
-                        y = bodyRows[i + 1].getElementsByTagName("TD")[n];
-                        
-                        var xContent = x.textContent.trim();
-                        var yContent = y.textContent.trim();
-                        
-                        var xVal = parseMoney(xContent);
-                        var yVal = parseMoney(yContent);
-                        
-                        if (xVal !== -999999 && yVal !== -999999) {
-                            if (dir == "asc") { if (xVal > yVal) { shouldSwitch = true; break; } }
-                            else { if (xVal < yVal) { shouldSwitch = true; break; } }
-                        } else {
-                            if (dir == "asc") { if (xContent.toLowerCase() > yContent.toLowerCase()) { shouldSwitch = true; break; } }
-                            else { if (xContent.toLowerCase() < yContent.toLowerCase()) { shouldSwitch = true; break; } }
-                        }
-                    }
-                    if (shouldSwitch) {
-                        bodyRows[i].parentNode.insertBefore(bodyRows[i + 1], bodyRows[i]);
-                        switching = true; switchcount ++; 
-                    } else {
-                        if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; }
-                    }
-                }
+            # --- Column Configurations ---
+            column_config = {
+                "Symbol": st.column_config.TextColumn("Symbol", width="small"),
+                "Name": st.column_config.TextColumn("Name", width="medium"),
+                "Industry": st.column_config.TextColumn("Industry", width="medium"),
+                "MC": st.column_config.NumberColumn(
+                    "Market Cap",
+                    help="Market Capitalization in Billions",
+                    format="$%.2f B",
+                    min_value=0,
+                ),
+                "Price": st.column_config.NumberColumn(
+                    "Price",
+                    format="$%.2f",
+                ),
+                "PE": st.column_config.NumberColumn("P/E", help="Price to Earnings Ratio"),
+                "PS": st.column_config.NumberColumn("P/S", help="Price to Sales Ratio"),
+                "Score": st.column_config.NumberColumn(
+                    "Score", 
+                    help="Composite Safety & Performance Score (0-100)",
+                    format="%.0f"
+                ),
+                "1D Change": st.column_config.NumberColumn("1D Chg", format="%+.2f%%"),
+                "5D Change": st.column_config.NumberColumn("5D Chg", format="%+.2f%%"),
+                "Momentum": st.column_config.NumberColumn("Momentum", format="%+.2f%%"),
+                "Volatility": st.column_config.NumberColumn("Volatility", format="%.2f%%"),
+                "RSI": st.column_config.NumberColumn("RSI", help="Relative Strength Index (14d)"),
             }
-            </script>
-            """
-            
-            # Wrap in full HTML structure for the component
-            full_html = f"""
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    {custom_css}
-                    {sort_script}
-                </head>
-                <body>
-                    {html_table}
-                </body>
-            </html>
-            """
-            
-            import streamlit.components.v1 as components
-            components.html(full_html, height=600, scrolling=True)
+
+            # Render Native Dataframe
+            st.dataframe(
+                styler,
+                column_config=column_config,
+                width="stretch",
+                hide_index=True,
+                height=600
+            )
 
             # --- Market Insights ---
             st.divider()

@@ -59,8 +59,8 @@ A modern, interactive personal portfolio showcasing skills, projects, and profes
     -   Calculates RSI (14-day), Momentum, and Volatility windows.
     -   Custom "Score" algorithm ranking stocks by safety & growth potential.
 3.  **Visualization (Enhanced UI)**:
-    -   **Sortable Table**: JavaScript-powered headers for instant sorting (Click to sort).
-    -   **Styling**: Custom CSS for alternate row shading (zebra stripes), sticky headers, and distinct hover effects.
+    -   **Sortable Table**: Native `st.dataframe` with built-in sorting and column configuration.
+    -   **Styling**: Columns formatted for readability (Currency, Billions, Percentages) using `st.column_config`.
     -   **Key Metrics**: Metrics dashboard highlighting Top Safe Stock, Top Gainer, and Highest Momentum.
     -   **RSI Alerts**: Visual pills causing alert for Overbought/Oversold conditions.
 
@@ -76,7 +76,7 @@ A modern, interactive personal portfolio showcasing skills, projects, and profes
     -   Header Accent: Deep Blue (`#0066cc`).
     -   Primary Action Buttons: Vibrant Green (`#28a745`) for "Try it Live" and key actions.
 - **Typography**: Custom 'Inter' font via Google Fonts for a polished look.
-- **Tables**: Custom HTML/CSS rendering for precise control over styling and interactivity (replacing standard `st.dataframe`).
+- **Tables**: Native `st.dataframe` for robust sorting, responsive design, and numeric precision.
 
 ## Technical Structure
 - `main.py`: The entry point and navigation manager. **(Lightweight)**
