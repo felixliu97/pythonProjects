@@ -3,7 +3,8 @@
         "category": "Cloud Data Platforms",
         "skills": [
             "AWS (S3, Glue, Redshift, MSK, Lambda)",
-            "Azure (ADF, Synapse, Databricks)"
+            "Azure (ADF, Synapse, Databricks)",
+            "Snowflake"
         ]
     },
     {
@@ -18,6 +19,19 @@
             "Airflow",
             "Argo Workflows",
             "Step Functions"
+        ]
+    },
+    {
+        "category": "Artificial Intelligence & LLMs",
+        "skills": [
+            "Generative AI",
+            "Large Language Models (LLMs)",
+            "RAG (Retrieval Augmented Generation)",
+            "AWS Bedrock",
+            "Google Gemini API",
+            "LangChain",
+            "Vector Databases",
+            "Prompt Engineering"
         ]
     },
     {

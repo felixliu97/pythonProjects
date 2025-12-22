@@ -1,7 +1,7 @@
 {
     "name": "Felix Liu",
     "title": "Senior Data Engineer | Cloud Engineer | AI Engineer",
-    "tagline": "Data enthusiast",
+    "tagline": "Building Scalable Data & AI Solutions",
     "bio": "Data Engineering leader with 10+ years delivering cloud-scale data platforms across financial services, media, and SaaS. Expert in modernising legacy ecosystems, building high-reliability pipelines, and driving measurable improvements in cost, quality, and performance. Known for turning complex data environments into scalable, governed, business-critical platforms.",
     "email": "liusuqing97@gmail.com",
     "socials": {
@@ -13,31 +13,31 @@
             "year": "Jul 2022 - Present",
             "role": "Senior Data Engineer",
             "company": "Macquarie Group",
-            "description": "0 tolerance for data quality, data lineageid, data governance, batch and streaming data, LLM, AWS Bedrock."
+            "description": "Championing a zero-tolerance approach to data quality. Implemented comprehensive data lineage and governance frameworks. Enhancing batch and streaming capabilities with LLMs and AWS Bedrock."
         },
         {
             "year": "Jan 2022 - Jul 2022",
             "role": "Senior Data Engineer",
-            "company": "Australian Broadcasting Corporation(ABC)",
-            "description": "data orchestration, ELT, cost optimization on AWS."
+            "company": "Australian Broadcasting Corporation (ABC)",
+            "description": "Optimized data orchestration and ELT pipelines. Delivered significant cost reductions through strategic AWS infrastructure tuning."
         },
         {
             "year": "Mar 2021 - Jan 2022",
             "role": "Data Consultant",
             "company": "Cognizant Servian",
-            "description": "MLA project - built advanced AWS data platform."
+            "description": "Led the MLA project, architecting and building an advanced, scalable data platform on AWS."
         },
         {
             "year": "Jan 2020 - Mar 2021",
             "role": "Data Consultant",
             "company": "Arq Group",
-            "description": "IAG data transformation project, TheCoffeeClub cloud engineering project."
+            "description": "Executed data transformation for IAG and delivered cloud engineering solutions for The Coffee Club."
         },
         {
             "year": "Feb 2014 - Jan 2020",
             "role": "Data & Analytics Developer",
             "company": "Plutora",
-            "description": "Build end to end BI solutions with Microsoft stacks."
+            "description": "Designed and built end-to-end BI solutions utilizing the full Microsoft stack."
         }
     ]
 }
