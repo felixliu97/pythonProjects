@@ -1,32 +1,43 @@
 {
     "name": "Felix Liu",
-    "title": "Full Stack Developer | Data Scientist",
-    "tagline": "Building beautiful data apps & robust backend systems.",
-    "bio": "I am a passionate developer with expertise in Python, Go, and Data Science. I love building tools that simplify complex workflows and creating intuitive user experiences. When I'm not coding, you can find me exploring new tech or gaming.",
-    "email": "felix@example.com",
+    "title": "Senior Data Engineer | Cloud Engineer | AI Engineer",
+    "tagline": "Data enthusiast",
+    "bio": "Data Engineering leader with 10+ years delivering cloud-scale data platforms across financial services, media, and SaaS. Expert in modernising legacy ecosystems, building high-reliability pipelines, and driving measurable improvements in cost, quality, and performance. Known for turning complex data environments into scalable, governed, business-critical platforms.",
+    "email": "liusuqing97@gmail.com",
     "socials": {
         "github": "https://github.com/felixliu",
-        "linkedin": "https://www.linkedin.com/in/felix-liu-53326584/",
-        "twitter": "https://twitter.com/felixliu"
+        "linkedin": "https://www.linkedin.com/in/felix-liu-53326584/"
     },
     "timeline": [
         {
-            "year": "2024 - Present",
-            "role": "Senior Developer",
-            "company": "Tech Corp",
-            "description": "Leading backend development with Go and Python."
+            "year": "Jul 2022 - Present",
+            "role": "Senior Data Engineer",
+            "company": "Macquarie Group",
+            "description": "0 tolerance for data quality, data lineageid, data governance, batch and streaming data, LLM, AWS Bedrock."
         },
         {
-            "year": "2021 - 2024",
-            "role": "Data Scientist",
-            "company": "Data Solutions Inc.",
-            "description": "Built predictive models and data dashboards."
+            "year": "Jan 2022 - Jul 2022",
+            "role": "Senior Data Engineer",
+            "company": "Australian Broadcasting Corporation(ABC)",
+            "description": "data orchestration, ELT, cost optimization on AWS."
         },
         {
-            "year": "2017 - 2021",
-            "role": "B.Sc. Computer Science",
-            "company": "University of Technology",
-            "description": "Graduated with Honors."
+            "year": "Mar 2021 - Jan 2022",
+            "role": "Data Consultant",
+            "company": "Cognizant Servian",
+            "description": "MLA project - built advanced AWS data platform."
+        },
+        {
+            "year": "Jan 2020 - Mar 2021",
+            "role": "Data Consultant",
+            "company": "Arq Group",
+            "description": "IAG data transformation project, TheCoffeeClub cloud engineering project."
+        },
+        {
+            "year": "Feb 2014 - Jan 2020",
+            "role": "Data & Analytics Developer",
+            "company": "Plutora",
+            "description": "Build end to end BI solutions with Microsoft stacks."
         }
     ]
 }

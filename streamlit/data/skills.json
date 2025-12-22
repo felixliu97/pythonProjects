@@ -1,42 +1,52 @@
 [
     {
-        "category": "Languages",
-        "name": "Python",
-        "level": 95
+        "category": "Cloud Data Platforms",
+        "skills": [
+            "AWS (S3, Glue, Redshift, MSK, Lambda)",
+            "Azure (ADF, Synapse, Databricks)"
+        ]
     },
     {
-        "category": "Languages",
-        "name": "Go",
-        "level": 80
+        "category": "Data Engineering",
+        "skills": [
+            "Python",
+            "SQL",
+            "Shell",
+            "Go",
+            "Spark",
+            "dbt",
+            "Airflow",
+            "Argo Workflows",
+            "Step Functions"
+        ]
     },
     {
-        "category": "Languages",
-        "name": "SQL",
-        "level": 85
+        "category": "Architecture & Design",
+        "skills": [
+            "Lakehouse",
+            "Real-time streaming",
+            "Data modelling",
+            "Distributed systems"
+        ]
     },
     {
-        "category": "Frameworks",
-        "name": "Streamlit",
-        "level": 90
+        "category": "DevOps & Infrastructure",
+        "skills": [
+            "Terraform",
+            "CloudFormation",
+            "Argo CD",
+            "Docker",
+            "Kubernetes",
+            "CI/CD automation"
+        ]
     },
     {
-        "category": "Frameworks",
-        "name": "FastAPI",
-        "level": 85
-    },
-    {
-        "category": "Tools",
-        "name": "Docker",
-        "level": 75
-    },
-    {
-        "category": "Tools",
-        "name": "Git",
-        "level": 90
-    },
-    {
-        "category": "Tools",
-        "name": "VS Code",
-        "level": 95
+        "category": "Observability",
+        "skills": [
+            "Splunk",
+            "Grafana",
+            "CloudWatch",
+            "System reliability engineering"
+        ]
     }
 ]

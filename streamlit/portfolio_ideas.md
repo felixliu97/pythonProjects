@@ -5,25 +5,25 @@ A modern, interactive personal portfolio showcasing skills, projects, and profes
 
 ## Proposed Sections
 
-### 1. Home / Hero Section
+### 1. Home / About Me ✅ (Consolidated)
 - **Visuals**: A professional profile photo (circular or stylized card) + a banner or dynamic background.
-- **Content**: Name, Title (e.g., "Full Stack Developer | Data Scientist"), and a brief tagline.
-- **Call to Action**: "View Projects" and "Contact Me" buttons.
-- **Socials**: Icons for GitHub, LinkedIn, Twitter, Email.
+- **Content**: 
+    -   Name, Title, and Tagline.
+    -   **Bio**: Key introduction.
+    -   **Timeline**: Consolidated into the Home page for immediate visibility.
+- **Call to Action**: (Simplified) Buttons removed for cleaner look, navigation via sidebar.
+- **Socials**: Icons for GitHub and LinkedIn (Twitter removed).
 
-### 2. About Me
-- **Bio**: A short narrative about your journey and passion.
-- **Timeline**: A visual timeline of your education and work experience (using `st.progress` or custom vertical layout).
-- **Hobbies/Interests**: Personal touches to make it human.
+### 2. [Section Removed] (Merged into Home)
 
-### 3. Skills Matrix
-- **Tech Stack**:
-    - **Languages**: Python, SQL, Go (with progress bars).
-    - **Frameworks**: Streamlit, FastAPI.
-    - **Tools**: Docker, Git, VS Code.
-- **Visualization**: Use a Radar Chart (Spider Plot) or simple Bar Charts to visualize proficiency levels.
+### 3. Skills ✅ (Implemented)
+- **Content**: Detailed breakdown of Core Skills including:
+    - Cloud Data Platforms (AWS, Azure).
+    - Data Engineering & Architecture.
+    - DevOps & Observability.
+- **Visualization**: Clean, categorized tags/badges (removed progress bars for a cleaner look).
 
-### 4. Project Gallery (The Core)
+### 4. Project Gallery (The Core) ✅ (Implemented)
 - **Layout**: a Grid layout of "Project Cards".
 - **Card Content**:
     - Project Thumbnail/Image.
@@ -32,14 +32,21 @@ A modern, interactive personal portfolio showcasing skills, projects, and profes
     - Links: "Source Code" (GitHub) and "Live Demo".
 - **Filter**: A sidebar filter to select projects by category (e.g., "Machine Learning", "Web App", "Automation").
 
-### 5. Services (Optional)
-- If exploring freelance: "Web Development", "Data Analysis", "Consulting" cards.
+### 5. AI Flashcard Generator ✅ (Implemented)
+**Requirements Met**:
+1.  **Model Selection**: User can select available xAI models (e.g., grok-beta).
+2.  **Content Generation**: 
+    -   User inputs text notes.
+    -   Model generates **3 flashcards**.
+    -   **Cloud Ready**: Uses xAI (Grok) API for fast inference (requires API key).
+3.  **Interaction**:
+    -   Flashcards show the **Front** (Question) by default.
+    -   Clicking on the card (or toggle button) toggles between **Front/Back**.
 
-### 6. Contact & Resume
-- **Resume**: A clear download button for the PDF version of your resume.
-- **Contact Form**: Simple fields (Name, Email, Message). Since Streamlit is static-ish, this could:
-    - Send an email via an API (like Formspree).
-    - Or just generate a `mailto:` link.
+**Technical Implementation**:
+-   Connects to **xAI API** (`/v1/chat/completions`).
+-   Securely handles API keys via `st.secrets` (`GROK_API_KEY`) with robust nested-dict handling.
+-   Uses `st.session_state` to persist cards.
 
 ## Design & Aesthetics
 - **Theme**: Dark mode by default (sleek, developer-focused) or a clean Light mode.
@@ -48,7 +55,7 @@ A modern, interactive personal portfolio showcasing skills, projects, and profes
 - **Animations**: Subtle entry animations using custom CSS or `streamlit-lottie` for engaging illustrations.
 
 ## Technical Structure
-- `main.py`: The entry point and navigation manager.
-- `views/`: Separate files for `home.py`, `projects.py`, etc., to keep code clean.
+- `main.py`: The entry point and navigation manager. **(Current Approach)**
 - `assets/`: Folder for images and CSS.
-- `data/`: JSON or CSV files to store project data (easier to update than hardcoding).
+- `data/`: JSON files (`profile.json`, `skills.json`, `projects.json`) store all content. ✅
+- Future Refactoring: Move page logic to `views/` if `main.py` grows too large.
