@@ -4,10 +4,8 @@
         "description": "Real-time tracking of 100 ASX blue-chip stocks with technical indicators (RSI, Momentum).",
         "category": "Finance",
         "tags": [
-            "Python",
-            "Streamlit",
             "yfinance",
-            "Pandas"
+            "ASX"
         ],
         "image": "images/AI_Stock_Monitor.png",
         "github": "#",
@@ -18,9 +16,7 @@
         "description": "Generate flashcards from your study notes using Gemini AI.",
         "category": "GenAI",
         "tags": [
-            "GenAI",
-            "Gemini",
-            "Streamlit"
+            "Gemini"
         ],
         "image": "images/AI_Flashcard_Generator.png",
         "demo": "internal:flashcards"
