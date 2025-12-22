@@ -1,54 +1,28 @@
 [
     {
-        "title": "Streamlit Portfolio",
-        "description": "A modern, data-driven personal portfolio website built with Streamlit.",
-        "category": "Web App",
+        "title": "ASX Stock Monitor",
+        "description": "Real-time tracking of 100 ASX blue-chip stocks with technical indicators (RSI, Momentum).",
+        "category": "Finance",
         "tags": [
             "Python",
             "Streamlit",
-            "CSS"
-        ],
-        "image": "https://picsum.photos/id/1/400/250",
-        "github": "#",
-        "demo": "#"
-    },
-    {
-        "title": "FastAPI Microservice",
-        "description": "High-performance REST API for data processing using Python and Go.",
-        "category": "Backend",
-        "tags": [
-            "FastAPI",
-            "Go",
-            "Docker"
-        ],
-        "image": "https://picsum.photos/id/2/400/250",
-        "github": "#",
-        "demo": "#"
-    },
-    {
-        "title": "Customer Churn Prediction",
-        "description": "Machine Learning model to predict customer churn using XGboost.",
-        "category": "Machine Learning",
-        "tags": [
-            "Python",
-            "Scikit-Learn",
+            "yfinance",
             "Pandas"
         ],
-        "image": "https://picsum.photos/id/3/400/250",
+        "image": "images/AI_Stock_Monitor.png",
         "github": "#",
-        "demo": "#"
+        "demo": "internal:asx_monitor"
     },
     {
-        "title": "Crypto Trading Bot",
-        "description": "Automated trading bot interacting with exchange APIs.",
-        "category": "Automation",
+        "title": "AI Flashcard Generator",
+        "description": "Generate flashcards from your study notes using Gemini AI.",
+        "category": "GenAI",
         "tags": [
-            "Python",
-            "API",
-            "AsyncIO"
+            "GenAI",
+            "Gemini",
+            "Streamlit"
         ],
-        "image": "https://picsum.photos/id/4/400/250",
-        "github": "#",
-        "demo": "#"
+        "image": "images/AI_Flashcard_Generator.png",
+        "demo": "internal:flashcards"
     }
 ]
