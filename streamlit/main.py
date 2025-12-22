@@ -344,7 +344,32 @@ elif page == "Projects":
                     if not image_path.startswith("http") and not os.path.isabs(image_path):
                         image_path = os.path.join(os.path.dirname(__file__), image_path)
                     
-                    st.image(image_path, use_container_width=True)
+                    # Robust Image Resizing for Consistency
+                    try:
+                        from PIL import Image, ImageOps
+                        if os.path.exists(image_path):
+                            img = Image.open(image_path)
+                            # Force 16:9 Aspect Ratio (e.g., 800x450)
+                            target_ratio = 16/9
+                            
+                            # Calculate target dimensions
+                            if img.width / img.height > target_ratio:
+                                # Too wide: crop width
+                                new_width = int(img.height * target_ratio)
+                                offset = (img.width - new_width) // 2
+                                img = img.crop((offset, 0, offset + new_width, img.height))
+                            else:
+                                # Too tall: crop height
+                                new_height = int(img.width / target_ratio)
+                                offset = (img.height - new_height) // 2
+                                img = img.crop((0, offset, img.width, offset + new_height))
+                                
+                            st.image(img, use_container_width=True)
+                        else:
+                            st.image(image_path, use_container_width=True)
+                    except Exception as e:
+                        # Fallback if PIL fails
+                        st.image(image_path, use_container_width=True)
                     st.subheader(project["title"])
                     st.caption(f"{project['category']} | {' • '.join(project['tags'])}")
                     st.write(project["description"])

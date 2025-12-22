@@ -54,7 +54,7 @@ A modern, interactive personal portfolio showcasing skills, projects, and profes
 **Status**: Implemented as an interactive sub-project within the Project Gallery.
 
 **Features**:
-1.  **Live Market Data**: Tracks **100+ ASX Blue-Chip Stocks** (expanded from 50).
+1.  **Live Market Data**: Tracks **100 ASX Blue-Chip Stocks**
 2.  **Technical Analysis**:
     -   Calculates RSI (14-day), Momentum, and Volatility windows.
     -   Custom "Score" algorithm ranking stocks by safety & growth potential.

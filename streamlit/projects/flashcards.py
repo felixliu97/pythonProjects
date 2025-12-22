@@ -145,11 +145,13 @@ def render_flashcard_generator():
                 # Use Native Streamlit Containers for Guaranteed Colors
                 # st.info = Blue (Front/Question)
                 # st.warning = Yellow (Back/Answer)
+                # Wrapped in fixed-height container for consistent alignment
                 
-                if is_flipped:
-                    st.warning(f"**Answer:**\n\n{content}")
-                else:
-                    st.info(f"**Question:**\n\n{content}")
+                with st.container(height=300):
+                    if is_flipped:
+                        st.warning(content, icon="⭐️") # Answer
+                    else:
+                        st.info(content, icon="❓") # Question
                 
                 # Toggle Button (Full Width below card)
                 btn_label = "Show Question" if is_flipped else "Show Answer"
