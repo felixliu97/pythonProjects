@@ -361,6 +361,17 @@ elif page == "Projects":
         for idx, project in enumerate(filtered_projects):
             with cols[idx % 2]:
                 with st.container(border=True, height=500):
+                    st.subheader(project["title"])
+                    st.caption(f"{project['category']} | {' • '.join(project['tags'])}")
+                    st.write(project["description"])
+                    
+                    if project["demo"].startswith("internal:"):
+                            st.button("Try it Live", key=f"btn_demo_{idx}", type="primary", on_click=set_active_project, args=(project["title"],))
+                    else:
+                            st.link_button("Live Demo", project["demo"])
+                    
+                    st.write("")
+                    
                     # Handle local images vs remote URLs
                     image_path = project["image"]
                     if not image_path.startswith("http") and not os.path.isabs(image_path):
@@ -373,15 +384,6 @@ elif page == "Projects":
                         st.image(img_to_show, use_container_width=True)
                     except:
                         st.error(f"Could not load image: {project['image']}")
-
-                    st.subheader(project["title"])
-                    st.caption(f"{project['category']} | {' • '.join(project['tags'])}")
-                    st.write(project["description"])
-                    
-                    if project["demo"].startswith("internal:"):
-                            st.button("Try it Live", key=f"btn_demo_{idx}", type="primary", on_click=set_active_project, args=(project["title"],))
-                    else:
-                            st.link_button("Live Demo", project["demo"])
                     # Removed divider as the border now separates cards
 
 # Footer
