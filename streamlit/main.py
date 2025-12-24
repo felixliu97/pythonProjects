@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import json
 import os
+from PIL import Image, ImageOps
 from projects import asx_monitor
 from projects import flashcards
 from projects import population
@@ -12,6 +13,24 @@ def load_data(filename):
     filepath = os.path.join(current_dir, "data", filename)
     with open(filepath, "r") as f:
         return json.load(f)
+
+def load_and_resize_image(image_path, size=(550, 250)):
+    """Loads and crops an image to a fixed size using PIL."""
+    # If it's a URL, we can't easily resize with PIL without downloading.
+    # For now, just return the URL if it's remote (st.image handles URLs).
+    if image_path.startswith("http"):
+        return image_path
+        
+    try:
+        img = Image.open(image_path)
+        # pad will resize the image to fit within the size preserving aspect ratio
+        # and then pad the rest with the specified color.
+        # using white to match the card background.
+        img = ImageOps.pad(img, size, method=Image.Resampling.LANCZOS, color='white', centering=(0.5, 0.5)) 
+        return img
+    except Exception as e:
+        st.error(f"Error processing image {image_path}: {e}")
+        return image_path
 
 # --- Load Data ---
 profile = load_data("profile.json")
@@ -349,7 +368,9 @@ elif page == "Projects":
                     
                     # Display full image (no cropping)
                     try:
-                        st.image(image_path, use_container_width=True)
+                        # Resize image to fixed dimensions
+                        img_to_show = load_and_resize_image(image_path)
+                        st.image(img_to_show, use_container_width=True)
                     except:
                         st.error(f"Could not load image: {project['image']}")
 
