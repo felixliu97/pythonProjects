@@ -7,18 +7,29 @@
             "yfinance",
             "ASX"
         ],
-        "image": "images/AI_Stock_Monitor.png",
+        "image": "images/ASX_Stock_Monitor.png",
         "github": "#",
         "demo": "internal:asx_monitor"
     },
     {
         "title": "AI Flashcard Generator",
-        "description": "Generate flashcards from your study notes using Gemini AI.",
+        "description": "Generate flashcards from your study notes.",
         "category": "GenAI",
         "tags": [
             "Gemini"
         ],
         "image": "images/AI_Flashcard_Generator.png",
         "demo": "internal:flashcards"
+    },
+    {
+        "title": "Population Over Time",
+        "description": "Historical population growth animation (1960-2024).",
+        "category": "Data Viz",
+        "tags": [
+            "Plotly",
+            "Animation"
+        ],
+        "image": "images/Population_By_Country.png",
+        "demo": "internal:population"
     }
 ]

@@ -70,6 +70,30 @@ A modern, interactive personal portfolio showcasing skills, projects, and profes
 -   **Package Structure**: Logic encapsulated in `projects/asx_monitor.py`.
 -   **Performance**: Caches data (`st.cache_data`) for 1 hour.
 
+### Population Over Time
+**Status**: Planned
+
+**Features**:
+1.  **Data Acquisition**: Fetch population of every country each year from 1960 to current year and save results as `population_data.csv`.
+2.  **Visualization**: Create a dynamic graph showing top 15 countries by population.
+3.  **Animation**:
+    -   Start from year 1960.
+    -   Display year at the top.
+    -   Every second, increment year by 1 (1961, 1962, etc.).
+    -   Refresh graph to show the new top 15 countries.
+    -   Stop changing when it arrives at current year.
+    -   **Design**: Horizontal Bar Chart.
+        -   **X-axis**: Population Scale (Bottom).
+        -   **Y-axis**: Country Names (No title).
+        -   **Labels**: Population count displayed **outside** (right of) the bars.
+        -   **Controls**: Auto-play only (Hide Play/Pause buttons).
+        -   **Legend**: Color-coded by Continent (Asia, Africa, North America, South America, Antarctica, Europe, Oceania).
+
+**Technical Implementation**:
+-   **Data Source**: World Bank API (wbdata) or direct CSV download.
+-   **Storage**: CSV file.
+-   **Visualization**: Streamlit + Plotly or Altair.
+
 ## Design & Aesthetics
 - **Theme**: Dark mode by default (sleek, developer-focused) or a clean Light mode.
 - **Colors**: 
@@ -83,5 +107,6 @@ A modern, interactive personal portfolio showcasing skills, projects, and profes
 - `projects/`: Dedicated package for sub-project modules.
     - `asx_monitor.py`: Financial data fetching and processing logic. ✅
     - `flashcards.py`: AI Flashcard Generator logic & UI. ✅
-- `images/`: Stores project thumbnails (e.g., `AI_Stock_Monitor.png`).
+    - `population.py`: Population data fetching and processing logic.
+- `images/`: Stores project thumbnails (e.g., `ASX_Stock_Monitor.png`).
 - `data/`: JSON files (`profile.json`, `skills.json`, `projects.json`) store content. ✅

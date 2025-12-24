@@ -4,6 +4,7 @@ import json
 import os
 from projects import asx_monitor
 from projects import flashcards
+from projects import population
 
 # --- Helper Functions ---
 def load_data(filename):
@@ -319,6 +320,8 @@ elif page == "Projects":
 
     elif st.session_state.active_project == "AI Flashcard Generator":
         flashcards.render_flashcard_generator()
+    elif st.session_state.active_project == "Population Over Time":
+        population.render_population_animation()
     else:
         # Standard Projects Gallery
         st.title("🚀 Project Gallery")
