@@ -315,8 +315,8 @@ elif page == "Projects":
             st.write("")
             
             # RSI Alerts (Compact Pills)
-            overbought = df[df['RSI'] >= 70]
-            oversold = df[df['RSI'] <= 30]
+            overbought = df[df['RSI'] >= 70].sort_values(by='RSI', ascending=False)
+            oversold = df[df['RSI'] <= 30].sort_values(by='RSI', ascending=True)
 
             if not overbought.empty or not oversold.empty:
                 st.caption("⚠️ RSI Alerts")
