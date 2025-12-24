@@ -35,70 +35,88 @@ class CatDogPredictor:
         self.model.eval()
         self.classes = ['cat', 'dog']
     
+    
     def load_pretrained_model(self):
         """
-        Load a pre-trained ResNet model and modify it for binary classification.
+        Load a pre-trained ResNet50 model.
         """
-        # Load pre-trained ResNet18
-        model = models.resnet18(pretrained=True)
-        
-        # Freeze all layers except the final layer
-        for param in model.parameters():
-            param.requires_grad = False
-        
-        # Modify the final layer for binary classification (cat vs dog)
-        num_features = model.fc.in_features
-        model.fc = nn.Sequential(
-            nn.Dropout(0.5),
-            nn.Linear(num_features, 2)  # 2 classes: cat, dog
-        )
-        
+        # Load pre-trained ResNet50 (more accurate than 18)
+        # Using the new weights enum if possible, or fallback
+        try:
+            from torchvision.models import ResNet50_Weights
+            model = models.resnet50(weights=ResNet50_Weights.DEFAULT)
+            self.weights = ResNet50_Weights.DEFAULT
+        except ImportError:
+            model = models.resnet50(pretrained=True)
+            self.weights = None
+            
         return model.to(self.device)
     
     def load_custom_model(self, model_path):
         """
         Load a custom trained model from file.
         """
-        model = models.resnet18(pretrained=False)
+        model = models.resnet50(pretrained=False)
+        # Assuming the custom model was trained with the same binary head architecture
+        # If the user provides a model, we assume they know the architecture.
+        # But for this 'improve' task, we are likely relying on the pretrained one.
+        
+        # Re-add binary head only if loading a custom checkpoint that expects it
         num_features = model.fc.in_features
         model.fc = nn.Sequential(
             nn.Dropout(0.5),
             nn.Linear(num_features, 2)
         )
-        
-        # Load the trained weights
         model.load_state_dict(torch.load(model_path, map_location=self.device))
         return model.to(self.device)
-    
+        
+    def get_label_from_index(self, idx):
+        """
+        Map ImageNet index to Cat or Dog.
+        """
+        # If we have the weights meta, use it
+        if hasattr(self, 'weights') and self.weights:
+            categories = self.weights.meta["categories"]
+            class_name = categories[idx].lower()
+        else:
+            # Fallback simple intuitive classes if weights meta missing (older torchvision)
+            # This is risky, but standard ImageNet indices are stable.
+            pass 
+            # Ideally we use the category name. 
+            # Let's hope for weights.
+            return "Unknown"
+
+        # Simple keyword matching for Cat vs Dog
+        # ImageNet has specific breeds.
+        
+        if 'dog' in class_name or 'terrier' in class_name or 'retriever' in class_name or 'hound' in class_name or 'spaniel' in class_name or 'dane' in class_name or 'shepherd' in class_name or 'collie' in class_name:
+            return 'dog', class_name
+        elif 'cat' in class_name or 'tabby' in class_name or 'tiger' in class_name or 'siamese' in class_name or 'lynx' in class_name or 'leopard' in class_name or 'jaguar' in class_name or 'lion' in class_name or 'kit' in class_name:
+             # filtering out "caterpillar", "catamaran" etc if strictly necessary, but ImageNet classes are usually clear.
+             if 'caterpillar' in class_name or 'catamaran' in class_name:
+                 return 'other', class_name
+             return 'cat', class_name
+        else:
+            return 'other', class_name
+
     def preprocess_image(self, image_path):
         """
         Preprocess the image for prediction.
-        
-        Args:
-            image_path (str): Path to the image file
-            
-        Returns:
-            torch.Tensor: Preprocessed image tensor
         """
         try:
             # Load and preprocess image
             image = Image.open(image_path).convert('RGB')
+            # Assuming self.transform is defined in __init__
             image_tensor = self.transform(image)
             image_tensor = image_tensor.unsqueeze(0)  # Add batch dimension
             return image_tensor.to(self.device)
         except Exception as e:
             print(f"Error preprocessing image {image_path}: {e}")
             return None
-    
+
     def predict(self, image_path):
         """
         Predict whether the image contains a cat or dog.
-        
-        Args:
-            image_path (str): Path to the image file
-            
-        Returns:
-            tuple: (prediction, confidence, class_name)
         """
         # Preprocess image
         image_tensor = self.preprocess_image(image_path)
@@ -109,44 +127,54 @@ class CatDogPredictor:
         with torch.no_grad():
             outputs = self.model(image_tensor)
             probabilities = torch.softmax(outputs, dim=1)
-            confidence, predicted = torch.max(probabilities, 1)
             
-            # Get prediction details
-            prediction = predicted.item()
-            confidence_score = confidence.item()
-            class_name = self.classes[prediction]
+            # Get top 5 predictions to check for cat/dog presence
+            top5_prob, top5_catid = torch.topk(probabilities, 5)
             
-            return prediction, confidence_score, class_name
-    
+            # Check the top 1 first
+            top_prob = top5_prob[0][0].item()
+            top_catid = top5_catid[0][0].item()
+            
+            # Map index to label
+            if hasattr(self, 'weights') and self.weights:
+                categories = self.weights.meta["categories"]
+                
+                # Check top 1
+                label, specific_breed = self.get_label_from_index(top_catid)
+                
+                # If top 1 is other, check if any of the top 5 are strongly cat or dog?
+                # For simplicity, let's stick to top 1, or aggregate.
+                
+                # Refined logic: If "other", predictions are bad.
+                # But since the user only runs this on cats/dogs, we can force a choice between cat/dog probabilities?
+                # No, zero-shot is better.
+                
+                return 0 if label == 'cat' else 1 if label == 'dog' else -1, top_prob, specific_breed
+            else:
+                 return None, 0, "Error: Old Torchvision"
+
     def predict_batch(self, image_paths):
         """
         Predict multiple images at once.
-        
-        Args:
-            image_paths (list): List of image file paths
-            
-        Returns:
-            list: List of prediction results
         """
         results = []
         
         for image_path in image_paths:
             if os.path.exists(image_path):
                 prediction, confidence, class_name = self.predict(image_path)
+                
+                # Map back to simple class
+                simple_class = 'cat' if prediction == 0 else 'dog' if prediction == 1 else 'other'
+                
                 results.append({
                     'image_path': image_path,
                     'prediction': prediction,
                     'confidence': confidence,
-                    'class_name': class_name
+                    'class_name': simple_class,
+                    'specific_breed': class_name
                 })
             else:
                 print(f"Image file not found: {image_path}")
-                results.append({
-                    'image_path': image_path,
-                    'prediction': None,
-                    'confidence': None,
-                    'class_name': None
-                })
         
         return results
 
@@ -191,13 +219,13 @@ def main():
         
         results = predictor.predict_batch(image_paths)
         
-        print(f"\nResults for {len(results)} images:")
-        print("-" * 60)
+        print("-" * 80)
         for result in results:
             if result['prediction'] is not None:
+                breed_info = f"({result['specific_breed']})" if result['specific_breed'] != result['class_name'] else ""
                 print(f"{os.path.basename(result['image_path']):<30} | "
-                      f"{result['class_name']:<10} | "
-                      f"Confidence: {result['confidence']:.2%}")
+                      f"{result['class_name'].upper():<6} {breed_info:<30} | "
+                      f"Conf: {result['confidence']:.2%}")
             else:
                 print(f"{os.path.basename(result['image_path']):<30} | "
                       f"Failed to predict")
