@@ -1,11 +1,30 @@
 # Cat/Dog Image Classifier
 
-This project contains tools for downloading a dataset of cat/dog images and running a basic image classifier using PyTorch (ResNet18).
+# Cat/Dog Image Predictor (Object Detection)
+
+This project provides tools for downloading a dataset of cat/dog images and runs a high-performance **Object Detection** pipeline using PyTorch (**Faster R-CNN**).
+
+## 🧠 How It Works
+
+Unlike simple image classifiers (e.g., ResNet18/50) that output a single label for an entire image, this project uses an **Object Detection** model to "see" and locate specific animals within a scene.
+
+### 1. Model Architecture
+- **Model**: Faster R-CNN with a ResNet-50-FPN backbone.
+- **Pre-training**: Trained on the **COCO** dataset (Common Objects in Context).
+- **Inference Strategy**: 
+    1. The model scans the image and proposes bounding boxes for potential objects.
+    2. It classifies each box into one of 91 COCO categories.
+    3. We rigorously filter these detections to only accept **Class 17 (Cat)** and **Class 18 (Dog)**.
+    4. If multiple animals are found, the one with the **highest confidence score** is selected as the prediction.
+
+### 2. High-Performance Execution
+- **Parallel Processing**: Uses `concurrent.futures.ThreadPoolExecutor` to process images in parallel threads.
+- **Latency**: Significantly faster than sequential processing, maximizing CPU/GPU utilization during I/O and inference.
 
 ## 📂 Project Structure
 
 - `dataset_downloader.py`: Script to fetch images from TheCatAPI and TheDogAPI.
-- `cat_dog_predictor.py`: PyTorch inference script using a **pre-trained ResNet50 model** (Zero-Shot).
+- `cat_dog_predictor.py`: The main inference script.
 - `Cats_Dogs/`: Directory containing the downloaded dataset.
 
 ## 🚀 Usage
@@ -28,14 +47,15 @@ python download_dataset.py
 
 You can run the predictor on a single image or an entire folder.
 
-**Predict on a Folder:**
+**Predict on a Folder (Parallel Execution):**
+The script automatically uses multiple threads to process images in parallel.
 ```bash
 python cat_dog_predictor.py --folder Cats_Dogs
 ```
 
 **Predict on a Single Image:**
 ```bash
-python cat_dog_predictor.py --image Cats_Dogs/cat-abc1234567.jpg
+python cat_dog_predictor.py --image Cats_Dogs/cat-0vua92y2vv.jpg
 ```
 
 ## 🛠️ Requirements
