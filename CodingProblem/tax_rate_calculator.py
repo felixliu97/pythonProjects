@@ -25,7 +25,7 @@ def tax_rate(taxable_income: float):
     print(f"taxable income: {taxable_income}, tax amount: {tax_amount:.2f} take home pay: {take_home_pay:.2f} tax rate: {current_tax_rate*100:.2f}%")
 
 def main():
-    for income in range(0, 400001, 5000):
+    for income in range(0, 300001, 5000):
         tax_rate(income)
 
 if __name__ == "__main__":
