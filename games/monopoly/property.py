@@ -127,12 +127,23 @@ class Street(Property):
             return False
         return self.owner.has_monopoly(self.color)
     
-    def can_build(self) -> bool:
-        """Check if a house can be built on this property."""
+    def can_build(self, group_houses: list[int] = None) -> bool:
+        """
+        Check if a house can be built on this property.
+        
+        Args:
+            group_houses: List of house counts for all properties in the color group.
+        """
         if self.is_mortgaged or self.houses >= 5:
             return False
         if not self.owner or not self._owner_has_monopoly():
             return False
+            
+        # Even building rule: Cannot build if this property would have >1 more house than others
+        if group_houses:
+            if self.houses > min(group_houses):
+                return False
+                
         return True
     
     def build_house(self) -> int:

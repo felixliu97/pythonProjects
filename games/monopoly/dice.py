@@ -58,6 +58,18 @@ class Dice:
             
         return result
     
+    def roll_for_jail(self) -> DiceRoll:
+        """
+        Roll dice for jail escape attempt.
+        Does NOT affect consecutive doubles counter.
+        
+        Returns:
+            DiceRoll containing the result.
+        """
+        die1 = random.randint(1, 6)
+        die2 = random.randint(1, 6)
+        return DiceRoll(die1, die2)
+    
     def reset_doubles(self) -> None:
         """Reset the consecutive doubles counter."""
         self.consecutive_doubles = 0

@@ -124,19 +124,24 @@ class MonopolyGame:
             return False
         
         # Doubles = roll again (unless sent to jail)
-        return roll.is_doubles and not player.in_jail
+        if roll.is_doubles and not player.in_jail:
+            print("\n  🎲 DOUBLES! Rolling again...")
+            return True
+        return False
     
     def _handle_jail_turn(self, player: Player) -> bool:
         """
         Handle a turn when player is in jail.
         
         Returns:
-            True if player escaped jail, False to end turn.
+            True if player escaped and should roll normally (paid/used card first),
+            False to end turn.
         """
         player.jail_turns += 1
         print(f"\n  {player.name} is in jail (turn {player.jail_turns}/3)")
         
         # Options: pay, use card, or try to roll doubles
+        # Using a "Get Out of Jail Free" card before rolling
         if player.jail_cards:
             print("  Using Get Out of Jail Free card!")
             card_type = player.use_jail_card()
@@ -145,10 +150,12 @@ class MonopolyGame:
             else:
                 self.community_chest_deck.return_card(None)
             player.leave_jail()
+            # Player is now "Just Visiting" - will roll normally in play_turn
+            # If they roll doubles, they get another turn
             return True
         
-        # Try to roll doubles
-        roll = self.dice.roll()
+        # Try to roll doubles (does NOT count toward consecutive doubles)
+        roll = self.dice.roll_for_jail()
         self.last_dice_roll = roll
         print(f"  🎲 Attempting doubles: {roll}")
         
@@ -157,7 +164,8 @@ class MonopolyGame:
             player.leave_jail()
             player.move(roll.total)
             self._handle_space(player, roll)
-            return False  # Don't roll again after escaping
+            # Rolling doubles to escape jail does NOT grant extra turn
+            return False
         
         if player.jail_turns >= 3:
             print("  Third failed attempt. Must pay $50.")

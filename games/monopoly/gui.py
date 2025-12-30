@@ -76,6 +76,8 @@ class MonopolyGUI:
         self.waiting_for_buy_decision = False
         self.current_property: Optional[Property] = None
         self.cell_positions = []
+        self.paid_jail_before_roll = False
+        self.can_roll = True  # Track if player can roll (start of turn or after doubles)
         
         # Build UI
         self._create_widgets()
@@ -242,15 +244,28 @@ class MonopolyGUI:
             elif space.space_type == SpaceType.LUXURY_TAX:
                 icon = "💎"
         
-        # Draw name (abbreviated)
-        name = space.name[:7] if len(space.name) > 7 else space.name
+        # Draw name (abbreviated and wrapped)
+        name = space.name
+        # Shorten and Wrap common suffixes
+        name = name.replace(" Avenue", "\nAve").replace(" Place", "\nPl").replace(" Gardens", "\nGdns")
+        name = name.replace(" Railroad", "\nRR").replace(" Company", "\nCo")
+        name = name.replace("Community Chest", "Comm\nChest").replace("Electric ", "Elec\n")
+        name = name.replace("Mediterranean", "Medit").replace("Connecticut", "Conn")
+        name = name.replace("Pennsylvania", "Penn").replace("Tennessee", "Tenn")
+        name = name.replace("North ", "N.\n").replace("South ", "S.\n").replace("Atlantic", "Atlntc")
+        
         if icon:
-            canvas.create_text(x + w/2, y + h/2 - 5, text=icon, font=("Helvetica", 12))
-            canvas.create_text(x + w/2, y + h/2 + 10, text=name, 
-                              font=("Helvetica", 6), width=w-4)
+            canvas.create_text(x + w/2, y + h/2 - 7, text=icon, font=("Helvetica", 10))
+            canvas.create_text(x + w/2, y + h/2 + 7, text=name, 
+                              font=("Helvetica", 5, "bold"), width=w-2, justify=tk.CENTER)
         else:
-            canvas.create_text(x + w/2, y + h/2, text=name, 
-                              font=("Helvetica", 7), width=w-4)
+            canvas.create_text(x + w/2, y + h/2 - 3, text=name, 
+                              font=("Helvetica", 6, "bold"), width=w-2, justify=tk.CENTER)
+        
+        # Draw price at bottom for properties
+        if isinstance(space, Property):
+            canvas.create_text(x + w/2, y + h - 8, text=f"${space.price}", 
+                              font=("Helvetica", 6, "bold"), fill="#444")
         
         # Draw houses/hotels
         if isinstance(space, Street) and space.houses > 0:
@@ -438,38 +453,53 @@ class MonopolyGUI:
         frame = tk.LabelFrame(parent, text="⚡ Actions",
                              font=("Helvetica", 12, "bold"),
                              bg=COLORS["panel_bg"], fg="white")
-        frame.pack(fill=tk.X, pady=(0, 10))
+        frame.pack(fill=tk.X, pady=(0, 5))
         
-        btn_style = {"font": ("Helvetica", 11, "bold"), "width": 18, "height": 2,
+        btn_style = {"font": ("Helvetica", 10, "bold"), "width": 16, "height": 1,
                     "relief": tk.FLAT, "cursor": "hand2"}
         
         self.roll_btn = tk.Button(frame, text="🎲 Roll Dice",
                                  command=self._on_roll,
                                  bg=COLORS["button_blue"], fg="white", **btn_style)
-        self.roll_btn.pack(pady=3, padx=10)
+        self.roll_btn.pack(pady=1, padx=10)
+        
+        self.pay_bail_btn = tk.Button(frame, text="💵 Pay $50 Bail",
+                                     command=self._on_pay_bail, state=tk.DISABLED,
+                                     bg=COLORS["button_purple"], fg="white", **btn_style)
+        self.pay_bail_btn.pack(pady=1, padx=10)
         
         self.buy_btn = tk.Button(frame, text="🏠 Buy Property",
                                 command=self._on_buy, state=tk.DISABLED,
                                 bg=COLORS["button_green"], fg="white", **btn_style)
-        self.buy_btn.pack(pady=3, padx=10)
+        self.buy_btn.pack(pady=1, padx=10)
         
         self.build_btn = tk.Button(frame, text="🏗️ Build House",
                                   command=self._on_build,
                                   bg=COLORS["button_purple"], fg="white", **btn_style)
-        self.build_btn.pack(pady=3, padx=10)
+        self.build_btn.pack(pady=1, padx=10)
+        
+        self.sell_house_btn = tk.Button(frame, text="📉 Sell House",
+                                       command=self._on_sell_house,
+                                       bg=COLORS["button_purple"], fg="white", **btn_style)
+        self.sell_house_btn.pack(pady=1, padx=10)
+        
+        self.mortgage_btn = tk.Button(frame, text="🏦 Mortgage",
+                                     command=self._on_mortgage,
+                                     bg=COLORS["button_purple"], fg="white", **btn_style)
+        self.mortgage_btn.pack(pady=1, padx=10)
         
         self.end_btn = tk.Button(frame, text="⏭️ End Turn",
                                 command=self._on_end_turn,
                                 bg=COLORS["button_red"], fg="white", **btn_style)
-        self.end_btn.pack(pady=3, padx=10)
+        self.end_btn.pack(pady=1, padx=10)
     
     def _create_players_section(self, parent):
         """All players list with owned properties."""
         # Create scrollable frame for players
         self.players_frame = tk.LabelFrame(parent, text="👥 Players & Properties",
-                             font=("Helvetica", 12, "bold"),
+                             font=("Helvetica", 11, "bold"),
                              bg=COLORS["panel_bg"], fg="white")
-        self.players_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        self.players_frame.pack(fill=tk.X, pady=(0, 5))
         
         # Create inner frame for players
         self.player_info_frames = []
@@ -477,11 +507,11 @@ class MonopolyGUI:
         
         for i in range(4):
             # Player info frame
-            pf = tk.Frame(self.players_frame, bg=COLORS["panel_bg"], pady=2)
+            pf = tk.Frame(self.players_frame, bg=COLORS["panel_bg"], pady=1)
             pf.pack(fill=tk.X, padx=5)
             
             # Player name and money
-            name_label = tk.Label(pf, text="", font=("Helvetica", 10, "bold"),
+            name_label = tk.Label(pf, text="", font=("Helvetica", 9, "bold"),
                                  bg=COLORS["panel_bg"], fg="white", anchor="w")
             name_label.pack(fill=tk.X)
             
@@ -515,50 +545,101 @@ class MonopolyGUI:
     
     def _update_display(self):
         """Update all display elements."""
-        player = self.game.current_player
-        space = self.game.board.get_space(player.position)
-        
-        # Current player
-        self.current_player_label.config(text=f"{player.token} {player.name}")
-        self.money_label.config(text=f"💵 ${player.money:,}")
-        self.position_label.config(text=f"📍 {space.name}")
-        
-        # Players list with properties
-        for i, (name_lbl, prop_lbl) in enumerate(zip(self.player_info_frames, self.player_prop_labels)):
-            if i < len(self.game.players):
-                p = self.game.players[i]
-                status = "💀" if p.is_bankrupt else "🔒" if p.in_jail else ""
-                arrow = "▶ " if p == player else "   "
-                player_color = DEFAULT_PLAYERS[i][2] if i < len(DEFAULT_PLAYERS) else "white"
-                
-                # Player name line
-                name_lbl.config(text=f"{arrow}{p.token} {p.name}: ${p.money:,} {status}")
-                if p == player:
-                    name_lbl.config(fg=COLORS["active_border"])
+        if not self.root.winfo_exists():
+            return
+            
+        try:
+            player = self.game.current_player
+            space = self.game.board.get_space(player.position)
+            
+            # Current player
+            self.current_player_label.config(text=f"{player.token} {player.name}")
+            self.money_label.config(text=f"💵 ${player.money:,}")
+            self.position_label.config(text=f"📍 {space.name}")
+            
+            # Players list with properties
+            for i, (name_lbl, prop_lbl) in enumerate(zip(self.player_info_frames, self.player_prop_labels)):
+                if i < len(self.game.players):
+                    p = self.game.players[i]
+                    status = "💀" if p.is_bankrupt else "🔒" if p.in_jail else ""
+                    arrow = "▶ " if p == player else "   "
+                    player_color = DEFAULT_PLAYERS[i][2] if i < len(DEFAULT_PLAYERS) else "white"
+                    
+                    # Player name line
+                    name_lbl.config(text=f"{arrow}{p.token} {p.name}: ${p.money:,} {status}")
+                    if p == player:
+                        name_lbl.config(fg=COLORS["active_border"])
+                    else:
+                        name_lbl.config(fg=player_color)
+                    
+                    # Properties owned
+                    if p.properties:
+                        prop_names = [prop.name[:10] for prop in p.properties[:6]]
+                        more = f" +{len(p.properties) - 6}" if len(p.properties) > 6 else ""
+                        prop_lbl.config(text=f"🏠 {', '.join(prop_names)}{more}")
+                    else:
+                        prop_lbl.config(text="No properties")
                 else:
-                    name_lbl.config(fg=player_color)
-                
-                # Properties owned
-                if p.properties:
-                    prop_names = [prop.name[:10] for prop in p.properties[:6]]
-                    more = f" +{len(p.properties) - 6}" if len(p.properties) > 6 else ""
-                    prop_lbl.config(text=f"🏠 {', '.join(prop_names)}{more}")
-                else:
-                    prop_lbl.config(text="No properties")
+                    name_lbl.config(text="")
+                    prop_lbl.config(text="")
+            
+            # Redraw board
+            self._draw_board()
+            
+            # Update buttons
+            if self.waiting_for_buy_decision:
+                self.roll_btn.config(state=tk.DISABLED)
+                self.buy_btn.config(state=tk.NORMAL)
+                self.pay_bail_btn.config(state=tk.DISABLED)
+                self.build_btn.config(state=tk.DISABLED)
             else:
-                name_lbl.config(text="")
-                prop_lbl.config(text="")
-        
-        # Redraw board
-        self._draw_board()
-        
-        # Update buttons
-        if self.waiting_for_buy_decision:
-            self.roll_btn.config(state=tk.DISABLED)
-            self.buy_btn.config(state=tk.NORMAL)
-        else:
-            self.roll_btn.config(state=tk.NORMAL)
-            self.buy_btn.config(state=tk.DISABLED)
+                # Only enable roll if player can roll (start of turn or after doubles)
+                if self.can_roll:
+                    self.roll_btn.config(state=tk.NORMAL)
+                else:
+                    self.roll_btn.config(state=tk.DISABLED)
+                    
+                self.buy_btn.config(state=tk.DISABLED)
+                
+                # Show Pay Bail button if player is in jail and has money
+                if player.in_jail and player.money >= 50 and not self.paid_jail_before_roll and self.can_roll:
+                    self.pay_bail_btn.config(state=tk.NORMAL)
+                else:
+                    self.pay_bail_btn.config(state=tk.DISABLED)
+                    
+                # Enable Build button only if player can actually build
+                buildable = []
+                for p in player.properties:
+                    if isinstance(p, Street):
+                        group_houses = self._get_group_houses(p.color)
+                        if p.can_build(group_houses) and player.money >= p.house_cost:
+                            buildable.append(p)
+                            
+                if buildable and self.game.bank.houses_available > 0:
+                    self.build_btn.config(state=tk.NORMAL)
+                else:
+                    self.build_btn.config(state=tk.DISABLED)
+                    
+                # Enable Sell House button if player has houses
+                has_houses = any(isinstance(p, Street) and p.houses > 0 for p in player.properties)
+                if has_houses:
+                    self.sell_house_btn.config(state=tk.NORMAL)
+                else:
+                    self.sell_house_btn.config(state=tk.DISABLED)
+                    
+                # Enable Mortgage button if player has properties to mortgage/unmortgage
+                if player.properties:
+                    self.mortgage_btn.config(state=tk.NORMAL)
+                else:
+                    self.mortgage_btn.config(state=tk.DISABLED)
+                
+                # End turn only allowed after rolling (and not doubles)
+                if self.can_roll:
+                    self.end_btn.config(state=tk.DISABLED)
+                else:
+                    self.end_btn.config(state=tk.NORMAL)
+        except tk.TclError:
+            pass
     
     def _update_dice_display(self, roll: DiceRoll):
         """Update dice display with animation."""
@@ -566,14 +647,24 @@ class MonopolyGUI:
         
         # Quick animation
         for _ in range(3):
+            if not self.root.winfo_exists():
+                return
             d1 = random.choice(dice_chars)
             d2 = random.choice(dice_chars)
-            self.dice_label.config(text=f"{d1} {d2}")
-            self.root.update()
-            self.root.after(50)
-        
-        # Final result
-        self.dice_label.config(text=f"{dice_chars[roll.die1-1]} {dice_chars[roll.die2-1]}")
+            try:
+                self.dice_label.config(text=f"{d1} {d2}")
+                self.root.update()
+                self.root.after(50)
+            except tk.TclError:
+                return
+            
+        if not self.root.winfo_exists():
+            return
+            
+        try:
+            self.dice_label.config(text=f"{dice_chars[roll.die1-1]} {dice_chars[roll.die2-1]}")
+        except tk.TclError:
+            pass
         
         result_text = f"= {roll.total}"
         if roll.is_doubles:
@@ -583,13 +674,29 @@ class MonopolyGUI:
             self.dice_result_label.config(fg="#AAA")
         self.dice_result_label.config(text=result_text)
     
+    def _on_pay_bail(self):
+        """Pay $50 to leave jail before rolling."""
+        player = self.game.current_player
+        if player.in_jail and player.money >= 50:
+            player.pay(50)
+            player.leave_jail()
+            self.paid_jail_before_roll = True
+            self._log(f"{player.name} paid $50 bail")
+            self.pay_bail_btn.config(state=tk.DISABLED)
+            self._update_display()
+    
     def _on_roll(self):
         """Handle dice roll."""
         player = self.game.current_player
         
-        if player.in_jail:
+        # If in jail and haven't paid bail, try to roll doubles to escape
+        if player.in_jail and not self.paid_jail_before_roll:
             self._handle_jail_roll()
             return
+        
+        # Reset jail payment flag (player already out of jail or paid before roll)
+        was_paid_before_roll = self.paid_jail_before_roll
+        self.paid_jail_before_roll = False
         
         roll = self.game.dice.roll()
         self.game.last_dice_roll = roll
@@ -597,10 +704,16 @@ class MonopolyGUI:
         self._log(f"{player.name} rolled {roll.total}")
         
         if self.game.dice.should_go_to_jail:
-            self._log(f"Three doubles! {player.name} goes to JAIL!")
+            self._log(f"THREE DOUBLES! {player.name} goes to JAIL!")
             self.game.send_to_jail(player)
             self.roll_btn.config(state=tk.DISABLED)
             self._update_display()
+            messagebox.showinfo("Speeding!", 
+                f"{player.name} rolled three doubles in a row!\n\n"
+                "Go directly to Jail. Do not pass GO.\nDo not collect $200.\n\n"
+                "Turn ends.")
+            # Auto-end turn after jail for speeding
+            self._auto_end_turn_for_jail()
             return
         
         passed_go = player.move(roll.total)
@@ -613,15 +726,20 @@ class MonopolyGUI:
         
         if roll.is_doubles and not player.in_jail:
             self._log("Doubles! Roll again.")
+            self.can_roll = True  # Can roll again after doubles
         else:
-            self.roll_btn.config(state=tk.DISABLED)
+            self.can_roll = False  # Turn ends, cannot roll
+        
+        # Update display AFTER setting can_roll so buttons reflect new state
+        self._update_display()
     
     def _handle_jail_roll(self):
-        """Handle jail escape attempt."""
+        """Handle jail escape attempt (rolling doubles to escape)."""
         player = self.game.current_player
         player.jail_turns += 1
         
-        roll = self.game.dice.roll()
+        # Use roll_for_jail - doesn't affect consecutive doubles counter
+        roll = self.game.dice.roll_for_jail()
         self.game.last_dice_roll = roll
         self._update_dice_display(roll)
         
@@ -630,6 +748,7 @@ class MonopolyGUI:
             player.leave_jail()
             player.move(roll.total)
             self._handle_space(player, roll)
+            # Rolling doubles to escape jail does NOT grant extra turn
         elif player.jail_turns >= 3:
             self._log(f"Must pay $50 to leave jail")
             player.pay(50)
@@ -639,6 +758,7 @@ class MonopolyGUI:
         else:
             self._log(f"No doubles. Still in jail ({player.jail_turns}/3)")
         
+        self.can_roll = False  # Jail roll ends turn (no extra rolls)
         self.roll_btn.config(state=tk.DISABLED)
         self._update_display()
     
@@ -703,13 +823,18 @@ class MonopolyGUI:
     def _on_build(self):
         """Build a house."""
         player = self.game.current_player
-        buildable = [p for p in player.properties if isinstance(p, Street) and p.can_build()]
+        buildable = []
+        for p in player.properties:
+            if isinstance(p, Street):
+                group_houses = self._get_group_houses(p.color)
+                if p.can_build(group_houses):
+                    buildable.append(p)
         
         if not buildable:
-            messagebox.showinfo("Build", "No properties available for building.")
+            messagebox.showinfo("Build", "No properties available for building (Even building rule applies).")
             return
         
-        # Simple: build on first available
+        # Simple: build on first available that maintains even building
         prop = buildable[0]
         if player.money >= prop.house_cost and self.game.bank.sell_house():
             prop.build_house()
@@ -719,6 +844,65 @@ class MonopolyGUI:
         else:
             messagebox.showinfo("Build", "Cannot build house.")
     
+    def _on_sell_house(self):
+        """Sell a house back to the bank."""
+        player = self.game.current_player
+        sellable = []
+        for p in player.properties:
+            if isinstance(p, Street) and p.houses > 0:
+                # Even selling rule: Cannot sell if this property would have <1 fewer house than others
+                group_houses = self._get_group_houses(p.color)
+                if p.houses == max(group_houses):
+                    sellable.append(p)
+                    
+        if not sellable:
+            messagebox.showinfo("Sell House", "No houses can be sold (Even selling rule applies).")
+            return
+            
+        # Sell from first available
+        prop = sellable[0]
+        received = prop.sell_house()
+        player.receive(received)
+        self.game.bank.houses_available += 1
+        self._log(f"Sold house on {prop.name} for ${received}")
+        self._update_display()
+
+    def _get_group_houses(self, color: PropertyColor) -> list[int]:
+        """Get house counts for all properties in a color group."""
+        group_props = self.game.board.get_streets_by_color(color)
+        return [p.houses for p in group_props]
+    
+    def _on_mortgage(self):
+        """Handle mortgage/unmortgage of properties."""
+        player = self.game.current_player
+        if not player.properties:
+            messagebox.showinfo("Mortgage", "You don't own any properties to mortgage.")
+            return
+            
+        # Select first available property to toggle for MVP
+        for prop in player.properties:
+            if prop.is_mortgaged:
+                # Unmortgage
+                if player.money >= prop.unmortgage_cost:
+                    cost = prop.unmortgage()
+                    player.pay(cost)
+                    self._log(f"Unmortgaged {prop.name} for ${cost}")
+                    self._update_display()
+                    return
+            else:
+                # Mortgage
+                # Check for houses first (must sell before mortgage)
+                if isinstance(prop, Street) and prop.houses > 0:
+                    continue
+                
+                received = prop.mortgage()
+                player.receive(received)
+                self._log(f"Mortgaged {prop.name} for ${received}")
+                self._update_display()
+                return
+                
+        messagebox.showinfo("Mortgage", "No properties can be mortgaged (Sell houses first!) or unmortgaged (Insufficient funds).")
+    
     def _on_end_turn(self):
         """End current turn."""
         if self.waiting_for_buy_decision:
@@ -726,7 +910,23 @@ class MonopolyGUI:
             self.waiting_for_buy_decision = False
             self.current_property = None
         
+        # Reset jail payment flag for next turn
+        self.paid_jail_before_roll = False
+        self.can_roll = True  # New turn, can roll
         self.game.dice.reset_doubles()
+        self.game.next_turn()
+        self.dice_label.config(text="⚀ ⚀")
+        self.dice_result_label.config(text="Roll to start!")
+        self._log(f"--- {self.game.current_player.name}'s turn ---")
+        self._update_display()
+    
+    def _auto_end_turn_for_jail(self):
+        """Auto-end turn after being sent to jail for speeding (3 doubles)."""
+        self.waiting_for_buy_decision = False
+        self.current_property = None
+        self.paid_jail_before_roll = False
+        self.can_roll = True  # New turn, can roll
+        # Doubles already reset in send_to_jail
         self.game.next_turn()
         self.dice_label.config(text="⚀ ⚀")
         self.dice_result_label.config(text="Roll to start!")

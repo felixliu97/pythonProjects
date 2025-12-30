@@ -40,12 +40,33 @@ A graphical implementation of the classic Monopoly board game in Python using Tk
 - **Railroads (4)**: Reading, Pennsylvania, B&O, Short Line
 - **Utilities (2)**: Electric Company, Water Works
 
-### Game Flow
-1. Players start with $1,500
-2. Roll two dice, move clockwise
-3. Perform space action (buy, pay rent, draw card, etc.)
-4. Doubles = roll again (3 doubles = jail)
-5. Pass GO = collect $200
+### Game Flow & Turn Structure
+1. **Turn Start**:
+   - Player can Build, Mortgage, or Trade before rolling.
+   - **"End Turn" button is DISABLED** at the start of every turn.
+2. **The Roll**:
+   - Rolling dice is the mandatory action to progress.
+   - Once rolled, the player moves and performs land-space actions.
+3. **Post-Roll Actions**:
+   - Player can Build, Mortgage, or Trade after land-space actions are resolved.
+   - **"End Turn" button is ENABLED** only after a roll has been completed (and no doubles rolled).
+   - If doubles were rolled, "End Turn" remains disabled as the player MUST roll again.
+4. **Doubles Rules**:
+   - Rolling doubles grants an extra turn (max 3).
+   - Rolling a **third consecutive double** = "Speeding" penalty → Go directly to Jail immediately (turn ends, no movement).
+5. **Pass GO**: Collect $200.
+
+### Housing Rules (Advanced)
+- **Monopoly Required**: Must own all properties of a color group to build.
+- **Even Building Rule**: You cannot build a second house on any property of a color group until you have built one house on every property of that group. This applies up to hotels.
+- **Selling Houses**: Houses can be sold back to the bank for 50% of their cost. Selling must also be done "evenly".
+- **Housing Shortage**: There are only 32 houses and 12 hotels. If the bank is out, no building is allowed until someone sells or upgrades.
+
+### Mortgage Interest and Trading
+- **Mortgage Interest**: Unmortgaging costs the mortgage value + 10% interest (110% total).
+- **Trading Mortgaged Properties**: When a player receives a mortgaged property in a trade:
+  - They must immediately pay the 10% interest to the bank.
+  - They can choose to unmortgage then (pay 110%) or keep it mortgaged (pay 10% now, pay 110% later).
 
 ### Default Players
 | Player | Default Name | Avatar | Color |
@@ -86,9 +107,13 @@ Players use default names, avatars, and colors automatically. Each player's toke
 - **Exit via**: Pay $50, use Get Out of Jail Free card, or roll doubles (3 attempts)
 - After 3 failed attempts, must pay $50
 
-### Winning Conditions
-- Last player remaining after all others are bankrupt
-- Bankruptcy = cannot pay debt and no assets to liquidate
+### Bankruptcy and Liquidation
+- **Liquidation Process**: Before declaring bankruptcy, a player MUST:
+  - Sell all houses/hotels to the bank (at 50% cost).
+  - Mortgage all properties to raise cash.
+- **Bankrupt to Player**: All remaining assets (mortgaged properties, cash, cards) go to the creditor player.
+- **Bankrupt to Bank**: All assets go back to the bank. All properties are immediately put up for auction.
+- **Winner**: The last player remaining with a positive balance.
 
 ---
 
@@ -102,9 +127,13 @@ Players use default names, avatars, and colors automatically. Each player's toke
 **Acceptance Criteria:**
 - [ ] Two dice are rolled with random values 1-6
 - [ ] Token moves clockwise by sum of dice
-- [ ] Rolling doubles grants another turn
-- [ ] Three consecutive doubles sends player to jail
+- [ ] Rolling doubles grants another turn (after completing actions on landed space)
+- [ ] Rolling second consecutive doubles grants yet another turn
+- [ ] Rolling three consecutive doubles = "Speeding" → Go to Jail immediately (no movement)
 - [ ] Passing GO awards $200
+- [ ] Clear indicator shown when doubles are rolled ("DOUBLES!" message)
+- [ ] **"End Turn" button disabled until mandatory roll is completed**
+- [ ] **"Roll Dice" button disabled after roll (until next player's turn or doubles)**
 
 ---
 
@@ -147,6 +176,7 @@ Players use default names, avatars, and colors automatically. Each player's toke
 - [ ] Maximum 4 houses before hotel
 - [ ] Building costs deducted from balance
 - [ ] Bank house/hotel supply is tracked
+- [ ] "Build House" button is disabled if player cannot build or lacks funds
 
 ---
 
@@ -195,8 +225,10 @@ Players use default names, avatars, and colors automatically. Each player's toke
 **So that** jail mechanics work correctly
 
 **Acceptance Criteria:**
-- [ ] Jail triggered by: Go To Jail space, card, 3 doubles
+- [ ] Jail triggered by: Go To Jail space, card, 3 consecutive doubles
 - [ ] Exit options: pay $50, use card, roll doubles
+- [ ] Rolling doubles to escape jail does NOT grant extra turn
+- [ ] Exception: Paying $50 or using card BEFORE rolling, then rolling doubles = extra turn granted
 - [ ] Forced payment after 3 failed attempts
 - [ ] Jail does not prevent rent collection
 
