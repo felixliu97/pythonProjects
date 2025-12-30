@@ -127,9 +127,9 @@ def set_page(page_name):
     st.session_state.page = page_name
     st.session_state.active_project = None
 
-st.sidebar.button("🏠 Home", on_click=set_page, args=("Home",), use_container_width=True)
-st.sidebar.button("🛠️ Skills", on_click=set_page, args=("Skills",), use_container_width=True)
-st.sidebar.button("🚀 Projects", on_click=set_page, args=("Projects",), use_container_width=True)
+st.sidebar.button("🏠 Home", on_click=set_page, args=("Home",), width='stretch')
+st.sidebar.button("🛠️ Skills", on_click=set_page, args=("Skills",), width='stretch')
+st.sidebar.button("🚀 Projects", on_click=set_page, args=("Projects",), width='stretch')
 
 st.sidebar.markdown("---")
 st.sidebar.markdown(f"""
@@ -208,13 +208,19 @@ elif page == "Projects":
                     delta=f"{top_gainer['1D Change']:.2f}%"
                 )
             with col3:
-               top_mom = df.loc[df['Momentum'].idxmax()]
-               st.metric(
-                   label="Highest Momentum", 
-                   value=top_mom['Symbol'], 
-                   delta=f"{top_mom['Momentum']:.2f}%",
-                   help="Stock with the strongest 5-day price trend"
-               )
+               # Industry with most stocks in positive territory
+               positive_by_industry = df[df['1D Change'] > 0].groupby('Industry').size()
+               if not positive_by_industry.empty:
+                   top_industry = positive_by_industry.idxmax()
+                   top_industry_count = positive_by_industry.max()
+                   st.metric(
+                       label="Strongest Sector", 
+                       value=top_industry, 
+                       delta=f"{top_industry_count} stocks up",
+                       help="Industry with most stocks gaining today"
+                   )
+               else:
+                   st.metric(label="Strongest Sector", value="N/A", delta="0 stocks up")
 
             st.divider()
 
@@ -225,8 +231,8 @@ elif page == "Projects":
             # Keep numeric values for sorting, but scale large numbers
             df_display['MC'] = df_display['MC'] / 1e9  # Convert to Billions
 
-            # Select and Rename Columns
-            cols_to_show = ["Symbol", "Name", "Industry", "MC", "Price", "PE", "PS", "Score", "1D Change", "5D Change", "Momentum", "Volatility", "RSI"]
+            # Select and Rename Columns (Momentum removed)
+            cols_to_show = ["Symbol", "Name", "Industry", "MC", "Price", "PE", "PS", "Score", "1D Change", "5D Change", "Volatility", "RSI"]
             df_final = df_display[cols_to_show].copy()
 
             # --- Styling API ---
@@ -247,7 +253,7 @@ elif page == "Projects":
                 except: pass
                 return ''
 
-            styler = df_final.style.map(color_change, subset=['1D Change', '5D Change', 'Momentum'])\
+            styler = df_final.style.map(color_change, subset=['1D Change', '5D Change'])\
                                    .map(color_rsi, subset=['RSI'])\
                                    .format({
                                        "PE": "{:.1f}", 
@@ -280,7 +286,6 @@ elif page == "Projects":
                 ),
                 "1D Change": st.column_config.NumberColumn("1D Chg", format="%+.2f%%"),
                 "5D Change": st.column_config.NumberColumn("5D Chg", format="%+.2f%%"),
-                "Momentum": st.column_config.NumberColumn("Momentum", format="%+.2f%%"),
                 "Volatility": st.column_config.NumberColumn("Volatility", format="%.2f%%"),
                 "RSI": st.column_config.NumberColumn("RSI", help="Relative Strength Index (14d)"),
             }
@@ -313,6 +318,50 @@ elif page == "Projects":
                      st.markdown(f"<div style='display:flex; justify-content:space-between'><b>{row['Symbol']}</b> <span style='color:#dc3545'>{row['1D Change']:.2f}%</span></div>", unsafe_allow_html=True)
 
             st.write("")
+            
+            # --- Industry Breakdown ---
+            st.caption("🏭 Industry Breakdown")
+            industry_stats = df.groupby('Industry').agg({
+                'Symbol': 'count',
+                '1D Change': 'mean',
+                'Score': 'mean',
+                'MC': 'sum'
+            }).rename(columns={'Symbol': 'Count', '1D Change': 'Avg 1D Chg', 'Score': 'Avg Score', 'MC': 'Total MC'})
+            industry_stats = industry_stats.sort_values('Total MC', ascending=False)
+            
+            # Display as a styled dataframe for industry breakdown
+            industry_display = industry_stats.copy()
+            industry_display['Total MC'] = industry_display['Total MC'] / 1e9  # Convert to Billions
+            
+            # Color function for change column
+            def style_industry_change(val):
+                try:
+                    if val > 0:
+                        return 'color: #28a745; font-weight: bold'
+                    elif val < 0:
+                        return 'color: #dc3545; font-weight: bold'
+                except:
+                    pass
+                return ''
+            
+            industry_styler = industry_display.style.map(style_industry_change, subset=['Avg 1D Chg'])\
+                                                    .format({
+                                                        'Avg 1D Chg': '{:+.2f}%',
+                                                        'Avg Score': '{:.1f}',
+                                                        'Total MC': '${:.0f}B'
+                                                    })
+            
+            st.dataframe(
+                industry_styler,
+                column_config={
+                    "Count": st.column_config.NumberColumn("Stocks", width="small"),
+                    "Avg 1D Chg": st.column_config.NumberColumn("Avg Change", width="small"),
+                    "Avg Score": st.column_config.NumberColumn("Avg Score", width="small"),
+                    "Total MC": st.column_config.NumberColumn("Market Cap", width="small"),
+                },
+                height=400,
+                width="stretch"
+            )
             
             # RSI Alerts (Compact Pills)
             overbought = df[df['RSI'] >= 70].sort_values(by='RSI', ascending=False)
@@ -381,7 +430,7 @@ elif page == "Projects":
                     try:
                         # Resize image to fixed dimensions
                         img_to_show = load_and_resize_image(image_path)
-                        st.image(img_to_show, use_container_width=True)
+                        st.image(img_to_show, width='stretch')
                     except:
                         st.error(f"Could not load image: {project['image']}")
                     # Removed divider as the border now separates cards

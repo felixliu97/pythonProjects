@@ -155,6 +155,6 @@ def render_flashcard_generator():
                 
                 # Toggle Button (Full Width below card)
                 btn_label = "Show Question" if is_flipped else "Show Answer"
-                if st.button(btn_label, key=f"btn_{i}", use_container_width=True):
+                if st.button(btn_label, key=f"btn_{i}", width='stretch'):
                     st.session_state[card_key] = not st.session_state[card_key]
                     st.rerun()
