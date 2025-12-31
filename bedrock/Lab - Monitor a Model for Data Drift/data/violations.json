@@ -1,0 +1,35 @@
+{
+  "violations" : [ {
+    "feature_name" : "rings",
+    "constraint_check_type" : "data_type_check",
+    "description" : "Data type match requirement is not met. Expected data type: Integral, Expected match: 100.0%. Observed: Only 0.0% of data is Integral."
+  }, {
+    "feature_name" : "sex_f",
+    "constraint_check_type" : "data_type_check",
+    "description" : "Data type match requirement is not met. Expected data type: Integral, Expected match: 100.0%. Observed: Only 62.616822429906534% of data is Integral."
+  }, {
+    "feature_name" : "sex_i",
+    "constraint_check_type" : "data_type_check",
+    "description" : "Data type match requirement is not met. Expected data type: Integral, Expected match: 100.0%. Observed: Only 62.616822429906534% of data is Integral."
+  }, {
+    "feature_name" : "sex_m",
+    "constraint_check_type" : "data_type_check",
+    "description" : "Data type match requirement is not met. Expected data type: Integral, Expected match: 100.0%. Observed: Only 62.616822429906534% of data is Integral."
+  }, {
+    "feature_name" : "length",
+    "constraint_check_type" : "baseline_drift_check",
+    "description" : "Baseline drift distance: 0.17354640931273702 exceeds threshold: 0.1"
+  }, {
+    "feature_name" : "diameter",
+    "constraint_check_type" : "baseline_drift_check",
+    "description" : "Baseline drift distance: 0.14440240796849557 exceeds threshold: 0.1"
+  }, {
+    "feature_name" : "whole_weight",
+    "constraint_check_type" : "baseline_drift_check",
+    "description" : "Baseline drift distance: 0.11630482464065406 exceeds threshold: 0.1"
+  }, {
+    "feature_name" : "shell_weight",
+    "constraint_check_type" : "baseline_drift_check",
+    "description" : "Baseline drift distance: 0.11238588915222741 exceeds threshold: 0.1"
+  } ]
+}
