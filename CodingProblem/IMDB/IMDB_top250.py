@@ -201,7 +201,7 @@ def main():
                             'Duration': '3h 5m',
                             'Classification': 'PG',
                             'Rating': '8.1',
-                            'Votes': '200K',
+                            'Votes': '201K',
                             'Directors': 'Stanley Kubrick'
                         }
                         expected_stars_182 = "Ryan O'Neal, Marisa Berenson, Patrick Magee"
@@ -215,7 +215,7 @@ def main():
                             'Duration': '2h 12m',
                             'Classification': 'PG-13',
                             'Rating': '8.1',
-                            'Votes': '758K',
+                            'Votes': '759K',
                             'Directors': 'Clint Eastwood'
                         }
                         expected_stars_184 = "Hilary Swank, Clint Eastwood, Morgan Freeman"
