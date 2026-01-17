@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Todo</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <span style="font-size: 24px;">📋</span>
+      <h1>Quick Todo</h1>
+      <button id="darkModeBtn" class="icon-btn" title="Toggle dark mode">🌙</button>
+    </header>
+
+    <!-- Search/Filter -->
+    <div class="search-group">
+      <input type="text" id="searchInput" placeholder="Search tasks...">
+      <select id="filterSelect">
+        <option value="all">All</option>
+        <option value="active">Active</option>
+        <option value="completed">Completed</option>
+        <option value="overdue">Overdue</option>
+      </select>
+    </div>
+
+    <!-- Add Task -->
+    <div class="input-group">
+      <input type="text" id="todoInput" placeholder="Add a new task..." autofocus>
+      <select id="priorityInput" title="Priority">
+        <option value="">⚪</option>
+        <option value="high">🔴</option>
+        <option value="medium">🟡</option>
+        <option value="low">🟢</option>
+      </select>
+      <input type="date" id="deadlineInput" title="Set deadline (optional)">
+      <button id="addBtn">+</button>
+    </div>
+
+    <!-- Task List -->
+    <div class="todo-list" id="todoList">
+      <!-- Todos will be rendered here -->
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-row">
+      <span id="footer"></span>
+      <button id="clearCompletedBtn" class="clear-btn">Clear completed</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
