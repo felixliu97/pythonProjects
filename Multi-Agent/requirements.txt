@@ -1,4 +1,0 @@
-crewai>=0.28.0
-crewai-tools>=0.2.0
-langchain-openai>=0.1.0
-langchain-google-vertexai>=1.0.0
