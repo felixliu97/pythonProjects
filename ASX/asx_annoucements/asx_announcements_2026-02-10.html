@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ASX Announcements Analysis</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+               background: #1a1a1a; color: #e0e0e0; margin: 0; padding: 20px; }
+        .header { background: #2d2d2d; padding: 20px; border-radius: 8px; margin-bottom: 20px; 
+                   border-left: 5px solid #007acc; }
+        h1 { margin: 0; color: #007acc; }
+        .timestamp { color: #888; font-size: 0.9em; margin-top: 5px; }
+        .section { margin: 20px 0; padding: 15px; background: #252526; border-radius: 8px; }
+        .section-title { font-size: 1.3em; font-weight: bold; margin-bottom: 15px; }
+        .buy { border-left: 4px solid #4caf50; }
+        .buy .section-title { color: #4caf50; }
+        .watch { border-left: 4px solid #ff9800; }
+        .watch .section-title { color: #ff9800; }
+        .sell { border-left: 4px solid #f44336; }
+        .sell .section-title { color: #f44336; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+        th { background: #333; color: #fff; cursor: pointer; user-select: none; }
+        th:hover { background: #444; }
+        th.sorted-asc::after { content: ' ▲'; font-size: 0.8em; }
+        th.sorted-desc::after { content: ' ▼'; font-size: 0.8em; }
+        tr:hover { background: #2d2d2d; }
+        .positive { color: #4caf50; }
+        .negative { color: #f44336; }
+        .neutral { color: #888; }
+        .score { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+        .score-high { background: #4caf50; color: #fff; }
+        .score-med { background: #ff9800; color: #fff; }
+        .score-low { background: #f44336; color: #fff; }
+        .reasons { font-size: 0.85em; color: #aaa; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔔 ASX Announcements Analysis</h1>
+        <div class="timestamp">Generated: 2026-02-10 14:41:30</div>
+    </div>
+    
+    <script>
+    function sortTable(table, colIndex) {
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const th = table.querySelectorAll('th')[colIndex];
+        const isAsc = th.classList.contains('sorted-asc');
+        
+        // Clear all sort indicators
+        table.querySelectorAll('th').forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+        
+        rows.sort((a, b) => {
+            let aVal = a.cells[colIndex].textContent.trim();
+            let bVal = b.cells[colIndex].textContent.trim();
+            
+            // Handle numeric values (prices, percentages)
+            const aNum = parseFloat(aVal.replace(/[$%,+]/g, ''));
+            const bNum = parseFloat(bVal.replace(/[$%,+]/g, ''));
+            
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return isAsc ? bNum - aNum : aNum - bNum;
+            }
+            
+            // String comparison
+            return isAsc ? bVal.localeCompare(aVal) : aVal.localeCompare(bVal);
+        });
+        
+        th.classList.add(isAsc ? 'sorted-desc' : 'sorted-asc');
+        rows.forEach(row => tbody.appendChild(row));
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('table').forEach(table => {
+            table.querySelectorAll('th').forEach((th, index) => {
+                th.addEventListener('click', () => sortTable(table, index));
+            });
+        });
+    });
+    </script>
+
+    <div class="section buy">
+        <div class="section-title">🟢 POTENTIAL BUY (31)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Headline</th>
+                    <th>Rating</th>
+                    <th>Summary</th>
+                    <th>Price</th>
+                    <th>Today</th>
+                    <th>5D Chg</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td><strong>AUE</strong></td>
+                    <td>Investor Presentation</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Acquisition</td>
+                    <td>$0.690</td>
+                    <td class="positive">+4.5%</td>
+                    <td class="positive">+6.2%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>BTM</strong></td>
+                    <td>Initial Drill Planning - Hazel Creek Copper-Gold Project</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Binding agreement</td>
+                    <td>$0.200</td>
+                    <td class="positive">+2.6%</td>
+                    <td class="neutral">+0.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>FIN</strong></td>
+                    <td>Placement Raises A$3.75m to fund Drilling at Cabin Lake</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Acquisition</td>
+                    <td>$0.013</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="positive">+30.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>ELV</strong></td>
+                    <td>Elevra signs Non-Binding Offtake MOU with Mangrove Lithium</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Contract/agreement. Partnership. Binding agreement</td>
+                    <td>$7.580</td>
+                    <td class="positive">+5.4%</td>
+                    <td class="positive">+11.8%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>SRZ</strong></td>
+                    <td>Stellar Completes Granite Tor Tin Project Acquisition</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Acquisition</td>
+                    <td>$0.036</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="negative">-2.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>TNC</strong></td>
+                    <td>Cloncurry Copper Project - Great Australia Resource Update</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. RSI low (35.8) - room to grow</td>
+                    <td>$0.555</td>
+                    <td class="positive">+4.7%</td>
+                    <td class="neutral">+0.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>ENV</strong></td>
+                    <td>DISCOVERY OF SURFACE IONIC ADSORPTION REE MINERALISATION</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. RSI neutral (50.0)</td>
+                    <td>$0.007</td>
+                    <td class="positive">+16.7%</td>
+                    <td class="neutral">+0.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>AOV</strong></td>
+                    <td>Half Year Results Announcement</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Half-year results. Revenue growth. RSI low (26.8) - room to grow</td>
+                    <td>$8.140</td>
+                    <td class="negative">-3.5%</td>
+                    <td class="negative">-3.5%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>AOV</strong></td>
+                    <td>Half Yearly Report and Accounts</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Half-year results. Revenue growth. RSI low (26.8) - room to grow</td>
+                    <td>$8.140</td>
+                    <td class="negative">-3.5%</td>
+                    <td class="negative">-3.5%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>RGN</strong></td>
+                    <td>Half Year 31 December 2025 Announcement</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Half-year results. Acquisition. RSI neutral (44.4)</td>
+                    <td>$2.370</td>
+                    <td class="positive">+2.2%</td>
+                    <td class="positive">+3.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>PLS</strong></td>
+                    <td>PLS executes offtake agreement with Canmax</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Annual report. Partnership. RSI low (33.5) - room to grow</td>
+                    <td>$4.205</td>
+                    <td class="positive">+0.8%</td>
+                    <td class="negative">-4.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>AOV</strong></td>
+                    <td>Half Year Results Investor Presentation</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Half-year results. Acquisition. RSI low (26.8) - room to grow</td>
+                    <td>$8.140</td>
+                    <td class="negative">-3.5%</td>
+                    <td class="negative">-3.5%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>EMA</strong></td>
+                    <td>Satellite imagery identifies multiple target at Campo Grande</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. RSI neutral (41.9)</td>
+                    <td>$0.056</td>
+                    <td class="negative">-9.7%</td>
+                    <td class="negative">-3.5%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>M2R</strong></td>
+                    <td>Option to Purchase Ashburton Gold, Copper & Antimony Project</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. RSI neutral (53.3)</td>
+                    <td>$0.004</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="neutral">+0.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>ICL</strong></td>
+                    <td>Drill Results Advance Geological Model at Guyer</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. Significant intercept. RSI low (24.1) - room to grow</td>
+                    <td>$0.055</td>
+                    <td class="positive">+1.9%</td>
+                    <td class="neutral">+0.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>GBR</strong></td>
+                    <td>Drilling extends mineralisation well below 1Moz resource</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. RSI neutral (47.6)</td>
+                    <td>$0.097</td>
+                    <td class="positive">+5.4%</td>
+                    <td class="positive">+4.3%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>BTI</strong></td>
+                    <td>Bailador FY26 Half Yearly Results Announcement</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Half-year results. RSI neutral (44.2). Price consolidated (breakout potential)</td>
+                    <td>$1.230</td>
+                    <td class="positive">+5.1%</td>
+                    <td class="positive">+1.2%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>BTI</strong></td>
+                    <td>Bailador FY26 Half Yearly Presentation</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Half-year results. RSI neutral (44.2). Price consolidated (breakout potential)</td>
+                    <td>$1.230</td>
+                    <td class="positive">+5.1%</td>
+                    <td class="positive">+1.2%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>BTI</strong></td>
+                    <td>Appendix 4D and FY26 Half Yearly Report</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Half-year results. RSI neutral (44.2). Price consolidated (breakout potential)</td>
+                    <td>$1.230</td>
+                    <td class="positive">+5.1%</td>
+                    <td class="positive">+1.2%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>RAP</strong></td>
+                    <td>Multiple Zones of Visual Copper Mineralisation at Chester</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Acquisition</td>
+                    <td>$0.055</td>
+                    <td class="negative">-6.8%</td>
+                    <td class="negative">-8.3%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>I88</strong></td>
+                    <td>2026 Unearthed Natural Resources Conference Presentation</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. Acquisition. RSI low (22.2) - room to grow</td>
+                    <td>$0.170</td>
+                    <td class="negative">-10.5%</td>
+                    <td class="negative">-35.9%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>CAE</strong></td>
+                    <td>Cannindah Copper Gold MRE Expansion Drilling Underway</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Price consolidated (breakout potential)</td>
+                    <td>$0.052</td>
+                    <td class="positive">+4.0%</td>
+                    <td class="positive">+4.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>TAT</strong></td>
+                    <td>$4.5 million raising to fund Silver exploration</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Positive trend (+8.7%)</td>
+                    <td>$0.050</td>
+                    <td class="positive">+21.9%</td>
+                    <td class="positive">+8.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>DES</strong></td>
+                    <td>Corporate Presentation - Mining INDABA</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Contract/agreement. High grade results. RSI neutral (53.9)</td>
+                    <td>$0.150</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="negative">-9.1%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>RG1</strong></td>
+                    <td>Appendix 4D & 1H26 Financial Report</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Half-year results. RSI neutral (44.2). Price consolidated (breakout potential)</td>
+                    <td>$2.370</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="negative">-1.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>OMA</strong></td>
+                    <td>OMA Awarded Large New Taroom Trough Acreage Setting Up 2026</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. RSI neutral (48.4). Positive trend (+9.5%)</td>
+                    <td>$0.460</td>
+                    <td class="positive">+7.0%</td>
+                    <td class="positive">+9.5%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>ORD</strong></td>
+                    <td>More Strong Zones of Shallow Gold Mineralisation at Barimaia</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Price consolidated (breakout potential)</td>
+                    <td>$0.895</td>
+                    <td class="positive">+5.3%</td>
+                    <td class="positive">+4.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>CAV</strong></td>
+                    <td>Mining Lease granted at Kookynie</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Positive trend (+12.0%)</td>
+                    <td>$0.140</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="positive">+12.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>NIM</strong></td>
+                    <td>Nimy Resources to Present at RSS Summer Series Conference</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. Positive trend (+9.2%)</td>
+                    <td>$0.071</td>
+                    <td class="negative">-4.0%</td>
+                    <td class="positive">+9.2%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>KCC</strong></td>
+                    <td>Nevertire expands and upgrades with drilling recommenced</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. Partnership. RSI neutral (45.5)</td>
+                    <td>$0.952</td>
+                    <td class="positive">+2.9%</td>
+                    <td class="negative">-2.4%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>NVO</strong></td>
+                    <td>Antimony-Gold-Silver Drill targets at Wyloo</td>
+                    <td><span class="score score-high">BUY</span></td>
+                    <td>Exploration update. High grade results. RSI neutral (42.9)</td>
+                    <td>$0.130</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="negative">-7.1%</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section watch">
+        <div class="section-title">🟡 NEUTRAL (37)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Headline</th>
+                    <th>Rating</th>
+                    <th>Summary</th>
+                    <th>Price</th>
+                    <th>Today</th>
+                    <th>5D Chg</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td><strong>RGN</strong></td>
+                    <td>Results Half Year 31 December 2025 and Appendix 4D</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Half-year results. RSI neutral (44.4). Price consolidated (breakout potential)</td>
+                    <td>$2.370</td>
+                    <td class="positive">+2.2%</td>
+                    <td class="positive">+3.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>BPT</strong></td>
+                    <td>OMA: OMA Awarded Large New Taroom Trough Acreage Setting Up</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. Price consolidated (breakout potential). Volume not yet spiked (early discovery)</td>
+                    <td>$1.172</td>
+                    <td class="positive">+2.4%</td>
+                    <td class="negative">-3.9%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>WTM</strong></td>
+                    <td>High Gold Recoveries at Spur Zone - Geometallurgical Results</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. Positive trend (+6.3%). Healthy volume increase (1.5x)</td>
+                    <td>$0.675</td>
+                    <td class="positive">+7.1%</td>
+                    <td class="positive">+6.3%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>SGM</strong></td>
+                    <td>Acquisition of Tri Coastal Trading</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Contract/agreement. Acquisition. Price consolidated (breakout potential)</td>
+                    <td>$21.305</td>
+                    <td class="positive">+3.3%</td>
+                    <td class="positive">+4.6%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>TRM</strong></td>
+                    <td>Drilling commencing today</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI low (36.4) - room to grow. Price consolidated (breakout potential)</td>
+                    <td>$0.083</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="positive">+3.8%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>EMH</strong></td>
+                    <td>Key Approval for the Cinovec Project</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Annual report. RSI low (33.3) - room to grow. Volume not yet spiked (early discovery)</td>
+                    <td>$0.305</td>
+                    <td class="positive">+1.7%</td>
+                    <td class="negative">-7.6%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>EOS</strong></td>
+                    <td>Response to Grizzly Research Report</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Annual report. New order. RSI low (23.2) - room to grow</td>
+                    <td>$6.900</td>
+                    <td class="positive">+15.0%</td>
+                    <td class="negative">-15.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>ID8</strong></td>
+                    <td>TOV:ID8-Declaration of Unacceptable Circumstances and Orders</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Capital raising. RSI neutral (50.0). Volume not yet spiked (early discovery)</td>
+                    <td>$0.005</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="negative">-16.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>EVE</strong></td>
+                    <td>Launch of Libbo and Activation of Men's Health Platform</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>RSI neutral (46.1). Price consolidated (breakout potential). Mixed signals</td>
+                    <td>$0.021</td>
+                    <td class="positive">+5.0%</td>
+                    <td class="positive">+5.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>88E</strong></td>
+                    <td>Namibia Update - Regional Results Highlight PEL93 Potential</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI neutral (50.0). Price consolidated (breakout potential)</td>
+                    <td>$0.021</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="neutral">+0.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>BML</strong></td>
+                    <td>Final Works Approval Received for Sorby Hills Construction</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Contract/agreement. RSI neutral (52.7). Price consolidated (breakout potential)</td>
+                    <td>$0.570</td>
+                    <td class="positive">+8.6%</td>
+                    <td class="positive">+3.6%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>XRA</strong></td>
+                    <td>New Geochemical Results at the Dudley Lithium Project</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI neutral (51.4). Positive trend (+19.6%)</td>
+                    <td>$0.335</td>
+                    <td class="positive">+3.1%</td>
+                    <td class="positive">+19.6%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>AHK</strong></td>
+                    <td>MoU Signed for Rare Earths Processing Trial</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Contract/agreement. RSI neutral (40.9). Price consolidated (breakout potential)</td>
+                    <td>$0.480</td>
+                    <td class="positive">+2.1%</td>
+                    <td class="positive">+2.1%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>WSR</strong></td>
+                    <td>Exploration Update</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI low (40.0) - room to grow. Healthy volume increase (2.4x)</td>
+                    <td>$0.007</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="negative">-12.5%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>REV</strong></td>
+                    <td>Wholesale Placement - Announcement</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Capital raising. RSI neutral (41.2). Price consolidated (breakout potential)</td>
+                    <td>$2.010</td>
+                    <td class="negative">-0.5%</td>
+                    <td class="neutral">+0.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>CXZ</strong></td>
+                    <td>CXZ Signs Agreement to Provide OnTRAC Software to GM Canada</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Contract/agreement. RSI neutral (42.9). Price consolidated (breakout potential)</td>
+                    <td>$0.026</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="neutral">+0.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>AMU</strong></td>
+                    <td>AMUIF Commences Trading on the OTCQB in US</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>RSI neutral (52.4). Price consolidated (breakout potential). Mixed signals</td>
+                    <td>$0.185</td>
+                    <td class="positive">+5.7%</td>
+                    <td class="positive">+2.8%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>TWE</strong></td>
+                    <td>Settlement of RNDC dispute and 1H26 EBITS expectation</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Half-year results. RSI neutral (46.8). Price consolidated (breakout potential)</td>
+                    <td>$5.400</td>
+                    <td class="positive">+4.5%</td>
+                    <td class="positive">+1.9%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>RGN</strong></td>
+                    <td>Results Half Year 31 December 2025 Investor Presentation</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>RSI neutral (44.4). Price consolidated (breakout potential). Mixed signals</td>
+                    <td>$2.370</td>
+                    <td class="positive">+2.2%</td>
+                    <td class="positive">+3.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>PL3</strong></td>
+                    <td>Formentera Lithium Drilling Update</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI neutral (44.4). Positive trend (+10.0%)</td>
+                    <td>$0.110</td>
+                    <td class="neutral">+0.0%</td>
+                    <td class="positive">+10.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>IDA</strong></td>
+                    <td>Gold Confirmed on Splay off Lake Labyrinth Shear</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI low (29.0) - room to grow. Volume not yet spiked (early discovery)</td>
+                    <td>$0.039</td>
+                    <td class="negative">-7.1%</td>
+                    <td class="negative">-13.3%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>MQG</strong></td>
+                    <td>Macquarie Group 2026 Operational Briefing Media Release</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Price consolidated (breakout potential). Volume not yet spiked (early discovery). Mixed signals</td>
+                    <td>$214.650</td>
+                    <td class="positive">+0.8%</td>
+                    <td class="negative">-1.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>RKN</strong></td>
+                    <td>Preliminary Final Report</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Contract/agreement. Loss reported. Extreme volume spike (5.2x average)</td>
+                    <td>$0.520</td>
+                    <td class="positive">+2.0%</td>
+                    <td class="negative">-8.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>PMT</strong></td>
+                    <td>PMET Announces Up To Aggregate C$130 Million Financings</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Contract/agreement. RSI neutral (41.8). Volume not yet spiked (early discovery)</td>
+                    <td>$0.580</td>
+                    <td class="negative">-10.8%</td>
+                    <td class="negative">-6.5%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>AQX</strong></td>
+                    <td>Upsize to Tranche Two of Placement</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Capital raising. RSI neutral (46.1). Positive trend (+7.7%)</td>
+                    <td>$0.014</td>
+                    <td class="negative">-12.5%</td>
+                    <td class="positive">+7.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>FMR</strong></td>
+                    <td>Drilling underway at Target K</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI low (38.9) - room to grow. Volume not yet spiked (early discovery)</td>
+                    <td>$0.230</td>
+                    <td class="positive">+4.5%</td>
+                    <td class="negative">-6.1%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>RLF</strong></td>
+                    <td>Appointment of Chief Executive Officer</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Half-year results. Pre-announcement run-up (+21.3% in 5 days). High volatility (101.7%)</td>
+                    <td>$0.057</td>
+                    <td class="positive">+3.6%</td>
+                    <td class="positive">+21.3%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>AEL</strong></td>
+                    <td>Elanora-1 exploration well update</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. Disappointing results. Extreme volume spike (5.1x average)</td>
+                    <td>$2.510</td>
+                    <td class="negative">-21.8%</td>
+                    <td class="negative">-19.6%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>H2G</strong></td>
+                    <td>Share Placement</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Capital raising. Positive trend (+12.5%). Healthy volume increase (2.3x)</td>
+                    <td>$0.009</td>
+                    <td class="positive">+20.0%</td>
+                    <td class="positive">+12.5%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>MQG</strong></td>
+                    <td>Macquarie Group 2026 Operational Briefing Presentation</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Loss reported. Impairment. Mixed signals</td>
+                    <td>$214.650</td>
+                    <td class="positive">+0.8%</td>
+                    <td class="negative">-1.0%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>CST</strong></td>
+                    <td>Castile Resources Successfully Raises $8.4m</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI neutral (45.5). Volume not yet spiked (early discovery)</td>
+                    <td>$0.120</td>
+                    <td class="negative">-7.7%</td>
+                    <td class="negative">-7.7%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>GEM</strong></td>
+                    <td>Market Update</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Impairment. High volume (3.7x average). Mixed signals</td>
+                    <td>$0.505</td>
+                    <td class="negative">-19.8%</td>
+                    <td class="negative">-22.9%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>TR2</strong></td>
+                    <td>Chief Geologist Appointed and Additional Prospects</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI elevated (65.8). Pre-announcement run-up (+21.9% in 5 days)</td>
+                    <td>$0.390</td>
+                    <td class="positive">+5.4%</td>
+                    <td class="positive">+21.9%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>LEG</strong></td>
+                    <td>Pinnacle Well Project Results Enhance Gold Prospectivity</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Exploration update. RSI neutral (41.7). Volume not yet spiked (early discovery)</td>
+                    <td>$0.010</td>
+                    <td class="positive">+5.3%</td>
+                    <td class="negative">-9.1%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>ACE</strong></td>
+                    <td>Multi-function enforcement contract expansion in WA</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Contract/agreement. RSI overbought (74.2). Recent price increase (+13.1% in 5 days)</td>
+                    <td>$1.855</td>
+                    <td class="positive">+8.5%</td>
+                    <td class="positive">+13.1%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>MBL</strong></td>
+                    <td>Macquarie Group 2026 Operational Briefing Media Release</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>No analysis data available. Mixed signals</td>
+                    <td>-</td>
+                    <td class="neutral">-</td>
+                    <td class="neutral">-</td>
+                </tr>
+
+                <tr>
+                    <td><strong>MBL</strong></td>
+                    <td>Macquarie Group 2026 Operational Briefing Presentation</td>
+                    <td><span class="score score-med">NEUTRAL</span></td>
+                    <td>Loss reported. Impairment. Mixed signals</td>
+                    <td>-</td>
+                    <td class="neutral">-</td>
+                    <td class="neutral">-</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section sell">
+        <div class="section-title">🔴 SELL (4)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Headline</th>
+                    <th>Rating</th>
+                    <th>Summary</th>
+                    <th>Price</th>
+                    <th>Today</th>
+                    <th>5D Chg</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td><strong>AU1</strong></td>
+                    <td>DECEMBER QUARTER 2025 UPDATE</td>
+                    <td><span class="score score-low">SELL</span></td>
+                    <td>Annual report. RSI overbought (71.4). Pre-announcement run-up (+15.4% in 5 days)</td>
+                    <td>$0.030</td>
+                    <td class="positive">+15.4%</td>
+                    <td class="positive">+15.4%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>ILA</strong></td>
+                    <td>Response to ASX Query Letter</td>
+                    <td><span class="score score-low">SELL</span></td>
+                    <td>Capital raising. Capital raise. Administration/liquidation</td>
+                    <td>$0.415</td>
+                    <td class="negative">-1.2%</td>
+                    <td class="positive">+6.4%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>EM3</strong></td>
+                    <td>Response to ASX Price Query</td>
+                    <td><span class="score score-low">SELL</span></td>
+                    <td>Trading halt. RSI overbought (93.8). Pre-announcement run-up (+79.8% in 5 days)</td>
+                    <td>$0.160</td>
+                    <td class="positive">+77.8%</td>
+                    <td class="positive">+79.8%</td>
+                </tr>
+
+                <tr>
+                    <td><strong>EM3</strong></td>
+                    <td>Pause in Trading</td>
+                    <td><span class="score score-low">SELL</span></td>
+                    <td>RSI overbought (93.8). Pre-announcement run-up (+79.8% in 5 days). Mixed signals</td>
+                    <td>$0.160</td>
+                    <td class="positive">+77.8%</td>
+                    <td class="positive">+79.8%</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <p>Total analyzed: <strong>72</strong> price-sensitive announcements</p>
+        <p style="color: #666; font-size: 0.9em;">💡 Click any column header to sort</p>
+    </div>
+</body>
+</html>

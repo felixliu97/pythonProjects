@@ -303,7 +303,10 @@ class PDFAnalyzer:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         })
-        self.pdf_cache_dir = os.path.join(os.path.dirname(__file__), '.pdf_cache')
+        self.pdf_cache_root = os.path.join(os.path.dirname(__file__), '.pdf_cache')
+        # Use today's date as subdirectory
+        today = datetime.now().strftime('%Y-%m-%d')
+        self.pdf_cache_dir = os.path.join(self.pdf_cache_root, today)
         os.makedirs(self.pdf_cache_dir, exist_ok=True)
     
     def download_pdf(self, url: str, asx_code: str = "") -> Optional[bytes]:
@@ -312,12 +315,8 @@ class PDFAnalyzer:
             return None
             
         try:
-            # Extract idsId for cache lookup
-            ids_match = re.search(r'idsId[=_](\d+)', url)
-            ids_id = ids_match.group(1) if ids_match else None
-            
-            # Check cache first using pattern matching (ASX_code_*.pdf or *_idsId.pdf)
-            if ids_id:
+            # Check cache first - look for {asx_code}_*.pdf in today's folder
+            if asx_code:
                 for cached_file in os.listdir(self.pdf_cache_dir):
                     if cached_file.startswith(f"{asx_code}_") and cached_file.endswith('.pdf'):
                         cache_path = os.path.join(self.pdf_cache_dir, cached_file)
@@ -327,6 +326,9 @@ class PDFAnalyzer:
                                 return content
             
             # Not in cache - download
+            ids_match = re.search(r'idsId[=_](\d+)', url)
+            ids_id = ids_match.group(1) if ids_match else None
+            
             response = self.session.get(url, timeout=30)
             response.raise_for_status()
             
@@ -351,7 +353,7 @@ class PDFAnalyzer:
                 pdf_content = pdf_response.content
                 original_filename = actual_pdf_url.split('/')[-1].replace('.pdf', '')
             
-            # Cache the PDF: {ASX_code}_{original_filename}.pdf
+            # Cache the PDF: .pdf_cache/{date}/{ASX_code}_{original_filename}.pdf
             cache_filename = f"{asx_code}_{original_filename}.pdf" if asx_code else f"{original_filename}.pdf"
             cache_file = os.path.join(self.pdf_cache_dir, cache_filename)
             
