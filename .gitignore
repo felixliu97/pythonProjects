@@ -41,3 +41,13 @@ venv.bak/
 # IDEs
 .idea/
 .vscode/
+
+# Rust
+**/target/
+Cargo.lock
+**/*.rs.bk
+
+# Temporary Scripts & Helpers
+build_msvc.ps1
+.cargo/
+Test/
