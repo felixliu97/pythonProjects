@@ -51,4 +51,4 @@ Cargo.lock
 build_msvc.ps1
 .cargo/
 Test/
-ASX/
+TradingBot/
