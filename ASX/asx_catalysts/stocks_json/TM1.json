@@ -1,0 +1,74 @@
+{
+  "Ticker": "TM1",
+  "Sector": "PGM - Cu - Ni - Ti - V (多金属战略矿产)",
+  "Catalysts": [
+    "2026年Q2 Phase 4 深部钻探持续推进 (5台钻机已就位，针对 SW5/SW6 高品位进料通道延伸，计划总钻探量达30,000米)",
+    "SW5 第二发现区及 SW6 延伸区块的后续 Assay 结果，以及 SW3-SW4 区域的首个 JORC 资源量 (MRE) 估算公告",
+    "Dante 项目多金属冶金回收率优化结果 (特别是 V 和 Ti 的分离)",
+    "850m 已验证走向之外的其他电磁 (EM) 异常点的初筛钻探 (系统走向潜在延伸至80km+)",
+    "Onslow 铜金项目剥离或战略合作协议签署"
+  ],
+  "Risks": [
+    "A$85M 配售完成后股本大幅扩张 (增发229.74M股)，短期每股价值稀释压力显著",
+    "极其强烈的股价波动及市场高杠杆炒作风险 (52周振幅达 A$0.018–A$0.470)",
+    "作为纯勘探商在通胀、熟练工短缺背景下的高脆弱性"
+  ],
+  "Earnings_Window": [
+    "Quarterly Activities (Apr 2026)",
+    "Annual Financial Report (Sep 2026)"
+  ],
+  "Heatmap": [
+    {
+      "Month": "Apr",
+      "Status": "Hot",
+      "Reason": "Q3 季报披露 Phase 4 早期视觉发现 (SW5 已见浅部网状至半块状硫化物) 及5台钻机动员进展"
+    },
+    {
+      "Month": "May",
+      "Status": "Hot",
+      "Reason": "SW5 第二发现区 + SW6 延伸孔 Assay 结果集中释放窗口 (约106个孔 assay 陆续回收)"
+    },
+    {
+      "Month": "Jun",
+      "Status": "Hot",
+      "Reason": "SW3-SW4 资源量 MRE 公告，配合 SW5/SW6 新发现强化大吨位叙事，催化估值重塑"
+    },
+    {
+      "Month": "Jul",
+      "Status": "Active",
+      "Reason": "Phase 4 30,000米钻探计划中段汇报，潜在多区域新发现确认"
+    },
+    {
+      "Month": "Aug",
+      "Status": "Active",
+      "Reason": "财报季，确认 Soul Patts、Tribeca、GEAR 等机构的持续持股状态及资源定义进展"
+    },
+    {
+      "Month": "Sep",
+      "Status": "Watch",
+      "Reason": "下一阶段钻探规划与冶金深度报告；年报披露全年资本支出执行情况"
+    }
+  ],
+  "CR_Risk": "极低 (2026年2月完成 A$85M 机构配售，Soul Patts、GEAR、Tribeca 参与，资产负债表强健，足以支撑 2026 全年30,000米高强度钻探)",
+  "Probability": "极高 (SW5 和 SW6 双发现已获 Assay 验证，PGM-Cu-Ni 硫化物系统存在性确立，850m 走向已证实，系统规模持续扩大)",
+  "Core_Notes": "TM1 正在书写一个类似 Chalice (CHN) 在 Julimar 发现早期的故事。SW5 (PGE3 最高53g/t) 与 SW6 的双重发现意味着 Dante 已从 Ti-V 项目演变为一个极具稀缺性的高品位 PGM 硫化物系统。A$85M 配售引入 Soul Patts (ASX50) 作为基石投资者，从根本上重塑了公司的机构认受性与资本实力。Phase 4 以5台钻机、30,000米为目标，是公司史上最大规模勘探计划。当前市值相对于850m+已验证走向、双发现格局和世界级潜力，存在巨大的重估空间。",
+  "Timeline_Title": "TM1 Dante 项目 2026 爆发年时间线",
+  "Timeline": [
+    {
+      "Time": "2026-03",
+      "Event": "Phase 4 正式启动：5台钻机进场，SW5 早期视觉已见浅部硫化物；A$85M 配售完成交割"
+    },
+    {
+      "Time": "2026-04/05",
+      "Event": "重磅 Assay 集中释放：SW5 第二发现区及 SW6 延伸孔高品位 PGM/Cu/Ni 数据"
+    },
+    {
+      "Time": "2026-Q2 末",
+      "Event": "发布 SW3-SW4 JORC MRE，结合 SW5/SW6 双发现，显著提升项目整体资源吨位与估值逻辑"
+    },
+    {
+      "Time": "2026-H2",
+      "Event": "Onslow 铜金资产处理方案落地；Dante 冶金流程初步设计完成；Phase 4 尾段成果汇总与下阶段规划"
+    }
+  ]
+}

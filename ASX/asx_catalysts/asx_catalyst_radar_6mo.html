@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans, "Helvetica Neue", Helvetica, Arial, sans-serif);
+      font-size: 13px;
+    }
+
+    .wrap {
+      padding: 10px;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .legend-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #666;
+    }
+
+    .leg-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .radar-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .radar-table th {
+      font-size: 11px;
+      font-weight: 600;
+      color: #334155;
+      background-color: #e2e8f0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 8px;
+      border-bottom: 1px solid #cbd5e1;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .radar-table td {
+      padding: 5px 8px;
+      border-bottom: 0.5px solid #ddd;
+      vertical-align: top;
+    }
+
+    .radar-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .radar-table tr:nth-child(even) td {
+      background-color: #f8f9fa;
+    }
+
+    .radar-table tr:hover td {
+      background-color: #f1f3f5;
+    }
+
+    .ticker {
+      font-weight: 500;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .sector-tag {
+      font-size: 10px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      margin-top: 4px;
+      display: block;
+      white-space: normal;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    .s-gold {
+      background: #FAEEDA;
+      color: #633806;
+    }
+
+    .s-uranium {
+      background: #E1F5EE;
+      color: #085041;
+    }
+
+    .s-copper {
+      background: #FAECE7;
+      color: #712B13;
+    }
+
+    .s-pharma {
+      background: #E6F1FB;
+      color: #0C447C;
+    }
+
+    .s-energy {
+      background: #EEEDFE;
+      color: #3C3489;
+    }
+
+    .s-critical {
+      background: #FBEAF0;
+      color: #72243E;
+    }
+
+    .s-pgm {
+      background: #EEEDFE;
+      color: #3C3489;
+    }
+
+    .event-pill {
+      display: block;
+      font-size: 10px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      white-space: normal;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .e-result {
+      background: #E6F1FB;
+      color: #0C447C;
+    }
+
+    .e-drill {
+      background: #E1F5EE;
+      color: #085041;
+    }
+
+    .e-milestone {
+      background: #FAEEDA;
+      color: #633806;
+    }
+
+    .e-production {
+      background: #EAF3DE;
+      color: #27500A;
+    }
+
+    .e-cr {
+      background: #FBEAF0;
+      color: #72243E;
+    }
+
+    .e-risk {
+      background: #FCEBEB;
+      color: #791F1F;
+    }
+
+    .e-corporate {
+      background: #EEEDFE;
+      color: #3C3489;
+    }
+
+    .e-hot {
+      background: #FCEBEB;
+      color: #791F1F;
+    }
+
+    .month-bar {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .mb {
+      height: 12px;
+      flex: 1;
+      border-radius: 2px;
+      background: #eee;
+    }
+
+    .mb-active {
+      background: #1D9E75;
+    }
+
+    .mb-hot {
+      background: #EF9F27;
+    }
+
+    .mb-watch {
+      background: #378ADD;
+    }
+
+    .prob {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .prob-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: #eee;
+      border-radius: 3px;
+      max-width: 80px;
+    }
+
+    .prob-bar {
+      height: 6px;
+      border-radius: 3px;
+    }
+
+    .prob-val {
+      font-size: 11px;
+      font-weight: 500;
+      min-width: 60px;
+      line-height: 1.4;
+    }
+
+    .p-vhigh {
+      color: #0C447C;
+    }
+
+    .p-high {
+      color: #0F6E56;
+    }
+
+    .p-med {
+      color: #854F0B;
+    }
+
+    .p-low {
+      color: #A32D2D;
+    }
+
+    .note-text {
+      font-size: 11px;
+      color: #555;
+      line-height: 1.5;
+      min-width: 120px;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .warn-tag {
+      font-size: 10px;
+      color: #A32D2D;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .cr-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      background: #FBEAF0;
+      color: #72243E;
+      border: 0.5px solid #ED93B1;
+      white-space: normal;
+      line-height: 1.2;
+    }
+
+    .no-cr {
+      display: block;
+      font-size: 10px;
+      color: #999;
+      white-space: normal;
+      line-height: 1.2;
+    }
+
+    .tbl-wrap {
+      border: 0.5px solid #ddd;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    /* Timeline distinct styling in cell */
+    .tl-item {
+      margin-bottom: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 10px;
+      color: #555;
+      line-height: 1.3;
+    }
+
+    .tl-time {
+      font-size: 9px;
+      font-weight: 500;
+      color: #444;
+      background: #e0e0e0;
+      border-radius: 3px;
+      padding: 1px 4px;
+      display: inline-block;
+      width: max-content;
+    }
+
+    .tl-future {
+      background: #EF9F27;
+      color: #412402;
+    }
+
+    .tl-soon {
+      background: #1D9E75;
+      color: #04342C;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrap">
+    <h1 style="font-size: 24px; font-weight: 600; margin-bottom: 16px; color: #1e293b;">ASX Catalyst Radar <span style="font-size: 16px; font-weight: 400; color: #64748b;">(6-Month Outlook)</span></h1>
+
+    <div class="legend-row">
+      <div class="leg">
+        <div class="leg-dot" style="background:#1D9E75;"></div>催化剂活跃窗口
+      </div>
+      <div class="leg">
+        <div class="leg-dot" style="background:#EF9F27;"></div>爆发概率高峰
+      </div>
+      <div class="leg">
+        <div class="leg-dot" style="background:#378ADD;"></div>值得关注
+      </div>
+      <div class="leg">
+        <div class="leg-dot" style="background:#eee;"></div>低活跃
+      </div>
+      <span style="margin-left:auto; font-size:11px; color:#999;">覆盖期：2026年4月 — 2026年9月</span>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="radar-table">
+        <thead>
+          <tr>
+            <th style="width:6%; min-width:60px;">股票</th>
+            <th style="width:15%; min-width:120px;">项目进展时间线</th>
+            <th style="width:16%; min-width:140px;">关键催化剂事件</th>
+            <th style="width:14%; min-width:130px;">核心风险事件</th>
+            <th style="width:8%; min-width:80px;">财报窗口</th>
+            <th style="width:10%; min-width:110px;">时间热力图<br><span
+                style="font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;">Apr - Sep</span></th>
+            <th style="width:8%; min-width:80px;">CR 可能性</th>
+            <th style="width:9%; min-width:90px;">爆发概率</th>
+            <th style="width:14%; min-width:150px;">核心观察点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+  <td>
+    <div class="ticker">DEL</div>
+    <div class="sector-tag s-energy">Bioenergy / Renewable Gas - BOO 模式生物天然气基础设施运营商 (澳大利亚首家商业规模生物甲烷生产商)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-03</span><span>ARENA 第二笔里程碑款 A$1.1M 到账 (累计 $3.8M)；SA1 生物甲烷升级装置进入最终集成阶段</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-04</span><span>SA1 正式首气投产，接入阿德莱德天然气网络 (AGIG)；Origin Energy 8年承购协议正式启动计量结算</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-05/06</span><span>SA1 爬坡阶段运营数据披露 (生物甲烷产量、LCO2 首批交付、碳信用认证进展)；NSW1 FID 融资结构公告</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-08-27</span><span>发布 FY26 全年财报：SA1 全年收入贡献、FY27 产能展望及 $200M 管线下一项目开发时间表</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-hot">2026年4月 SA1 (南澳 Salisbury) 旗舰项目正式首气投产并接入阿德莱德天然气网络 (管理层明确目标，ARENA 第二笔里程碑款已于2026年3月到账)</span>
+    <span class="event-pill e-milestone">SA1 投产后六大收入流的首次财务数据披露 (生物甲烷+LCO2+ACCU碳信用+RGGO+生物肥料+门禁费)</span>
+    <span class="event-pill e-corporate">NSW1 Brickworks 项目 (发展许可已获批) 的 FID 与建设融资落地</span>
+    <span class="event-pill e-milestone">VIC1 Stanhope 及 $200M 全国管线中其他项目的开发进展更新</span>
+    <span class="event-pill e-corporate">SA1 投产后银行再融资能力提升，触发 $37M 企业融资包的债务重组优化</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">SA1 首气投产后爬坡 (Ramp-up) 至满负荷运营的时间可能长于预期 (首次商业规模生物甲烷项目固有的技术调试风险)</span>
+    <span class="event-pill e-risk">现有 $37M 企业融资包的债务偿还压力 (在 SA1 产生稳定现金流前，融资成本为主要财务负担)</span>
+    <span class="event-pill e-risk">NSW1 FID 前的开发资金需求与股权稀释风险</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Q3 Activities Report (Apr 2026)</span>
+    <span class="event-pill e-result">FY26 Annual Results (Aug 27, 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+    </div>
+  </td>
+  <td>
+    <span class="no-cr">中 (SA1 投产并产生稳定现金流后，$37M 融资包可触发银行再融资，显著降低股权稀释需求；但在爬坡阶段完成前，现金消耗仍需密切关注；ARENA $6.08M 拨款已收到 $3.8M，剩余 $2.28M 待后续里程碑支付)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:88%; background:#185FA5;"></div></div>
+      <span class="prob-val p-vhigh">极高 (SA1 机械竣工已完成，关键土建已完工，厌氧消化罐已竖立，长交货期设备已到位，生物甲烷升级装置进入集成阶段；Origin Energy 8年期 200TJ/年承购协议已锁定核心收入)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">DEL 是澳大利亚生物甲烷商业化历史上的关键节点性公司。SA1 Salisbury 是澳大利亚首个将厌氧消化升级为管道级生物甲烷并直接接入市政天然气网络的商业规模项目，其成功不仅验证 DEL 的 BOO 商业模式，更为整个行业树立基准。六大收入流设计 (尤其是 LCO2 与碳信用) 使 SA1 的单位废弃物盈利能力显著高于传统沼气项目。与 Origin Energy (200 TJ/年，8年 take-or-pay)、Supagas (LCO2) 的投资级承购合同锁定了稳定现金流底线。$200M 全国管线的复制逻辑在 SA1 验证后将快速强化。关键观察指标：SA1 首气公告日期、爬坡至满负荷 (70,000吨/年有机废弃物处理) 的时间表，以及 NSW1 FID 融资结构。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">TM1</div>
+    <div class="sector-tag s-pgm">PGM - Cu - Ni - Ti - V (多金属战略矿产)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-03</span><span>Phase 4 正式启动：5台钻机进场，SW5 早期视觉已见浅部硫化物；A$85M 配售完成交割</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-04/05</span><span>重磅 Assay 集中释放：SW5 第二发现区及 SW6 延伸孔高品位 PGM/Cu/Ni 数据</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q2 末</span><span>发布 SW3-SW4 JORC MRE，结合 SW5/SW6 双发现，显著提升项目整体资源吨位与估值逻辑</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-H2</span><span>Onslow 铜金资产处理方案落地；Dante 冶金流程初步设计完成；Phase 4 尾段成果汇总与下阶段规划</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-drill">2026年Q2 Phase 4 深部钻探持续推进 (5台钻机已就位，针对 SW5/SW6 高品位进料通道延伸，计划总钻探量达30,000米)</span>
+    <span class="event-pill e-result">SW5 第二发现区及 SW6 延伸区块的后续 Assay 结果，以及 SW3-SW4 区域的首个 JORC 资源量 (MRE) 估算公告</span>
+    <span class="event-pill e-result">Dante 项目多金属冶金回收率优化结果 (特别是 V 和 Ti 的分离)</span>
+    <span class="event-pill e-drill">850m 已验证走向之外的其他电磁 (EM) 异常点的初筛钻探 (系统走向潜在延伸至80km+)</span>
+    <span class="event-pill e-milestone">Onslow 铜金项目剥离或战略合作协议签署</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">A$85M 配售完成后股本大幅扩张 (增发229.74M股)，短期每股价值稀释压力显著</span>
+    <span class="event-pill e-risk">极其强烈的股价波动及市场高杠杆炒作风险 (52周振幅达 A$0.018–A$0.470)</span>
+    <span class="event-pill e-risk">作为纯勘探商在通胀、熟练工短缺背景下的高脆弱性</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Quarterly Activities (Apr 2026)</span>
+    <span class="event-pill e-result">Annual Financial Report (Sep 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+    </div>
+  </td>
+  <td>
+    <span class="no-cr">极低 (2026年2月完成 A$85M 机构配售，Soul Patts、GEAR、Tribeca 参与，资产负债表强健，足以支撑 2026 全年30,000米高强度钻探)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:88%; background:#185FA5;"></div></div>
+      <span class="prob-val p-vhigh">极高 (SW5 和 SW6 双发现已获 Assay 验证，PGM-Cu-Ni 硫化物系统存在性确立，850m 走向已证实，系统规模持续扩大)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">TM1 正在书写一个类似 Chalice (CHN) 在 Julimar 发现早期的故事。SW5 (PGE3 最高53g/t) 与 SW6 的双重发现意味着 Dante 已从 Ti-V 项目演变为一个极具稀缺性的高品位 PGM 硫化物系统。A$85M 配售引入 Soul Patts (ASX50) 作为基石投资者，从根本上重塑了公司的机构认受性与资本实力。Phase 4 以5台钻机、30,000米为目标，是公司史上最大规模勘探计划。当前市值相对于850m+已验证走向、双发现格局和世界级潜力，存在巨大的重估空间。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">CLA</div>
+    <div class="sector-tag s-gold">Copper & Gold - 菲律宾高品位铜金开发商 (过渡至建设阶段)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-01</span><span>DFS 正式发布 (NPV A$1.98B, IRR 31%)；Grant Samuel 获委任为综合融资顾问</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-04</span><span>发布 HY26 半年报 + Q3 季报；披露 Grant Samuel 融资进展及 Off-take 谈判状态</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q2/Q3</span><span>综合融资方案落地：Off-take 协议签署 + 结构性债务/股权融资完成，触发 FID</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q3</span><span>MCB 项目主体建设正式开工；Namibia 及澳大利亚非核心资产剥离完成</span></div>
+    <div class="tl-item"><span class="tl-time">2028-Q2/Q3</span><span>首矿生产 (First Ore)，随后精矿出货，CLA 正式进入产矿现金流阶段</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-corporate">2026年Q2/Q3 综合融资方案最终落地 (Grant Samuel 主导，含 Off-take、结构性债务及项目级股权，多方提案已收到)</span>
+    <span class="event-pill e-milestone">正式承购协议 (Off-take) 签署公告 (计划覆盖年产约 22,000吨铜 + 27,000盎司金)</span>
+    <span class="event-pill e-milestone">2026年Q3 MCB 主体建设正式开工 (首期工程已启动，大规模建设计划 Q3 2026)</span>
+    <span class="event-pill e-milestone">Namibia 及澳大利亚非核心资产剥离完成 (减少现金消耗并回笼资金)</span>
+    <span class="event-pill e-production">2028年 Q2/Q3 首矿生产及首批精矿出货</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">综合融资方案落地时间持续延期风险 (原定 Q1 2026 FID，已推迟；Grant Samuel 融资进程仍存在不确定性)</span>
+    <span class="event-pill e-risk">MCB 资本支出在通胀背景下较 2021年研究估算显著上升 (原 Capex ~US$253M，现预计更高)</span>
+    <span class="event-pill e-risk">MIC (马哈尔利卡投资公司) 作为菲律宾主权基金的政策风险及 SODOR 股权安排复杂性</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">HY26 Results (Apr 2026)</span>
+    <span class="event-pill e-result">Quarterly Activities Report (Apr 2026)</span>
+    <span class="event-pill e-result">Full Year FY26 Results (Aug 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+    </div>
+  </td>
+  <td>
+    <span class="cr-badge">中 (MIC OLSA 首批注资已到位，前期工程资金有保障；但全项目建设资金 (~US$253M+) 仍依赖 Grant Samuel 主导的综合融资方案落地，FID 前存在阶段性资金缺口风险)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:75%; background:#1D9E75;"></div></div>
+      <span class="prob-val p-high">中-高 (DFS 已于 2026年1月发布，NPV A$1.98B / IRR 31%，经济性强劲；铜价高位提升融资吸引力；Grant Samuel 收到多方提案印证市场需求；核心风险已从'项目可行性'转移至'融资结构与时间')</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">MCB 是菲律宾近15年来首个获批铜矿采矿许可的重大项目，具备稀缺的监管准入优势。2026年1月 DFS 确认 NPV A$1.98B (IRR 31%)，使用保守金属价格假设 (铜 US$4.00/lb, 金 US$1,695/oz)，当前铜价显著高于此假设，实际经济性更强。C1 现金成本 US$0.73/lb (扣金信用后) 将使 MCB 进入全球铜矿商成本曲线下四分位。Grant Samuel 的介入标志着融资进程从探索期进入正式执行期；Bardin Davis 的顾问加入 (前 Peak Rare Earths CEO，主导过项目融资+承购协议完整流程) 为管理层带来关键的执行经验。主体建设目标 Q3 2026 开工，首矿生产目标 2028年，项目路径清晰，最大的不确定性在于综合融资包的交割速度。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">KSN</div>
+    <div class="sector-tag s-copper">Gold & Copper - 澳大利亚生产商 (NSW Cobar Basin Mineral Hill Mine 多产品运营)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-04</span><span>发布 Q3 FY26 季报：Pearse Pits 最终月度产量、SOZ 地下矿山建设里程碑及铜精矿产出预期时间表</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-06</span><span>Mineral Hill 实现铜精矿首次出货 (公司目标 CY26 铜产出)；Pearse Pits 露天采矿收尾并完成运营交接</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-07</span><span>Q4 FY26 季报发布；Ok Tedi A$10M 第二笔递延款到账；A$5M 债务首笔到期处理</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-09</span><span>发布 FY26 全年财报：首年铜精矿收入规模、AISC 成本曲线定位，以及资本分配方案 (分红/扩产/回购)</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-production">2026年中 Mineral Hill 转入地下采矿阶段，启动铜精矿生产 (公司明确目标 CY26 初始铜产出，处理产能已获批至700ktpa)</span>
+    <span class="event-pill e-milestone">2026年7月11日 Ok Tedi 支付 Misima 项目第二笔递延款 A$10M，进一步强化净现金状态</span>
+    <span class="event-pill e-milestone">Mineral Hill Southern Ore Zone (SOZ) 及 Jack's Hut 地下高品位截距的持续扩张 (近期截距包括 14m @ 19.35g/t Au + 0.79% Cu)</span>
+    <span class="event-pill e-milestone">Pearse Pits 露天采矿 (至2026年中) 与地下采矿平稳衔接的运营过渡确认</span>
+    <span class="event-pill e-milestone">Ok Tedi 就 Misima 项目作出正式 FID 决定后可额外触发 A$10M 递延款 + 0.5% 毛收入版税</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">地下采矿启动时期的爬坡 (Ramp-up) 成本超支及品位稀释风险 (SOZ 地下开采为公司首次规模化地下作业)</span>
+    <span class="event-pill e-risk">债务偿还节点集中：A$5M 到期 2026年7月7日，A$5M 到期 2027年2月，A$5M 到期 2027年6月</span>
+    <span class="event-pill e-risk">金/铜价回调对 Mineral Hill 小规模生产商 AISC 竞争力的边际压缩风险</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Quarterly Activities & Cashflow (Apr 2026)</span>
+    <span class="event-pill e-result">Annual Financial Report (Sep 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-watch"></div>
+      <div class="mb mb-hot"></div>
+    </div>
+  </td>
+  <td>
+    <span class="no-cr">极低 (A$50M Misima 首付款已到账，债务已全额偿还；A$10M 第二笔递延款将于2026年7月11日到账；公司已转型为无净债务的现金流正生产商，股权稀释风险极低)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:75%; background:#1D9E75;"></div></div>
+      <span class="prob-val p-high">高 (Mineral Hill 浮选设施已成功重启并生产金银精矿；地下矿山开发已启动；SOZ 高品位截距印证资源质量；铜精矿生产技术路径清晰，CY26目标铜产出有较强可信度)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">KSN 在2025-2026年完成了从'资源勘探商'到'现金流正多产品生产商'的转型。Misima 的 A$95M 出售 (结构：A$50M 已收+A$10M 递延2026年7月+A$10M 触发于 Misima FID+0.5% 毛收入版税) 彻底重塑了资产负债表，同时保留了 Misima 未来开发的上行期权。Mineral Hill 是 Cobar Basin 已验证的高品位金铜系统，SOZ G/H 矿脉的截距 (最高 48.8g/t Au) 印证了地下矿山的优质基础。350-400ktpa 现有处理能力 (已获批扩至700ktpa) 提供了低资本投入的扩产路径。当前估值尚未充分反映：(1) 铜精矿收入对总营收的增量贡献；(2) A$10M 递延款入账后的净现金强化；(3) 700ktpa 扩容潜力下的 NPV 重估空间。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">LOT</div>
+    <div class="sector-tag s-uranium">Uranium - 非洲聚焦铀生产商 (马拉维 Kayelekera 复产 + 博茨瓦纳 Letlhakane 开发)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q2</span><span>首批铀精矿装船发货至北美核电站 (物流就绪，待最终 converter 资质认证)；酸厂 240t/d 产能正式投产</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q3</span><span>北美承购合同首笔现金回笼确认；Kayelekera 达到稳态产量 2.4Mlb/年</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q4</span><span>马拉维国家电网接入完成，年节省电力成本 A$12-14M；运营利润率显著改善</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-H2</span><span>博茨瓦纳 Letlhakane PFS 发布，展现双资产平台战略；FY27 稳产与扩产路径公布</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-milestone">2026年Q2 首批铀精矿向北美三大核电站发货 (First Shipment，物流就绪，待最终converter资质认证完成，至少一家预计2026年2月底前完成)</span>
+    <span class="event-pill e-milestone">Q2/Q3 首批发货后开始产生实际现金回笼 (管理层目标 Q3 CY26 开始收款，3.5-3.8Mlb固定价格承购合同履约)</span>
+    <span class="event-pill e-production">酸厂 (Acid Plant) 240t/d产能投产，显著降低硫酸进口依赖与生产成本</span>
+    <span class="event-pill e-milestone">2026年Q4 马拉维国家电网 (ESCOM) 接入完成，年节省电力成本 A$12-14M</span>
+    <span class="event-pill e-milestone">博茨瓦纳 Letlhakane 项目预可研 (PFS) 发布 (目标 2026年下半年)</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">Kayelekera 爬坡延迟：Converter资质认证程序延误导致首批发货推迟，已造成现金消耗高于预期 (Bell Potter估计运营现金消耗约 A$16M/季至满产时 A$37M/季)</span>
+    <span class="event-pill e-risk">硫酸供应约束：酸厂投产前持续依赖进口硫酸，供应中断风险仍存</span>
+    <span class="event-pill e-risk">2026年2月 A$76M 配售 (11.5:1 股票合并后) 带来的股本稀释已发生，短期价格修复压力显著</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Quarterly Activities Report (Apr 2026)</span>
+    <span class="event-pill e-result">FY26 Annual Results (Sep 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+      <div class="mb mb-hot"></div>
+    </div>
+  </td>
+  <td>
+    <span class="no-cr">极低 (2026年2月完成 A$76M 配售 + A$5M SPP，Pro-forma 现金约 A$145M；足以覆盖9个月以上运营消耗、酸厂投产及电网接入全部资本项目，无近期股权融资需求)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:75%; background:#1D9E75;"></div></div>
+      <span class="prob-val p-high">高 (Kayelekera 为成熟矿山复产，工艺设施已全面重新调试，采矿作业已启动；唯一剩余不确定性为 converter 资质认证时间表；北美三大电站 3.5-3.8Mlb 承购合同锁定了发货后的收入确定性)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">LOT 的核心逻辑正在从'复产期权'过渡至'现金流生产商'。首批发货是公司历史上最关键的里程碑：一旦完成，将触发北美三大电站 (Orano、Cameco/Converdyn 及第三家) 承购合同的实际现金结算，并彻底改变市场对公司的估值框架。Kayelekera 具备 10年矿山寿命、23Mlb 矿石储量，AISC 约 US$45/lb，在铀现货价约 $70/lb 背景下盈利空间显著。电网接入 (Q4 CY26) 完成后预计每年额外节省 A$12-14M，将使 Kayelekera 进入全球铀矿成本曲线竞争性区间。Letlhakane 的 PFS 将开启'双中心'叙事，进一步强化长期资源平台价值。市场当前的主权折价 (马拉维) 有望随首笔现金收款确认逐步收窄。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">MEU</div>
+    <div class="sector-tag s-pgm">Gold & Uranium - 南澳盖勒克拉通多金属勘探商 (Aurora Tank 金矿 + Junction Dam 铀矿 + Golden Moon JV)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-03-25</span><span>Junction Dam Target 4 (Jasons) 钻探方案设计完成，四大靶区 400孔全部设计就绪；矿权法律挑战公告披露</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q2</span><span>Aurora Tank 堆浸最终回收率数据发布；Junction Dam / Golden Moon JV 钻探启动 (取决于 Native Title 及法律清除进度)</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-H2</span><span>Junction Dam Stage 1 (Saffron 164孔 + Bridget 114孔) Assay 数据集完整释放；Jasons 古河道延伸首钻结果</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-09</span><span>全年财报；Stage 2 (Yolanda + Jasons 追加孔) 规划公布；Aurora Tank 采矿租赁进展及 Golden Moon JV 资源更新</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-drill">2026年Q2 Junction Dam 铀矿重启项目四大靶区 (Saffron/Bridget/Yolanda/Jasons) 全部设计完成，Native Title 清关后立即启动 400孔/两阶段 (~A$4M) 钻探</span>
+    <span class="event-pill e-drill">Junction Dam Target 4 (Jasons) 新靶区首钻：测试 Boss Energy Jason's 资源旁侧 3.7km 古河道延伸段 (同一赋铀Eyre地层，从未被钻探)</span>
+    <span class="event-pill e-result">Aurora Tank 金矿堆浸 (Heap Leach) 冶金测试最终回收率结果 (管理层称进展极顺利，预计近期完成)</span>
+    <span class="event-pill e-drill">Golden Moon JV (90% MEU，Campfire Bore / Golf Bore / Greenwood / Mainwood) 四大金矿床加密钻探结果 (均为地表100m内浅埋，8年未钻)</span>
+    <span class="event-pill e-result">Woomera 禁区 (WPA) 核心铜金靶区新一轮准入及地球物理调查结果</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">Junction Dam EL6530 矿权存在第三方法律挑战 (公司已于2026年3月收到 Warden's Court 申请通知，认为无实质依据但需司法清除，可能延迟钻探启动)</span>
+    <span class="event-pill e-risk">Native Title 清关时间不可控，若审批延期将直接推迟 Junction Dam 所有钻探计划</span>
+    <span class="event-pill e-risk">作为无收入纯勘探公司，多项目并行 (金/铀/铜三线) 的资金消耗速率可能超过现有储备，2026年内融资需求仍存</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Quarterly Activities Report (Apr 2026)</span>
+    <span class="event-pill e-result">Annual Financial Report (Sep 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+    </div>
+  </td>
+  <td>
+    <span class="cr-badge">中 (公司声称处于'史上最强财务状态'，Junction Dam 两阶段 A$4M 钻探全额资金已落实；但多项目并行模式下总现金消耗仍需持续关注，若阶段性结果积极则可能触发融资驱动的规模扩张)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:75%; background:#1D9E75;"></div></div>
+      <span class="prob-val p-high">中高 (Junction Dam 的地质逻辑极强：Saffron 已有 5.4Mlb JORC 资源，Bridget/Yolanda 有 22-33Mlb 勘探目标，Jasons 毗邻 Boss Energy 13.3Mlb @ 410ppm 已证资源；Aurora Tank 堆浸路径若得验证则为公司提供近期产金期权)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">MEU 在2026年3月25日完成了 Junction Dam 四大靶区全部钻探方案设计，标志着该项目从规划阶段正式进入执行前沿。Jasons 新靶区是本轮最具催化潜力的看点：其紧邻 Boss Energy 的 Jason's 资源 (13.3Mlb @ 410ppm，Boss 最新升级)，位于同一Yarramba古河道系统，3.7km 延伸段从未被钻探，与 Honeymoon、Beverley Four Mile 同为 Eyre 地层赋铀。400孔两阶段设计的完成意味着一旦 Native Title 清关，资金和方案均已就位，可立即开钻。矿权法律挑战是最大的节奏风险，若能快速清除，2026年H1即可启动钻探；Aurora Tank 堆浸若验证低资本建矿可行，公司将迅速拥有澳洲首个新兴低成本堆浸金矿期权。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">RML</div>
+    <div class="sector-tag s-pgm">Gold, Antimony & Tungsten - 美国关键矿产一体化开发商 (爱达荷州 Horse Heaven 项目，紧邻 Perpetua Resources Stibnite)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-03</span><span>Johnson Creek 钨锑磨机收购完成交割；Form F-20 已向 SEC 保密提交；Level 1 ADR (RLMLF) 已激活</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q2</span><span>Phase 2 57孔 RC 钻探正式开钻 (6月季度)；Johnson Creek 磨机改造工程评估完成；钨库存冶金测试结果发布</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q3</span><span>Phase 2 完整 Assay 数据集 (金/锑/钨三项)；潜在首个 JORC 资源量公告；SEC F-20 正式受理进展</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q4</span><span>Nasdaq 挂牌倒计时冲刺：美国机构路演启动；可能启动股票合并以满足美股入场价；Pre-IPO/配套融资安排</span></div>
+    <div class="tl-item"><span class="tl-time">2027-Q1</span><span>预期正式在 Nasdaq 挂牌 (ASX + Nasdaq 双重上市)；同步发布重大 JORC 资源更新，锁定美国国防关键矿产定位</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-drill">2026年Q2 Phase 2 57孔 RC 钻探启动 (Golden Gate 金矿延伸 + Antimony Ridge 验证)，H1 2026 启动，6月季度正式开钻</span>
+    <span class="event-pill e-result">Johnson Creek 钨锑磨机 (50tpd，25英亩私有地) 收购已完成 (2026年3月)，现有 ~2,000吨历史钨矿石库存的冶金测试结果及磨机改造评估</span>
+    <span class="event-pill e-milestone">Nasdaq 双重挂牌进展：Form F-20 已于2026年2月向 SEC 保密提交，Level 1 ADR 设施已启动 (RLMLF OTC)，等待 SEC 正式受理</span>
+    <span class="event-pill e-result">Antimony Ridge 高品位样品 (最高 48.7% Sb, 890g/t Ag) 冶金测试结果 (Kingston Process Metallurgy 主导)</span>
+    <span class="event-pill e-milestone">美国国防部/能源部 FAST-41 项目框架下的政府赠款或贷款申请进展</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">Phase 2 钻探规模 (57孔) 及 A$27.1M 融资额度相对于 Nasdaq 上市所需资产规模仍偏小，JORC 资源量尚未公告</span>
+    <span class="event-pill e-risk">Nasdaq 上市执行存在不确定性 (SEC 审核时间表、合规成本、市场窗口)；F-20 保密提交到正式挂牌通常需6-12个月</span>
+    <span class="event-pill e-risk">Antimony Ridge 地表超高品位样品 (48.7% Sb) 与钻探规模化资源量之间存在巨大证明缺口，高品位未必代表系统性富集</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Quarterly Activities (Apr 2026)</span>
+    <span class="event-pill e-result">Annual Audit for US Compliance (Sep-Oct 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-active"></div>
+    </div>
+  </td>
+  <td>
+    <span class="cr-badge">中高 (A$27.1M 融资已完成，Phase 2 钻探及磨机收购有足够资金支撑；但 Nasdaq 上市通常需要 Pre-IPO 或 IPO 配套融资，2026年内需追加融资的可能性较高；股票合并以满足美股入场价要求的风险仍存)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:75%; background:#1D9E75;"></div></div>
+      <span class="prob-val p-high">中高 (Phase 1 钻探已确认 Golden Gate 连续金矿化从地表延伸，所有孔终止于金矿化中，IRGS 型金系统存在性已验证；Johnson Creek 磨机收购构建了'一体化'叙事；Perpetua Resources 对标逻辑强劲；Nasdaq F-20 已保密提交是重大执行信号)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">RML 的终极逻辑是'脱澳入美'。2026年2月完成的 Level 1 ADR 设施启动 + Form F-20 保密提交，标志着 Nasdaq 上市从战略意图转入正式执行阶段。Johnson Creek 磨机 (~50tpd，25英亩私有地 + 工业用水权 + 电力基础设施) 的收购是差异化竞争壁垒：RML 成为美国境内极少数同时拥有'探矿靶区 + 历史产矿验证 + 就近处理设施'三位一体的关键矿产公司。Phase 2 57孔钻探将提供 JORC 资源量所需的数据基础，是 Nasdaq 路演的核心'硬指标'。Antimony Ridge 48.7% Sb 地表样品若通过系统性钻探验证，其稀缺性将在 Nasdaq 美国国防关键矿产框架下被赋予显著溢价。投资者需关注：2026年Q4可能出现的股票合并 (Share Consolidation) 操作以满足 Nasdaq 入场价格要求。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">BOT</div>
+    <div class="sector-tag s-pharma">Dermatology - 商业化阶段皮肤科制药 (原发性腋窝多汗症 / 皮肤抗感染管线)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-04-01</span><span>EGM 投票批准 Tranche 2 配售 (~A$25M) 及 SPP (~A$5M) 期权发行；董事及 CEO 跟投约 A$500K</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-04-13</span><span>SPP (证券购买计划) 截止，全部 A$45M 融资资金入账</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-04-下旬</span><span>发布 Q3 FY26 季报 (截至2026年3月31日)：关注季度处方量、净收入及现金消耗趋势</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026年中</span><span>API 付款条款重新谈判结果公告 (April 2026 及 January 2027 付款推迟)；第二 API 供应商技术转移进展</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-08</span><span>发布 FY26 全年业绩 (Appendix 4E)：确认全年净收入总量、GTN 改善轨迹及 FY27 现金流盈亏平衡展望</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-milestone">2026年4月1日 股东大会 (EGM) 批准 Tranche 2 配售及 SPP 期权发行 (约 A$30M 剩余资金解锁)</span>
+    <span class="event-pill e-result">2026年4月下旬 发布 Q3 FY26 季报 (关注 H2 处方量增长斜率，管理层目标 FY26 全年净收入显著超越 H1 A$16.5M)</span>
+    <span class="event-pill e-milestone">2026年中 API 替代供应商谈判进展 (当前 April 2026 和 January 2027 付款条款重新谈判，目标 GTN 利润率升至 30-40%，长期 COGS 降低空间 A$20M+)</span>
+    <span class="event-pill e-result">2026年8月 发布 FY26 全年报 (确认 H2 业绩，提供 FY27 展望)</span>
+    <span class="event-pill e-risk">2026年H2 迈向单季度现金流盈亏平衡 (50名销售专员全力运转，处方量持续积累)</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">A$45M 配售以 A$0.06 较停牌前折价 45.5% 完成，重大股权稀释已发生，短期股价修复压力显著</span>
+    <span class="event-pill e-risk">Sofdra GTN 利润率改善速度慢于预期 (H1 净收入仅为毛收入约 21%，GTN 改善是盈利关键路径)</span>
+    <span class="event-pill e-risk">API 单一供应商结构性风险 (当前仅一家 API 供应商，技术转移需 FDA 审批，备货谈判存在不确定性)</span>
+    <span class="event-pill e-risk">临床管线 (BTX 1503 痤疮 Phase 2 / BTX 1702 玫瑰痤疮 Phase 2) 研发失败风险</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Q3 FY26 Activity Report (Apr 2026)</span>
+    <span class="event-pill e-result">Full Year FY26 Results & Appendix 4E (Aug 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+      <div class="mb mb-watch"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+    </div>
+  </td>
+  <td>
+    <span class="no-cr">中 (A$45M 融资方案已完成 Tranche 1，剩余约 A$30M 依赖 4月1日 EGM 批准；融资价格 A$0.06 较历史价格大幅折价已反映重大稀释，短期内再次配售可能性低，但 API 采购付款压力仍存)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:75%; background:#1D9E75;"></div></div>
+      <span class="prob-val p-high">中高 (商业化路径清晰，H1 处方量 45,800张环比增长173%，62,500张累计处方印证系统性采用；核心风险已从'能否销售'转移至'GTN 利润率能否及时改善以支撑盈利平衡')</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">BOT 的核心逻辑已完成从'研发期权'到'商业化放量'的范式转变。Sofdra 在推出后11个月内实现 A$21.2M 净收入、62,500张处方，50名销售专员的规模效应尚未完全体现。当前估值争议聚焦于 GTN 利润率改善速度：H1 美国 Sofdra 净收入 A$16.2M 对应毛收入约 A$37-40M（GTN 约 40-43%），但管理层目标 GTN 改善至 30-40% 实为净收入占比提升，需 API 多元化降低 COGS 配合实现。A$45M 融资代价为严重稀释（A$0.06 vs 停牌前 A$0.11），但同时消除了近期流动性危机风险。关键观察指标：季度净收入绝对额、GTN 改善幅度、以及 API 第二供应商谈判时间表。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">BTR</div>
+    <div class="sector-tag s-pgm">Gold - 正在向生产商转型的金矿开发商 (西澳 Laverton, Menzies & Sandstone)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-03</span><span>完成巨额融资组合 (A$193M Equity + US$120M Debt)；Laverton-Menzies 目标 FID</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-06</span><span>Laverton-Menzies 主力项目实现首批矿石产出 (First Ore)</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-H2</span><span>发布 Sandstone 项目 PFS，奠定第三生产中心逻辑</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-milestone">2026年3月 Laverton-Menzies 金矿项目 Final Investment Decision (FID) 落地</span>
+    <span class="event-pill e-production">2026年Q2 (约6月) Laverton-Menzies 项目的首次矿石生产 (First Ore)</span>
+    <span class="event-pill e-result">Sandstone 金矿项目预可研报告 (PFS) 发布 (基于 1.5Moz+ 资源)</span>
+    <span class="event-pill e-milestone">Fish 地下矿坑在达到年产 40,000 盎司后的持续产量爬坡</span>
+    <span class="event-pill e-risk">与 Genesis Minerals 矿石采购协议带来的早期自由现金流确认</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">近期完成的 A$193M 巨额股权融资带来的严重股本稀释压力</span>
+    <span class="event-pill e-risk">向生产商转型过程中固有的矿山建设延期及资本支出 (Capex) 超支风险</span>
+    <span class="event-pill e-risk">金价大幅波动直接影响高达 $1B 预期自由现金流的实现</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Quarterly Activities Report (Apr 2026)</span>
+    <span class="event-pill e-result">Full Year FY26 Results (Aug 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-watch"></div>
+    </div>
+  </td>
+  <td>
+    <span class="no-cr">低 (2026年3月刚完成 A$193M 配售及 US$120M 债务融资，项目建设直至投产资金已全面锁定)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:75%; background:#1D9E75;"></div></div>
+      <span class="prob-val p-high">高 (资金障碍已完全扫除，进入实质性矿区开发和建设收线期，项目拥有确定性产出)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">Brightstar 正在执行极具野心的增长战略。2026年3月的近三亿澳元融资包是决定性的分水岭，彻底解决了制约开工的‘资金阻碍’。Laverton-Menzies 的投产 (目标70k oz/a) 叠加 Fish 矿坑产量，使其有望在 2026-2027 年迅速跃升为年产 10万盎司级别的中型生产商。当前的阵痛在于 A$193M 股权配售造成的短期每股价值稀释。市场下一阶段的焦点将从'能否造矿'转向'能否按预算和时间表顺利投产'。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">CTN</div>
+    <div class="sector-tag s-pgm">Gold & Copper - VMS 铜主导及多金属勘探 (西澳中央伊尔岗 + Breakaway Dam VMS)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-03</span><span>Breakaway Dam 12孔 RC 钻探开钻 (3月3日已启动)，测试16km导电趋势中700m核心矿化区段</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-04</span><span>发布 Q3 季报 (Appendix 5B)，披露现金头寸；Breakaway Dam 首批钻探 Assay 结果预期回收</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-Q2</span><span>Yerilgee/Evanston 20,000m 钻探计划完整 Assay 数据集发布；BGM Metals 整合完成，Maverick VMS 靶区初步勘察结果</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-H2</span><span>若 Breakaway Dam 结果积极，启动后续扩大钻探并进行潜在配售融资；Auric North 地球物理勘察启动</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-drill">2026年Q2 Breakaway Dam VMS 铜项目 12孔 (~3,160m) RC 钻探结果 (已于2026年3月开钻，测试700m矿化走廊内的多个DHEM高优先级导体)</span>
+    <span class="event-pill e-drill">Yerilgee 及 Evanston 项目 ~20,000m RC 钻探计划剩余 Assay 结果披露 (2026年3月已获 48m @ 2.61g/t Au 高品位截距)</span>
+    <span class="event-pill e-result">BGM Metals 收购完成后 Maverick VMS 靶区及 Auric North (~45,000公顷) 金矿组合的初步勘探结果</span>
+    <span class="event-pill e-milestone">Central Yilgarn 及新矿权的后续电磁 (DHEM) 地球物理调查新靶区确认</span>
+    <span class="event-pill e-corporate">Newcam Minerals (USD 0.5M 配售) 入股后的潜在战略合作深化</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">资金消耗速率高于勘探进展，多项目并行推进的现金管理压力 (USD 0.5M 融资规模偏小)</span>
+    <span class="event-pill e-risk">Breakaway Dam VMS 系统存在但品位不足以达到经济规模的勘探失败风险</span>
+    <span class="event-pill e-risk">Lachlan Fold Belt (NSW Rock Lodge 项目) 进展迟滞，战略重心已移往西澳，NSW资产被动搁置风险</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Quarterly Activities & Appendix 5B (Apr 2026)</span>
+    <span class="event-pill e-result">Full Year Report (Sep 2026)</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+      <div class="mb mb-watch"></div>
+    </div>
+  </td>
+  <td>
+    <span class="cr-badge">高 (Newcam USD 0.5M 融资虽已落地，但多项目并行 (~20,000m+ 钻探计划) 的资金消耗速率预计仍超过单季度现金储备，2026年内需追加融资的可能性极高)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:75%; background:#1D9E75;"></div></div>
+      <span class="prob-val p-high">中低 (Breakaway Dam VMS 系统存在性已验证，但700m走廊内的高品位富集区尚未确认；Yerilgee 48m @ 2.61g/t 金截距是积极信号；近期战略重组清晰度提升，但同时管理多个早期项目分散执行资源)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">CTN 在 2025-2026 年完成了一次重大战略重组：出售 Laverton 资产，并购 Breakaway Dam VMS 铜项目 + BGM Metals + Auric North，将战略重心从 NSW Lachlan Fold Belt 整体迁移至西澳 Central Yilgarn 及 Mid-West 地区。Breakaway Dam 的 16km 导电趋势及 700m 已识别矿化走廊赋予了该项目系统性扩大的想象空间，其 VMS 赋矿构造与西澳已知富矿具有地质类比性。Yerilgee 的高品位金截距则提供了多金属勘探的阶段性亮点。核心逻辑：低市值壳体 + 多靶区组合勘探期权属性，在铜金价双高背景下具有杠杆弹性。</div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <div class="ticker">IMU</div>
+    <div class="sector-tag ">Biotechnology - 临床阶段肿瘤免疫疗法 (CAR-T / 溶瘤病毒)</div>
+  </td>
+  <td>
+    <div class="tl-item"><span class="tl-time tl-future">2026-年中</span><span>集中释放 onCARlytics 及 VAXINIA (CF33) 剂量递增与联合治疗的早期安全性与有效性数据</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026-H2</span><span>锁定 Azer-cel 最终临床注册路径，与 FDA 就关键 Phase 2/3 标准全部达成一致</span></div>
+    <div class="tl-item"><span class="tl-time tl-future">2026底-2027前</span><span>正式启动 Azer-cel 注册性临床试验，迈入冲刺商业化最实质性的决定阶段</span></div>
+  </td>
+  <td>
+    <span class="event-pill e-milestone">Azer-cel 针对 DLBCL (弥漫性大B细胞淋巴瘤) 的中期临床数据及 FDA 注册性 Phase 2/3 试验筹备更新</span>
+    <span class="event-pill e-milestone">onCARlytics (针对实体瘤) 项目在扩大试验及中国区合作后的初步有效性数据释放</span>
+    <span class="event-pill e-result">VAXINIA (CF33 溶瘤病毒) 联合应用 (如与 CD19 双特抗体) 的剂量递增试验结果</span>
+    <span class="event-pill e-milestone">PD1-Vaxx 结直肠癌 Phase 1 临床试验的早期安全性和免疫原性数据</span>
+    <span class="event-pill e-milestone">潜在的跨国药企 (Big Pharma) 层面产品线对外授权 (Out-licensing) 或重磅战略合作协议签署</span>
+  </td>
+  <td>
+    <span class="event-pill e-risk">临床试验结果不及预期的双刃剑风险 (如 Azer-cel 回应率无法维持，或出现未预见的不良反应)</span>
+    <span class="event-pill e-risk">高额研发投入带来的持续资本消耗与随之而来的频繁股权融资 (稀释现有股东)</span>
+    <span class="event-pill e-risk">FDA 监管准入不确定性，即便临床数据良好，依然面临注册路径复杂及审批延迟的可能</span>
+  </td>
+  <td>
+    <span class="event-pill e-result">Quarterly Cash Flow (4C) - Apr 2026</span>
+    <span class="event-pill e-result">Annual Report - Aug/Sep 2026</span>
+  </td>
+  <td>
+    <div class="month-bar">
+      <div class="mb mb-active"></div>
+      <div class="mb mb-watch"></div>
+      <div class="mb mb-hot"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-active"></div>
+      <div class="mb mb-hot"></div>
+    </div>
+  </td>
+  <td>
+    <span class="cr-badge">高 (作为无商业化销售产出的纯临床生物制药企业，极度依赖持续配售补充动辄数千万的年度研发消耗，长期面临融资刚需)</span>
+  </td>
+  <td>
+    <div class="prob">
+      <div class="prob-bar-wrap"><div class="prob-bar" style="width:55%; background:#EF9F27;"></div></div>
+      <span class="prob-val p-med">中 (抗癌神药若突破则回报呈指数级，但这直接暴露于二期/三期临床及 FDA 注册试验中固有且不可控的医学数据风险)</span>
+    </div>
+  </td>
+  <td>
+    <div class="note-text">Imugene 拥有全澳最具深度且最前沿的免疫肿瘤学管线。Azer-cel 现阶段最接近商业化目标，前期数据展示了极高回应率 (ORR 82%)。但市场的长期隐忧在于庞大管线背后的资金无底洞效应——历史上不断的增发极大稀释了每股账面价值，股价长期的低迷正是市场对其频繁 CR 模式的自然反映。2026 年的核心转折点在于：能否凭借 Azer-cel 无可辩驳的晚期数据拿到 FDA 的 RMAT 认定加速上市，或是通过核心管线的对外授权 (Out-licensing) 换取非稀释性巨额现金注入。若以上转机未能出现，散户群体依然将承受资金抽血压力。</div>
+  </td>
+</tr>
+
+
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      style="margin-top: 1rem; padding: 10px 14px; background: #fbfbfb; border-radius: 8px; display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start;">
+      <div style="flex:1; min-width:200px;">
+        <div
+          style="font-size:11px; font-weight:500; color:#666; margin-bottom:6px; text-transform: uppercase; letter-spacing:0.04em;">
+          爆发窗口排序</div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+                <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="background:#1D9E75; color:#04342C; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:500;">1</span>DEL — 2026年4月 SA1 (南澳 Salisbury) 旗舰项目正式首气投产并接入阿德莱德天然气网络 (管理层明确目标，ARENA 第二笔里程碑款已于2026年3月到账)</div>
+      <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="background:#1D9E75; color:#04342C; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:500;">2</span>TM1 — 2026年Q2 Phase 4 深部钻探持续推进 (5台钻机已就位，针对 SW5/SW6 高品位进料通道延伸，计划总钻探量达30,000米)</div>
+      <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="background:#1D9E75; color:#04342C; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:500;">3</span>CLA — 2026年Q2/Q3 综合融资方案最终落地 (Grant Samuel 主导，含 Off-take、结构性债务及项目级股权，多方提案已收到)</div>
+      <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="background:#EF9F27; color:#412402; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:500;">4</span>KSN — 2026年中 Mineral Hill 转入地下采矿阶段，启动铜精矿生产 (公司明确目标 CY26 初始铜产出，处理产能已获批至700ktpa)</div>
+      <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="background:#EF9F27; color:#412402; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:500;">5</span>LOT — 2026年Q2 首批铀精矿向北美三大核电站发货 (First Shipment，物流就绪，待最终converter资质认证完成，至少一家预计2026年2月底前完成)</div>
+      <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="background:#378ADD; color:#042C53; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:500;">6</span>MEU — 2026年Q2 Junction Dam 铀矿重启项目四大靶区 (Saffron/Bridget/Yolanda/Jasons) 全部设计完成，Native Title 清关后立即启动 400孔/两阶段 (~A$4M) 钻探</div>
+
+        </div>
+      </div>
+      <div style="flex:1; min-width:160px;">
+        <div
+          style="font-size:11px; font-weight:500; color:#666; margin-bottom:6px; text-transform: uppercase; letter-spacing:0.04em;">
+          重要提示</div>
+        <div style="font-size:11px; color:#999; line-height:1.6;">所有时间节点基于公司公告及市场信息，仅供参考，不构成投资建议。（此文档完全基于 json 数据动态生成）
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

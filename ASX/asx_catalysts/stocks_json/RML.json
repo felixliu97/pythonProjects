@@ -1,0 +1,78 @@
+{
+  "Ticker": "RML",
+  "Sector": "Gold, Antimony & Tungsten - 美国关键矿产一体化开发商 (爱达荷州 Horse Heaven 项目，紧邻 Perpetua Resources Stibnite)",
+  "Catalysts": [
+    "2026年Q2 Phase 2 57孔 RC 钻探启动 (Golden Gate 金矿延伸 + Antimony Ridge 验证)，H1 2026 启动，6月季度正式开钻",
+    "Johnson Creek 钨锑磨机 (50tpd，25英亩私有地) 收购已完成 (2026年3月)，现有 ~2,000吨历史钨矿石库存的冶金测试结果及磨机改造评估",
+    "Nasdaq 双重挂牌进展：Form F-20 已于2026年2月向 SEC 保密提交，Level 1 ADR 设施已启动 (RLMLF OTC)，等待 SEC 正式受理",
+    "Antimony Ridge 高品位样品 (最高 48.7% Sb, 890g/t Ag) 冶金测试结果 (Kingston Process Metallurgy 主导)",
+    "美国国防部/能源部 FAST-41 项目框架下的政府赠款或贷款申请进展"
+  ],
+  "Risks": [
+    "Phase 2 钻探规模 (57孔) 及 A$27.1M 融资额度相对于 Nasdaq 上市所需资产规模仍偏小，JORC 资源量尚未公告",
+    "Nasdaq 上市执行存在不确定性 (SEC 审核时间表、合规成本、市场窗口)；F-20 保密提交到正式挂牌通常需6-12个月",
+    "Antimony Ridge 地表超高品位样品 (48.7% Sb) 与钻探规模化资源量之间存在巨大证明缺口，高品位未必代表系统性富集"
+  ],
+  "Earnings_Window": [
+    "Quarterly Activities (Apr 2026)",
+    "Annual Audit for US Compliance (Sep-Oct 2026)"
+  ],
+  "Heatmap": [
+    {
+      "Month": "Apr",
+      "Status": "Hot",
+      "Reason": "Q3 季报：Johnson Creek 磨机收购交割确认，钨库存冶金测试初步结果，Phase 2 钻探动员进度披露"
+    },
+    {
+      "Month": "May",
+      "Status": "Active",
+      "Reason": "Antimony Ridge 冶金测试结果发布；磨机改造工程评估完成"
+    },
+    {
+      "Month": "Jun",
+      "Status": "Hot",
+      "Reason": "Phase 2 57孔 RC 钻探正式开钻 (6月季度)；Golden Gate 金矿延伸及钨矿靶区同步推进"
+    },
+    {
+      "Month": "Jul",
+      "Status": "Hot",
+      "Reason": "Phase 2 早期钻探 Assay 结果回收 (金/锑/钨三项同步检测)；SEC F-20 审核进度更新"
+    },
+    {
+      "Month": "Aug",
+      "Status": "Active",
+      "Reason": "Phase 2 完整 Assay 数据集及潜在首个 JORC 资源量估算；美国上市审计合规准备"
+    },
+    {
+      "Month": "Sep",
+      "Status": "Active",
+      "Reason": "美国合规审计完成；Nasdaq 挂牌倒计时；可能启动 Pre-IPO/配套融资"
+    }
+  ],
+  "CR_Risk": "中高 (A$27.1M 融资已完成，Phase 2 钻探及磨机收购有足够资金支撑；但 Nasdaq 上市通常需要 Pre-IPO 或 IPO 配套融资，2026年内需追加融资的可能性较高；股票合并以满足美股入场价要求的风险仍存)",
+  "Probability": "中高 (Phase 1 钻探已确认 Golden Gate 连续金矿化从地表延伸，所有孔终止于金矿化中，IRGS 型金系统存在性已验证；Johnson Creek 磨机收购构建了'一体化'叙事；Perpetua Resources 对标逻辑强劲；Nasdaq F-20 已保密提交是重大执行信号)",
+  "Core_Notes": "RML 的终极逻辑是'脱澳入美'。2026年2月完成的 Level 1 ADR 设施启动 + Form F-20 保密提交，标志着 Nasdaq 上市从战略意图转入正式执行阶段。Johnson Creek 磨机 (~50tpd，25英亩私有地 + 工业用水权 + 电力基础设施) 的收购是差异化竞争壁垒：RML 成为美国境内极少数同时拥有'探矿靶区 + 历史产矿验证 + 就近处理设施'三位一体的关键矿产公司。Phase 2 57孔钻探将提供 JORC 资源量所需的数据基础，是 Nasdaq 路演的核心'硬指标'。Antimony Ridge 48.7% Sb 地表样品若通过系统性钻探验证，其稀缺性将在 Nasdaq 美国国防关键矿产框架下被赋予显著溢价。投资者需关注：2026年Q4可能出现的股票合并 (Share Consolidation) 操作以满足 Nasdaq 入场价格要求。",
+  "Timeline_Title": "RML 2026 钻探突破与 Nasdaq 上市时间线",
+  "Timeline": [
+    {
+      "Time": "2026-03",
+      "Event": "Johnson Creek 钨锑磨机收购完成交割；Form F-20 已向 SEC 保密提交；Level 1 ADR (RLMLF) 已激活"
+    },
+    {
+      "Time": "2026-Q2",
+      "Event": "Phase 2 57孔 RC 钻探正式开钻 (6月季度)；Johnson Creek 磨机改造工程评估完成；钨库存冶金测试结果发布"
+    },
+    {
+      "Time": "2026-Q3",
+      "Event": "Phase 2 完整 Assay 数据集 (金/锑/钨三项)；潜在首个 JORC 资源量公告；SEC F-20 正式受理进展"
+    },
+    {
+      "Time": "2026-Q4",
+      "Event": "Nasdaq 挂牌倒计时冲刺：美国机构路演启动；可能启动股票合并以满足美股入场价；Pre-IPO/配套融资安排"
+    },
+    {
+      "Time": "2027-Q1",
+      "Event": "预期正式在 Nasdaq 挂牌 (ASX + Nasdaq 双重上市)；同步发布重大 JORC 资源更新，锁定美国国防关键矿产定位"
+    }
+  ]
+}

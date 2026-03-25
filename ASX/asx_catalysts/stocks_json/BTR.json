@@ -1,0 +1,70 @@
+{
+  "Ticker": "BTR",
+  "Sector": "Gold - 正在向生产商转型的金矿开发商 (西澳 Laverton, Menzies & Sandstone)",
+  "Catalysts": [
+    "2026年3月 Laverton-Menzies 金矿项目 Final Investment Decision (FID) 落地",
+    "2026年Q2 (约6月) Laverton-Menzies 项目的首次矿石生产 (First Ore)",
+    "Sandstone 金矿项目预可研报告 (PFS) 发布 (基于 1.5Moz+ 资源)",
+    "Fish 地下矿坑在达到年产 40,000 盎司后的持续产量爬坡",
+    "与 Genesis Minerals 矿石采购协议带来的早期自由现金流确认"
+  ],
+  "Risks": [
+    "近期完成的 A$193M 巨额股权融资带来的严重股本稀释压力",
+    "向生产商转型过程中固有的矿山建设延期及资本支出 (Capex) 超支风险",
+    "金价大幅波动直接影响高达 $1B 预期自由现金流的实现"
+  ],
+  "Earnings_Window": [
+    "Quarterly Activities Report (Apr 2026)",
+    "Full Year FY26 Results (Aug 2026)"
+  ],
+  "Heatmap": [
+    {
+      "Month": "Apr",
+      "Status": "Active",
+      "Reason": "Q3 季报：确认 Fish 地下矿山产量爬坡情况"
+    },
+    {
+      "Month": "May",
+      "Status": "Watch",
+      "Reason": "Laverton-Menzies 项目 FID 后的早期场地建设动员"
+    },
+    {
+      "Month": "Jun",
+      "Status": "Hot",
+      "Reason": "关键里程碑：Laverton-Menzies 项目首矿 (First Ore) 产出预定窗口"
+    },
+    {
+      "Month": "Jul",
+      "Status": "Active",
+      "Reason": "Q4 季报：评估首矿产出后的运营数据及成本初步测算"
+    },
+    {
+      "Month": "Aug",
+      "Status": "Hot",
+      "Reason": "全年业绩及 Sandstone 项目 PFS 潜在发布窗口"
+    },
+    {
+       "Month": "Sep",
+       "Status": "Watch",
+       "Reason": "机构路演及下一阶段债务提取节点"
+    }
+  ],
+  "CR_Risk": "低 (2026年3月刚完成 A$193M 配售及 US$120M 债务融资，项目建设直至投产资金已全面锁定)",
+  "Probability": "高 (资金障碍已完全扫除，进入实质性矿区开发和建设收线期，项目拥有确定性产出)",
+  "Core_Notes": "Brightstar 正在执行极具野心的增长战略。2026年3月的近三亿澳元融资包是决定性的分水岭，彻底解决了制约开工的‘资金阻碍’。Laverton-Menzies 的投产 (目标70k oz/a) 叠加 Fish 矿坑产量，使其有望在 2026-2027 年迅速跃升为年产 10万盎司级别的中型生产商。当前的阵痛在于 A$193M 股权配售造成的短期每股价值稀释。市场下一阶段的焦点将从'能否造矿'转向'能否按预算和时间表顺利投产'。",
+  "Timeline_Title": "BTR 2026 黄金生产商跃升时间线",
+  "Timeline": [
+    {
+      "Time": "2026-03",
+      "Event": "完成巨额融资组合 (A$193M Equity + US$120M Debt)；Laverton-Menzies 目标 FID"
+    },
+    {
+      "Time": "2026-06",
+      "Event": "Laverton-Menzies 主力项目实现首批矿石产出 (First Ore)"
+    },
+    {
+      "Time": "2026-H2",
+      "Event": "发布 Sandstone 项目 PFS，奠定第三生产中心逻辑"
+    }
+  ]
+}

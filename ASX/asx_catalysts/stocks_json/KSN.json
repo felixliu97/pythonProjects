@@ -1,0 +1,74 @@
+{
+  "Ticker": "KSN",
+  "Sector": "Gold & Copper - 澳大利亚生产商 (NSW Cobar Basin Mineral Hill Mine 多产品运营)",
+  "Catalysts": [
+    "2026年中 Mineral Hill 转入地下采矿阶段，启动铜精矿生产 (公司明确目标 CY26 初始铜产出，处理产能已获批至700ktpa)",
+    "2026年7月11日 Ok Tedi 支付 Misima 项目第二笔递延款 A$10M，进一步强化净现金状态",
+    "Mineral Hill Southern Ore Zone (SOZ) 及 Jack's Hut 地下高品位截距的持续扩张 (近期截距包括 14m @ 19.35g/t Au + 0.79% Cu)",
+    "Pearse Pits 露天采矿 (至2026年中) 与地下采矿平稳衔接的运营过渡确认",
+    "Ok Tedi 就 Misima 项目作出正式 FID 决定后可额外触发 A$10M 递延款 + 0.5% 毛收入版税"
+  ],
+  "Risks": [
+    "地下采矿启动时期的爬坡 (Ramp-up) 成本超支及品位稀释风险 (SOZ 地下开采为公司首次规模化地下作业)",
+    "债务偿还节点集中：A$5M 到期 2026年7月7日，A$5M 到期 2027年2月，A$5M 到期 2027年6月",
+    "金/铜价回调对 Mineral Hill 小规模生产商 AISC 竞争力的边际压缩风险"
+  ],
+  "Earnings_Window": [
+    "Quarterly Activities & Cashflow (Apr 2026)",
+    "Annual Financial Report (Sep 2026)"
+  ],
+  "Heatmap": [
+    {
+      "Month": "Apr",
+      "Status": "Hot",
+      "Reason": "Q3 FY26 季报：披露 Pearse Pits 最终阶段生产数据、SOZ 地下矿山进展及铜精矿产出时间表"
+    },
+    {
+      "Month": "May",
+      "Status": "Active",
+      "Reason": "SOZ 地下采矿正式投产前的系统调试与矿石处理验证；Parker's Hill / EOZ 扩张勘探 Assay 更新"
+    },
+    {
+      "Month": "Jun",
+      "Status": "Active",
+      "Reason": "铜精矿首次出货里程碑确认；Pearse Pits 露天采矿完成及地下采矿无缝交接"
+    },
+    {
+      "Month": "Jul",
+      "Status": "Hot",
+      "Reason": "Q4 FY26 季报总结全年产量；Ok Tedi A$10M 第二笔递延款到账 (7月11日)；债务 A$5M 首笔到期 (7月7日) 处理结果"
+    },
+    {
+      "Month": "Aug",
+      "Status": "Watch",
+      "Reason": "财报前静默期；铜精矿产出规模化后的市场定价重估预期"
+    },
+    {
+      "Month": "Sep",
+      "Status": "Hot",
+      "Reason": "全年财报：首年铜精矿收入贡献、AISC 全维持成本披露，以及剩余 Misima 递延款与版税的资本配置方案 (分红/回购/扩张)"
+    }
+  ],
+  "CR_Risk": "极低 (A$50M Misima 首付款已到账，债务已全额偿还；A$10M 第二笔递延款将于2026年7月11日到账；公司已转型为无净债务的现金流正生产商，股权稀释风险极低)",
+  "Probability": "高 (Mineral Hill 浮选设施已成功重启并生产金银精矿；地下矿山开发已启动；SOZ 高品位截距印证资源质量；铜精矿生产技术路径清晰，CY26目标铜产出有较强可信度)",
+  "Core_Notes": "KSN 在2025-2026年完成了从'资源勘探商'到'现金流正多产品生产商'的转型。Misima 的 A$95M 出售 (结构：A$50M 已收+A$10M 递延2026年7月+A$10M 触发于 Misima FID+0.5% 毛收入版税) 彻底重塑了资产负债表，同时保留了 Misima 未来开发的上行期权。Mineral Hill 是 Cobar Basin 已验证的高品位金铜系统，SOZ G/H 矿脉的截距 (最高 48.8g/t Au) 印证了地下矿山的优质基础。350-400ktpa 现有处理能力 (已获批扩至700ktpa) 提供了低资本投入的扩产路径。当前估值尚未充分反映：(1) 铜精矿收入对总营收的增量贡献；(2) A$10M 递延款入账后的净现金强化；(3) 700ktpa 扩容潜力下的 NPV 重估空间。",
+  "Timeline_Title": "KSN 2026 铜产出启动与价值释放时间线",
+  "Timeline": [
+    {
+      "Time": "2026-04",
+      "Event": "发布 Q3 FY26 季报：Pearse Pits 最终月度产量、SOZ 地下矿山建设里程碑及铜精矿产出预期时间表"
+    },
+    {
+      "Time": "2026-06",
+      "Event": "Mineral Hill 实现铜精矿首次出货 (公司目标 CY26 铜产出)；Pearse Pits 露天采矿收尾并完成运营交接"
+    },
+    {
+      "Time": "2026-07",
+      "Event": "Q4 FY26 季报发布；Ok Tedi A$10M 第二笔递延款到账；A$5M 债务首笔到期处理"
+    },
+    {
+      "Time": "2026-09",
+      "Event": "发布 FY26 全年财报：首年铜精矿收入规模、AISC 成本曲线定位，以及资本分配方案 (分红/扩产/回购)"
+    }
+  ]
+}

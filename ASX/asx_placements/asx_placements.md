@@ -69,7 +69,7 @@ To evaluate the placement's discount/premium, the script queries the live ASX AP
 
 ## PDF Caching
 
-- PDFs are cached in `.pdf_cache/` with naming: `{ASX_CODE}_{docKey}.pdf` (e.g. `STK_2924_03052793.pdf`)
+- PDFs are cached in the shared `../.pdf_cache/` directory with naming: `{Date}_[{ASX_CODE}]_{Headline_Clean}.pdf` (e.g. `2026-03-19_[1AD]_New AD-214 patent granted.pdf`)
 - Re-runs only download **new** announcements (delta caching)
 - Cached PDFs are read from disk without network calls
 

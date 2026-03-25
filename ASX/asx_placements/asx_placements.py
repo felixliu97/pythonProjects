@@ -13,6 +13,7 @@ import csv
 import io
 import os
 import re
+import string
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
@@ -332,15 +333,24 @@ def fetch_announcements(
     return all_items
 
 
+def sanitize_filename(name: str) -> str:
+    valid_chars = "-_.() " + string.ascii_letters + string.digits
+    cleaned = ''.join(c for c in name if c in valid_chars)
+    return cleaned.strip()[:80]
+
+
 def download_pdf(
     doc_key: str,
     symbol: str,
     session: requests.Session,
     cache_dir: str,
+    date: str,
+    headline: str,
 ) -> Optional[bytes]:
     """Download a PDF or serve it from the local cache."""
-    safe_key = doc_key.replace("/", "_").replace("-", "_")
-    cache_file = os.path.join(cache_dir, f"{symbol}_{safe_key}.pdf")
+    safe_hl = sanitize_filename(headline)
+    pdf_filename = f"{date}_[{symbol}]_{safe_hl}.pdf"
+    cache_file = os.path.join(cache_dir, pdf_filename)
 
     if os.path.exists(cache_file):
         with open(cache_file, "rb") as f:
@@ -398,7 +408,7 @@ def process_event(
                 break
 
             pdf_bytes = download_pdf(
-                doc_key, event["symbol"], session, cache_dir
+                doc_key, event["symbol"], session, cache_dir, event["date"], event["headline"]
             )
             if pdf_bytes:
                 text = extract_pdf_text(pdf_bytes)
@@ -455,7 +465,7 @@ def main() -> None:
     args = parser.parse_args()
 
     root = os.path.dirname(os.path.abspath(__file__))
-    cache_dir = os.path.join(root, ".pdf_cache")
+    cache_dir = os.path.abspath(os.path.join(root, "..", ".pdf_cache"))
     os.makedirs(cache_dir, exist_ok=True)
     out_csv = os.path.join(root, "asx_placements.csv")
 
@@ -521,10 +531,9 @@ def main() -> None:
 
         date_str = item.get("date", "")
         try:
-            dt = datetime.fromisoformat(
-                date_str.replace("Z", "+00:00")
-            )
-            date_display = dt.strftime("%Y-%m-%d")
+            utc_dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+            syd_dt = utc_dt + timedelta(hours=10)
+            date_display = syd_dt.strftime("%Y-%m-%d")
         except Exception:
             date_display = date_str[:10] if date_str else ""
 
