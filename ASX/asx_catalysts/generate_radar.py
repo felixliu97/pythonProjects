@@ -1,15 +1,9 @@
-import json
+import yaml
 import os
-import glob
 
 # Paths
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-JSON_DIR = os.path.join(ROOT_DIR, "stocks_json")
-
-# Fallback in case they are still in json_data
-if not os.path.exists(JSON_DIR):
-    JSON_DIR = os.path.join(ROOT_DIR, "json_data")
-    
+JSON_FILE = os.path.join(ROOT_DIR, "stocks.yaml")
 HTML_OUT = os.path.join(ROOT_DIR, "asx_catalyst_radar_6mo.html")
 
 def get_class_for_probability(prob):
@@ -68,7 +62,7 @@ def build_row(stock):
     timeline = stock.get("Timeline", [])
     if timeline:
         for item in timeline:
-            time_label = item.get("Time", "")
+            time_label = str(item.get("Time", ""))
             event_label = item.get("Event", "")
             tl_time_cls = "tl-time"
             if "2026" in time_label: tl_time_cls += " tl-future"
@@ -115,10 +109,28 @@ def build_row(stock):
     # 5. CR Risk
     row_html += '  <td>\n'
     cr = stock.get("CR_Risk", "")
-    if "低" in cr or "N/A" in cr or "已并入" in cr:
-        row_html += f'    <span class="no-cr">{cr}</span>\n'
-    else:
-        row_html += f'    <span class="cr-badge">{cr}</span>\n'
+    
+    cr_level = cr.strip()
+    cr_desc = ""
+    for sep in [" (", " （", "(", "（", " "]:
+        if sep in cr_level:
+            parts = cr_level.split(sep, 1)
+            cr_level = parts[0].strip()
+            # Restore parentheses if they were used
+            if "(" in sep: cr_desc = "(" + parts[1].strip()
+            elif "（" in sep: cr_desc = "（" + parts[1].strip()
+            else: cr_desc = parts[1].strip()
+            break
+            
+    lvl_cls = "cr-low"
+    if "极高" in cr_level or "高" in cr_level:
+        lvl_cls = "cr-high"
+    elif "中" in cr_level:
+        lvl_cls = "cr-med"
+        
+    row_html += f'    <div class="cr-val {lvl_cls}">{cr_level}</div>\n'
+    if cr_desc:
+        row_html += f'    <div class="cr-desc">{cr_desc}</div>\n'
     row_html += '  </td>\n'
     
     # 6. Probability
@@ -145,13 +157,8 @@ def build_row(stock):
     return row_html
 
 def generate_html():
-    json_files = glob.glob(os.path.join(JSON_DIR, "*.json"))
-    stocks = []
-    
-    for jf in json_files:
-        with open(jf, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            stocks.append(data)
+    with open(JSON_FILE, 'r', encoding='utf-8') as f:
+        stocks = yaml.safe_load(f)
             
     def breakout_key(s):
         p = s.get("Probability", "")
@@ -173,7 +180,7 @@ def generate_html():
         
     # Build Breakout Ranking HTML
     breakout_html = ""
-    bg_colors = [("#1D9E75", "#04342C"), ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C"), ("#EF9F27", "#412402"), ("#EF9F27", "#412402"), ("#378ADD", "#042C53")]
+    bg_colors = [("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"), ("#EF9F27", "#412402"), ("#EF9F27", "#412402"), ("#1D9E75", "#04342C")]
     for i, s in enumerate(stocks[:6]):
         tk = s.get("Ticker", "")
         cats = s.get("Catalysts", [])

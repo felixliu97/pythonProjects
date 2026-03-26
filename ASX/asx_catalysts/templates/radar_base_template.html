@@ -197,15 +197,15 @@
     }
 
     .mb-active {
-      background: #1D9E75;
-    }
-
-    .mb-hot {
       background: #EF9F27;
     }
 
+    .mb-hot {
+      background: #E24B4A;
+    }
+
     .mb-watch {
-      background: #378ADD;
+      background: #1D9E75;
     }
 
     .prob {
@@ -267,25 +267,27 @@
       margin-top: 2px;
     }
 
-    .cr-badge {
+    .cr-val {
       display: inline-block;
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 99px;
-      background: #FBEAF0;
-      color: #72243E;
-      border: 0.5px solid #ED93B1;
-      white-space: normal;
-      line-height: 1.2;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
     }
 
-    .no-cr {
-      display: block;
+    .cr-desc {
       font-size: 10px;
-      color: #999;
+      color: #666;
+      line-height: 1.3;
+      margin-top: 4px;
       white-space: normal;
-      line-height: 1.2;
+      word-break: break-word;
     }
+    
+    .cr-high { background: #FCEBEB; color: #791F1F; }
+    .cr-med { background: #FAEEDA; color: #633806; }
+    .cr-low { background: #f1f5f9; color: #475569; }
 
     .tbl-wrap {
       border: 0.5px solid #ddd;
@@ -334,16 +336,16 @@
 
     <div class="legend-row">
       <div class="leg">
-        <div class="leg-dot" style="background:#1D9E75;"></div>催化剂活跃窗口
+        <div class="leg-dot" style="background:#E24B4A;"></div>高热度 (Hot)
       </div>
       <div class="leg">
-        <div class="leg-dot" style="background:#EF9F27;"></div>爆发概率高峰
+        <div class="leg-dot" style="background:#EF9F27;"></div>活跃期 (Active)
       </div>
       <div class="leg">
-        <div class="leg-dot" style="background:#378ADD;"></div>值得关注
+        <div class="leg-dot" style="background:#1D9E75;"></div>观察期 (Watch)
       </div>
       <div class="leg">
-        <div class="leg-dot" style="background:#eee;"></div>低活跃
+        <div class="leg-dot" style="background:#eee;"></div>低活跃 (Other)
       </div>
       <span style="margin-left:auto; font-size:11px; color:#999;">覆盖期：2026年4月 — 2026年9月</span>
     </div>

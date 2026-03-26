@@ -5,10 +5,7 @@ This document outlines the architecture for a dynamic HTML generator that automa
 ## 1. Directory Structure
 ```text
 ASX/asx_catalysts/
-├── stocks_json/                      # Single source of truth (Data)
-│   ├── RML.json
-│   ├── CLA.json
-│   └── TM1.json
+├── stocks.yaml                       # Single source of truth (YAML list of objects)
 ├── templates/
 │   └── radar_base_template.html      # Static HTML shell (CSS, Layout, Headers, Footers)
 ├── asx_catalyst_radar_6mo.md         # Documentation & Design
@@ -21,7 +18,7 @@ ASX/asx_catalysts/
 The system uses a **Data-Driven Templating** approach, entirely decoupling the data (JSON) from the presentation layer (HTML/CSS).
 
 1. **The Generator (`generate_radar.py`)**: A Python script utilizing the built-in `json` library and standard string formatting (or `Jinja2` for advanced templating).
-2. **The Data Source**: Loops over all `.json` files inside the `stocks_json/` directory.
+2. **The Data Source**: Reads the single `stocks.yaml` file containing all stock definitions.
 3. **The Template**: Reads `radar_base_template.html` which contains placeholder tags (e.g., `{{ table_rows }}` and `{{ timelines }}`).
 4. **Rendering Logic**: Maps the structured JSON properties back into the specific radar HTML format.
 5. **Responsive Layout**: The template CSS strictly uses `word-break: break-word` and `white-space: normal` combined with optimized `width` and `min-width` boundaries to ensure the high-density table collapses elegantly and completely eliminates horizontal scrolling on single screens, even with extended `Sector` descriptions and long arrays of `Risks`.
@@ -53,10 +50,10 @@ The script uses regex or keyword matching on the event text to assign background
 ### C. Six-Month Heatmap (`Heatmap` Array)
 The JSON stores each month's status: `{"Month": "Apr", "Status": "Hot"}`.
 The build script maps the `Status` string back to CSS height/color bars:
-- "Hot" → `<div class="mb mb-hot"></div>`
-- "Active" → `<div class="mb mb-active"></div>`
-- "Watch" → `<div class="mb mb-watch"></div>`
-- "Inactive" / Empty → `<div class="mb"></div>`
+- "Hot" → `<div class="mb mb-hot"></div>` (Red)
+- "Active" → `<div class="mb mb-active"></div>` (Yellow)
+- "Watch" → `<div class="mb mb-watch"></div>` (Green)
+- "Inactive" / Empty → `<div class="mb"></div>` (Grey)
 
 ### D. Probability Bar Graph (`Probability`)
 The text value determines both the color class and the width of the inline progress bar:
@@ -78,18 +75,17 @@ Since reading a directory yields arbitrary alphabetical order, the script sorts 
 This combined logical sorting ensures the most explosive stocks (e.g., TM1, DEL) naturally float to the top of the generated HTML table and the breakout ranking panel.
 
 ## 5. Development Workflow
-1. Update a stock's timeline or catalysts by simply editing `stocks_json/TM1.json`.
+1. Update a stock's timeline or catalysts by simply editing the corresponding block in `stocks.yaml`.
 2. Run `python generate_radar.py`.
 3. The script rewrites `asx_catalyst_radar_6mo.html` instantly.
 4. Open the HTML in a browser to see the perfectly formatted, color-coded table.
 
 ## 6. JSON Data Schema
 
-The generator strongly expects the data files in `stocks_json/` to adhere to the following schema. Use this structure when adding new stocks or updating existing ones.
+The generator strongly expects the root data file `stocks.yaml` to be a YAML list of stock items adhering to the following schema.
 
-```json
-{
-  "Ticker": "string",             // Required: Stock code (e.g., "TM1")
+```yaml
+- Ticker: string             # Required: Stock code (e.g., "TM1")
   "Sector": "string",             // Required: Sector tags (e.g., "PGM · Ti · V · Cu", "铀")
   "Catalysts": [                  // Required: Array of strings, each representing a key catalyst event
     "string"
@@ -110,11 +106,7 @@ The generator strongly expects the data files in `stocks_json/` to adhere to the
   "Probability": "string",        // Required: Breakout probability rating ("极高" | "高" | "中高" | "中" | "低中" | "低")
   "Core_Notes": "string",         // Required: Detailed string; Supports \n for explicit linebreaks and ⚠ for inline warning badge formatting
   "Timeline_Title": "string",     // (Optional) Specific header text for the timeline section (if Timeline is provided)
-  "Timeline": [                   // (Optional) Array for rendering a vertical event timeline under the main table
-    {
-      "Time": "string",           // Time label (e.g., "2026年1月", "即将到来")
-      "Event": "string"           // Event description
-    }
-  ]
-}
+  Timeline:
+    - Time: string           # Time label (e.g., "2026年1月", "即将到来")
+      Event: string          # Event description
 ```
