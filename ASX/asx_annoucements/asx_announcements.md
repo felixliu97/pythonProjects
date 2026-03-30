@@ -40,7 +40,7 @@ The script outputs a CSV file (`asx_price_sensitive_announcements.csv`) with the
 
 ## Incremental Scanning & Append Mode
 
-1. **Read Existing CSV** — On startup, read `asx_price_sensitive_announcements.csv` to determine the maximum `Date` value log.
-2. **Determine Start Date** — Set the API query start date to `max_date + 1 day`.
+1. **Read Existing CSV** — On startup, read `asx_price_sensitive_announcements.csv` to determine the maximum `Date` value recorded.
+2. **Determine Start Date** — Set the API query start date to `max_date`. This ensures that if the script is run multiple times on the same day, any new announcements released after the first run are correctly captured.
 3. **Deduplicate Against Existing** — Build a set from the active CSV. Skip API results that already exist locally.
 4. **Append New Rows** — Fetch uniform names for the new set combined with historical lines and rewrite.

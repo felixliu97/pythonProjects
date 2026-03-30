@@ -1,5 +1,11 @@
 import yaml
 import os
+import html
+import re
+from datetime import datetime
+
+# Current reference date for "past" vs "future"
+TODAY = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
 # Paths
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -7,12 +13,16 @@ JSON_FILE = os.path.join(ROOT_DIR, "stocks.yaml")
 HTML_OUT = os.path.join(ROOT_DIR, "asx_catalyst_radar_6mo.html")
 
 def get_class_for_probability(prob):
-    if not prob: return "p-med", 50, "#EF9F27"
-    if "极高" in prob: return "p-vhigh", 88, "#185FA5"
-    if "高" in prob: return "p-high", 75, "#1D9E75"
-    if "中" in prob: return "p-med", 55, "#EF9F27"
-    if "低" in prob: return "p-low", 30, "#E24B4A"
-    return "p-med", 50, "#EF9F27"
+    if not prob: return "p-med", 50, "#FBC02D"
+    p = prob.strip()
+    if p.startswith("极高"): return "p-vhigh", 95, "#0D47A1"
+    if p.startswith("高"): return "p-high", 80, "#2E7D32"
+    if p.startswith("中高"): return "p-mhigh", 65, "#C0CA33"
+    if p.startswith("中"):
+        if p.startswith("中低"): return "p-mlow", 35, "#F57C00"
+        return "p-med", 50, "#FBC02D"
+    if p.startswith("低"): return "p-low", 20, "#D32F2F"
+    return "p-med", 50, "#FBC02D"
 
 def get_sector_class(sector):
     if not sector: return ""
@@ -75,8 +85,9 @@ def build_row(stock):
     # 2. Catalysts
     row_html += '  <td>\n'
     for cat in stock.get("Catalysts", []):
-        pill_cls = determine_event_pill_class(cat)
-        row_html += f'    <span class="event-pill {pill_cls}">{cat}</span>\n'
+        cat_str = str(cat)
+        pill_cls = determine_event_pill_class(cat_str)
+        row_html += f'    <span class="event-pill {pill_cls}">{html.escape(cat_str)}</span>\n'
     row_html += '  </td>\n'
     
     # 2.5 Risks
@@ -99,11 +110,12 @@ def build_row(stock):
     row_html += '  <td>\n    <div class="month-bar">\n'
     for ht in stock.get("Heatmap", []):
         st = ht.get("Status", "")
+        reason = ht.get("Reason", "")
         mb_cls = "mb"
         if st == "Hot": mb_cls = "mb mb-hot"
         elif st == "Active": mb_cls = "mb mb-active"
         elif st == "Watch": mb_cls = "mb mb-watch"
-        row_html += f'      <div class="{mb_cls}"></div>\n'
+        row_html += f'      <div class="{mb_cls}" title="{html.escape(reason, quote=True)}"></div>\n'
     row_html += '    </div>\n  </td>\n'
     
     # 5. CR Risk
@@ -157,16 +169,23 @@ def build_row(stock):
     return row_html
 
 def generate_html():
-    with open(JSON_FILE, 'r', encoding='utf-8') as f:
-        stocks = yaml.safe_load(f)
+    try:
+        with open(JSON_FILE, 'r', encoding='utf-8') as f:
+            stocks = yaml.safe_load(f)
+    except Exception as e:
+        print(f"Error loading YAML from {JSON_FILE}: {e}")
+        return
             
     def breakout_key(s):
         p = s.get("Probability", "")
         base = 0
-        if "极高" in p: base = -5
-        elif "高" in p: base = -4
-        elif "中高" in p or "中" in p: base = -3
-        elif "低" in p: base = -1
+        p = p.strip()
+        if p.startswith("极高"): base = -6
+        elif p.startswith("高"): base = -5
+        elif p.startswith("中高"): base = -4
+        elif p.startswith("中低"): base = -2
+        elif p.startswith("中"): base = -3
+        elif p.startswith("低"): base = -1
         
         hot_count = sum(1 for h in s.get("Heatmap", []) if h.get("Status") == "Hot")
         return (base, -hot_count, s.get("Ticker", ""))
@@ -180,11 +199,42 @@ def generate_html():
         
     # Build Breakout Ranking HTML
     breakout_html = ""
-    bg_colors = [("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"), ("#EF9F27", "#412402"), ("#EF9F27", "#412402"), ("#1D9E75", "#04342C")]
-    for i, s in enumerate(stocks[:6]):
+    # Define color sequence for top 10
+    bg_colors = [
+        ("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"), 
+        ("#EF9F27", "#412402"), ("#EF9F27", "#412402"), ("#EF9F27", "#412402"),
+        ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C")
+    ]
+    
+    def get_upcoming_catalyst(cats):
+        for cat in cats:
+            # Robustly handle if cat is not a string (e.g. from malformed YAML)
+            if isinstance(cat, dict):
+                # If it's a dict like {'Date': 'Event'}, join them
+                cat_str = " ".join([f"{k} {v}" for k, v in cat.items()])
+            else:
+                cat_str = str(cat)
+                
+            # Simple heuristic to detect past dates
+            # Match YYYY年M月D日 or YYYY-MM-DD
+            m1 = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', cat_str)
+            m2 = re.search(r'(\d{4})-(\d{2})-(\d{2})', cat_str)
+            
+            date_found = None
+            if m1:
+                date_found = datetime(int(m1.group(1)), int(m1.group(2)), int(m1.group(3)))
+            elif m2:
+                date_found = datetime(int(m2.group(1)), int(m2.group(2)), int(m2.group(3)))
+            
+            if date_found and date_found < TODAY:
+                continue # Skip past event
+            return cat_str # Return first non-past event
+        return str(cats[0]) if cats else ""
+
+    for i, s in enumerate(stocks[:10]):
         tk = s.get("Ticker", "")
         cats = s.get("Catalysts", [])
-        reason = cats[0] if cats else ""
+        reason = get_upcoming_catalyst(cats)
         bg, col = bg_colors[i] if i < len(bg_colors) else ("#eee", "#333")
         breakout_html += f'      <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="background:{bg}; color:{col}; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:500;">{i+1}</span>{tk} — {reason}</div>\n'
 

@@ -50,24 +50,27 @@ The script uses regex or keyword matching on the event text to assign background
 ### C. Six-Month Heatmap (`Heatmap` Array)
 The JSON stores each month's status: `{"Month": "Apr", "Status": "Hot"}`.
 The build script maps the `Status` string back to CSS height/color bars:
-- "Hot" → `<div class="mb mb-hot"></div>` (Red)
-- "Active" → `<div class="mb mb-active"></div>` (Yellow)
-- "Watch" → `<div class="mb mb-watch"></div>` (Green)
-- "Inactive" / Empty → `<div class="mb"></div>` (Grey)
+- "Hot" → `<div class="mb mb-hot"></div>` (Deep Red: #B71C1C)
+- "Active" → `<div class="mb mb-active"></div>` (Orange: #F57C00)
+- "Watch" → `<div class="mb mb-watch"></div>` (Warm Yellow: #FFD54F)
 
 ### D. Probability Bar Graph (`Probability`)
 The text value determines both the color class and the width of the inline progress bar:
-- "极高" (Very High) → Width: 88%-95%, Class: `p-vhigh`
-- "高" (High) → Width: 70%-85%, Class: `p-high`
-- "中", "中高" (Med) → Width: 45%-65%, Class: `p-med`
-- "低", "低中" (Low) → Width: 15%-35%, Class: `p-low`
+- "极高" (Extremely High) → Width: 95%, Class: `p-vhigh`, Color: #0D47A1
+- "高" (High) → Width: 80%, Class: `p-high`, Color: #2E7D32
+- "中高" (Medium-High) → Width: 65%, Class: `p-mhigh`, Color: #C0CA33
+- "中" (Medium) → Width: 50%, Class: `p-med`, Color: #FBC02D
+- "中低" (Medium-Low) → Width: 35%, Class: `p-mlow`, Color: #F57C00
+- "低" (Low) → Width: 20%, Class: `p-low`, Color: #D32F2F
 
 ## 4. Sorting & Ordering
 Since reading a directory yields arbitrary alphabetical order, the script sorts the rows prior to rendering based on a combined breakout key:
 1. **Probability Score (Primary):**
-   - 极高 (Very High) -> -5
-   - 高 (High) -> -4
-   - 中高 / 中 (Medium) -> -3
+   - 极高 (Extremely High) -> -6
+   - 高 (High) -> -5
+   - 中高 (Medium-High) -> -4
+   - 中 (Medium) -> -3
+   - 中低 (Medium-Low) -> -2
    - 低 (Low) -> -1
 2. **Heatmap Hotness (Secondary):** Evaluates the number of "Hot" months within the 6-month window (More 'Hot' months rank higher in the event of a probability tie).
 3. **Alphabetical by Ticker (Tertiary):** Handles any remaining ties.

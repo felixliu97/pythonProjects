@@ -40,7 +40,8 @@ POSITIVE_KEYWORDS = (
     "significant intercept", "significant discovery", "award", "supply agreement", "license",
     "licence", "takeover", "scheme of arrangement", "assay", "drilling results",
     "exploration results", "test results", "metallurgical", "acquisition", "merger", "grant",
-    "exceptional", "outstanding", "spectacular", "bonanza", "thick intercept"
+    "exceptional", "outstanding", "spectacular", "bonanza", "thick intercept",
+    "restart", "refurbishment", "fast-track", "recommence", "upgraded", "acceleration"
 )
 
 NOISE_KEYWORDS = (
@@ -59,6 +60,8 @@ OUTPUT_FIELDS = [
 def is_positive_announcement(headline: str) -> bool:
     hl = headline.lower()
     if any(nk in hl for nk in NOISE_KEYWORDS): return False
+    # If the headline is ALL CAPS and at least 30 chars, it's often a major news item
+    if headline.isupper() and len(headline) >= 30: return True
     # If the headline matches any positive keyword
     if any(pk in hl for pk in POSITIVE_KEYWORDS): return True
     return False
@@ -261,14 +264,12 @@ def main() -> None:
     if not args.full_refresh:
         max_date, existing_keys, existing_anns = read_existing_csv(out_csv)
         if max_date:
-            resume_date = datetime.strptime(max_date, "%Y-%m-%d") + timedelta(days=1)
-            today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            if resume_date <= today:
-                start_override = resume_date.strftime("%Y-%m-%d")
-                print(f"Resuming from {start_override} (existing CSV max date: {max_date})")
-            else:
-                print(f"CSV is already up to date (max date: {max_date}).")
-                fetch_new = False
+            start_override = max_date
+            print(f"Checking for new announcements starting from {max_date}...")
+        else:
+            print("No existing CSV found or max date could not be determined. Starting fresh.")
+    else:
+        print("Full refresh requested. Ignoring existing CSV entries for start date.")
 
     raw_items = []
     if fetch_new:
@@ -339,22 +340,29 @@ def main() -> None:
         print("No data to save.")
         return
 
-    # Uniformly fetch company names
-    unique_symbols = list({ann["ASX_Code"] for ann in all_announcements if ann.get("ASX_Code")})
-    print(f"Fetching uniform company names for {len(unique_symbols)} symbols...")
-    name_map = {}
-    workers = min(20, max(1, len(unique_symbols)))
-    with ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {executor.submit(fetch_company_name, sym, session): sym for sym in unique_symbols}
-        for future in as_completed(futures):
-            sym, dname = future.result()
-            if dname: name_map[sym] = dname
-            
-    # Apply uniform names
-    for ann in all_announcements:
-        sym = ann["ASX_Code"]
-        if sym in name_map:
-            ann["Company"] = name_map[sym]
+    # Fetch company names only for new records or existing records missing a name
+    symbols_to_fetch = list({
+        ann["ASX_Code"] for ann in all_announcements 
+        if ann.get("ASX_Code") and not ann.get("Company")
+    })
+    
+    if symbols_to_fetch:
+        print(f"Fetching company names for {len(symbols_to_fetch)} symbols (new or missing)...")
+        name_map = {}
+        workers = min(20, max(1, len(symbols_to_fetch)))
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = {executor.submit(fetch_company_name, sym, session): sym for sym in symbols_to_fetch}
+            for future in as_completed(futures):
+                sym, dname = future.result()
+                if dname: name_map[sym] = dname
+                
+        # Apply names (only if missing or newly fetched)
+        for ann in all_announcements:
+            sym = ann["ASX_Code"]
+            if sym in name_map:
+                ann["Company"] = name_map[sym]
+    else:
+        print("All company names are already present. Skipping name fetch.")
 
     all_announcements.sort(key=lambda x: x["Date"], reverse=True)
     df_anns = pd.DataFrame(all_announcements, columns=OUTPUT_FIELDS)
