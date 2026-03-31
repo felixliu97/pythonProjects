@@ -3,13 +3,12 @@ ASX Placement / Capital Raising Scanner
 
 Scans ASX announcements for capital raising events, deduplicates by symbol
 and date, extracts financial details from PDFs (multi-threaded), fetches
-real-time prices, and outputs sortable numeric columns.
+real-time prices, and outputs to YAML and HTML.
 
-Supports incremental mode: reads existing CSV to resume from max_date + 1.
+Supports incremental mode: reads existing database to resume from max_date.
 """
 
 import argparse
-import csv
 import io
 import os
 import re
@@ -19,7 +18,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Set, Tuple
 
+import yaml
 import requests
+import html
 
 try:
     import pdfplumber
@@ -83,16 +84,7 @@ REJECT_KEYWORDS = (
     "cancellation",
 )
 
-OUTPUT_FIELDS = [
-    "ASX_Code",
-    "Company",
-    "Headline",
-    "Date",
-    "CR_Price",
-    "Current_Price",
-    "Price_Diff_%",
-    "PDF_Link",
-]
+
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -156,7 +148,7 @@ def extract_price(text: str) -> Optional[float]:
         if m:
             val = m.group(1).rstrip(".")
             num = _clean_float(val)
-            if num is not None and 0.001 <= num <= 500.0:
+            if num is not None and 0.005 < num <= 500.0:
                 return num
 
     # 2. Cents/Dollars phrasing (e.g., "5 cents per share", "1 dollar per share")
@@ -172,7 +164,7 @@ def extract_price(text: str) -> Optional[float]:
             num = _clean_float(val)
             if num is not None:
                 final_val = num * multiplier
-                if 0.0001 <= final_val <= 1000.0:
+                if 0.005 < final_val <= 1000.0:
                     return round(final_val, 6)
 
     return None
@@ -202,7 +194,7 @@ def extract_from_headline(
                 and headline[end_pos].lower() == "c"
             ):
                 num = num / 100.0
-            if 0.001 <= num <= 500.0:
+            if 0.005 < num <= 500.0:
                 res["price"] = num
 
     return res
@@ -222,40 +214,43 @@ def normalize_date(date_str: str) -> str:
         return date_str
 
 
-def read_existing_csv(
-    csv_path: str,
+def read_existing_yaml(
+    yaml_path: str,
 ) -> Tuple[Optional[str], Set[str], List[Dict]]:
-    """Read existing CSV and return (max_date, set of 'SYMBOL' keys, existing_rows)."""
+    """Read existing YAML and return (max_date, set of 'SYMBOL' keys, existing_rows)."""
     existing_symbols: Set[str] = set()
     max_date: Optional[str] = None
     existing_rows: List[Dict] = []
 
-    if not os.path.exists(csv_path):
-        return None, existing_keys, existing_rows
+    if not os.path.exists(yaml_path):
+        return None, existing_symbols, existing_rows
 
     try:
-        with open(csv_path, "r", newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                sym = row.get("ASX_Code", "").strip()
-                raw_date = row.get("Date", "").strip()
-                date = normalize_date(raw_date)
-                if sym and date:
-                    existing_symbols.add(sym)
-                    if max_date is None or date > max_date:
-                        max_date = date
-                    
-                    norm_row = {
-                        "symbol": sym,
-                        "company": row.get("Company", ""),
-                        "headline": row.get("Headline", ""),
-                        "date": date,
-                        "CR_Price": row.get("CR_Price", row.get("Price", "")),
-                        "PDF_Link": row.get("PDF_Link", ""),
-                    }
-                    existing_rows.append(norm_row)
+        with open(yaml_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        if not data:
+            data = []
+            
+        for row in data:
+            sym = str(row.get("ASX_Code", "")).strip()
+            raw_date = str(row.get("Date", "")).strip()
+            date = normalize_date(raw_date)
+            if sym and date:
+                existing_symbols.add(sym)
+                if max_date is None or date > max_date:
+                    max_date = date
+                
+                norm_row = {
+                    "symbol": sym,
+                    "company": str(row.get("Company", "")),
+                    "headline": str(row.get("Headline", "")),
+                    "date": date,
+                    "CR_Price": row.get("CR_Price", row.get("Price", "")),
+                    "PDF_Link": str(row.get("PDF_Link", "")),
+                }
+                existing_rows.append(norm_row)
     except Exception as e:
-        print(f"Warning: Could not read existing CSV: {e}")
+        print(f"Warning: Could not read existing YAML: {e}")
         return None, set(), []
 
     return max_date, existing_symbols, existing_rows
@@ -460,14 +455,29 @@ def main() -> None:
     parser.add_argument(
         "--full-refresh",
         action="store_true",
-        help="Ignore existing CSV; full re-scan and overwrite",
+        help="Ignore existing database; full re-scan and overwrite",
+    )
+    parser.add_argument(
+        "--html-only",
+        action="store_true",
+        help="Only generate HTML from existing YAML (no API calls)",
     )
     args = parser.parse_args()
+
+    if args.html_only:
+        print("\n=== Generating Placements HTML from YAML ===")
+        generate_html()
+        return
 
     root = os.path.dirname(os.path.abspath(__file__))
     cache_dir = os.path.abspath(os.path.join(root, "..", ".pdf_cache"))
     os.makedirs(cache_dir, exist_ok=True)
-    out_csv = os.path.join(root, "asx_placements.csv")
+    out_dir = os.path.abspath(os.path.join(root, "..", "output"))
+    os.makedirs(out_dir, exist_ok=True)
+    config_dir = os.path.abspath(os.path.join(root, "..", "config"))
+    os.makedirs(config_dir, exist_ok=True)
+    
+    yaml_db = os.path.join(config_dir, "asx_placements.yaml")
 
     session = requests.Session()
     session.headers.update(
@@ -479,14 +489,14 @@ def main() -> None:
         }
     )
 
-    # ── 0. Determine scan range from existing CSV ────────────────────────
+    # ── 0. Determine scan range from existing YAML ────────────────────────
     existing_symbols: Set[str] = set()
     start_override: Optional[str] = None
     existing_rows: List[Dict] = []
     fetch_new = True
 
     if not args.full_refresh:
-        max_date, existing_symbols, existing_rows = read_existing_csv(out_csv)
+        max_date, existing_symbols, existing_rows = read_existing_yaml(yaml_db)
         if max_date:
             resume_date = (
                 datetime.strptime(max_date, "%Y-%m-%d")
@@ -499,11 +509,11 @@ def main() -> None:
                 start_override = resume_date.strftime("%Y-%m-%d")
                 print(
                     f"Resuming from {start_override} "
-                    f"(existing CSV max date: {max_date})"
+                    f"(existing database max date: {max_date})"
                 )
             else:
                 print(
-                    f"CSV is already up to date "
+                    f"Database is already up to date "
                     f"(max date: {max_date}). Updating latest prices for existing records."
                 )
                 fetch_new = False
@@ -696,37 +706,214 @@ def main() -> None:
             }
         )
 
-    # Sort descending by date
-    rows.sort(key=lambda x: x["Date"], reverse=True)
+    print(f"\nProcessed {len(rows)} valid placement events.")
 
-    # ── 6. Write CSV — overwrite ─────────────────────────────────────────
+    # ── Export YAML config ───────────────────────────────────────────────
+    config_dir = os.path.abspath(os.path.join(root, "..", "config"))
+    os.makedirs(config_dir, exist_ok=True)
+    yaml_path = os.path.join(config_dir, "asx_placements.yaml")
+    yaml_data = []
+    for r in rows:
+        cr_p = r.get("CR_Price", "")
+        # Ensure CR_Price is numeric if possible
+        if isinstance(cr_p, str) and cr_p.strip():
+            try:
+                cr_p = float(cr_p.replace(",", "").replace("$", ""))
+            except ValueError:
+                pass
+        
+        yaml_data.append({
+            "ASX_Code": r["ASX_Code"],
+            "Company": r.get("Company", ""),
+            "Headline": r.get("Headline", ""),
+            "Date": r.get("Date", ""),
+            "CR_Price": cr_p,
+            "Current_Price": r.get("Current_Price", ""),
+            "Price_Diff_%": r.get("Price_Diff_%", ""),
+            "PDF_Link": r.get("PDF_Link", ""),
+        })
+    with open(yaml_path, "w", encoding="utf-8") as f:
+        yaml.dump(yaml_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    print(f"Exported YAML config to {yaml_path}")
+
+    print("\n=== Generating Placements HTML ===")
+    generate_html()
+
+# ── HTML Generation ──────────────────────────────────────────────────────────
+
+def get_date_class(date_str: str) -> str:
+    TODAY = datetime.now().strftime("%Y-%m-%d")
+    WEEK_AGO = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+    if not date_str:
+        return "date-tag"
+    if date_str == TODAY:
+        return "date-tag date-today"
+    if date_str >= WEEK_AGO:
+        return "date-tag date-recent"
+    return "date-tag"
+
+def format_price(val) -> str:
+    if val in (None, "", "N/A"):
+        return "-"
     try:
-        with open(
-            out_csv, "w", newline="", encoding="utf-8"
-        ) as f:
-            writer = csv.DictWriter(
-                f, fieldnames=OUTPUT_FIELDS
-            )
-            writer.writeheader()
-            writer.writerows(rows)
-        print(
-            f"\nExported {len(rows)} rows to: {out_csv}"
+        num = float(str(val).replace(",", "").replace("$", ""))
+        if num < 0.01:
+            return f"${num:.4f}"
+        elif num < 1:
+            return f"${num:.3f}"
+        else:
+            return f"${num:.2f}"
+    except (ValueError, TypeError):
+        return str(val)
+
+def get_diff_class(diff_val) -> str:
+    if diff_val in (None, "", "N/A"):
+        return "price-na"
+    try:
+        num = float(str(diff_val).replace("%", ""))
+        if num > 0:
+            return "price-up"
+        elif num < 0:
+            return "price-down"
+        return "price-flat"
+    except (ValueError, TypeError):
+        return "price-na"
+
+def format_diff(diff_val) -> str:
+    if diff_val in (None, "", "N/A"):
+        return "N/A"
+    try:
+        num = float(str(diff_val).replace("%", ""))
+        sign = "+" if num > 0 else ""
+        return f"{sign}{num:.1f}%"
+    except (ValueError, TypeError):
+        return str(diff_val)
+
+def build_row(placement: dict) -> str:
+    code = html.escape(str(placement.get("ASX_Code", "")))
+    company = html.escape(str(placement.get("Company", "")))
+    headline = html.escape(str(placement.get("Headline", "")))
+    date_str = str(placement.get("Date", ""))
+    cr_price = placement.get("CR_Price", "")
+    cur_price = placement.get("Current_Price", "")
+    diff_pct = placement.get("Price_Diff_%", "")
+    pdf_link = str(placement.get("PDF_Link", ""))
+
+    date_cls = get_date_class(date_str)
+    diff_cls = get_diff_class(diff_pct)
+
+    row = '<tr>\n'
+    row += f'  <td>\n    <div class="ticker">{code}</div>\n'
+    if company:
+        row += f'    <div class="company-name">{company}</div>\n'
+    row += '  </td>\n'
+    row += f'  <td>\n    <span class="{date_cls}">{html.escape(date_str)}</span>\n  </td>\n'
+    row += f'  <td>\n    <span class="event-pill e-cr">{headline}</span>\n  </td>\n'
+
+    price_display = format_price(cr_price)
+    if price_display == "-":
+        row += '  <td>\n    <span style="color:#ccc;font-size:10px;">-</span>\n  </td>\n'
+    else:
+        row += f'  <td>\n    <span class="cr-val price-flat">{price_display}</span>\n  </td>\n'
+
+    cur_display = format_price(cur_price)
+    if cur_display == "-":
+        row += '  <td>\n    <span style="color:#ccc;font-size:10px;">-</span>\n  </td>\n'
+    else:
+        row += f'  <td>\n    <span style="font-size:11px; font-weight:500; color:#333;">{cur_display}</span>\n  </td>\n'
+
+    diff_display = format_diff(diff_pct)
+    if diff_display == "N/A":
+        row += '  <td>\n    <span class="diff-val price-na">N/A</span>\n  </td>\n'
+    else:
+        row += f'  <td>\n    <span class="diff-val {diff_cls}">{diff_display}</span>\n  </td>\n'
+
+    if pdf_link:
+        row += f'  <td>\n    <a class="pdf-link" href="{html.escape(pdf_link)}" target="_blank">📄 PDF</a>\n  </td>\n'
+    else:
+        row += '  <td>\n    <span style="color:#ccc;font-size:10px;">-</span>\n  </td>\n'
+
+    row += '</tr>\n'
+    return row
+
+def generate_html():
+    root = os.path.dirname(os.path.abspath(__file__))
+    yaml_file = os.path.join(os.path.abspath(os.path.join(root, "..", "config")), "asx_placements.yaml")
+    html_out = os.path.join(os.path.abspath(os.path.join(root, "..", "output")), "asx_placements.html")
+    template_path = os.path.join(os.path.abspath(os.path.join(root, "..", "templates")), "asx_placements.html")
+
+    try:
+        with open(yaml_file, 'r', encoding='utf-8') as f:
+            placements = yaml.safe_load(f)
+    except FileNotFoundError:
+        print(f"Error: YAML config not found at {yaml_file}")
+        print("Run the placements scanner first: python run.py placements")
+        return
+    except Exception as e:
+        print(f"Error loading YAML from {yaml_file}: {e}")
+        return
+
+    if not placements:
+        print("No placements data found in YAML.")
+        return
+
+    placements.sort(key=lambda x: str(x.get("Date", "")), reverse=True)
+
+    rows_html = ""
+    for p in placements:
+        rows_html += build_row(p)
+
+    ranked = []
+    for p in placements:
+        diff = p.get("Price_Diff_%", "")
+        if diff in (None, "", "N/A"):
+            continue
+        try:
+            diff_num = float(str(diff).replace("%", ""))
+            ranked.append((str(p.get("ASX_Code", "")), diff_num))
+        except (ValueError, TypeError):
+            continue
+
+    ranked.sort(key=lambda x: x[1], reverse=True)
+    top_10 = ranked[:10]
+
+    bg_colors = [
+        ("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"),
+        ("#EF9F27", "#412402"), ("#EF9F27", "#412402"), ("#EF9F27", "#412402"),
+        ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C")
+    ]
+
+    ranking_html = ""
+    for i, (code, diff) in enumerate(top_10):
+        bg, col = bg_colors[i] if i < len(bg_colors) else ("#eee", "#333")
+        sign = "+" if diff > 0 else ""
+        ranking_html += (
+            f'      <div style="display:flex; align-items:center; gap:8px; font-size:12px;">'
+            f'<span style="background:{bg}; color:{col}; padding:2px 8px; border-radius:99px; '
+            f'font-size:10px; font-weight:500;">{i+1}</span>'
+            f'{code} — {sign}{diff:.1f}%</div>\n'
         )
-    except PermissionError:
-        alt_csv = out_csv.replace(".csv", "_new.csv")
-        print(
-            f"\nWarning: {out_csv} is locked. "
-            f"Writing to {alt_csv} instead."
-        )
-        with open(
-            alt_csv, "w", newline="", encoding="utf-8"
-        ) as f:
-            writer = csv.DictWriter(
-                f, fieldnames=OUTPUT_FIELDS
-            )
-            writer.writeheader()
-            writer.writerows(rows)
-        print(f"Exported to: {alt_csv}")
+
+    dates = [str(p.get("Date", "")) for p in placements if p.get("Date")]
+    min_date = min(dates) if dates else "N/A"
+    max_date = max(dates) if dates else "N/A"
+    stats_text = f"共 {len(placements)} 条 · {min_date} — {max_date}"
+
+    with open(template_path, "r", encoding="utf-8") as f:
+        template = f.read()
+
+    final_html = (
+        template
+        .replace("{{ table_rows }}", rows_html)
+        .replace("{{ ranking_html }}", ranking_html)
+        .replace("{{ stats_text }}", stats_text)
+    )
+
+    os.makedirs(os.path.dirname(html_out), exist_ok=True)
+    with open(html_out, 'w', encoding='utf-8') as f:
+        f.write(final_html)
+
+    print(f"Generated {html_out} successfully with {len(placements)} placements.")
 
 
 if __name__ == "__main__":

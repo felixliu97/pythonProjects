@@ -9,8 +9,8 @@ TODAY = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
 # Paths
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-JSON_FILE = os.path.join(ROOT_DIR, "stocks.yaml")
-HTML_OUT = os.path.join(ROOT_DIR, "asx_catalyst_radar_6mo.html")
+JSON_FILE = os.path.join(os.path.dirname(ROOT_DIR), "config", "asx_catalysts.yaml")
+HTML_OUT = os.path.join(os.path.dirname(ROOT_DIR), "output", "asx_catalysts.html")
 
 def get_class_for_probability(prob):
     if not prob: return "p-med", 50, "#FBC02D"
@@ -238,7 +238,7 @@ def generate_html():
         bg, col = bg_colors[i] if i < len(bg_colors) else ("#eee", "#333")
         breakout_html += f'      <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="background:{bg}; color:{col}; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:500;">{i+1}</span>{tk} — {reason}</div>\n'
 
-    template_path = os.path.join(ROOT_DIR, "templates", "radar_base_template.html")
+    template_path = os.path.join(os.path.dirname(ROOT_DIR), "templates", "asx_catalysts.html")
     with open(template_path, "r", encoding="utf-8") as f:
         template = f.read()
 

@@ -2,7 +2,7 @@
 ASX Price Sensitive Announcements Scanner
 
 Scans ASX announcements for strictly price-sensitive events, filters by positive keywords,
-downloads PDFs, extracts summaries, and outputs to CSV.
+downloads PDFs, extracts summaries, and outputs to YAML and HTML.
 """
 
 import argparse
@@ -11,12 +11,13 @@ import os
 import re
 import string
 import time
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Set, Tuple
-
+import yaml
 import requests
-import pandas as pd
+import html
 
 try:
     import pdfplumber
@@ -53,9 +54,7 @@ NOISE_KEYWORDS = (
     "daily share buy-back", "change of registered office"
 )
 
-OUTPUT_FIELDS = [
-    "ASX_Code", "Company", "Headline", "Date", "Summary", "PDF_Link"
-]
+
 
 def is_positive_announcement(headline: str) -> bool:
     hl = headline.lower()
@@ -75,22 +74,26 @@ def normalize_date(date_str: str) -> str:
     except Exception:
         return date_str
 
-def read_existing_csv(csv_path: str) -> Tuple[Optional[str], Set[str], List[Dict]]:
+def read_existing_yaml(yaml_path: str) -> Tuple[Optional[str], Set[str], List[Dict]]:
     existing_keys = set()
     max_date = None
     existing_anns = []
 
-    if not os.path.exists(csv_path):
+    if not os.path.exists(yaml_path):
         return None, existing_keys, existing_anns
 
     try:
-        df = pd.read_csv(csv_path, dtype=str)
-        df.fillna("", inplace=True)
-        for _, row in df.iterrows():
+        with open(yaml_path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f)
+        if not data:
+            data = []
+            
+        for row in data:
             sym = str(row.get("ASX_Code", "")).strip()
             raw_date = str(row.get("Date", "")).strip()
             date = normalize_date(raw_date)
             headline = str(row.get("Headline", "")).strip()
+            
             if sym and date:
                 key = f"{sym}_{date}_{headline[:50]}"
                 existing_keys.add(key)
@@ -105,7 +108,7 @@ def read_existing_csv(csv_path: str) -> Tuple[Optional[str], Set[str], List[Dict
                     "PDF_Link": str(row.get("PDF_Link", "")),
                 })
     except Exception as e:
-        print(f"Warning: Could not read existing CSV: {e}")
+        print(f"Warning: Could not read existing YAML: {e}")
         return None, set(), []
 
     return max_date, existing_keys, existing_anns
@@ -242,16 +245,26 @@ def process_event(event: Dict, session: requests.Session, pdf_dir: str, skip_pdf
     return event
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="ASX Price Sensitive Announcements Scanner (CSV)")
+    parser = argparse.ArgumentParser(description="ASX Price Sensitive Announcements Scanner")
     parser.add_argument("--months", type=int, default=2, help="Lookback months (default: 2)")
     parser.add_argument("--no-pdf", action="store_true", help="Skip PDF download & extraction")
-    parser.add_argument("--full-refresh", action="store_true", help="Ignore existing CSV; full re-scan")
+    parser.add_argument("--full-refresh", action="store_true", help="Ignore existing database; full re-scan")
+    parser.add_argument("--html-only", action="store_true", help="Only generate HTML from existing YAML (no API calls)")
     args = parser.parse_args()
+
+    if args.html_only:
+        print("\n=== Generating Announcements HTML from YAML ===")
+        generate_html()
+        return
 
     root = os.path.dirname(os.path.abspath(__file__))
     pdf_dir = os.path.abspath(os.path.join(root, "..", ".pdf_cache"))
     os.makedirs(pdf_dir, exist_ok=True)
-    out_csv = os.path.join(root, "asx_price_sensitive_announcements.csv")
+    out_dir = os.path.abspath(os.path.join(root, "..", "output"))
+    config_dir = os.path.abspath(os.path.join(root, "..", "config"))
+    os.makedirs(config_dir, exist_ok=True)
+    
+    yaml_db = os.path.join(config_dir, "asx_announcements.yaml")
 
     session = requests.Session()
     session.headers.update({"User-Agent": "Mozilla/5.0"})
@@ -259,19 +272,20 @@ def main() -> None:
     existing_keys = set()
     start_override = None
     existing_anns = []
-    fetch_new = True
 
     if not args.full_refresh:
-        max_date, existing_keys, existing_anns = read_existing_csv(out_csv)
+        max_date, existing_keys, existing_anns = read_existing_yaml(yaml_db)
         if max_date:
             start_override = max_date
             print(f"Checking for new announcements starting from {max_date}...")
         else:
-            print("No existing CSV found or max date could not be determined. Starting fresh.")
+            print("No existing database found or max date could not be determined. Starting fresh.")
     else:
-        print("Full refresh requested. Ignoring existing CSV entries for start date.")
+        print("Full refresh requested. Ignoring existing database entries for start date.")
 
     raw_items = []
+    # In announcements, we always fetch unless html-only (which returns early)
+    fetch_new = True 
     if fetch_new:
         raw_items = fetch_announcements(args.months, start_override)
 
@@ -365,9 +379,153 @@ def main() -> None:
         print("All company names are already present. Skipping name fetch.")
 
     all_announcements.sort(key=lambda x: x["Date"], reverse=True)
-    df_anns = pd.DataFrame(all_announcements, columns=OUTPUT_FIELDS)
-    df_anns.to_csv(out_csv, index=False)
-    print(f"\nExported {len(all_announcements)} rows to {out_csv}")
+    print(f"\nProcessed {len(all_announcements)} valid announcements.")
+
+    # ── Export YAML config ───────────────────────────────────────────────
+    config_dir = os.path.abspath(os.path.join(root, "..", "config"))
+    os.makedirs(config_dir, exist_ok=True)
+    yaml_path = os.path.join(config_dir, "asx_announcements.yaml")
+    yaml_data = []
+    for ann in all_announcements:
+        yaml_data.append({
+            "ASX_Code": ann["ASX_Code"],
+            "Company": ann.get("Company", ""),
+            "Headline": ann.get("Headline", ""),
+            "Date": ann.get("Date", ""),
+            "Summary": ann.get("Summary", ""),
+            "PDF_Link": ann.get("PDF_Link", ""),
+        })
+    with open(yaml_path, "w", encoding="utf-8") as f:
+        yaml.dump(yaml_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    print(f"Exported YAML config to {yaml_path}")
+
+    print("\n=== Generating Announcements HTML ===")
+    generate_html()
+
+# ── HTML Generation ──────────────────────────────────────────────────────────
+
+def get_date_class(date_str: str) -> str:
+    TODAY = datetime.now().strftime("%Y-%m-%d")
+    WEEK_AGO = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+    if not date_str:
+        return "date-tag"
+    if date_str == TODAY:
+        return "date-tag date-today"
+    if date_str >= WEEK_AGO:
+        return "date-tag date-recent"
+    return "date-tag"
+
+def determine_headline_class(headline: str) -> str:
+    hl = headline.lower()
+    if any(kw in hl for kw in ("discovery", "high grade", "high-grade", "bonanza", "spectacular")):
+        return "e-drill"
+    if any(kw in hl for kw in ("production", "commissioning", "commenced")):
+        return "e-production"
+    if any(kw in hl for kw in ("placement", "capital", "equity", "spp", "rights issue")):
+        return "e-cr"
+    if any(kw in hl for kw in ("acquisition", "merger", "takeover", "joint venture", "jv", "mou")):
+        return "e-corporate"
+    if any(kw in hl for kw in ("result", "assay", "report", "feasibility", "dfs", "pfs")):
+        return "e-result"
+    return "e-milestone"
+
+def build_row(ann: dict) -> str:
+    code = html.escape(str(ann.get("ASX_Code", "")))
+    company = html.escape(str(ann.get("Company", "")))
+    headline = html.escape(str(ann.get("Headline", "")))
+    date_str = str(ann.get("Date", ""))
+    summary = str(ann.get("Summary", ""))
+    pdf_link = str(ann.get("PDF_Link", ""))
+
+    date_cls = get_date_class(date_str)
+    hl_cls = determine_headline_class(str(ann.get("Headline", "")))
+
+    row = '<tr>\n'
+    row += f'  <td>\n    <div class="ticker">{code}</div>\n'
+    if company:
+        row += f'    <div class="company-name">{company}</div>\n'
+    row += '  </td>\n'
+    row += f'  <td>\n    <span class="{date_cls}">{html.escape(date_str)}</span>\n  </td>\n'
+    row += f'  <td>\n    <span class="event-pill {hl_cls}">{headline}</span>\n  </td>\n'
+    
+    summary_escaped = html.escape(summary) if summary else '<span style="color:#ccc;font-size:10px;">-</span>'
+    row += f'  <td>\n    <div class="summary-text">{summary_escaped}</div>\n  </td>\n'
+    
+    if pdf_link:
+        row += f'  <td>\n    <a class="pdf-link" href="{html.escape(pdf_link)}" target="_blank">📄 PDF</a>\n  </td>\n'
+    else:
+        row += '  <td>\n    <span style="color:#ccc;font-size:10px;">-</span>\n  </td>\n'
+
+    row += '</tr>\n'
+    return row
+
+def generate_html():
+    root = os.path.dirname(os.path.abspath(__file__))
+    yaml_file = os.path.join(os.path.abspath(os.path.join(root, "..", "config")), "asx_announcements.yaml")
+    html_out = os.path.join(os.path.abspath(os.path.join(root, "..", "output")), "asx_announcements.html")
+    template_path = os.path.join(os.path.abspath(os.path.join(root, "..", "templates")), "asx_announcements.html")
+
+    try:
+        with open(yaml_file, 'r', encoding='utf-8') as f:
+            announcements = yaml.safe_load(f)
+    except FileNotFoundError:
+        print(f"Error: YAML config not found at {yaml_file}")
+        print("Run the announcements scanner first: python run.py announcements")
+        return
+    except Exception as e:
+        print(f"Error loading YAML from {yaml_file}: {e}")
+        return
+
+    if not announcements:
+        print("No announcements data found in YAML.")
+        return
+
+    announcements.sort(key=lambda x: str(x.get("Date", "")), reverse=True)
+
+    rows_html = ""
+    for ann in announcements:
+        rows_html += build_row(ann)
+
+    code_counts = Counter(str(ann.get("ASX_Code", "")) for ann in announcements)
+    top_stocks = code_counts.most_common(10)
+
+    bg_colors = [
+        ("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"), ("#E24B4A", "#4A0808"),
+        ("#EF9F27", "#412402"), ("#EF9F27", "#412402"), ("#EF9F27", "#412402"),
+        ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C"), ("#1D9E75", "#04342C")
+    ]
+
+    ranking_html = ""
+    for i, (code, count) in enumerate(top_stocks):
+        bg, col = bg_colors[i] if i < len(bg_colors) else ("#eee", "#333")
+        ranking_html += (
+            f'      <div style="display:flex; align-items:center; gap:8px; font-size:12px;">'
+            f'<span style="background:{bg}; color:{col}; padding:2px 8px; border-radius:99px; '
+            f'font-size:10px; font-weight:500;">{i+1}</span>'
+            f'{code} — {count} 条公告</div>\n'
+        )
+
+    dates = [str(ann.get("Date", "")) for ann in announcements if ann.get("Date")]
+    min_date = min(dates) if dates else "N/A"
+    max_date = max(dates) if dates else "N/A"
+    stats_text = f"共 {len(announcements)} 条 · {min_date} — {max_date}"
+
+    with open(template_path, "r", encoding="utf-8") as f:
+        template = f.read()
+
+    final_html = (
+        template
+        .replace("{{ table_rows }}", rows_html)
+        .replace("{{ ranking_html }}", ranking_html)
+        .replace("{{ stats_text }}", stats_text)
+    )
+
+    os.makedirs(os.path.dirname(html_out), exist_ok=True)
+    with open(html_out, 'w', encoding='utf-8') as f:
+        f.write(final_html)
+
+    print(f"Generated {html_out} successfully with {len(announcements)} announcements.")
+
 
 if __name__ == "__main__":
     main()

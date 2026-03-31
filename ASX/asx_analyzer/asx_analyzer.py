@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import numpy as np
 from typing import List, Dict
 import warnings
-import json
+import yaml
 import os
 import concurrent.futures
 import time
@@ -24,13 +24,13 @@ class Colors:
 
 class ASXTrendingStocks:
     def __init__(self):
-        self.config_file = os.path.join(os.path.dirname(__file__), 'config.json')
+        self.config_file = os.path.join(os.path.dirname(__file__), '..', 'config', 'asx_analyzer.yaml')
         self.load_config()
 
     def load_config(self):
         try:
-            with open(self.config_file, 'r') as f:
-                config = json.load(f)
+            with open(self.config_file, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
             
             self.asx_stocks = config.get('stocks', [])
             self.asx_etfs = config.get('etfs', [])
@@ -496,130 +496,14 @@ class ASXTrendingStocks:
 
     def generate_html_report(self, data: Dict[str, List[Dict]]):
         date_str = datetime.now().strftime('%Y-%m-%d')
-        filename = f"asx_report_{date_str}.html"
+        out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "output"))
+        os.makedirs(out_dir, exist_ok=True)
+        filename = os.path.join(out_dir, "asx_analyzer.html")
+        template_path = os.path.join(os.path.dirname(__file__), "..", "templates", "asx_analyzer.html")
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         trending_stocks = data.get('stocks', [])
         trending_etfs = data.get('etfs', [])
-        
-        html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <title>ASX Trending Stocks & ETFs Report</title>
-    <style>
-        body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #1a1a1a; color: #e0e0e0; margin: 0; padding: 20px; }}
-        .header {{ background-color: #2d2d2d; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #007acc; }}
-        h1 {{ margin: 0; color: #007acc; }}
-        .timestamp {{ color: #888; font-size: 0.9em; margin-top: 5px; }}
-        .tab {{ overflow: hidden; border: 1px solid #444; background-color: #333; border-radius: 8px 8px 0 0; }}
-        .tab button {{ background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; color: #ccc; font-size: 17px; }}
-        .tab button:hover {{ background-color: #444; }}
-        .tab button.active {{ background-color: #007acc; color: white; }}
-        .tabcontent {{ display: none; padding: 20px; border: 1px solid #444; border-top: none; background-color: #252526; border-radius: 0 0 8px 8px; }}
-        table {{ border-collapse: collapse; width: 100%; margin-top: 10px; font-size: 0.9em; }}
-        th, td {{ text-align: left; padding: 12px; border-bottom: 1px solid #333; }}
-        th {{ background-color: #333; color: white; cursor: pointer; }}
-        th:hover {{ background-color: #444; }}
-        tr:hover {{ background-color: #2d2d2d; }}
-        .positive {{ color: #4caf50; font-weight: bold; }}
-        .negative {{ color: #f44336; font-weight: bold; }}
-        .neutral {{ color: #888; }}
-        .highlight {{ color: #00bcd4; font-weight: bold; }}
-        .section {{ margin-top: 20px; padding: 15px; background-color: #2d2d2d; border-radius: 8px; }}
-        h3 {{ border-bottom: 1px solid #444; padding-bottom: 10px; color: #007acc; }}
-        h4 {{ margin-top: 15px; margin-bottom: 5px; color: #ccc; }}
-        .score-box {{ display: inline-block; padding: 2px 8px; border-radius: 4px; background-color: #333; font-weight: bold; }}
-    </style>
-    <script>
-        function openTab(evt, tabName) {{
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {{ tabcontent[i].style.display = "none"; }}
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {{ tablinks[i].className = tablinks[i].className.replace(" active", ""); }}
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }}
-        function sortTable(n, tableId) {{
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById(tableId);
-            switching = true; dir = "asc"; 
-            
-            function parseMoney(str) {{
-                if (!str) return -1;
-                var clean = str.replace(/[$,]/g, "").trim();
-                var mult = 1;
-                if (clean.endsWith("B")) {{ mult = 1e9; clean = clean.slice(0, -1); }}
-                else if (clean.endsWith("M")) {{ mult = 1e6; clean = clean.slice(0, -1); }}
-                else if (clean.endsWith("K")) {{ mult = 1e3; clean = clean.slice(0, -1); }}
-                else if (clean.endsWith("%")) {{ clean = clean.slice(0, -1); }}
-                
-                var val = parseFloat(clean);
-                if (isNaN(val)) return -999999;
-                return val * mult;
-            }}
 
-            while (switching) {{
-                switching = false; rows = table.rows;
-                for (i = 1; i < (rows.length - 1); i++) {{
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("TD")[n];
-                    y = rows[i + 1].getElementsByTagName("TD")[n];
-                    
-                    var xContent = x.textContent.trim();
-                    var yContent = y.textContent.trim();
-                    
-                    var xVal = parseMoney(xContent);
-                    var yVal = parseMoney(yContent);
-                    
-                    if (xVal !== -999999 && yVal !== -999999) {{
-                        if (dir == "asc") {{ if (xVal > yVal) {{ shouldSwitch = true; break; }} }}
-                        else {{ if (xVal < yVal) {{ shouldSwitch = true; break; }} }}
-                    }} else {{
-                        if (dir == "asc") {{ if (xContent.toLowerCase() > yContent.toLowerCase()) {{ shouldSwitch = true; break; }} }}
-                        else {{ if (xContent.toLowerCase() < yContent.toLowerCase()) {{ shouldSwitch = true; break; }} }}
-                    }}
-                }}
-                if (shouldSwitch) {{
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true; switchcount ++; 
-                }} else {{
-                    if (switchcount == 0 && dir == "asc") {{ dir = "desc"; switching = true; }}
-                }}
-            }}
-        }}
-    </script>
-</head>
-<body onload="document.getElementById('defaultOpen').click();">
-    <div class="header">
-        <h1>ASX Trending Stocks & ETFs</h1>
-        <div class="timestamp">Generated on {timestamp}</div>
-    </div>
-    <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'Stocks')" id="defaultOpen">Stocks</button>
-        <button class="tablinks" onclick="openTab(event, 'ETFs')">ETFs</button>
-    </div>
-    <div id="Stocks" class="tabcontent">
-    <h2>Analysed Stocks ({len(trending_stocks)})</h2>
-    <table id="stockTable">
-        <thead>
-            <tr>
-                <th onclick="sortTable(0, 'stockTable')">Symbol</th>
-                <th onclick="sortTable(1, 'stockTable')">Name</th>
-                <th onclick="sortTable(2, 'stockTable')">Industry</th>
-                <th onclick="sortTable(3, 'stockTable')">MC</th>
-                <th onclick="sortTable(4, 'stockTable')">Price</th>
-                <th onclick="sortTable(5, 'stockTable')">PE</th>
-                <th onclick="sortTable(6, 'stockTable')">PS</th>
-                <th onclick="sortTable(7, 'stockTable')">Score</th>
-                <th onclick="sortTable(8, 'stockTable')">1D Change</th>
-                <th onclick="sortTable(9, 'stockTable')">5D Change</th>
-                <th onclick="sortTable(10, 'stockTable')">Momentum</th>
-                <th onclick="sortTable(11, 'stockTable')">Volatility</th>
-                <th onclick="sortTable(12, 'stockTable')">RSI</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
         def get_color_class(val, type='normal'):
              if val is None: return 'neutral'
              if type == 'rsi':
@@ -632,18 +516,22 @@ class ASXTrendingStocks:
              
         def fmt_nop(val): return f"{val:.2f}" if val is not None else "-"
 
+        def fmt_mc(mc_val):
+            if mc_val:
+                if mc_val >= 1e9: return f"${mc_val/1e9:.1f}B"
+                else: return f"${mc_val/1e6:.1f}M"
+            return "-"
+
+        # ── Build stock rows ─────────────────────────────────────────────
+        stock_rows = ""
         for stock in sorted(trending_stocks, key=lambda x: x['symbol']):
             p1d_class = get_color_class(stock['price_change_1d'])
             p5d_class = get_color_class(stock['price_change_5d'])
             mom_class = get_color_class(stock['momentum'])
             rsi_class = get_color_class(stock['rsi'], 'rsi')
-            mc_val = stock.get('marketCap')
-            if mc_val:
-                if mc_val >= 1e9: mc_str = f"${mc_val/1e9:.1f}B"
-                else: mc_str = f"${mc_val/1e6:.1f}M"
-            else: mc_str = "-"
+            mc_str = fmt_mc(stock.get('marketCap'))
             
-            html += f"""
+            stock_rows += f"""
             <tr>
                 <td><b>{stock['symbol']}</b></td>
                 <td>{stock.get('name', 'Unknown')}</td>
@@ -660,37 +548,9 @@ class ASXTrendingStocks:
                 <td class="{rsi_class}">{stock['rsi']:.2f}</td>
             </tr>
             """
-        html += """
-        </tbody>
-    </table>
-"""
-        html += self._generate_insights_html(trending_stocks, "Stock Market", group_label="Sector")
-        html += "</div>"
-        
-        html += f"""
-    <div id="ETFs" class="tabcontent">
-    <h2>Analysed ETFs ({len(trending_etfs)})</h2>
-    <table id="etfTable">
-        <thead>
-            <tr>
-                <th onclick="sortTable(0, 'etfTable')">Symbol</th>
-                <th onclick="sortTable(1, 'etfTable')">Name</th>
-                <th onclick="sortTable(2, 'etfTable')">Category</th>
-                <th onclick="sortTable(3, 'etfTable')">AUM</th>
-                <th onclick="sortTable(4, 'etfTable')">Price</th>
-                <th onclick="sortTable(5, 'etfTable')">PE</th>
-                <th onclick="sortTable(6, 'etfTable')">Yield</th>
-                <th onclick="sortTable(7, 'etfTable')">Score</th>
-                <th onclick="sortTable(8, 'etfTable')">1D %</th>
-                <th onclick="sortTable(9, 'etfTable')">5D %</th>
-                <th onclick="sortTable(10, 'etfTable')">1Y %</th>
-                <th onclick="sortTable(11, 'etfTable')">Momentum</th>
-                <th onclick="sortTable(12, 'etfTable')">Volatility</th>
-                <th onclick="sortTable(13, 'etfTable')">RSI</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
+
+        # ── Build ETF rows ───────────────────────────────────────────────
+        etf_rows = ""
         for stock in sorted(trending_etfs, key=lambda x: x['symbol']):
              p1d_class = get_color_class(stock['price_change_1d'])
              p5d_class = get_color_class(stock['price_change_5d'])
@@ -699,18 +559,14 @@ class ASXTrendingStocks:
              y1 = stock.get('annual_return')
              y1_class = get_color_class(y1)
              y1_str = f"{y1:+.2f}%" if y1 is not None else "-"
-             mc_val = stock.get('totalAssets')
-             if mc_val:
-                 if mc_val >= 1e9: mc_str = f"${mc_val/1e9:.1f}B"
-                 else: mc_str = f"${mc_val/1e6:.1f}M"
-             else: mc_str = "-"
+             mc_str = fmt_mc(stock.get('totalAssets'))
              y_val = stock.get('yield')
              if y_val:
                  if y_val < 0.3: ps = f"{y_val*100:.2f}%"
                  else: ps = f"{y_val:.2f}%"
              else: ps = "-"
              
-             html += f"""
+             etf_rows += f"""
              <tr>
                  <td><b>{stock['symbol']}</b></td>
                  <td>{stock.get('name', 'Unknown')}</td>
@@ -728,12 +584,22 @@ class ASXTrendingStocks:
                  <td class="{rsi_class}">{stock['rsi']:.2f}</td>
              </tr>
              """
-        html += """
-        </tbody>
-    </table>
-"""
-        html += self._generate_insights_html(trending_etfs, "ETF Market", group_label="Category")
-        html += "</div></body></html>"
+
+        # ── Build insights ───────────────────────────────────────────────
+        stock_insights = self._generate_insights_html(trending_stocks, "Stock Market", group_label="Sector")
+        etf_insights = self._generate_insights_html(trending_etfs, "ETF Market", group_label="Category")
+
+        # ── Read template and fill placeholders ──────────────────────────
+        with open(template_path, "r", encoding="utf-8") as f:
+            template = f.read()
+
+        html = template.replace("{{ timestamp }}", timestamp)
+        html = html.replace("{{ stock_count }}", str(len(trending_stocks)))
+        html = html.replace("{{ etf_count }}", str(len(trending_etfs)))
+        html = html.replace("{{ stock_rows }}", stock_rows)
+        html = html.replace("{{ etf_rows }}", etf_rows)
+        html = html.replace("{{ stock_insights }}", stock_insights)
+        html = html.replace("{{ etf_insights }}", etf_insights)
         
         try:
             with open(filename, "w", encoding='utf-8') as f:

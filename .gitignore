@@ -36,7 +36,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.pdf_cache/
 
 # IDEs
 .idea/
@@ -52,3 +51,8 @@ build_msvc.ps1
 .cargo/
 Test/
 TradingBot/
+
+# ASX Project
+ASX/config/
+ASX/output/
+ASX/.pdf_cache/
