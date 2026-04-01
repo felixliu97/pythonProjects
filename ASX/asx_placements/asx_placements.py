@@ -21,6 +21,7 @@ from typing import Dict, List, Optional, Set, Tuple
 import yaml
 import requests
 import html
+import yfinance as yf
 
 try:
     import pdfplumber
@@ -434,6 +435,61 @@ def fetch_current_info(
         return symbol, None, ""
 
 
+def fetch_liquidity_info(sym: str) -> Tuple[bool, str]:
+    """Check if stock meets minimum liquidity requirements (MCap >= 10M, Daily Val >= 20k)."""
+    if not sym:
+        return True, "No symbol"
+    try:
+        ticker = yf.Ticker(f"{sym}.AX")
+        info = ticker.info
+        
+        # Sometime yfinance returns empty info for delisted/suspended stocks
+        if not info or 'regularMarketPrice' not in info:
+            # Let's try to get history as fallback to check if it's trading
+            hist = ticker.history(period="10d")
+            if hist.empty:
+                return False, "No data/Delisted"
+            # Estimate from history
+            mcap = info.get("marketCap", 0) if info else 0
+            avg_vol = hist["Volume"].mean()
+            price = hist["Close"].iloc[-1]
+            val = avg_vol * price
+            
+            if mcap > 0 and mcap < 10_000_000:
+                return False, f"MCap < 10M (${mcap:,.0f})"
+            if val < 20_000:
+                return False, f"Avg Daily Val < 20k (${val:,.0f})"
+            return True, "OK"
+            
+        mcap = info.get("marketCap", 0)
+        avg_vol = info.get("averageVolume", info.get("regularMarketVolume", 0))
+        price = info.get("regularMarketPrice", info.get("currentPrice", 0))
+        
+        if not price and 'previousClose' in info:
+            price = info['previousClose']
+            
+        # fallback to history if info is incomplete
+        if not avg_vol or not price:
+            hist = ticker.history(period="10d")
+            if hist.empty:
+                return False, "No trading data"
+            avg_vol = hist["Volume"].mean()
+            price = hist["Close"].iloc[-1]
+            
+        daily_val = avg_vol * price
+        
+        if mcap > 0 and mcap < 10_000_000:
+            return False, f"MCap < 10M (${mcap:,.0f})"
+        
+        if daily_val < 20_000:
+            return False, f"Avg Daily Val < 20k (${daily_val:,.0f})"
+            
+        return True, "OK"
+        
+    except Exception as e:
+        return True, f"Error, kept for safety ({str(e)})"
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 
@@ -612,7 +668,44 @@ def main() -> None:
                 )
         print()
         
-    all_events = processed_events + existing_rows
+    # ── 3.6 Filter liquidity for NEW events using yfinance ───────────────
+    if processed_events:
+        unique_new_symbols = list({ev["symbol"] for ev in processed_events})
+        print(f"\nFiltering liquidity for {len(unique_new_symbols)} new symbols...")
+        symbol_status = {}
+        
+        workers = min(20, max(1, len(unique_new_symbols)))
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = {executor.submit(fetch_liquidity_info, sym): sym for sym in unique_new_symbols}
+            done = 0
+            for future in as_completed(futures):
+                sym = futures[future]
+                is_liquid, reason = future.result()
+                symbol_status[sym] = (is_liquid, reason)
+                done += 1
+                if done % 10 == 0:
+                    print(f"\r  Processed {done}/{len(unique_new_symbols)} liquidity checks...", end="", flush=True)
+        print()
+                    
+        removed = []
+        filtered_new_events = []
+        for ev in processed_events:
+            sym = ev["symbol"]
+            is_liquid, reason = symbol_status.get(sym, (True, "Unchecked"))
+            if is_liquid:
+                filtered_new_events.append(ev)
+            else:
+                removed.append((sym, reason))
+                
+        unique_removed = list(set(removed))
+        unique_removed.sort()
+        
+        if unique_removed:
+            print(f"\n--- Removed {len(unique_removed)} illiquid new symbols ---")
+            for sym, reason in unique_removed:
+                 print(f"  {sym}: {reason}")
+                 
+        processed_events = filtered_new_events
 
     # ── 3.5 Strict Deduplication: One row per stock (Preserve Original) ──
     final_events_map: Dict[str, Dict] = {}
