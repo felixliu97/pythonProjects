@@ -46,11 +46,9 @@ def main():
     parser_plac.add_argument("--no-pdf", action="store_true", help="Skip PDF download & extraction")
     parser_plac.add_argument("--full-refresh", action="store_true", help="Ignore existing database; full re-scan")
     
-    # 5. Announcements HTML only
-    parser_ann_html = subparsers.add_parser("announcements-html", help="Generate Announcements HTML from existing YAML")
-    
-    # 6. Placements HTML only
-    parser_plac_html = subparsers.add_parser("placements-html", help="Generate Placements HTML from existing YAML")
+    # 7. All
+    parser_all = subparsers.add_parser("all", help="Regenerate EVERYTHING (Run all 4 modules fully)")
+    parser_all.add_argument("--months", type=int, default=1, help="Lookback months for scanners (default: 1)")
     
     args = parser.parse_args()
     
@@ -84,15 +82,31 @@ def main():
         run_script("asx_placements/asx_placements.py", pass_args)
         print("=== Complete! Outputs saved to /output/ ===\n")
         
-    elif args.command == "announcements-html":
-        print("\n=== Generating Announcements HTML from YAML ===")
-        run_script("asx_announcements/asx_announcements.py", ["--html-only"])
-        print("=== Complete! Outputs saved to /output/ ===\n")
+    elif args.command == "all":
+        print("\n" + "="*50)
+        print("RUNNING COMPLETE ASX ANALYSIS SUITE")
+        print("="*50)
         
-    elif args.command == "placements-html":
-        print("\n=== Generating Placements HTML from YAML ===")
-        run_script("asx_placements/asx_placements.py", ["--html-only"])
-        print("=== Complete! Outputs saved to /output/ ===\n")
+        # 1. Catalysts
+        print("\n--- [1/4] Catalysts ---")
+        run_script("asx_catalysts/asx_catalysts.py")
+        
+        # 2. Analyzer
+        print("\n--- [2/4] Analyzer ---")
+        run_script("asx_analyzer/asx_analyzer.py")
+        
+        # 3. Announcements
+        print("\n--- [3/4] Announcements ---")
+        scan_args = ["--months", str(args.months)]
+        run_script("asx_announcements/asx_announcements.py", scan_args)
+        
+        # 4. Placements
+        print("\n--- [4/4] Placements ---")
+        run_script("asx_placements/asx_placements.py", scan_args)
+        
+        print("\n" + "="*50)
+        print("ALL MODULES COMPLETED SUCCESSFULLY")
+        print("="*50 + "\n")
         
     else:
         parser.print_help()

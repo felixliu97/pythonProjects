@@ -35,7 +35,7 @@ ASX/
 └── asx_sectors.md        # AI prompt documentation for the 11 ASX Core Sectors
 ```
 
-> **Note**: All generated artifacts (`.csv` datasets and `.html` dashboards) are automatically routed to the `output/` directory. Configuration files reside inside the `config/` directory using the `asx_{module}.yaml` naming convention.
+> **Note**: All generated dashboards (`.html`) are automatically routed to the `output/` directory. Persistent tracking data and configuration files reside inside the `config/` directory using the `asx_{module}.yaml` naming convention.
 
 ## Modules
 
@@ -58,8 +58,7 @@ python run.py catalysts          # Generate Catalyst Radar HTML
 python run.py analyzer           # Run Technical Trend Analyzer (HTML)
 python run.py announcements      # Scan → YAML + HTML
 python run.py placements         # Scan → YAML + HTML
-python run.py announcements-html # Re-generate HTML from existing YAML
-python run.py placements-html    # Re-generate HTML from existing YAML
+python run.py all                # Full re-scan and regenerate EVERYTHING (all 4)
 ```
 
 ## Data Pipeline

@@ -5,9 +5,9 @@ Scans ASX announcements for **price-sensitive** events, filters by positive keyw
 ## Quick Start
 
 ```bash
-pip install requests pdfplumber pandas pyyaml
+pip install requests pdfplumber pyyaml
 
-# Full pipeline: scan → CSV + YAML + HTML
+# Full pipeline: scan → YAML + HTML
 python run.py announcements
 
 # Fast scan without PDF extraction
@@ -24,7 +24,6 @@ python run.py announcements-html
 
 ```
 ASX API → asx_announcements.py
-              ├── output/asx_announcements.csv       (raw dataset optional)
               ├── config/asx_announcements.yaml      (structured YAML tracking DB)
               └── output/asx_announcements.html      (styled dashboard natively generated)
 ```
@@ -37,7 +36,6 @@ ASX API → asx_announcements.py
 4. **Extract & Summarize** — Uses `pdfplumber` to pull the first several paragraphs of the PDF into a concise string format.
 5. **Uniform Company Identification** — Triggers isolated asynchronous queries directly to the ASX headers API to resolve flawless company names for all symbols.
 6. **Export** — Outputs:
-   - `output/asx_announcements.csv` — Full dataset (legacy support)
    - `config/asx_announcements.yaml` — Structured YAML acting as primary database
    - `output/asx_announcements.html` — Styled HTML dashboard (generated natively at end of scan)
 

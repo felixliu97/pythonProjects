@@ -82,18 +82,24 @@
                     x = rows[i].getElementsByTagName("TD")[n];
                     y = rows[i + 1].getElementsByTagName("TD")[n];
                     
-                    var xContent = x.textContent.trim();
-                    var yContent = y.textContent.trim();
+                    var xVal, yVal;
                     
-                    var xVal = parseMoney(xContent);
-                    var yVal = parseMoney(yContent);
+                    if (x.dataset.sort !== undefined) {
+                        xVal = parseFloat(x.dataset.sort);
+                        yVal = parseFloat(y.dataset.sort);
+                    } else {
+                        xVal = parseMoney(x.textContent.trim());
+                        yVal = parseMoney(y.textContent.trim());
+                    }
                     
-                    if (xVal !== -999999 && yVal !== -999999) {
+                    if (!isNaN(xVal) && !isNaN(yVal) && xVal !== -999999 && yVal !== -999999) {
                         if (dir == "asc") { if (xVal > yVal) { shouldSwitch = true; break; } }
                         else { if (xVal < yVal) { shouldSwitch = true; break; } }
                     } else {
-                        if (dir == "asc") { if (xContent.toLowerCase() > yContent.toLowerCase()) { shouldSwitch = true; break; } }
-                        else { if (xContent.toLowerCase() < yContent.toLowerCase()) { shouldSwitch = true; break; } }
+                        var xText = x.textContent.trim().toLowerCase();
+                        var yText = y.textContent.trim().toLowerCase();
+                        if (dir == "asc") { if (xText > yText) { shouldSwitch = true; break; } }
+                        else { if (xText < yText) { shouldSwitch = true; break; } }
                     }
                 }
                 if (shouldSwitch) {

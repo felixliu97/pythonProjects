@@ -1,13 +1,13 @@
 # ASX Placement / Capital Raising Scanner
 
-Scans ASX announcements for capital raising, placement, SPP, and rights issue events. Downloads PDFs to extract price, quantity, and amount raised. Supports incremental scanning by resuming from the last date in the existing CSV.
+Scans ASX announcements for capital raising, placement, SPP, and rights issue events. Downloads PDFs to extract price, quantity, and amount raised. Supports incremental scanning by resuming from the last date in the existing YAML.
 
 ## Quick Start
 
 ```bash
 pip install requests pdfplumber pyyaml
 
-# Full pipeline: scan → CSV + YAML + HTML
+# Full pipeline: scan → YAML + HTML
 python run.py placements
 
 # Fast scan without PDF extraction
@@ -24,7 +24,6 @@ python run.py placements-html
 
 ```
 ASX API → asx_placements.py
-              ├── output/asx_placements.csv       (raw dataset optional)
               ├── config/asx_placements.yaml      (structured YAML tracking DB)
               └── output/asx_placements.html      (styled dashboard natively generated)
 ```
@@ -39,7 +38,6 @@ ASX API → asx_placements.py
    - **Headline Fallback**: If PDF extraction fails, extracts amount and price directly from the announcement headline.
 5. **Fetch Current Price & Info** — Calls the ASX MarkIt Digital Company API to fetch the real-time stock price and company name for all matched symbols concurrently.
 6. **Export** — Outputs:
-   - `output/asx_placements.csv` — Full dataset (legacy support)
    - `config/asx_placements.yaml` — Structured YAML acting as primary database
    - `output/asx_placements.html` — Styled HTML dashboard (generated natively at end of scan)
 

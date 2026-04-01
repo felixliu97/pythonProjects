@@ -549,7 +549,7 @@ def main() -> None:
 
         event_key = f"{sym}_{date_display}"
 
-        # Skip if the symbol already exists in our master CSV
+        # Skip if the symbol already exists in our master YAML
         if sym in existing_symbols:
             continue
 

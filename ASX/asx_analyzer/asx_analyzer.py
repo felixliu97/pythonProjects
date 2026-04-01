@@ -145,14 +145,22 @@ class ASXTrendingStocks:
         return ((current_price - price_1y_ago) / price_1y_ago) * 100
 
     def calculate_rsi(self, prices: pd.Series, period: int = 14) -> float:
-        if len(prices) < period + 1:
+        """Calculate Relative Strength Index (RSI) using Wilder's Smoothing"""
+        if len(prices) < period:
             return np.nan
+        
         delta = prices.diff()
-        gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-        rs = gain / loss
+        gain = (delta.where(delta > 0, 0))
+        loss = (-delta.where(delta < 0, 0))
+        
+        # Wilder's Smoothing (EWM with alpha = 1/period)
+        avg_gain = gain.ewm(alpha=1/period, min_periods=period, adjust=False).mean()
+        avg_loss = loss.ewm(alpha=1/period, min_periods=period, adjust=False).mean()
+        
+        rs = avg_gain / avg_loss
         rsi = 100 - (100 / (1 + rs))
         return rsi.iloc[-1]
+
     
     def _process_stock(self, stock_info, period, is_etf=False):
         if isinstance(stock_info, dict):
@@ -536,16 +544,16 @@ class ASXTrendingStocks:
                 <td><b>{stock['symbol']}</b></td>
                 <td>{stock.get('name', 'Unknown')}</td>
                 <td>{stock.get('industry', 'Unknown')}</td>
-                <td>{mc_str}</td>
-                <td>${stock['current_price']:.2f}</td>
-                <td>{fmt_nop(stock.get('pe'))}</td>
-                <td>{fmt_nop(stock.get('ps'))}</td>
-                <td><span class="score-box">{stock['score']:.2f}</span></td>
-                <td class="{p1d_class}">{stock['price_diff_1d']:+.2f} ({stock['price_change_1d']:+.2f}%)</td>
-                <td class="{p5d_class}">{stock['price_diff_5d']:+.2f} ({stock['price_change_5d']:+.2f}%)</td>
-                <td class="{mom_class}">{stock['momentum']:+.2f}%</td>
-                <td>{stock['volatility']:.2f}%</td>
-                <td class="{rsi_class}">{stock['rsi']:.2f}</td>
+                <td data-sort="{stock.get('marketCap', 0)}">{mc_str}</td>
+                <td data-sort="{stock['current_price']}">${stock['current_price']:.2f}</td>
+                <td data-sort="{stock.get('pe', -999999)}">{fmt_nop(stock.get('pe'))}</td>
+                <td data-sort="{stock.get('ps', -999999)}">{fmt_nop(stock.get('ps'))}</td>
+                <td data-sort="{stock['score']}"><span class="score-box">{stock['score']:.2f}</span></td>
+                <td class="{p1d_class}" data-sort="{stock['price_change_1d'] or 0}">{stock['price_diff_1d']:+.2f} ({stock['price_change_1d']:+.2f}%)</td>
+                <td class="{p5d_class}" data-sort="{stock['price_change_5d'] or 0}">{stock['price_diff_5d']:+.2f} ({stock['price_change_5d']:+.2f}%)</td>
+                <td class="{mom_class}" data-sort="{stock['momentum'] or 0}">{stock['momentum']:+.2f}%</td>
+                <td data-sort="{stock['volatility'] or 0}">{stock['volatility']:.2f}%</td>
+                <td class="{rsi_class}" data-sort="{stock['rsi'] or 0}">{stock['rsi']:.2f}</td>
             </tr>
             """
 
@@ -571,17 +579,17 @@ class ASXTrendingStocks:
                  <td><b>{stock['symbol']}</b></td>
                  <td>{stock.get('name', 'Unknown')}</td>
                  <td>{stock.get('industry', 'Unknown')}</td>
-                 <td>{mc_str}</td>
-                 <td>${stock['current_price']:.2f}</td>
-                 <td>{fmt_nop(stock.get('pe'))}</td>
-                 <td>{ps}</td>
-                 <td><span class="score-box">{stock['score']:.2f}</span></td>
-                 <td class="{p1d_class}">{stock['price_change_1d']:+.2f}%</td>
-                 <td class="{p5d_class}">{stock['price_change_5d']:+.2f}%</td>
-                 <td class="{y1_class}">{y1_str}</td>
-                 <td class="{mom_class}">{stock['momentum']:+.2f}%</td>
-                 <td>{stock['volatility']:.2f}%</td>
-                 <td class="{rsi_class}">{stock['rsi']:.2f}</td>
+                 <td data-sort="{stock.get('totalAssets', 0)}">{mc_str}</td>
+                 <td data-sort="{stock['current_price']}">${stock['current_price']:.2f}</td>
+                 <td data-sort="{stock.get('pe', -999999)}">{fmt_nop(stock.get('pe'))}</td>
+                 <td data-sort="{y_val or 0}">{ps}</td>
+                 <td data-sort="{stock['score']}"><span class="score-box">{stock['score']:.2f}</span></td>
+                 <td class="{p1d_class}" data-sort="{stock['price_change_1d'] or 0}">{stock['price_change_1d']:+.2f}%</td>
+                 <td class="{p5d_class}" data-sort="{stock['price_change_5d'] or 0}">{stock['price_change_5d']:+.2f}%</td>
+                 <td class="{y1_class}" data-sort="{y1 or 0}">{y1_str}</td>
+                 <td class="{mom_class}" data-sort="{stock['momentum'] or 0}">{stock['momentum']:+.2f}%</td>
+                 <td data-sort="{stock['volatility'] or 0}">{stock['volatility']:.2f}%</td>
+                 <td class="{rsi_class}" data-sort="{stock['rsi'] or 0}">{stock['rsi']:.2f}</td>
              </tr>
              """
 
