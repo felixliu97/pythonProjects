@@ -1,7 +1,7 @@
 """
 ASX Price Sensitive Announcements Scanner
 
-Scans ASX announcements for strictly price-sensitive events, filters by positive keywords,
+Scans ASX announcements for strictly price-sensitive events (utilizing API filters),
 downloads PDFs, extracts summaries, and outputs to YAML and HTML.
 """
 
@@ -32,38 +32,13 @@ PDF_CDN = "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0
 PDF_TOKEN = "83ff96335c2d45a094df02a206a39ff4"
 ITEMS_PER_PAGE = 100
 
-POSITIVE_KEYWORDS = (
-    "offtake", "contract", "binding", "commercialisation", "commercialization",
-    "discovery", "partnership", "alliance", "approval", "patent", "record revenue",
-    "record profit", "record production", "fda approval", "tga approval", "mou", "memorandum",
-    "joint venture", "jv", "maiden resource", "resource upgrade", "feasibility",
-    "dfs", "pfs", "first production", "commissioning", "commenced production", "high grade", "high-grade",
-    "significant intercept", "significant discovery", "award", "supply agreement", "license",
-    "licence", "takeover", "scheme of arrangement", "assay", "drilling results",
-    "exploration results", "test results", "metallurgical", "acquisition", "merger", "grant",
-    "exceptional", "outstanding", "spectacular", "bonanza", "thick intercept",
-    "restart", "refurbishment", "fast-track", "recommence", "upgraded", "acceleration"
-)
-
 NOISE_KEYWORDS = (
-    "cleansing notice", "application for quotation", "appendix 2a",
-    "appendix 3b", "appendix 4c", "appendix 4d", "appendix 4e",
-    "change of director", "results of meeting", "notification of buy-back",
-    "trading halt", "suspension from quotation", "notice of annual general meeting",
-    "proxy form", "becoming a substantial holder", "ceasing to be a substantial holder",
-    "daily share buy-back", "change of registered office"
+    "trading halt", "pausing in trading", "pause in trading", 
+    "response to asx", "price query", "notification of buy-back",
+    "suspension from quotation", "cleansing notice", "market update",
+    "on-market share buyback", "on-market buy-back", "investor presentation",
+    "disclosure document", "dividend/distribution", "investor webinar presentation"
 )
-
-
-
-def is_positive_announcement(headline: str) -> bool:
-    hl = headline.lower()
-    if any(nk in hl for nk in NOISE_KEYWORDS): return False
-    # If the headline is ALL CAPS and at least 30 chars, it's often a major news item
-    if headline.isupper() and len(headline) >= 30: return True
-    # If the headline matches any positive keyword
-    if any(pk in hl for pk in POSITIVE_KEYWORDS): return True
-    return False
 
 def normalize_date(date_str: str) -> str:
     if not date_str: return ""
@@ -292,7 +267,7 @@ def main() -> None:
     events_map = {}
     for item in raw_items:
         hl = item.get("headline", "")
-        if not is_positive_announcement(hl): continue
+        if any(nk in hl.lower() for nk in NOISE_KEYWORDS): continue
         sym = item.get("symbol", "")
         if not sym: continue
 
@@ -320,9 +295,9 @@ def main() -> None:
 
     events_list = list(events_map.values())
     if events_list:
-        print(f"\nFiltered to {len(events_list)} new positive announcement events.")
+        print(f"\nFound {len(events_list)} new price-sensitive announcements.")
     elif fetch_new:
-        print("\nNo new positive price-sensitive announcements found.")
+        print("\nNo new price-sensitive announcements found.")
     
     processed_events = []
     if events_list:
@@ -459,7 +434,7 @@ def build_row(ann: dict) -> str:
     row += '</tr>\n'
     return row
 
-def generate_html():
+def generate_html(save_file: bool = True) -> str:
     root = os.path.dirname(os.path.abspath(__file__))
     yaml_file = os.path.join(os.path.abspath(os.path.join(root, "..", "config")), "asx_announcements.yaml")
     html_out = os.path.join(os.path.abspath(os.path.join(root, "..", "output")), "asx_announcements.html")
@@ -470,15 +445,14 @@ def generate_html():
             announcements = yaml.safe_load(f)
     except FileNotFoundError:
         print(f"Error: YAML config not found at {yaml_file}")
-        print("Run the announcements scanner first: python run.py announcements")
-        return
+        return ""
     except Exception as e:
         print(f"Error loading YAML from {yaml_file}: {e}")
-        return
+        return ""
 
     if not announcements:
         print("No announcements data found in YAML.")
-        return
+        return ""
 
     announcements.sort(key=lambda x: str(x.get("Date", "")), reverse=True)
 
@@ -520,11 +494,13 @@ def generate_html():
         .replace("{{ stats_text }}", stats_text)
     )
 
-    os.makedirs(os.path.dirname(html_out), exist_ok=True)
-    with open(html_out, 'w', encoding='utf-8') as f:
-        f.write(final_html)
-
-    print(f"Generated {html_out} successfully with {len(announcements)} announcements.")
+    if save_file:
+        os.makedirs(os.path.dirname(html_out), exist_ok=True)
+        with open(html_out, 'w', encoding='utf-8') as f:
+            f.write(final_html)
+        print(f"Generated {html_out} successfully with {len(announcements)} announcements.")
+    
+    return final_html
 
 
 if __name__ == "__main__":

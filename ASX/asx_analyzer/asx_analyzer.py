@@ -502,7 +502,7 @@ class ASXTrendingStocks:
         html += "</div>"
         return html
 
-    def generate_html_report(self, data: Dict[str, List[Dict]]):
+    def generate_html_report(self, data: Dict[str, List[Dict]], save_file: bool = True) -> str:
         date_str = datetime.now().strftime('%Y-%m-%d')
         out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "output"))
         os.makedirs(out_dir, exist_ok=True)
@@ -601,21 +601,23 @@ class ASXTrendingStocks:
         with open(template_path, "r", encoding="utf-8") as f:
             template = f.read()
 
-        html = template.replace("{{ timestamp }}", timestamp)
-        html = html.replace("{{ stock_count }}", str(len(trending_stocks)))
-        html = html.replace("{{ etf_count }}", str(len(trending_etfs)))
-        html = html.replace("{{ stock_rows }}", stock_rows)
-        html = html.replace("{{ etf_rows }}", etf_rows)
-        html = html.replace("{{ stock_insights }}", stock_insights)
-        html = html.replace("{{ etf_insights }}", etf_insights)
+        html_content = template.replace("{{ timestamp }}", timestamp)
+        html_content = html_content.replace("{{ stock_count }}", str(len(trending_stocks)))
+        html_content = html_content.replace("{{ etf_count }}", str(len(trending_etfs)))
+        html_content = html_content.replace("{{ stock_rows }}", stock_rows)
+        html_content = html_content.replace("{{ etf_rows }}", etf_rows)
+        html_content = html_content.replace("{{ stock_insights }}", stock_insights)
+        html_content = html_content.replace("{{ etf_insights }}", etf_insights)
         
-        try:
-            with open(filename, "w", encoding='utf-8') as f:
-                f.write(html)
-            print(f"\n{Colors.GREEN}Report generated successfully: {filename}{Colors.ENDC}")
-            print(f"You can open it in your browser to view the formatted results.")
-        except Exception as e:
-            print(f"{Colors.FAIL}Failed to generate HTML report: {e}{Colors.ENDC}")
+        if save_file:
+            try:
+                with open(filename, "w", encoding='utf-8') as f:
+                    f.write(html_content)
+                print(f"\n{Colors.GREEN}Report generated successfully: {filename}{Colors.ENDC}")
+            except Exception as e:
+                print(f"{Colors.FAIL}Failed to generate HTML report: {e}{Colors.ENDC}")
+        
+        return html_content
 
 def main():
     print("ASX Stocks/ETFs Analyzer")

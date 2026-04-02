@@ -1,6 +1,6 @@
 # ASX Price Sensitive Announcements Scanner
 
-Scans ASX announcements for **price-sensitive** events, filters by positive keywords (e.g. offtake agreements, major contracts signed, strategic partnerships, significant discoveries). The system downloads the associated announcement PDFs to a shared `../.pdf_cache/` folder, extracts the text, and processes the content to generate short summaries.
+Scans ASX announcements for **price-sensitive** events (by leveraging the API's own flag). The system downloads the associated announcement PDFs to a shared `../.pdf_cache/` folder, extracts the text, and processes the content to generate short summaries.
 
 ## Quick Start
 
@@ -31,10 +31,9 @@ ASX API → asx_announcements.py
 ## How It Works
 
 1. **Fetch Price-Sensitive Announcements** — Directly requests ONLY `priceSensitiveOnly=true` announcements from the ASX MarkIt Digital API up to the current completion day.
-2. **Filter** — Keeps announcements matching broadly positive keywords in the headline (e.g., "offtake", "discovery", "drilling results", "assay"). Administrative noise is strictly ignored.
-3. **Local PDF Verification** — Scans existing PDFs in the shared `../.pdf_cache/` directory. If missing, dynamically downloads it over CDN concurrently.
-4. **Extract & Summarize** — Uses `pdfplumber` to pull the first several paragraphs of the PDF into a concise string format.
-5. **Uniform Company Identification** — Triggers isolated asynchronous queries directly to the ASX headers API to resolve flawless company names for all symbols.
+2. **Local PDF Verification** — Scans existing PDFs in the shared `../.pdf_cache/` directory. If missing, dynamically downloads it over CDN concurrently.
+3. **Extract & Summarize** — Uses `pdfplumber` to pull the first several paragraphs of the PDF into a concise string format.
+4. **Uniform Company Identification** — Triggers isolated asynchronous queries directly to the ASX headers API to resolve flawless company names for all symbols.
 6. **Export** — Outputs:
    - `config/asx_announcements.yaml` — Structured YAML acting as primary database
    - `output/asx_announcements.html` — Styled HTML dashboard (generated natively at end of scan)

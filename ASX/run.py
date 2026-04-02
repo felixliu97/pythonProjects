@@ -46,6 +46,9 @@ def main():
     parser_plac.add_argument("--no-pdf", action="store_true", help="Skip PDF download & extraction")
     parser_plac.add_argument("--full-refresh", action="store_true", help="Ignore existing database; full re-scan")
     
+    # Dashboard
+    parser_dash = subparsers.add_parser("dashboard", help="Generate Unified Dashboard (HTML)")
+    
     # 7. All
     parser_all = subparsers.add_parser("all", help="Regenerate EVERYTHING (Run all 4 modules fully)")
     parser_all.add_argument("--months", type=int, default=1, help="Lookback months for scanners (default: 1)")
@@ -82,6 +85,10 @@ def main():
         run_script("asx_placements/asx_placements.py", pass_args)
         print("=== Complete! Outputs saved to /output/ ===\n")
         
+    elif args.command == "dashboard":
+        import asx_dashboard
+        asx_dashboard.generate_dashboard()
+        
     elif args.command == "all":
         print("\n" + "="*50)
         print("RUNNING COMPLETE ASX ANALYSIS SUITE")
@@ -103,6 +110,11 @@ def main():
         # 4. Placements
         print("\n--- [4/4] Placements ---")
         run_script("asx_placements/asx_placements.py", scan_args)
+        
+        # 5. Dashboard
+        print("\n--- Generating Unified Dashboard ---")
+        import asx_dashboard
+        asx_dashboard.generate_dashboard()
         
         print("\n" + "="*50)
         print("ALL MODULES COMPLETED SUCCESSFULLY")

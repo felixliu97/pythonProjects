@@ -168,13 +168,13 @@ def build_row(stock):
     row_html += '</tr>\n'
     return row_html
 
-def generate_html():
+def generate_html(save_file: bool = True) -> str:
     try:
         with open(JSON_FILE, 'r', encoding='utf-8') as f:
             stocks = yaml.safe_load(f)
     except Exception as e:
         print(f"Error loading YAML from {JSON_FILE}: {e}")
-        return
+        return ""
             
     def breakout_key(s):
         p = s.get("Probability", "")
@@ -190,10 +190,11 @@ def generate_html():
         hot_count = sum(1 for h in s.get("Heatmap", []) if h.get("Status") == "Hot")
         return (base, -hot_count, s.get("Ticker", ""))
         
-    stocks.sort(key=breakout_key)
+    if stocks:
+        stocks.sort(key=breakout_key)
 
     rows_html = ""
-    for s in stocks:
+    for s in (stocks or []):
         rows_html += build_row(s)
         rows_html += "\n"
         
@@ -208,15 +209,11 @@ def generate_html():
     
     def get_upcoming_catalyst(cats):
         for cat in cats:
-            # Robustly handle if cat is not a string (e.g. from malformed YAML)
             if isinstance(cat, dict):
-                # If it's a dict like {'Date': 'Event'}, join them
                 cat_str = " ".join([f"{k} {v}" for k, v in cat.items()])
             else:
                 cat_str = str(cat)
                 
-            # Simple heuristic to detect past dates
-            # Match YYYY年M月D日 or YYYY-MM-DD
             m1 = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', cat_str)
             m2 = re.search(r'(\d{4})-(\d{2})-(\d{2})', cat_str)
             
@@ -227,11 +224,11 @@ def generate_html():
                 date_found = datetime(int(m2.group(1)), int(m2.group(2)), int(m2.group(3)))
             
             if date_found and date_found < TODAY:
-                continue # Skip past event
-            return cat_str # Return first non-past event
+                continue
+            return cat_str
         return str(cats[0]) if cats else ""
 
-    for i, s in enumerate(stocks[:10]):
+    for i, s in enumerate((stocks or [])[:10]):
         tk = s.get("Ticker", "")
         cats = s.get("Catalysts", [])
         reason = get_upcoming_catalyst(cats)
@@ -245,10 +242,12 @@ def generate_html():
     final_html = template.replace("{{ table_rows }}", rows_html)\
                          .replace("{{ breakout_html }}", breakout_html)
 
-    with open(HTML_OUT, 'w', encoding='utf-8') as f:
-        f.write(final_html)
-        
-    print(f"Generated {HTML_OUT} successfully with {len(stocks)} stocks.")
+    if save_file:
+        with open(HTML_OUT, 'w', encoding='utf-8') as f:
+            f.write(final_html)
+        print(f"Generated {HTML_OUT} successfully with {len(stocks or [])} stocks.")
+    
+    return final_html
 
 if __name__ == "__main__":
     generate_html()

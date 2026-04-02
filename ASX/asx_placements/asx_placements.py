@@ -929,7 +929,7 @@ def build_row(placement: dict) -> str:
     row += '</tr>\n'
     return row
 
-def generate_html():
+def generate_html(save_file: bool = True) -> str:
     root = os.path.dirname(os.path.abspath(__file__))
     yaml_file = os.path.join(os.path.abspath(os.path.join(root, "..", "config")), "asx_placements.yaml")
     html_out = os.path.join(os.path.abspath(os.path.join(root, "..", "output")), "asx_placements.html")
@@ -940,15 +940,14 @@ def generate_html():
             placements = yaml.safe_load(f)
     except FileNotFoundError:
         print(f"Error: YAML config not found at {yaml_file}")
-        print("Run the placements scanner first: python run.py placements")
-        return
+        return ""
     except Exception as e:
         print(f"Error loading YAML from {yaml_file}: {e}")
-        return
+        return ""
 
     if not placements:
         print("No placements data found in YAML.")
-        return
+        return ""
 
     placements.sort(key=lambda x: str(x.get("Date", "")), reverse=True)
 
@@ -1002,11 +1001,13 @@ def generate_html():
         .replace("{{ stats_text }}", stats_text)
     )
 
-    os.makedirs(os.path.dirname(html_out), exist_ok=True)
-    with open(html_out, 'w', encoding='utf-8') as f:
-        f.write(final_html)
-
-    print(f"Generated {html_out} successfully with {len(placements)} placements.")
+    if save_file:
+        os.makedirs(os.path.dirname(html_out), exist_ok=True)
+        with open(html_out, 'w', encoding='utf-8') as f:
+            f.write(final_html)
+        print(f"Generated {html_out} successfully with {len(placements)} placements.")
+    
+    return final_html
 
 
 if __name__ == "__main__":
