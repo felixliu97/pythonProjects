@@ -1,0 +1,18 @@
+Usage: openapi-ts [options]
+
+Generate TypeScript code from OpenAPI specifications
+
+Options:
+  -V, --version             output the version number
+  -i, --input <path...>     OpenAPI specification (path, URL, or string)
+  -o, --output <path...>    Output folder(s)
+  -c, --client <name>       HTTP client to generate
+  -p, --plugins [names...]  Plugins to use
+  -f, --file <path>         Path to config file
+  -d, --debug               Enable debug logging
+  -s, --silent              Suppress all output
+  -l, --logs <path>         Logs folder path
+  --no-log-file             Disable log file output
+  --dry-run                 Skip writing files
+  -w, --watch [interval]    Watch for changes
+  -h, --help                display help for command
