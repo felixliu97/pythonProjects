@@ -56,3 +56,13 @@ TradingBot/
 ASX/config/
 ASX/output/
 ASX/.pdf_cache/
+
+# Commodity Dashboard
+FullStack/commodity_dashboard/frontend/.next/
+FullStack/commodity_dashboard/backend/commodities_cache.json/
+FullStack/commodity_dashboard/frontend/src/api-client/
+FullStack/commodity_dashboard/frontend/openapi-ts-error-*.log
+FullStack/commodity_dashboard/frontend/npm-debug.log*
+FullStack/commodity_dashboard/frontend/yarn-debug.log*
+FullStack/commodity_dashboard/frontend/yarn-error.log*
+FullStack/commodity_dashboard/frontend/pnpm-debug.log*

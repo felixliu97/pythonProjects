@@ -1,0 +1,161 @@
+{
+  "timestamp": "2026-04-06T15:33:33.589139",
+  "items": [
+    {
+      "ticker": "GC=F",
+      "name": "Gold",
+      "price": 4696.8,
+      "unit": "oz",
+      "change_pct": 0.47,
+      "change_abs": 21.8,
+      "category": "Precious Metals",
+      "icon": "Coins",
+      "trend": "Neutral",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "SI=F",
+      "name": "Silver",
+      "price": 72.72,
+      "unit": "oz",
+      "change_pct": 0.01,
+      "change_abs": 0.0,
+      "category": "Precious Metals",
+      "icon": "Disc",
+      "trend": "Neutral",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "PL=F",
+      "name": "Platinum",
+      "price": 1979.9,
+      "unit": "oz",
+      "change_pct": -1.05,
+      "change_abs": -21.1,
+      "category": "Precious Metals",
+      "icon": "Sparkles",
+      "trend": "Bearish",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "PA=F",
+      "name": "Palladium",
+      "price": 1512.5,
+      "unit": "oz",
+      "change_pct": 0.57,
+      "change_abs": 8.5,
+      "category": "Precious Metals",
+      "icon": "Zap",
+      "trend": "Bullish",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "CL=F",
+      "name": "Crude Oil WTI",
+      "price": 111.45,
+      "unit": "bbl",
+      "change_pct": -1.34,
+      "change_abs": -1.51,
+      "category": "Energy",
+      "icon": "Droplets",
+      "trend": "Bearish",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "BZ=F",
+      "name": "Brent Crude",
+      "price": 109.74,
+      "unit": "bbl",
+      "change_pct": 0.49,
+      "change_abs": 0.54,
+      "category": "Energy",
+      "icon": "Droplets",
+      "trend": "Neutral",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "NG=F",
+      "name": "Natural Gas",
+      "price": 2.79,
+      "unit": "MMBtu",
+      "change_pct": -1.62,
+      "change_abs": -0.05,
+      "category": "Energy",
+      "icon": "Wind",
+      "trend": "Bearish",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "RB=F",
+      "name": "Gasoline",
+      "price": 3.12,
+      "unit": "gal",
+      "change_pct": -0.67,
+      "change_abs": -0.02,
+      "category": "Energy",
+      "icon": "Droplet",
+      "trend": "Bearish",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "HG=F",
+      "name": "Copper",
+      "price": 5.62,
+      "unit": "lb",
+      "change_pct": -0.7,
+      "change_abs": -0.04,
+      "category": "Industrial Metals",
+      "icon": "Hammer",
+      "trend": "Bearish",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "ZN=F",
+      "name": "Zinc",
+      "price": 110.7,
+      "unit": "mt",
+      "change_pct": -0.01,
+      "change_abs": -0.02,
+      "category": "Industrial Metals",
+      "icon": "Shield",
+      "trend": "Neutral",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "ZC=F",
+      "name": "Corn",
+      "price": 449.0,
+      "unit": "bu",
+      "change_pct": -0.88,
+      "change_abs": -4.0,
+      "category": "Agriculture",
+      "icon": "Leaf",
+      "trend": "Bearish",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "ZS=F",
+      "name": "Soybeans",
+      "price": 1161.25,
+      "unit": "bu",
+      "change_pct": -0.28,
+      "change_abs": -3.25,
+      "category": "Agriculture",
+      "icon": "Sprout",
+      "trend": "Neutral",
+      "last_updated": "2026-04-06 15:33:33"
+    },
+    {
+      "ticker": "ZW=F",
+      "name": "Wheat",
+      "price": 591.5,
+      "unit": "bu",
+      "change_pct": -1.25,
+      "change_abs": -7.5,
+      "category": "Agriculture",
+      "icon": "Wheat",
+      "trend": "Bearish",
+      "last_updated": "2026-04-06 15:33:33"
+    }
+  ]
+}
