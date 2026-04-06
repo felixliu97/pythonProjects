@@ -1,79 +1,32 @@
 ---
 name: solution-design
-description: Designs software solutions and architectures. Use when planning new features, systems, or discussing technical approaches.
+description: Structured approach, documentation templates, and technical standards for software architecture and system design.
 ---
 
-# Solution Design Skill
+# Solution Design Skill (Technical)
 
-When designing solutions, follow this structured approach:
+Standard process and documentation requirements for proposing technical solutions.
 
-## 1. Requirements Gathering
+## 1. Design Lifecycle
 
-- **Functional Requirements**: What must the system do?
-- **Non-Functional Requirements**: Performance, scalability, security, reliability
-- **Constraints**: Technology stack, budget, timeline, team skills
-- **Assumptions**: Document any assumptions made
+For any architectural change, address these pillars in order:
 
-## 2. Design Process
+1. **Problem Analysis**: Identify functional requirements (FRs), non-functional requirements (NFRs), and success metrics.
+2. **Architecture Blueprint**: High-level component interactions. Use **Mermaid diagrams**.
+3. **Technology Selection**: Justify choices of databases, frameworks, and protocols (Sync vs. Async).
+4. **Data Modeling**: Schema design, data flow, and consistency strategies.
+5. **Interface Design**: API contracts, integration patterns, and contract testing.
+6. **Resilience & Security**: Caching, balancing, disaster recovery, and threat modeling.
+7. **Implementation Roadmap**: Phased delivery plan (MVP -> V1) with risk mitigations.
 
-### Problem Analysis
-1. Break down the problem into smaller components
-2. Identify existing solutions or patterns that apply
-3. Consider trade-offs between different approaches
+## 2. Documentation Standards
 
-### Architecture Patterns
+- **Visuals**: Mandatory use of Mermaid for flowcharts and ERDs.
+- **Trade-offs**: Always document alternative approaches considered and the rationale for the final choice.
+- **Patterns**: Leverage known patterns (Monolith, Microservices, Event-Driven, or CQRS) where appropriate.
 
-| Pattern | Use When |
-|---------|----------|
-| **Monolith** | Small team, simple domain, rapid prototyping |
-| **Microservices** | Large teams, independent deployments, scaling needs |
-| **Event-Driven** | Async workflows, decoupled systems |
-| **CQRS** | Complex queries, separate read/write scaling |
-
-### Design Principles
-
-- **SOLID** principles for object-oriented design
-- **DRY** (Don't Repeat Yourself)
-- **KISS** (Keep It Simple, Stupid)
-- **YAGNI** (You Aren't Gonna Need It)
-
-## 3. Documentation Deliverables
-
-When creating a design document, include:
-
-```markdown
-# Solution Design: [Feature Name]
-
-## Problem Statement
-Brief description of the problem being solved.
-
-## Proposed Solution
-High-level overview of the approach.
-
-## Technical Design
-- Architecture diagram (use Mermaid)
-- Component breakdown
-- Data models
-- API contracts
-
-## Trade-offs & Alternatives
-| Option | Pros | Cons |
-|--------|------|------|
-
-## Implementation Plan
-1. Phase 1: ...
-2. Phase 2: ...
-
-## Risks & Mitigations
-- Risk 1: Mitigation strategy
-```
-
-## 4. Review Checklist
-
-Before finalizing a design:
-- [ ] Does it solve the stated problem?
-- [ ] Is it the simplest solution that works?
-- [ ] Are edge cases considered?
-- [ ] Is it testable?
-- [ ] Is it maintainable?
-- [ ] Does it align with existing architecture?
+## 3. Review Checklist
+- [ ] Does it solve the FRs?
+- [ ] Is it the simplest possible solution?
+- [ ] Are potential bottlenecks identified?
+- [ ] Is the design testable and observable?

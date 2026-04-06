@@ -5,33 +5,24 @@ description: Reviews code changes for bugs, style issues, and best practices. Us
 
 # Code Review Skill
 
-When reviewing code, follow this checklist:
+Use this checklist during PR reviews or when auditing local code.
 
-## Review Checklist
+## 1. Correctness & Logic
+- Does the code achieve the intended functional Goal?
+- Are edge cases (nulls, empty lists, timeouts) handled?
+- Are there any off-by-one errors or logical fallacies?
 
-### 1. Correctness
-- Does the code do what it's supposed to do?
-- Are there any logic errors?
-- Are edge cases handled?
+## 2. Style & Readability
+- Follows PEP 8 (Python) or project-specific style guides.
+- Naming is descriptive, not cryptic (e.g., `user_id` vs `uid`).
+- Complex logic is explained via comments, not over-abstracted.
 
-### 2. Style
-- Is the code readable and well-formatted?
-- Are variable/function names descriptive?
-- Is there appropriate commenting?
+## 3. Performance & Security
+- No redundant database queries or API calls inside loops.
+- Input is sanitized before use in commands or queries.
+- Sensitive data is NOT logged or printed.
 
-### 3. Performance
-- Are there any obvious performance issues?
-- Are there unnecessary loops or operations?
-- Is memory being used efficiently?
-
-### 4. Security
-- Are there any security vulnerabilities?
-- Is user input properly validated/sanitized?
-- Are sensitive data handled securely?
-
-## Feedback Guidelines
-
-- Be constructive and specific
-- Explain *why* something should be changed
-- Suggest alternatives when pointing out issues
-- Acknowledge good code practices when you see them
+## Feedback Etiquette
+- Be **constructive**: "Consider using X here because..."
+- **Praise** good implementations.
+- Distinguish between **Blocking** issues and **Nitpicks**.
