@@ -59,7 +59,7 @@ ASX/.pdf_cache/
 
 # Commodity Dashboard
 FullStack/commodity_dashboard/frontend/.next/
-FullStack/commodity_dashboard/backend/commodities_cache.json/
+FullStack/commodity_dashboard/backend/commodities_cache.json
 FullStack/commodity_dashboard/frontend/src/api-client/
 FullStack/commodity_dashboard/frontend/openapi-ts-error-*.log
 FullStack/commodity_dashboard/frontend/npm-debug.log*
