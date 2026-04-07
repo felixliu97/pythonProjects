@@ -258,11 +258,15 @@
       table = document.getElementById(tableId);
       switching = true; dir = "asc"; 
       
-      function parseCol(str) {
+      function parseCol(cell) {
+        if (cell.hasAttribute("data-sort")) return parseFloat(cell.getAttribute("data-sort"));
+        var str = cell.textContent.trim();
         if (!str || str === "-" || str === "N/A") return -999999;
         var clean = str.replace(/[$,%+]/g, "").trim();
         // Check if looks like a date (YYYY-MM-DD)
-        if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(clean)) return -999999;
+        if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(clean)) {
+            return new Date(clean).getTime() || -999999;
+        }
         var val = parseFloat(clean);
         if (isNaN(val)) return -999999;
         return val;
@@ -275,11 +279,8 @@
           x = rows[i].getElementsByTagName("TD")[n];
           y = rows[i + 1].getElementsByTagName("TD")[n];
           
-          var xContent = x.textContent.trim();
-          var yContent = y.textContent.trim();
-          
-          var xVal = parseCol(xContent);
-          var yVal = parseCol(yContent);
+          var xVal = parseCol(x);
+          var yVal = parseCol(y);
           
           var isNumX = xVal !== -999999;
           var isNumY = yVal !== -999999;
@@ -288,9 +289,10 @@
             if (dir == "asc") { if (xVal > yVal) { shouldSwitch = true; break; } }
             else { if (xVal < yVal) { shouldSwitch = true; break; } }
           } else {
-            // String comparison (works for dates too)
-            if (dir == "asc") { if (xContent.toLowerCase() > yContent.toLowerCase()) { shouldSwitch = true; break; } }
-            else { if (xContent.toLowerCase() < yContent.toLowerCase()) { shouldSwitch = true; break; } }
+            var xText = x.textContent.trim().toLowerCase();
+            var yText = y.textContent.trim().toLowerCase();
+            if (dir == "asc") { if (xText > yText) { shouldSwitch = true; break; } }
+            else { if (xText < yText) { shouldSwitch = true; break; } }
           }
         }
         if (shouldSwitch) {
@@ -301,7 +303,6 @@
         }
       }
 
-      // Final visual indicators
       var headers = table.getElementsByTagName("TH");
       for (var h = 0; h < headers.length; h++) {
         headers[h].classList.remove("sort-asc", "sort-desc");

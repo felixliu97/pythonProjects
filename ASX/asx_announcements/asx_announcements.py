@@ -26,6 +26,14 @@ except ImportError:
     PDF_SUPPORT = False
     print("Warning: pdfplumber not installed. PDF analysis disabled.")
 
+class _C:
+    R=chr(27)+'[0m'; DIM=chr(27)+'[2m'; GREEN=chr(27)+'[92m'
+    YELLOW=chr(27)+'[93m'; BOLD=chr(27)+'[1m'
+def _ok(m):   print(f"{_C.GREEN}{m}{_C.R}")
+def _warn(m): print(f"{_C.YELLOW}{m}{_C.R}")
+def _dim(m):  print(f"{_C.DIM}{m}{_C.R}",  end="", flush=True)
+def _info(m): print(f"{_C.DIM}{m}{_C.R}")
+
 API_BASE = "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements"
 HEADER_API = "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header"
 PDF_CDN = "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/"
@@ -81,6 +89,7 @@ def read_existing_yaml(yaml_path: str) -> Tuple[Optional[str], Set[str], List[Di
                     "Date": date,
                     "Summary": str(row.get("Summary", "")),
                     "PDF_Link": str(row.get("PDF_Link", "")),
+                    "Rating": int(row.get("Rating", 2))
                 })
     except Exception as e:
         print(f"Warning: Could not read existing YAML: {e}")
@@ -107,7 +116,7 @@ def fetch_announcements(months: int = 2, start_override: Optional[str] = None) -
     session.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
     all_items = []
     page = 0
-    print(f"Fetching ASX price-sensitive announcements ({start_date:%Y-%m-%d} -> {end_date:%Y-%m-%d})...")
+    _info(f"Fetching ASX price-sensitive announcements ({start_date:%Y-%m-%d} -> {end_date:%Y-%m-%d})...")
 
     while True:
         params["page"] = page
@@ -123,11 +132,11 @@ def fetch_announcements(months: int = 2, start_override: Optional[str] = None) -
         if not items: break
 
         all_items.extend(items)
-        print(f"\r  Fetched {len(all_items)}/{total} announcements...", end="", flush=True)
+        _dim(f"\r  Fetched {len(all_items)}/{total} announcements...")
         if len(all_items) >= total: break
         page += 1
         time.sleep(0.3)
-    print(f"\n  Total fetched: {len(all_items)}")
+    _info(f"\n  Total fetched: {len(all_items)}")
     return all_items
 
 def fetch_company_name(symbol: str, session: requests.Session) -> Tuple[str, str]:
@@ -192,6 +201,43 @@ def _parse_summary(text: str) -> str:
         summary = (summary + " " + s).strip()
     return summary if summary else body_text[:300]
 
+def calculate_rating(headline: str, summary: str) -> int:
+    hl = headline.lower()
+    sm = summary.lower() if summary else ""
+    
+    # 5 - Exceptional (Most Positive)
+    # Direct high-impact keywords
+    if any(kw in hl for kw in ["discovery", "high-grade", "high grade", "bonanza", "spectacular", "exceptional", "tier 1", "world class", "maiden resource", "production commenced", "etf", "inclusion", "index", "msci", "s&p", "streaming", "offtake", "fortune 500", "patent granted"]):
+        return 5
+    
+    # Large monetary deals or commitments
+    is_billion = any(kw in hl for kw in ["billion", "bn", " b ", "b$"])
+    has_large_money = is_billion or (any(kw in hl for kw in ["$", "million", " m ", "m$"]) and any(f"{i}00" in hl for i in range(1, 10)))
+    
+    if has_large_money:
+        if any(kw in hl for kw in ["commitment", "offer", "strategic", "agreement", "financing", "funding", "hybrid", "securities", "launch", "collaboration"]):
+            return 5
+        return 4
+    
+    # 4 - Significant
+    if any(kw in hl for kw in ["resource upgrade", "binding offtake", "major acquisition", "dfs", "pfs", "feasibility", "final investment decision", "fid", "takeover", "merger", "award", "contract", "financing", "funding", "facility", "agreement", "strategic"]):
+        return 4
+    if any(kw in hl for kw in ["high-grade", "high grade"]) and any(kw in hl for kw in ["assay", "results", "drilling"]):
+        return 4
+
+    # 3 - Interesting
+    if any(kw in hl for kw in ["assay", "results", "drilling", "commenced", "strategic partnership", "mou", "capital raise", "placement", "acquisition"]):
+        return 3
+    if any(kw in sm for kw in ["high-grade", "high grade", "discovery"]):
+        return 3
+
+    # 1 - Potentially Negative (Most Negative)
+    if any(kw in hl for kw in ["termination", "withdrawal", "disappointing", "delay", "failed", "cancelled"]):
+        return 1
+
+    # 2 - Routine / Neutral
+    return 2
+
 def process_event(event: Dict, session: requests.Session, pdf_dir: str, skip_pdf: bool) -> Dict:
     summary = ""
     if not skip_pdf:
@@ -217,6 +263,7 @@ def process_event(event: Dict, session: requests.Session, pdf_dir: str, skip_pdf
                 summary = extract_pdf_summary(pdf_bytes)
                 if summary: break
     event["Summary"] = summary if summary else event["headline"]
+    event["Rating"] = calculate_rating(event["headline"], event["Summary"])
     return event
 
 def main() -> None:
@@ -228,7 +275,6 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.html_only:
-        print("\n=== Generating Announcements HTML from YAML ===")
         generate_html()
         return
 
@@ -252,11 +298,11 @@ def main() -> None:
         max_date, existing_keys, existing_anns = read_existing_yaml(yaml_db)
         if max_date:
             start_override = max_date
-            print(f"Checking for new announcements starting from {max_date}...")
+            _info(f"Checking for new announcements starting from {max_date}...")
         else:
-            print("No existing database found or max date could not be determined. Starting fresh.")
+            _info("No existing database found. Starting fresh.")
     else:
-        print("Full refresh requested. Ignoring existing database entries for start date.")
+        _warn("Full refresh requested. Ignoring existing database entries for start date.")
 
     raw_items = []
     # In announcements, we always fetch unless html-only (which returns early)
@@ -295,13 +341,13 @@ def main() -> None:
 
     events_list = list(events_map.values())
     if events_list:
-        print(f"\nFound {len(events_list)} new price-sensitive announcements.")
+        _info(f"Found {len(events_list)} new price-sensitive announcements.")
     elif fetch_new:
-        print("\nNo new price-sensitive announcements found.")
+        _info("No new price-sensitive announcements found.")
     
     processed_events = []
     if events_list:
-        print(f"Processing PDFs & Downloading to local folder (Total {len(events_list)})...")
+        _info(f"Processing PDFs & Downloading to local folder (Total {len(events_list)})...")
         workers = min(10, max(1, len(events_list)))
         with ThreadPoolExecutor(max_workers=workers) as executor:
             futures = {executor.submit(process_event, ev, session, pdf_dir, args.no_pdf): ev for ev in events_list}
@@ -309,7 +355,7 @@ def main() -> None:
             for future in as_completed(futures):
                 processed_events.append(future.result())
                 completed += 1
-                print(f"\r  Processed {completed}/{len(events_list)}", end="", flush=True)
+                _dim(f"\r  Processed {completed}/{len(events_list)}")
         print()
 
     new_anns_mapped = []
@@ -321,7 +367,9 @@ def main() -> None:
         new_anns_mapped.append({
             "ASX_Code": sym, "Company": "", 
             "Headline": ev.get("headline", ""), "Date": ev.get("date", ""),
-            "Summary": ev.get("Summary", ""), "PDF_Link": pdf_link
+            "Summary": ev.get("Summary", ""), 
+            "PDF_Link": pdf_link,
+            "Rating": ev.get("Rating", 2)
         })
 
     all_announcements = existing_anns + new_anns_mapped
@@ -336,7 +384,7 @@ def main() -> None:
     })
     
     if symbols_to_fetch:
-        print(f"Fetching company names for {len(symbols_to_fetch)} symbols (new or missing)...")
+        _info(f"Fetching company names for {len(symbols_to_fetch)} symbols (new or missing)...")
         name_map = {}
         workers = min(20, max(1, len(symbols_to_fetch)))
         with ThreadPoolExecutor(max_workers=workers) as executor:
@@ -353,8 +401,13 @@ def main() -> None:
     else:
         print("All company names are already present. Skipping name fetch.")
 
-    all_announcements.sort(key=lambda x: x["Date"], reverse=True)
-    print(f"\nProcessed {len(all_announcements)} valid announcements.")
+    all_announcements.sort(key=lambda x: (x.get("Date", ""), x.get("Rating", 2)), reverse=True)
+    
+    # --- Keep only the last 2 weeks of announcements ---
+    two_weeks_ago = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
+    all_announcements = [ann for ann in all_announcements if ann.get("Date", "") >= two_weeks_ago]
+    
+    _info(f"\nProcessed {len(all_announcements)} valid announcements (Last 14 days).")
 
     # ── Export YAML config ───────────────────────────────────────────────
     config_dir = os.path.abspath(os.path.join(root, "..", "config"))
@@ -369,12 +422,12 @@ def main() -> None:
             "Date": ann.get("Date", ""),
             "Summary": ann.get("Summary", ""),
             "PDF_Link": ann.get("PDF_Link", ""),
+            "Rating": ann.get("Rating", 2)
         })
     with open(yaml_path, "w", encoding="utf-8") as f:
         yaml.dump(yaml_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    print(f"Exported YAML config to {yaml_path}")
+    # _ok(f"Exported YAML config to {yaml_path}")
 
-    print("\n=== Generating Announcements HTML ===")
     generate_html()
 
 # ── HTML Generation ──────────────────────────────────────────────────────────
@@ -411,20 +464,33 @@ def build_row(ann: dict) -> str:
     date_str = str(ann.get("Date", ""))
     summary = str(ann.get("Summary", ""))
     pdf_link = str(ann.get("PDF_Link", ""))
+    rating = int(ann.get("Rating", 2))
 
     date_cls = get_date_class(date_str)
     hl_cls = determine_headline_class(str(ann.get("Headline", "")))
+
+    rating_labels = {
+        5: "极佳 (5)",
+        4: "优异 (4)",
+        3: "良好 (3)",
+        2: "普通 (2)",
+        1: "警告 (1)"
+    }
+    rating_text = rating_labels.get(rating, "普通 (2)")
+    rating_cls = f"rating-{rating}"
 
     row = '<tr>\n'
     row += f'  <td>\n    <div class="ticker">{code}</div>\n'
     if company:
         row += f'    <div class="company-name">{company}</div>\n'
     row += '  </td>\n'
-    row += f'  <td>\n    <span class="{date_cls}">{html.escape(date_str)}</span>\n  </td>\n'
+    row += f'  <td data-sort="{date_str}">\n    <span class="{date_cls}">{html.escape(date_str)}</span>\n  </td>\n'
     row += f'  <td>\n    <span class="event-pill {hl_cls}">{headline}</span>\n  </td>\n'
     
     summary_escaped = html.escape(summary) if summary else '<span style="color:#ccc;font-size:10px;">-</span>'
     row += f'  <td>\n    <div class="summary-text">{summary_escaped}</div>\n  </td>\n'
+    
+    row += f'  <td data-sort="{rating}">\n    <span class="rating-badge {rating_cls}">{rating_text}</span>\n  </td>\n'
     
     if pdf_link:
         row += f'  <td>\n    <a class="pdf-link" href="{html.escape(pdf_link)}" target="_blank">📄 PDF</a>\n  </td>\n'
@@ -498,7 +564,7 @@ def generate_html(save_file: bool = True) -> str:
         os.makedirs(os.path.dirname(html_out), exist_ok=True)
         with open(html_out, 'w', encoding='utf-8') as f:
             f.write(final_html)
-        print(f"Generated {html_out} successfully with {len(announcements)} announcements.")
+        _ok(f"Generated {html_out} successfully with {len(announcements)} announcements.")
     
     return final_html
 

@@ -7,6 +7,11 @@ from datetime import datetime
 # Current reference date for "past" vs "future"
 TODAY = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
+class _C:
+    R=chr(27)+'[0m'; GREEN=chr(27)+'[92m'; YELLOW=chr(27)+'[93m'
+def _ok(m):   print(f"{_C.GREEN}{m}{_C.R}")
+def _warn(m): print(f"{_C.YELLOW}{m}{_C.R}")
+
 # Paths
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_FILE = os.path.join(os.path.dirname(ROOT_DIR), "config", "asx_catalysts.yaml")
@@ -173,7 +178,7 @@ def generate_html(save_file: bool = True) -> str:
         with open(JSON_FILE, 'r', encoding='utf-8') as f:
             stocks = yaml.safe_load(f)
     except Exception as e:
-        print(f"Error loading YAML from {JSON_FILE}: {e}")
+        _warn(f"Error loading YAML from {JSON_FILE}: {e}")
         return ""
             
     def breakout_key(s):
@@ -245,7 +250,7 @@ def generate_html(save_file: bool = True) -> str:
     if save_file:
         with open(HTML_OUT, 'w', encoding='utf-8') as f:
             f.write(final_html)
-        print(f"Generated {HTML_OUT} successfully with {len(stocks or [])} stocks.")
+        _ok(f"Generated {HTML_OUT} successfully with {len(stocks or [])} stocks.")
     
     return final_html
 

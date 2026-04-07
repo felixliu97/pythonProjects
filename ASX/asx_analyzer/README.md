@@ -36,11 +36,13 @@ Assigns a "Trending Score" to each asset based on a weighted sum of:
 
 ## Output
 
-- **Console**: Color-coded ASCII tables sorted by trending score
-- **HTML**: `output/asx_analyzer.html` — Interactive dashboard with sortable columns, insights section (top gainers/decliners, sector performance, volume spikes, RSI alerts)
+- **Console**: Color-coded ASCII tables sorted by trending score.
+- **YAML Storage**: Computation results (current price, score, RSI, etc.) are saved directly into `config/asx_analyzer.yaml` using a compact, single-line-per-entry format. This allows the configuration to act as a persistent state cache.
+- **HTML**: `output/asx_analyzer.html` — Interactive dashboard with sortable columns, insights section (top gainers/decliners, sector performance, volume spikes, RSI alerts).
 
 ## Data Processing
 
-- **Concurrent Fetching**: 10 worker threads for simultaneous data retrieval
-- **Resilience**: Gracefully handles API errors for individual tickers
-- **ETF Filtering**: Excludes ETFs with AUM under $1 Billion
+- **Concurrent Fetching**: 10 worker threads for simultaneous data retrieval.
+- **Resilience**: Gracefully handles API errors for individual tickers.
+- **Compact Serialization**: Custom YAML serializer ensures that each instrument remains on a single line even when populated with analysis data, keeping the configuration file manageable.
+- **ETF Filtering**: Excludes ETFs with AUM under $1 Billion.

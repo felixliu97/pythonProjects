@@ -16,8 +16,8 @@ python run.py announcements --no-pdf
 # Custom lookback period
 python run.py announcements --months 3
 
-# Re-generate HTML from existing YAML (no API calls)
-python run.py announcements-html
+# Re-generate HTML from latest YAML (cached)
+python run.py announcements --html-only
 ```
 
 ## Output Pipeline

@@ -58,13 +58,25 @@ python run.py catalysts          # Generate Catalyst Radar HTML
 python run.py analyzer           # Run Technical Trend Analyzer (HTML)
 python run.py announcements      # Scan → YAML + HTML
 python run.py placements         # Scan → YAML + HTML
-python run.py all                # Full re-scan and regenerate EVERYTHING (all 4)
+python run.py dashboard          # Regenerate unified dashboard FROM existing YAML cache
+python run.py all                # Full re-scan and update EVERYTHING (all 4 modules)
 ```
+
+## Refined Experience
+
+- **Clean CLI Output**: All modules now feature a standardized, non-distracting console interface with dimmed progress logs and clear success notifications.
+- **Unified Dashboard**: The `run.py dashboard` command creates a single, integrated HTML view combining all four research modules into one screen.
+- **Optimized Storage**: Modules like `asx_analyzer` use a compact YAML format to store metadata and results together, keeping the `config/` directory clean.
 
 ## Data Pipeline
 
 ```
-ASX API → Scanner (asx_announcements.py / asx_placements.py)
-              ├── config/asx_*.yaml     (structured tracking DB core)
-              └── output/*.html         (styled dashboard, natively generated)
+ASX API → Scanners (asx_announcements.py / asx_placements.py)
+              ├── config/asx_*.yaml     (Centralized tracking DB)
+              └── output/*.html         (Styled dashboard)
+
+yFinance → Analyzer (asx_analyzer.py)
+              └── config/asx_analyzer.yaml (Merges results into config)
 ```
+
+> **Optimization**: The `asx_analyzer` now uses a compact, single-line-per-entry YAML format within the primary `config/asx_analyzer.yaml` file to store both static metadata and dynamic results, eliminating redundant cache files.

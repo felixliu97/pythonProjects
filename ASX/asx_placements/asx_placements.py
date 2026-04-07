@@ -30,6 +30,14 @@ try:
 except ImportError:
     PDF_SUPPORT = False
 
+class _C:
+    R=chr(27)+'[0m'; DIM=chr(27)+'[2m'; GREEN=chr(27)+'[92m'
+    YELLOW=chr(27)+'[93m'; BOLD=chr(27)+'[1m'
+def _ok(m):   print(f"{_C.GREEN}{m}{_C.R}")
+def _warn(m): print(f"{_C.YELLOW}{m}{_C.R}")
+def _dim(m):  print(f"{_C.DIM}{m}{_C.R}",  end="", flush=True)
+def _info(m): print(f"{_C.DIM}{m}{_C.R}")
+
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
@@ -291,7 +299,7 @@ def fetch_announcements(
 
     all_items: List[Dict] = []
     page = 0
-    print(
+    _info(
         f"Fetching ASX 'issued capital' announcements "
         f"({start_date:%Y-%m-%d} -> {end_date:%Y-%m-%d})..."
     )
@@ -313,10 +321,8 @@ def fetch_announcements(
             break
 
         all_items.extend(items)
-        print(
-            f"\r  Fetched {len(all_items)}/{total} announcements...",
-            end="",
-            flush=True,
+        _dim(
+            f"\r  Fetched {len(all_items)}/{total} announcements..."
         )
 
         if len(all_items) >= total:
@@ -325,7 +331,7 @@ def fetch_announcements(
         page += 1
         time.sleep(0.3)
 
-    print(f"\n  Total fetched: {len(all_items)}")
+    _info(f"\n  Total fetched: {len(all_items)}")
     return all_items
 
 
@@ -521,7 +527,6 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.html_only:
-        print("\n=== Generating Placements HTML from YAML ===")
         generate_html()
         return
 
@@ -568,7 +573,7 @@ def main() -> None:
                     f"(existing database max date: {max_date})"
                 )
             else:
-                print(
+                _info(
                     f"Database is already up to date "
                     f"(max date: {max_date}). Updating latest prices for existing records."
                 )
@@ -632,12 +637,12 @@ def main() -> None:
 
     events_list = list(events.values())
     if events_list:
-        print(
-            f"\nFiltered and deduplicated to "
+        _info(
+            f"Filtered and deduplicated to "
             f"{len(events_list)} new placement events."
         )
     else:
-        print("\nNo new placements found to fetch.")
+        _info("No new placements found to fetch.")
 
     # ── 3. Parallel PDF extraction ───────────────────────────────────────
     total = len(events_list)
@@ -645,7 +650,7 @@ def main() -> None:
     processed_events: List[Dict] = []
     
     if total > 0:
-        print(
+        _info(
             f"Processing PDFs & extracting data "
             f"(Total events: {total})..."
         )
@@ -661,17 +666,15 @@ def main() -> None:
             for future in as_completed(futures):
                 processed_events.append(future.result())
                 completed += 1
-                print(
-                    f"\r  Processed {completed}/{total} events",
-                    end="",
-                    flush=True,
+                _dim(
+                    f"\r  Processed {completed}/{total} events"
                 )
         print()
         
     # ── 3.6 Filter liquidity for NEW events using yfinance ───────────────
     if processed_events:
         unique_new_symbols = list({ev["symbol"] for ev in processed_events})
-        print(f"\nFiltering liquidity for {len(unique_new_symbols)} new symbols...")
+        _info(f"\nFiltering liquidity for {len(unique_new_symbols)} new symbols...")
         symbol_status = {}
         
         workers = min(20, max(1, len(unique_new_symbols)))
@@ -684,7 +687,7 @@ def main() -> None:
                 symbol_status[sym] = (is_liquid, reason)
                 done += 1
                 if done % 10 == 0:
-                    print(f"\r  Processed {done}/{len(unique_new_symbols)} liquidity checks...", end="", flush=True)
+                    _dim(f"\r  Processed {done}/{len(unique_new_symbols)} liquidity checks...")
         print()
                     
         removed = []
@@ -701,9 +704,9 @@ def main() -> None:
         unique_removed.sort()
         
         if unique_removed:
-            print(f"\n--- Removed {len(unique_removed)} illiquid new symbols ---")
+            _warn(f"Removed {len(unique_removed)} illiquid new symbols:")
             for sym, reason in unique_removed:
-                 print(f"  {sym}: {reason}")
+                _warn(f"  {sym}: {reason}")
                  
         processed_events = filtered_new_events
 
@@ -724,7 +727,7 @@ def main() -> None:
     unique_symbols = list(
         {ev["symbol"] for ev in all_events}
     )
-    print(
+    _info(
         f"Fetching live prices for "
         f"{len(unique_symbols)} symbols..."
     )
@@ -745,7 +748,7 @@ def main() -> None:
                 price_map[sym] = px
             if dname:
                 name_map[sym] = dname
-    print(
+    _info(
         f"  Got price/info for {len(price_map)}/"
         f"{len(unique_symbols)} symbols."
     )
@@ -799,7 +802,7 @@ def main() -> None:
             }
         )
 
-    print(f"\nProcessed {len(rows)} valid placement events.")
+    _info(f"\nProcessed {len(rows)} valid placement events.")
 
     # ── Export YAML config ───────────────────────────────────────────────
     config_dir = os.path.abspath(os.path.join(root, "..", "config"))
@@ -827,9 +830,8 @@ def main() -> None:
         })
     with open(yaml_path, "w", encoding="utf-8") as f:
         yaml.dump(yaml_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    print(f"Exported YAML config to {yaml_path}")
+    # _ok(f"Exported YAML config to {yaml_path}")
 
-    print("\n=== Generating Placements HTML ===")
     generate_html()
 
 # ── HTML Generation ──────────────────────────────────────────────────────────
@@ -1005,7 +1007,7 @@ def generate_html(save_file: bool = True) -> str:
         os.makedirs(os.path.dirname(html_out), exist_ok=True)
         with open(html_out, 'w', encoding='utf-8') as f:
             f.write(final_html)
-        print(f"Generated {html_out} successfully with {len(placements)} placements.")
+        _ok(f"Generated {html_out} successfully with {len(placements)} placements.")
     
     return final_html
 

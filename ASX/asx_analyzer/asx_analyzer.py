@@ -21,6 +21,16 @@ class Colors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    DIM = '\033[2m'
+
+    @staticmethod
+    def ok(msg):    print(f"{Colors.GREEN}{msg}{Colors.ENDC}")
+    @staticmethod
+    def warn(msg):  print(f"{Colors.WARNING}{msg}{Colors.ENDC}")
+    @staticmethod
+    def fail(msg):  print(f"{Colors.FAIL}{Colors.BOLD}{msg}{Colors.ENDC}")
+    @staticmethod
+    def info(msg):  print(f"{Colors.DIM}{msg}{Colors.ENDC}")
 
 class ASXTrendingStocks:
     def __init__(self):
@@ -31,7 +41,6 @@ class ASXTrendingStocks:
         try:
             with open(self.config_file, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
-            
             self.asx_stocks = config.get('stocks', [])
             self.asx_etfs = config.get('etfs', [])
             self.weights = config.get('weights', {
@@ -48,11 +57,18 @@ class ASXTrendingStocks:
                 'price_change_alert': 5.0, 'volume_change_alert': 50.0
             })
         except Exception as e:
-            print(f"Warning: Could not load config file ({e}). Using defaults.")
+            Colors.warn(f"Warning: Could not load config file ({e}). Using defaults.")
             self.asx_stocks = []
+            self.asx_etfs = []
             self.weights = {}
             self.settings = {}
             self.thresholds = {}
+
+        # Reconstruct cached results from embedded stock/etf data
+        self.results = {
+            'stocks': [s for s in self.asx_stocks if 'score' in s],
+            'etfs':   [e for e in self.asx_etfs   if 'score' in e],
+        }
         
     def get_stock_bundle(self, symbol: str, period: str = '1mo') -> tuple:
         """Fetch stock history and metadata info with retry logic"""
@@ -238,7 +254,7 @@ class ASXTrendingStocks:
         return results
 
     def get_trending_stocks(self) -> Dict[str, List[Dict]]:
-        print("Fetching ASX stock data...")
+        Colors.info("Fetching ASX stock data...")
         start_time = time.time()
         
         stock_results = self._process_items(self.asx_stocks, is_etf=False)
@@ -247,19 +263,101 @@ class ASXTrendingStocks:
         if limit is not None:
             stock_results = stock_results[:limit]
             
-        print("Fetching ASX ETF data...")
+        Colors.info("Fetching ASX ETF data...")
         etf_results = self._process_items(self.asx_etfs, is_etf=True)
         etf_results.sort(key=lambda x: x['score'], reverse=True)
         if limit is not None:
              etf_results = etf_results[:limit]
 
         elapsed = time.time() - start_time
-        print(f"Data fetching completed in {elapsed:.2f} seconds.\n")
+        Colors.info(f"Data fetching completed in {elapsed:.2f} seconds.")
         
         return {
             'stocks': stock_results,
             'etfs': etf_results
         }
+    
+    def _convert_to_python_types(self, obj):
+        """Recursively convert numpy types to standard Python types for YAML serialization"""
+        if isinstance(obj, dict):
+            return {k: self._convert_to_python_types(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_to_python_types(i) for i in obj]
+        elif hasattr(obj, 'item'): # Handle numpy scalars
+            return obj.item()
+        elif isinstance(obj, np.generic): # Handle other numpy types
+            return obj.tolist()
+        return obj
+
+    def _write_compact_config(self, config: dict):
+        """Write config YAML with one line per stock/etf entry"""
+        _NEEDS_QUOTE = set(':,{}[]#&*?|-<>=!%@`\'"')
+
+        def _val(v):
+            if v is None: return 'null'
+            if isinstance(v, bool): return 'true' if v else 'false'
+            if isinstance(v, (int, float)): return repr(v)
+            s = str(v)
+            if any(c in s for c in _NEEDS_QUOTE) or not s:
+                return f'"{s}"'
+            return s
+
+        def flow_item(d):
+            ordered = {}
+            for k in ['symbol', 'name', 'industry']:  # identity fields first
+                if k in d: ordered[k] = d[k]
+            for k, v in d.items():
+                if k not in ordered: ordered[k] = v
+            return '{' + ', '.join(f'{k}: {_val(v)}' for k, v in ordered.items()) + '}'
+
+        lines = []
+        lines.append('settings:')
+        for k, v in config.get('settings', {}).items():
+            lines.append(f'  {k}: {"null" if v is None else v}')
+        lines.append('thresholds:')
+        for k, v in config.get('thresholds', {}).items():
+            lines.append(f'  {k}: {v}')
+        lines.append('weights:')
+        for k, v in config.get('weights', {}).items():
+            lines.append(f'  {k}: {v}')
+        if config.get('timestamp'):
+            lines.append(f'timestamp: {config["timestamp"]}')
+        lines.append('stocks:')
+        for s in config.get('stocks', []):
+            lines.append(f'  - {flow_item(s)}')
+        lines.append('etfs:')
+        for e in config.get('etfs', []):
+            lines.append(f'  - {flow_item(e)}')
+
+        with open(self.config_file, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines) + '\n')
+
+    def save_results(self, data: Dict[str, List[Dict]]):
+        """Merge fetched results into config/asx_analyzer.yaml (one line per stock/etf)"""
+        try:
+            with open(self.config_file, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f) or {}
+
+            # Build lookup from fetched results (converted to plain Python types)
+            result_lookup = {
+                item['symbol']: self._convert_to_python_types(item)
+                for item in data.get('stocks', []) + data.get('etfs', [])
+            }
+
+            IDENTITY = {'symbol', 'name', 'industry'}
+            for section in ('stocks', 'etfs'):
+                for entry in config.get(section, []):
+                    res = result_lookup.get(entry['symbol'])
+                    if res:
+                        for k, v in res.items():
+                            if k not in IDENTITY:
+                                entry[k] = v
+
+            config['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            self._write_compact_config(config)
+            # Colors.ok(f"Results saved to {self.config_file}")
+        except Exception as e:
+            Colors.fail(f"Error saving results: {e}")
     
     def colorize(self, value, metric_type) -> tuple:
         val = float(value)
@@ -501,8 +599,14 @@ class ASXTrendingStocks:
                 html += f"<p>Oversold (<30): <span class='positive'>{os_list}</span></p>"
         html += "</div>"
         return html
-
-    def generate_html_report(self, data: Dict[str, List[Dict]], save_file: bool = True) -> str:
+    
+    def generate_html_report(self, data: Dict[str, List[Dict]] = None, save_file: bool = True) -> str:
+        if data is None:
+            if not self.results:
+                print("No results found in config to generate report.")
+                return ""
+            data = self.results
+            
         date_str = datetime.now().strftime('%Y-%m-%d')
         out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "output"))
         os.makedirs(out_dir, exist_ok=True)
@@ -613,25 +717,33 @@ class ASXTrendingStocks:
             try:
                 with open(filename, "w", encoding='utf-8') as f:
                     f.write(html_content)
-                print(f"\n{Colors.GREEN}Report generated successfully: {filename}{Colors.ENDC}")
+                Colors.ok(f"Generated {filename} successfully with {len(trending_stocks)} stocks and {len(trending_etfs)} ETFs.")
             except Exception as e:
-                print(f"{Colors.FAIL}Failed to generate HTML report: {e}{Colors.ENDC}")
+                Colors.fail(f"Failed to generate HTML report: {e}")
         
         return html_content
 
 def main():
-    print("ASX Stocks/ETFs Analyzer")
-    print("=" * 50)
+    import argparse
+    parser = argparse.ArgumentParser(description="ASX Stocks/ETFs Analyzer")
+    parser.add_argument("--html-only", action="store_true", help="Only generate HTML from existing YAML (no data fetching)")
+    parser.add_argument("--quiet", action="store_true", help="Suppress console print of the results table")
+    args = parser.parse_args()
     try:
         analyzer = ASXTrendingStocks()
-        market_data = analyzer.get_trending_stocks()
-        analyzer.display_results(market_data)
-        analyzer.generate_html_report(market_data)
+        if args.html_only:
+             analyzer.generate_html_report()
+        else:
+            market_data = analyzer.get_trending_stocks()
+            if not args.quiet:
+                analyzer.display_results(market_data)
+            analyzer.save_results(market_data)
+            analyzer.generate_html_report(market_data)
     except Exception as e:
         import traceback
         traceback.print_exc()
-        print(f"An error occurred: {e}")
-        print("Please check your internet connection and try again.")
+        Colors.fail(f"An error occurred: {e}")
+        Colors.warn("Please check your internet connection and try again.")
 
 if __name__ == "__main__":
     main()

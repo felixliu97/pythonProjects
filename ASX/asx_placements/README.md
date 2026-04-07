@@ -16,8 +16,8 @@ python run.py placements --no-pdf
 # Custom lookback period
 python run.py placements --months 3
 
-# Re-generate HTML from existing YAML (no API calls)
-python run.py placements-html
+# Re-generate HTML from latest YAML (cached)
+python run.py placements --html-only
 ```
 
 ## Output Pipeline

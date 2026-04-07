@@ -80,6 +80,28 @@
       background-color: #f1f3f5;
     }
 
+    .radar-table th[onclick] {
+      cursor: pointer;
+    }
+
+    .radar-table th[onclick]:hover {
+      background-color: #cbd5e1;
+    }
+
+    .radar-table th.sort-asc::after {
+      content: " ▲";
+      font-size: 8px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .radar-table th.sort-desc::after {
+      content: " ▼";
+      font-size: 8px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
     .ticker {
       font-weight: 500;
       font-size: 13px;
@@ -219,7 +241,82 @@
       border-radius: 4px;
       font-weight: 500;
     }
+
+    .rating-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 50px;
+    }
+
+    .rating-5 { background: #FFD700; color: #856404; } /* 极佳 - Gold */
+    .rating-4 { background: #D4EDDA; color: #155724; } /* 优异 - Green */
+    .rating-3 { background: #CCE5FF; color: #004085; } /* 良好 - Blue */
+    .rating-2 { background: #E2E3E5; color: #383d41; } /* 普通 - Grey */
+    .rating-1 { background: #F8D7DA; color: #721c24; } /* 警告 - Red */
   </style>
+  <script>
+    function sortTable(n, tableId) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById(tableId);
+      switching = true; dir = "asc"; 
+      
+      function parseCol(cell) {
+        if (cell.hasAttribute("data-sort")) return parseFloat(cell.getAttribute("data-sort"));
+        var str = cell.textContent.trim();
+        if (!str || str === "-" || str === "N/A") return -999999;
+        var clean = str.replace(/[$,%+]/g, "").trim();
+        // Check if looks like a date (YYYY-MM-DD)
+        if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(clean)) {
+            return new Date(clean).getTime() || -999999;
+        }
+        var val = parseFloat(clean);
+        if (isNaN(val)) return -999999;
+        return val;
+      }
+
+      while (switching) {
+        switching = false; rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+          
+          var xVal = parseCol(x);
+          var yVal = parseCol(y);
+          
+          var isNumX = xVal !== -999999;
+          var isNumY = yVal !== -999999;
+          
+          if (isNumX && isNumY) {
+            if (dir == "asc") { if (xVal > yVal) { shouldSwitch = true; break; } }
+            else { if (xVal < yVal) { shouldSwitch = true; break; } }
+          } else {
+            var xText = x.textContent.trim().toLowerCase();
+            var yText = y.textContent.trim().toLowerCase();
+            if (dir == "asc") { if (xText > yText) { shouldSwitch = true; break; } }
+            else { if (xText < yText) { shouldSwitch = true; break; } }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true; switchcount ++; 
+        } else {
+          if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; }
+        }
+      }
+
+      var headers = table.getElementsByTagName("TH");
+      for (var h = 0; h < headers.length; h++) {
+        headers[h].classList.remove("sort-asc", "sort-desc");
+      }
+      if (dir == "asc") { headers[n].classList.add("sort-asc"); }
+      else { headers[n].classList.add("sort-desc"); }
+    }
+  </script>
 </head>
 
 <body>
@@ -241,13 +338,14 @@
     </div>
 
     <div class="tbl-wrap">
-      <table class="radar-table">
+      <table id="announcementsTable" class="radar-table">
         <thead>
           <tr>
-            <th style="width:6%; min-width:60px;">股票</th>
-            <th style="width:8%; min-width:80px;">日期</th>
-            <th style="width:25%; min-width:200px;">公告标题</th>
+            <th onclick="sortTable(0, 'announcementsTable')" style="width:6%; min-width:60px;">股票</th>
+            <th onclick="sortTable(1, 'announcementsTable')" style="width:8%; min-width:80px;">日期</th>
+            <th onclick="sortTable(2, 'announcementsTable')" style="width:25%; min-width:200px;">公告标题</th>
             <th style="width:40%; min-width:300px;">摘要</th>
+            <th onclick="sortTable(4, 'announcementsTable')" style="width:6%; min-width:60px;">评分</th>
             <th style="width:6%; min-width:50px;">PDF</th>
           </tr>
         </thead>
