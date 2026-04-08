@@ -207,7 +207,7 @@ def calculate_rating(headline: str, summary: str) -> int:
     
     # 5 - Exceptional (Most Positive)
     # Direct high-impact keywords
-    if any(kw in hl for kw in ["discovery", "high-grade", "high grade", "bonanza", "spectacular", "exceptional", "tier 1", "world class", "maiden resource", "production commenced", "etf", "inclusion", "index", "msci", "s&p", "streaming", "offtake", "fortune 500", "patent granted"]):
+    if any(kw in hl for kw in ["discovery", "high-grade", "high grade", "bonanza", "spectacular", "exceptional", "tier 1", "world class", "maiden resource", "production commenced", "etf", "inclusion", "index", "msci", "s&p", "streaming", "offtake", "fortune 500", "patent granted", "white house", "fast-41"]):
         return 5
     
     # Large monetary deals or commitments

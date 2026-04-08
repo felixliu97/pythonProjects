@@ -111,19 +111,7 @@ def build_row(stock):
          row_html += f'    <span class="event-pill e-result">{earn}</span>\n'
     row_html += '  </td>\n'
     
-    # 4. Heatmap
-    row_html += '  <td>\n    <div class="month-bar">\n'
-    for ht in stock.get("Heatmap", []):
-        st = ht.get("Status", "")
-        reason = ht.get("Reason", "")
-        mb_cls = "mb"
-        if st == "Hot": mb_cls = "mb mb-hot"
-        elif st == "Active": mb_cls = "mb mb-active"
-        elif st == "Watch": mb_cls = "mb mb-watch"
-        row_html += f'      <div class="{mb_cls}" title="{html.escape(reason, quote=True)}"></div>\n'
-    row_html += '    </div>\n  </td>\n'
-    
-    # 5. CR Risk
+    # 4. CR Risk
     row_html += '  <td>\n'
     cr = stock.get("CR_Risk", "")
     
@@ -192,8 +180,7 @@ def generate_html(save_file: bool = True) -> str:
         elif p.startswith("中"): base = -3
         elif p.startswith("低"): base = -1
         
-        hot_count = sum(1 for h in s.get("Heatmap", []) if h.get("Status") == "Hot")
-        return (base, -hot_count, s.get("Ticker", ""))
+        return (base, s.get("Ticker", ""))
         
     if stocks:
         stocks.sort(key=breakout_key)
