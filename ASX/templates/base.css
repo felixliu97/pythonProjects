@@ -122,7 +122,7 @@ th {
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
-    background: var(--bg-card) !important;
+    background: rgba(59, 130, 246, 0.08) !important;
 }
 
 td {
@@ -131,7 +131,40 @@ td {
     vertical-align: middle;
 }
 
+tbody tr:nth-child(even) { background-color: var(--bg-main); }
+
 tr:hover td { background: rgba(59, 130, 246, 0.05); }
+
+/* Clarity for sorting arrows */
+.dataTable-sorter::before, .dataTable-sorter::after {
+    content: none !important;
+    border: none !important;
+}
+
+.dataTable-sorter::after {
+    content: " \2195" !important; /* Default up-down arrow */
+    margin-left: 8px;
+    font-size: 0.85rem;
+    opacity: 0.2;
+    transition: opacity 0.2s, color 0.2s;
+    vertical-align: middle;
+}
+
+.dataTable-sorter:hover::after {
+    opacity: 0.5;
+}
+
+.asc .dataTable-sorter::after {
+    content: " \2191" !important; /* Up arrow for ASC */
+    opacity: 1 !important;
+    color: var(--primary) !important;
+}
+
+.desc .dataTable-sorter::after {
+    content: " \2193" !important; /* Down arrow for DESC */
+    opacity: 1 !important;
+    color: var(--primary) !important;
+}
 
 /* Badges & Pills */
 .badge {
