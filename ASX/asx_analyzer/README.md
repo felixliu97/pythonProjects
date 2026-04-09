@@ -1,48 +1,46 @@
-# ASX Trend Analyzer
+# ASX Market Analyzer
 
-A Python-based utility that identifies trending stocks and ETFs on the Australian Securities Exchange (ASX). It scores instruments based on price momentum, volume analysis, and technical indicators (RSI, Volatility) to help identify potential trading opportunities.
+A multi-threaded technical analysis engine that identifies trending stocks and ETFs. It evaluates momentum using a combination of price action, volume spikes, and relative strength (RSI).
 
 ## Quick Start
 
 ```bash
-pip install yfinance pandas numpy pyyaml
-
+# Process market data and refresh dashboard
 python run.py analyzer
 ```
 
 ## Configuration
 
-The application reads `config/asx_analyzer.yaml` for stock/ETF watchlists and scoring parameters.
+The application reads `config/asx_analyzer.yaml` for watchlists and scoring parameters.
 
-**YAML Structure:**
-- `stocks`: Array of stock ticker strings (e.g., `"BHP.AX"`)
-- `etfs`: Array of ETF ticker strings (e.g., `"VAS.AX"`)
-- `weights`: (Optional) Scoring weights for different metrics
-- `settings`: (Optional) Analysis parameters (e.g., `rsi_period`, `min_data_points`)
-- `thresholds`: (Optional) Alert triggers (e.g., `rsi_upper`, `price_change_alert`)
-
-## System Requirements
-
-- **Python**: 3.7+
-- **Dependencies**: `yfinance`, `pandas`, `numpy`, `pyyaml`
-- **Network**: Active internet connection required (Yahoo Finance API)
+**Key Config Sections:**
+- `growth_stocks`: High-momentum, catalyst-driven opportunities.
+- `foundation_stocks`: Stable, large-cap portfolio anchors.
+- `etfs`: ETF ticker strings (e.g., `VAS.AX`).
+- `weights`: Scoring weights for the 100-point algorithm.
 
 ## Scoring Algorithm
 
-Assigns a "Trending Score" to each asset based on a weighted sum of:
-- **Price Momentum**: 1-day, 5-day, and 20-day percentage changes
-- **Volume Analysis**: Current volume vs. historical average
-- **Technical Signals**: RSI and Volatility (Std Dev of returns)
+The "Momentum Score" is a hard-quantitative algorithm that prevents penny-stock outliers from destabilizing the ranks.
+
+**Current Formula & Weights:**
+- **1D Price Change** (30%): Near-term absolute velocity.
+- **5D Price Change** (25%): Weekly confirmation pivot.
+- **20D Price Change** (15%): Monthly trend anchor.
+- **Volume Surge (volume_change)** (20%): `(Current / Average Vol) - 1`. **Note: Capped at maximum 400%** to prevent 10x anomalous penny stock volume spikes from blindly dictating the score.
+- **Mom / Trend (momentum)** (10%): `(RSI - 50)`. Uses relative divergence instead of redundant raw price action.
+
+> [!IMPORTANT]  
+> **Clarification: `volume_change` vs `volatility`**
+> - **`volume_change` (Volume Surge):** The calculated percentage spike in daily trading volume vs historical average. Used *strictly internally* to calculate the momentum score.
+> - **`volatility` (Displayed as Risk/Volatility):** The annualized standard deviation of historic daily price returns. Placed strictly in the dashboard as an *informational display column*, and is **NOT** used to calculate the score.
 
 ## Output
 
-- **Console**: Color-coded ASCII tables sorted by trending score.
-- **YAML Storage**: Computation results (current price, score, RSI, etc.) are saved directly into `config/asx_analyzer.yaml` using a compact, single-line-per-entry format. This allows the configuration to act as a persistent state cache.
-- **HTML**: `output/asx_analyzer.html` — Interactive dashboard with sortable columns, insights section (top gainers/decliners, sector performance, volume spikes, RSI alerts).
+This module operates as a **Headless Data Engine**:
+1. Processes market data for all configured tickers.
+2. Exports structured research to `output/asx_analyzer.json`.
+3. Automatically triggers a dashboard refresh via `run.py`.
 
-## Data Processing
-
-- **Concurrent Fetching**: 10 worker threads for simultaneous data retrieval.
-- **Resilience**: Gracefully handles API errors for individual tickers.
-- **Compact Serialization**: Custom YAML serializer ensures that each instrument remains on a single line even when populated with analysis data, keeping the configuration file manageable.
-- **ETF Filtering**: Excludes ETFs with AUM under $1 Billion.
+> [!NOTE]
+> The analyzer handles data sanitization (filtering out infinity/NaN values) to ensure dashboard stability.

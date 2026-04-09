@@ -4,79 +4,81 @@ A comprehensive, unified Python suite for Australian Securities Exchange (ASX) d
 
 ## Project Architecture
 
-```
+The suite follows a **Headless Data Engine** pattern: individual modules extract and process raw data into JSON/YAML, while a single Unified Dashboard serves as the presentation layer.
+
+```text
 ASX/
 │
-├── asx_analyzer/         # Technical momentum, volume, and RSI screener for Stocks/ETFs
-├── asx_announcements/    # Automated tracker for price-sensitive market announcements
-├── asx_catalysts/        # Fundamental tracked catalyst radar builder (HTML)
-├── asx_placements/       # Capital raising and placement discount detection tool
+├── asx_analyzer/         # Momentum, volume, and RSI screener for Stocks/ETFs
+├── asx_announcements/    # price-sensitive market announcement tracker
+├── asx_catalysts/        # Fundamental catalyst radar & database
+├── asx_placements/       # Capital raising discovery & PDF extractor
 │
-├── .pdf_cache/           # Shared fast-access PDF document cache
-├── config/               # Centralized YAML data (asx_{module}.yaml)
-│   ├── asx_analyzer.yaml       # Analyzer stock/ETF watchlists & scoring weights
-│   ├── asx_announcements.yaml  # Announcements scanner output (auto-generated)
-│   ├── asx_catalysts.yaml      # Catalyst radar stock database (manually curated)
-│   └── asx_placements.yaml     # Placements scanner output (auto-generated)
+├── config/               # Source metadata and database storage
+│   ├── asx_analyzer.yaml       # Analyzer watchlists (Growth/Foundation)
+│   ├── asx_announcements.yaml  # Persistent history of news items
+│   ├── asx_catalysts.yaml      # Master catalyst database
+│   └── asx_placements.yaml     # Capital raising history
 │
-├── templates/            # Centralized HTML templates (asx_{module}.html)
-│   ├── asx_analyzer.html       # Technical trend dashboard template
-│   ├── asx_announcements.html  # Announcements dashboard template
-│   ├── asx_catalysts.html      # Catalyst radar template
-│   └── asx_placements.html     # Placements dashboard template
+├── templates/            # Global UI Templates
+│   ├── asx_dashboard.html      # Unified Pro Dashboard (Jinja2)
+│   └── base.css                # Shared modern styling
 │
-├── output/               # All exported reports (HTML)
-│   ├── asx_analyzer.html       # Technical trend leaderboard
-│   ├── asx_announcements.html  # Announcements dashboard
-│   ├── asx_catalysts.html      # Catalyst radar dashboard
-│   └── asx_placements.html     # Placements dashboard
+├── output/               # Production Data & UI
+│   ├── asx_dashboard.html      # THE UNIFIED HUB (Open this for results)
+│   ├── asx_analyzer.json       # Ingested by dashboard
+│   ├── asx_announcements.json  # Ingested by dashboard
+│   ├── asx_catalysts.json      # Ingested by dashboard
+│   └── asx_placements.json     # Ingested by dashboard
 │
-├── run.py                # Unified CLI runner
-└── asx_sectors.md        # AI prompt documentation for the 11 ASX Core Sectors
+└── run.py                # Unified CLI runner (Entry point)
 ```
-
-> **Note**: All generated dashboards (`.html`) are automatically routed to the `output/` directory. Persistent tracking data and configuration files reside inside the `config/` directory using the `asx_{module}.yaml` naming convention.
 
 ## Modules
 
 ### 1. Catalyst Radar (`asx_catalysts`)
-Compiles tracking information of high-conviction fundamental plays from `config/asx_catalysts.yaml` and builds an interactive HTML radar sorted by event timeline, probability, and execution risk.
+Compiles tracking information of high-conviction fundamental plays.
+- **Risk-Adjusted Sorting**: Rankings based on Probability (High->Low) and CR Risk (Low->High).
+- **Headless Mode**: Exports structured research to JSON for the master dashboard.
 
 ### 2. Market Analyzer (`asx_analyzer`)
-Pulls Yahoo Finance data for a predefined set of tickers listed in `config/asx_analyzer.yaml`. Performs technical factor ranking (SMA, Momentum, Volatility, RSI) and outputs a scored HTML interactive leaderboard.
+Pulls live market data for predefined set of tickers.
+- **Categorized View**: Specialized tracking for **Growth / Catalyst** and **Large Cap / Foundation** stocks.
+- **Momentum Scoring**: Proprietary 100-point score using price action (1D/5D/20D), Volume Breaks, and RSI.
 
-### 3. Price-Sensitive Announcements Scanner (`asx_announcements`)
-Directly polls the ASX MarkIt API for strictly price-sensitive news over a specified lookback timeframe. Uses multi-threaded parsing (`pdfplumber`) alongside keyword extraction to build summarized datasets. Outputs YAML (`config/asx_announcements.yaml`) + styled HTML dashboard.
+### 3. Announcements Scanner (`asx_announcements`)
+Directly polls the ASX MarkIt API for news.
+- **AI-Ready Summary**: Uses `pdfplumber` to extract text and builds structured news datasets.
+- **Rolling Retention**: Maintains a high-signal 7-day rolling window of price-sensitive news.
 
-### 4. Placements & Capital Raisings (`asx_placements`)
-Targeted pipeline looking for new capital issues (placements, SPP). Extracts issuance prices out of PDFs, fetches real-time ticker prices concurrently, and computes the discount/premium % for immediate arbitrage detection. Outputs YAML (`config/asx_placements.yaml`) + styled HTML dashboard.
+### 4. Placements Scanner (`asx_placements`)
+Targeted pipeline for capital raisings.
+- **Discount Detection**: Extracts issuance prices out of PDFs and compares them to real-time market prices.
 
 ## Unified CLI
 
+Every data command now **automatically synchronizes** with the dashboard.
+
 ```bash
-python run.py catalysts          # Generate Catalyst Radar HTML
-python run.py analyzer           # Run Technical Trend Analyzer (HTML)
-python run.py announcements      # Scan → YAML + HTML
-python run.py placements         # Scan → YAML + HTML
-python run.py dashboard          # Regenerate unified dashboard FROM existing YAML cache
-python run.py all                # Full re-scan and update EVERYTHING (all 4 modules)
+python run.py catalysts          # Sync Catalysts -> Dashboard
+python run.py analyzer           # Sync Market Trends -> Dashboard
+python run.py announcements      # Sync News Feed -> Dashboard
+python run.py placements         # Sync Placements -> Dashboard
+python run.py dashboard          # Regenerate dashboard from existing data
+python run.py all                # Full pipeline run (Refresh everything)
 ```
-
-## Refined Experience
-
-- **Clean CLI Output**: All modules now feature a standardized, non-distracting console interface with dimmed progress logs and clear success notifications.
-- **Unified Dashboard**: The `run.py dashboard` command creates a single, integrated HTML view combining all four research modules into one screen.
-- **Optimized Storage**: Modules like `asx_analyzer` use a compact YAML format to store metadata and results together, keeping the `config/` directory clean.
 
 ## Data Pipeline
 
 ```
-ASX API → Scanners (asx_announcements.py / asx_placements.py)
-              ├── config/asx_*.yaml     (Centralized tracking DB)
-              └── output/*.html         (Styled dashboard)
-
-yFinance → Analyzer (asx_analyzer.py)
-              └── config/asx_analyzer.yaml (Merges results into config)
+[ ASX API / yFinance ] 
+         ↓
+  [ Data Engines ] (Python + PDF Extractors)
+         ↓
+ [ Structured JSON ] (output/*.json)
+         ↓
+[ Unified Dashboard ] (Jinja2 + asx_dashboard.html)
 ```
 
-> **Optimization**: The `asx_analyzer` now uses a compact, single-line-per-entry YAML format within the primary `config/asx_analyzer.yaml` file to store both static metadata and dynamic results, eliminating redundant cache files.
+> [!TIP]
+> Always use **run.py** as your entry point. The individual module scripts are "headless" and no longer generate standalone HTML files.

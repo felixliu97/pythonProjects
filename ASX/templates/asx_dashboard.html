@@ -1,99 +1,683 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ASX Unified Performance Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ASX Pro Analysis Suite v2.1</title>
+    <link rel="stylesheet" href="base.css">
+    <link href="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.js" type="text/javascript"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8fafc; color: #1e293b; }
-        
-        .dashboard-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; }
-        .dashboard-title { font-size: 28px; font-weight: 700; color: #0f172a; }
-        .dashboard-timestamp { font-size: 13px; color: #64748b; }
-
-        /* Main Tabs Table */
-        .main-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-        .main-tab-btn { padding: 12px 24px; border: none; background: #fff; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 15px; font-weight: 600; color: #64748b; border: 1px solid #e2e8f0; border-bottom: none; transition: all 0.2s; }
-        .main-tab-btn:hover { background: #f1f5f9; color: #0f172a; }
-        .main-tab-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-        
-        .tab-content-wrap { background: #fff; border-radius: 0 8px 8px 8px; border: 1px solid #e2e8f0; padding: 0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow: hidden; min-height: 600px; }
-        .tab-content { display: none; padding: 0; }
-        .tab-content.active { display: block; }
-
-        /* Consolidating Module Styles */
-        {{ master_styles }}
-        
-        /* Overrides to adapt the fragments */
-        .module-wrap .wrap { padding: 20px; }
-        .module-wrap h1 { display: none; } /* Hide module headers as we have dashboard header */
-        
-        /* Ensure the nested tabs in Analyzer work */
-        .module-wrap #Stocks, .module-wrap #ETFs { display: block; } /* Show by default if script doesn't trigger on load */
-    </style>
-    <script>
-        function selectMainTab(evt, tabId) {
-            var i, contents, btns;
-            contents = document.getElementsByClassName("tab-content");
-            for (i = 0; i < contents.length; i++) {
-                contents[i].style.display = "none";
-            }
-            btns = document.getElementsByClassName("main-tab-btn");
-            for (i = 0; i < btns.length; i++) {
-                btns[i].className = btns[i].className.replace(" active", "");
-            }
-            document.getElementById(tabId).style.display = "block";
-            evt.currentTarget.className += " active";
-            
-            // Re-trigger defaults for the module (e.g. nested tabs)
-            if (tabId === 'tab-analyzer') {
-                const defOpen = document.querySelector('#module-analyzer button[id="defaultOpen"]');
-                if (defOpen) defOpen.click();
-            }
+        .search-container {
+            position: relative;
+            max-width: 450px;
+            width: 100%;
         }
         
-        // Include module scripts
-        {{ master_scripts }}
+        #globalSearch {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            border-radius: 99px;
+            border: 2px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            outline: none;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        #globalSearch:focus { border-color: var(--primary); }
+
+        .search-icon {
+            position: absolute;
+            left: 1.1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .score-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.75rem;
+            color: white;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .score-high { background: #059669; }
+        .score-med { background: #d97706; }
+        .score-low { background: #dc2626; }
+
+        .cr-pill { padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; white-space: nowrap; }
+        .cr-high { background: #fee2e2; color: #991b1b; }
+        .cr-med { background: #fef3c7; color: #92400e; }
+        .cr-low { background: #d1fae5; color: #065f46; }
+
+        .dataTable-wrapper .dataTable-top { padding: 0 0 1.5rem 0; }
+        .dataTable-wrapper .dataTable-bottom { padding: 1.5rem 0 0 0; }
         
-        // Wrap everything in an onload
-        window.onload = function() {
-            // Click the default main tab
-            document.querySelector('.main-tab-btn').click();
-        };
-    </script>
+        [data-theme="dark"] .dataTable-table { color: #f8fafc; }
+        [data-theme="dark"] .dataTable-info, [data-theme="dark"] .dataTable-pagination a { color: #94a3b8; }
+        
+        #themeToggle {
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+        #themeToggle:hover { transform: scale(1.1); border-color: var(--primary); }
+
+        /* Sub-tabs */
+        .sub-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sub-tab {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .sub-tab:hover {
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        .sub-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Timeline Styles */
+        .timeline-container {
+            position: relative;
+            padding: 1rem 0;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 50px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 15px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg-card);
+            z-index: 2;
+        }
+
+        .timeline-date {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            background: var(--bg-main);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .timeline-content:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+        }
+
+        .timeline-ticker {
+            font-weight: 800;
+            color: var(--text-main);
+            margin-right: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 2px 6px;
+            border-top-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <div class="dashboard-header">
+    <script>
+        // Immediate theme sync to prevent flash
+        const savedTheme = localStorage.getItem('asx-theme') || 'dark';
+        document.body.dataset.theme = savedTheme;
+    </script>
+    <div class="container animate-up">
+        <header>
             <div>
-                <h1 class="dashboard-title">ASX Unified DASHBOARD</h1>
-                <p style="font-size: 14px; color: #64748b;">Comprehensive ASX market and sentiment analysis</p>
+                <h1>ASX Pro <span style="color:var(--primary)">Suite</span> <span style="font-size: 0.9rem; vertical-align: middle; background: var(--border); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); font-weight: 600;">v1.0</span></h1>
+                <p class="timestamp">Market Engine Sync: {{ timestamp }}</p>
             </div>
-            <div class="dashboard-timestamp">Last Updated: {{ timestamp }}</div>
-        </div>
+            
+            <div style="display: flex; gap: 1.2rem; align-items: center;">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="globalSearch" placeholder="Search ticker, name, or industry...">
+                </div>
+                <button id="themeToggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">🌓</button>
+            </div>
+        </header>
 
-        <div class="main-tabs">
-            <button class="main-tab-btn" onclick="selectMainTab(event, 'tab-analyzer')">📊 Trend Analyzer</button>
-            <button class="main-tab-btn" onclick="selectMainTab(event, 'tab-catalysts')">🚀 Catalyst Radar</button>
-            <button class="main-tab-btn" onclick="selectMainTab(event, 'tab-announcements')">📢 Recent Announcements</button>
-            <button class="main-tab-btn" onclick="selectMainTab(event, 'tab-placements')">💰 Capital Placements</button>
-        </div>
+        <nav id="mainNav">
+            <button class="active" onclick="showTab('analyzer')">📊 Market Trends</button>
+            <button onclick="showTab('catalysts')">🚀 Catalyst Radar</button>
+            <button onclick="showTab('announcements')">📢 News Feed</button>
+            <button onclick="showTab('placements')">💰 Capital Placements</button>
+        </nav>
 
-        <div class="tab-content-wrap">
-            <div id="tab-analyzer" class="tab-content">
-                {{ analyzer_content }}
-            </div>
-            <div id="tab-catalysts" class="tab-content">
-                {{ catalysts_content }}
-            </div>
-            <div id="tab-announcements" class="tab-content">
-                {{ announcements_content }}
-            </div>
-            <div id="tab-placements" class="tab-content">
-                {{ placements_content }}
-            </div>
-        </div>
+        <main>
+            <!-- Market Trends Tab -->
+            <section id="tab-analyzer" class="tab-pane">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <h3 style="font-size: 1.4rem;">Market Momentum Scoreboard</h3>
+                            <p class="dim" style="margin-bottom: 0.5rem;">Proprietary scoring based on price action, volume breaks and RSI</p>
+                            <div style="font-size: 0.75rem; background: var(--bg-main); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); display: inline-flex; gap: 15px; flex-wrap: wrap;">
+                                <span><strong style="color:var(--primary)">1D Price:</strong> 30%</span>
+                                <span><strong style="color:var(--primary)">5D Price:</strong> 25%</span>
+                                <span><strong style="color:var(--primary)">20D Price:</strong> 15%</span>
+                                <span><strong style="color:var(--primary)">Vol Surge:</strong> 20%</span>
+                                <span><strong style="color:var(--primary)">Trend (RSI):</strong> 10%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" onclick="switchSubTab('growth-stocks-table', this)">Growth / Catalyst</button>
+                        <button class="sub-tab" onclick="switchSubTab('foundation-stocks-table', this)">Large Cap / Foundation</button>
+                        <button class="sub-tab" onclick="switchSubTab('etfs-table', this)">ETFs / Listed Funds</button>
+                    </div>
+
+                    <!-- Growth Stocks Sub-Tab -->
+                    <div id="growth-stocks-table" class="tab-content active">
+                        <div class="table-container">
+                            <table id="growthStockTable">
+                                <thead>
+                                    <tr>
+                                        <th>Ticker</th>
+                                        <th>Name</th>
+                                        <th>Industry</th>
+                                        <th data-type="number">Cap</th>
+                                        <th data-type="number">Price</th>
+                                        <th>Trend</th>
+                                        <th data-type="number">P/E</th>
+                                        <th data-type="number">P/S</th>
+                                        <th data-type="number">Score</th>
+                                        <th data-type="number">1D %</th>
+                                        <th data-type="number">5D %</th>
+                                        <th data-type="number">Mom.</th>
+                                        <th data-type="number">Volatility</th>
+                                        <th data-type="number">Vol Surge</th>
+                                        <th data-type="number">RSI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if analyzer and analyzer.growth_stocks %}
+                                    {% for s in analyzer.growth_stocks %}
+                                    <tr>
+                                        <td class="bold">{{ s.symbol }}</td>
+                                        <td><div style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ s.name }}</div></td>
+                                        <td class="dim">{{ s.industry }}</td>
+                                        <td class="dim">
+                                            <span style="display:none">{{ "%015d"|format(s.marketCap|default(0)) }}</span>{% if s.marketCap > 1000000000 %}{{ "%.1fb"|format(s.marketCap/1000000000) }}{% elif s.marketCap %}{{ "%.1fm"|format(s.marketCap/1000000) }}{% else %}-{% endif %}
+                                        </td>
+                                        <td class="bold"><span style="display:none">{{ "%010.3f"|format(s.current_price|default(0)) }}</span>${{ "%.2f"|format(s.current_price) }}</td>
+                                        <td>{{ s.sparkline | safe }}</td>
+                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.pe if s.pe is number else 99999.0) + 10000.0) }}</span>{{ "%.1f"|format(s.pe) if s.pe is number else '-' }}</td>
+                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.ps if s.ps is number else 99999.0) + 10000.0) }}</span>{{ "%.3f"|format(s.ps) if s.ps is number else '-' }}</td>
+                                        <td>
+                                            <span style="display:none">{{ "%010.3f"|format(s.score|default(0) + 10000.0) }}</span>
+                                            <span class="score-pill {{ 'score-high' if s.score > 60 else ('score-med' if s.score > 30 else 'score-low') }}">
+                                                {{ "%.1f"|format(s.score) }}
+                                            </span>
+                                        </td>
+                                        <td class="{{ 'pos' if s.price_change_1d > 0 else ('neg' if s.price_change_1d < 0 else 'dim') }}">
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_change_1d|default(0)) + 10000.0) }}</span>{{ "%.2f"|format(s.price_diff_1d) }} ({{ "%+ .1f"|format(s.price_change_1d) }}%)
+                                        </td>
+                                        <td class="{{ 'pos' if s.price_change_5d > 0 else ('neg' if s.price_change_5d < 0 else 'dim') }}">
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_change_5d|default(0)) + 10000.0) }}</span>{{ "%.2f"|format(s.price_diff_5d) }} ({{ "%+ .1f"|format(s.price_change_5d) }}%)
+                                        </td>
+                                        <td class="{{ 'pos' if s.momentum > 0 else ('neg' if s.momentum < 0 else 'dim') }}"><span style="display:none">{{ "%010.3f"|format(s.momentum|default(0) + 10000.0) }}</span>{{ "%+.1f"|format(s.momentum) }}%</td>
+                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format(s.volatility|default(0)) }}</span>{{ "%.1f"|format(s.volatility) }}%</td>
+                                        <td class="{{ 'pos' if s.volume_change > 0 else 'neg' }}"><span style="display:none">{{ "%010.3f"|format(s.volume_change|default(0) + 10000.0) }}</span>{{ "%.1f"|format(s.volume_change) }}%</td>
+                                        <td class="bold {% if s.rsi > 70 %}neg{% elif s.rsi < 30 %}pos{% endif %}"><span style="display:none">{{ "%010.3f"|format(s.rsi|default(0)) }}</span>{{ "%.1f"|format(s.rsi) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Foundation Stocks Sub-Tab -->
+                    <div id="foundation-stocks-table" class="tab-content">
+                        <div class="table-container">
+                            <table id="foundationStockTable">
+                                <thead>
+                                    <tr>
+                                        <th>Ticker</th>
+                                        <th>Name</th>
+                                        <th>Industry</th>
+                                        <th data-type="number">Cap</th>
+                                        <th data-type="number">Price</th>
+                                        <th>Trend</th>
+                                        <th data-type="number">P/E</th>
+                                        <th data-type="number">P/S</th>
+                                        <th data-type="number">Score</th>
+                                        <th data-type="number">1D %</th>
+                                        <th data-type="number">5D %</th>
+                                        <th data-type="number">Mom.</th>
+                                        <th data-type="number">Volatility</th>
+                                        <th data-type="number">Vol Surge</th>
+                                        <th data-type="number">RSI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if analyzer and analyzer.foundation_stocks %}
+                                    {% for s in analyzer.foundation_stocks %}
+                                    <tr>
+                                        <td class="bold">{{ s.symbol }}</td>
+                                        <td><div style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ s.name }}</div></td>
+                                        <td class="dim">{{ s.industry }}</td>
+                                        <td class="dim">
+                                            <span style="display:none">{{ "%015d"|format(s.marketCap|default(0)) }}</span>{% if s.marketCap > 1000000000 %}{{ "%.1fb"|format(s.marketCap/1000000000) }}{% elif s.marketCap %}{{ "%.1fm"|format(s.marketCap/1000000) }}{% else %}-{% endif %}
+                                        </td>
+                                        <td class="bold"><span style="display:none">{{ "%010.3f"|format(s.current_price|default(0)) }}</span>${{ "%.2f"|format(s.current_price) }}</td>
+                                        <td>{{ s.sparkline | safe }}</td>
+                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.pe if s.pe is number else 99999.0) + 10000.0) }}</span>{{ "%.1f"|format(s.pe) if s.pe is number else '-' }}</td>
+                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.ps if s.ps is number else 99999.0) + 10000.0) }}</span>{{ "%.3f"|format(s.ps) if s.ps is number else '-' }}</td>
+                                        <td>
+                                            <span style="display:none">{{ "%010.3f"|format(s.score|default(0) + 10000.0) }}</span>
+                                            <span class="score-pill {{ 'score-high' if s.score > 60 else ('score-med' if s.score > 30 else 'score-low') }}">
+                                                {{ "%.1f"|format(s.score) }}
+                                            </span>
+                                        </td>
+                                        <td class="{{ 'pos' if s.price_change_1d > 0 else ('neg' if s.price_change_1d < 0 else 'dim') }}">
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_change_1d|default(0)) + 10000.0) }}</span>{{ "%.2f"|format(s.price_diff_1d) }} ({{ "%+ .1f"|format(s.price_change_1d) }}%)
+                                        </td>
+                                        <td class="{{ 'pos' if s.price_change_5d > 0 else ('neg' if s.price_change_5d < 0 else 'dim') }}">
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_change_5d|default(0)) + 10000.0) }}</span>{{ "%.2f"|format(s.price_diff_5d) }} ({{ "%+ .1f"|format(s.price_change_5d) }}%)
+                                        </td>
+                                        <td class="{{ 'pos' if s.momentum > 0 else ('neg' if s.momentum < 0 else 'dim') }}"><span style="display:none">{{ "%010.3f"|format(s.momentum|default(0) + 10000.0) }}</span>{{ "%+.1f"|format(s.momentum) }}%</td>
+                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format(s.volatility|default(0)) }}</span>{{ "%.1f"|format(s.volatility) }}%</td>
+                                        <td class="{{ 'pos' if s.volume_change > 0 else 'neg' }}"><span style="display:none">{{ "%010.3f"|format(s.volume_change|default(0) + 10000.0) }}</span>{{ "%.1f"|format(s.volume_change) }}%</td>
+                                        <td class="bold {% if s.rsi > 70 %}neg{% elif s.rsi < 30 %}pos{% endif %}"><span style="display:none">{{ "%010.3f"|format(s.rsi|default(0)) }}</span>{{ "%.1f"|format(s.rsi) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ETFs Sub-Tab -->
+                    <div id="etfs-table" class="tab-content">
+                        <div class="table-container">
+                            <table id="etfTable">
+                                <thead>
+                                    <tr>
+                                        <th>Ticker</th>
+                                        <th>Fund Name</th>
+                                        <th>Sector</th>
+                                        <th data-type="number">Total Assets</th>
+                                        <th data-type="number">Price</th>
+                                        <th>Trend</th>
+                                        <th data-type="number">Yield</th>
+                                        <th data-type="number">Score</th>
+                                        <th data-type="number">1D %</th>
+                                        <th data-type="number">5D %</th>
+                                        <th data-type="number">Mom.</th>
+                                        <th data-type="number">Volatility</th>
+                                        <th data-type="number">Vol Surge</th>
+                                        <th data-type="number">RSI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if analyzer and analyzer.etfs %}
+                                    {% for e in analyzer.etfs %}
+                                    <tr>
+                                        <td class="bold">{{ e.symbol }}</td>
+                                        <td><div style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ e.name }}</div></td>
+                                        <td class="dim">{{ e.industry }}</td>
+                                        <td class="dim">
+                                            <span style="display:none">{{ "%015d"|format(e.marketCap|default(0)) }}</span>{% if e.marketCap > 1000000000 %}{{ "%.1fb"|format(e.marketCap/1000000000) }}{% elif e.marketCap %}{{ "%.1fm"|format(e.marketCap/1000000) }}{% else %}-{% endif %}
+                                        </td>
+                                        <td class="bold"><span style="display:none">{{ "%010.3f"|format(e.current_price|default(0)) }}</span>${{ "%.2f"|format(e.current_price) }}</td>
+                                        <td>{{ e.sparkline | safe }}</td>
+                                        <td class="dim bold" style="color: var(--positive);"><span style="display:none">{{ "%010.3f"|format(e.yield|default(0)) }}</span>{{ "%.2f"|format(e.yield) }}%</td>
+                                        <td>
+                                            <span style="display:none">{{ "%010.3f"|format(e.score|default(0) + 10000.0) }}</span>
+                                            <span class="score-pill {{ 'score-high' if e.score > 60 else ('score-med' if e.score > 30 else 'score-low') }}">
+                                                {{ "%.1f"|format(e.score) }}
+                                            </span>
+                                        </td>
+                                        <td class="{{ 'pos' if e.price_change_1d > 0 else ('neg' if e.price_change_1d < 0 else 'dim') }}">
+                                            <span style="display:none">{{ "%010.3f"|format((e.price_change_1d|default(0)) + 10000.0) }}</span>
+                                            {{ "%.2f"|format(e.price_diff_1d) }} ({{ "%+ .1f"|format(e.price_change_1d) }}%)
+                                        </td>
+                                        <td class="{{ 'pos' if e.price_change_5d > 0 else ('neg' if e.price_change_5d < 0 else 'dim') }}">
+                                            <span style="display:none">{{ "%010.3f"|format((e.price_change_5d|default(0)) + 10000.0) }}</span>
+                                            {{ "%.2f"|format(e.price_diff_5d) }} ({{ "%+ .1f"|format(e.price_change_5d) }}%)
+                                        </td>
+                                        <td class="{{ 'pos' if e.momentum > 0 else ('neg' if e.momentum < 0 else 'dim') }}"><span style="display:none">{{ "%010.3f"|format(e.momentum|default(0) + 10000.0) }}</span>{{ "%+.1f"|format(e.momentum) }}%</td>
+                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format(e.volatility|default(0)) }}</span>{{ "%.1f"|format(e.volatility) }}%</td>
+                                        <td class="{{ 'pos' if e.volume_change > 0 else 'neg' }}"><span style="display:none">{{ "%010.3f"|format(e.volume_change|default(0) + 10000.0) }}</span>{{ "%.1f"|format(e.volume_change) }}%</td>
+                                        <td class="bold {% if e.rsi > 70 %}neg{% elif e.rsi < 30 %}pos{% endif %}"><span style="display:none">{{ "%010.3f"|format(e.rsi|default(0)) }}</span>{{ "%.1f"|format(e.rsi) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Catalysts Tab -->
+            <section id="tab-catalysts" class="tab-pane" style="display:none">
+                <div class="card">
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" onclick="switchSubTab('stock-view', this)">Stock Analysis View</button>
+                        <button class="sub-tab" onclick="switchSubTab('timeline-view', this)">Master Explosive Timeline</button>
+                    </div>
+
+                    <!-- Stock View Sub-Tab -->
+                    <div id="stock-view" class="tab-content active">
+                        <div class="table-container">
+                            <table id="catalystTable">
+                                <thead>
+                                    <tr>
+                                        <th>Ticker Name</th>
+                                        <th>Timeline</th>
+                                        <th>Key Catalysts</th>
+                                        <th>Risks</th>
+                                        <th>Earnings</th>
+                                        <th>CR Risk</th>
+                                        <th>Prob.</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if catalysts.catalysts %}
+                                    {% for c in catalysts.catalysts %}
+                                    <tr>
+                                        <td>
+                                            <div class="bold" style="font-size: 1.1rem; color: var(--primary);">{{ c.Ticker }}</div>
+                                            <div class="badge badge-sector" style="margin-top: 5px;">{{ c.Sector }}</div>
+                                        </td>
+                                        <td>
+                                            {% if c.Timeline %}
+                                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                {% for tl in c.Timeline %}
+                                                <div style="font-size: 0.75rem; border-left: 2px solid var(--primary); padding-left: 6px;">
+                                                    <span class="bold">{{ tl.Time }}:</span> {{ tl.Event }}
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                            {% else %}-{% endif %}
+                                        </td>
+                                        <td>
+                                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                                {% for cat in c.Catalysts %}
+                                                <div style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--border); border-left: 3px solid #10b981; padding: 8px 10px; border-radius: 6px; line-height: 1.4;">{{ cat }}</div>
+                                                {% endfor %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                                {% for r in c.Risks %}
+                                                <div style="font-size: 0.8rem; background: rgba(239, 68, 68, 0.04); border: 1px solid var(--border); border-left: 3px solid #ef4444; padding: 8px 10px; border-radius: 6px; line-height: 1.4;">{{ r }}</div>
+                                                {% endfor %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                {% for e in c.Earnings_Window %}
+                                                <div style="font-size: 0.75rem; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3); padding: 5px 8px; border-radius: 4px; color: var(--text); text-align: center; font-weight: 500;">{{ e }}</div>
+                                                {% endfor %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% set crp = c.CR_Risk.split('(')[0].strip() if '(' in c.CR_Risk else c.CR_Risk %}
+                                            {% set cr_cls = 'cr-high' if '高' in crp else ('cr-med' if '中' in crp else 'cr-low') %}
+                                            <span class="cr-pill {{ cr_cls }}">{{ crp }}</span>
+                                        </td>
+                                        <td style="min-width: 80px;">
+                                             {% set pval = 50 %}
+                                             {% if c.Probability.startswith('极高') %}{% set pval = 90 %}{% elif c.Probability.startswith('高') %}{% set pval = 75 %}{% elif c.Probability.startswith('中高') %}{% set pval = 65 %}{% elif c.Probability.startswith('中') %}{% set pval = 50 %}{% else %}{% set pval = 30 %}{% endif %}
+                                             <div style="width:100%; height:8px; background:var(--border); border-radius:4px; margin-bottom:4px; overflow: hidden;">
+                                                 <div style="width:{{ pval }}%; height:100%; background:var(--primary);"></div>
+                                             </div>
+                                             <span style="font-size:0.75rem; font-weight: 600;">{{ c.Probability }}</span>
+                                        </td>
+                                        <td class="dim" style="max-width: 250px;">{{ c.Core_Notes }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Timeline Sub-Tab -->
+                    <div id="timeline-view" class="tab-content">
+                        <div class="timeline-container">
+                            {% if analyzer.global_timeline %}
+                            {% for event in analyzer.global_timeline %}
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-date">{{ event.time }}</div>
+                                <div class="timeline-content">
+                                    <span class="timeline-ticker">{{ event.ticker }}</span>
+                                    <span style="font-weight: 500;">{{ event.event }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div style="padding: 2rem; text-align: center; color: var(--text-dim);">
+                                No upcoming global catalysts found for 2026.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- News Feed Tab -->
+            <section id="tab-announcements" class="tab-pane" style="display:none">
+                <div class="card">
+                    <table id="annTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Code</th>
+                                <th>Company</th>
+                                <th>Headline & Summary</th>
+                                <th>Rating</th>
+                                <th>PDF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if announcements.announcements %}
+                            {% for a in announcements.announcements %}
+                            <tr>
+                                <td style="white-space:nowrap" class="dim bold">{{ a.Date }}</td>
+                                <td class="bold" style="color: var(--primary);">{{ a.ASX_Code }}</td>
+                                <td class="dim bold" style="font-size: 0.8rem;">{{ a.Company }}</td>
+                                <td>
+                                    <div class="bold" style="margin-bottom: 6px; font-size: 0.95rem;">{{ a.Headline }}</div>
+                                    <div class="dim" style="background: var(--bg-main); padding: 8px; border-radius: 6px; border-left: 3px solid var(--border);">
+                                        {{ a.Summary }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="score-pill {{ 'score-high' if a.Rating >= 4 else ('score-med' if a.Rating == 3 else 'score-low') }}">
+                                        {{ a.Rating }}/5
+                                    </span>
+                                </td>
+                                <td><a href="{{ a.PDF_Link }}" target="_blank" style="text-decoration:none; font-size: 1.4rem;" title="View PDF">📄</a></td>
+                            </tr>
+                            {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Placements Tab -->
+            <section id="tab-placements" class="tab-pane" style="display:none">
+                <div class="card">
+                    <table id="placTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Code</th>
+                                <th>Company Name</th>
+                                <th>Placement Event Detail</th>
+                                <th>CR Price</th>
+                                <th>Live</th>
+                                <th data-type="number">Diff %</th>
+                                <th>Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if placements.placements %}
+                            {% for p in placements.placements %}
+                            <tr>
+                                <td class="dim bold">{{ p.Date }}</td>
+                                <td class="bold" style="color: var(--primary);">{{ p.ASX_Code }}</td>
+                                <td class="bold dim" style="font-size: 0.8rem;">{{ p.Company }}</td>
+                                <td style="font-size: 0.85rem;">{{ p.Headline }}</td>
+                                <td class="bold"><span style="display:none">{{ "%010.3f"|format(p.CR_Price|float if p.CR_Price else 0.0) }}</span>${{ "%.3f"|format(p.CR_Price|float) if p.CR_Price else "-" }}</td>
+                                <td class="bold"><span style="display:none">{{ "%010.3f"|format(p.Current_Price|float if p.Current_Price else 0.0) }}</span>${{ "%.3f"|format(p.Current_Price|float) if p.Current_Price else "-" }}</td>
+                                <td class="{{ 'pos' if p['Price_Diff_%'] > 0 else ('neg' if p['Price_Diff_%'] < 0 else 'dim') }}">
+                                    <span style="display:none">{{ "%010.3f"|format(p['Price_Diff_%']|default(0) + 10000.0) }}</span>{{ "%+ .2f"|format(p['Price_Diff_%']) }}%
+                                </td>
+                                <td><a href="{{ p.PDF_Link }}" target="_blank" style="font-size: 1.4rem; text-decoration: none;">📄</a></td>
+                            </tr>
+                            {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
     </div>
+
+    <script>
+        const tables = {};
+        
+        function initDataTables() {
+            const tableIds = ['growthStockTable', 'foundationStockTable', 'etfTable', 'catalystTable', 'annTable', 'placTable'];
+            
+            // Wire up Global Search
+            document.getElementById('globalSearch').addEventListener('input', function(e) {
+                const term = e.target.value;
+                Object.values(tables).forEach(table => {
+                    if (table && table.search) {
+                        try {
+                            table.search(term);
+                        } catch (err) {}
+                    }
+                });
+            });
+
+            tableIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    tables[id] = new DataTable(el, {
+                        searchable: true,
+                        fixedHeight: false,
+                        perPage: 25
+                    });
+                }
+            });
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+            document.getElementById('tab-' + tabId).style.display = 'block';
+            
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            body.dataset.theme = body.dataset.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('asx-theme', body.dataset.theme);
+        }
+
+        window.onload = initDataTables;
+        function switchSubTab(contentId, btn) {
+            // Hide all tab content in mother section
+            const tabContents = btn.closest('.card').querySelectorAll('.tab-content');
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Remove active class from brothers
+            const buttons = btn.parentElement.querySelectorAll('.sub-tab');
+            buttons.forEach(b => b.classList.remove('active'));
+            
+            // Show target
+            document.getElementById(contentId).classList.add('active');
+            btn.classList.add('active');
+        }
+    </script>
 </body>
 </html>
