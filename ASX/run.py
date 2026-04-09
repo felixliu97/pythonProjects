@@ -45,16 +45,21 @@ def load_json_data(module_name):
         except: pass
     return {}
 
+def load_settings():
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    settings_path = os.path.join(root_dir, "config", "settings.yaml")
+    if os.path.exists(settings_path):
+        with open(settings_path, "r", encoding="utf-8") as f:
+            return yaml.safe_load(f)
+    return {}
+
 def generate_dashboard():
+    section("=== Generating Dashboard ===")
     step("Generating modern Jinja2 dashboard...")
     root_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Load settings
-    settings = {}
-    settings_path = os.path.join(root_dir, "config", "settings.yaml")
-    if os.path.exists(settings_path):
-        with open(settings_path, "r", encoding="utf-8") as f:
-            settings = yaml.safe_load(f)
+    settings = load_settings()
 
     # 1. Load data from all modules
     data = {
@@ -88,11 +93,12 @@ def generate_dashboard():
         err(f"Template rendering failed: {e}")
 
 def main():
-    parser = argparse.ArgumentParser(description="ASX Project V2.1 Runner")
+    parser = argparse.ArgumentParser(description="ASX Project v1.0 Runner")
     subparsers = parser.add_subparsers(dest="command")
     
     subparsers.add_parser("catalysts")
-    subparsers.add_parser("analyzer")
+    ana_p = subparsers.add_parser("analyzer")
+    ana_p.add_argument("--force", action="store_true", help="Bypass cache")
     
     ann_p = subparsers.add_parser("announcements")
     ann_p.add_argument("--months", type=int, default=1)
@@ -106,6 +112,7 @@ def main():
     all_p = subparsers.add_parser("all")
     all_p.add_argument("--months", type=int, default=1)
     all_p.add_argument("--no-pdf", action="store_true")
+    all_p.add_argument("--force", action="store_true", help="Bypass cache")
     
     args = parser.parse_args()
     
@@ -113,7 +120,8 @@ def main():
         if run_script("asx_catalysts/asx_catalysts.py"):
             generate_dashboard()
     elif args.command == "analyzer":
-        if run_script("asx_analyzer/asx_analyzer.py"):
+        analyzer_args = ["--force"] if args.force else []
+        if run_script("asx_analyzer/asx_analyzer.py", analyzer_args):
             generate_dashboard()
     elif args.command == "announcements":
         ann_args = ["--months", str(args.months)]
@@ -128,7 +136,9 @@ def main():
     elif args.command == "all":
         section("=== Full Pipeline Run ===")
         run_script("asx_catalysts/asx_catalysts.py")
-        run_script("asx_analyzer/asx_analyzer.py")
+        
+        analyzer_args = ["--force"] if args.force else []
+        run_script("asx_analyzer/asx_analyzer.py", analyzer_args)
         
         ann_args = ["--months", str(args.months)]
         if args.no_pdf: ann_args.append("--no-pdf")

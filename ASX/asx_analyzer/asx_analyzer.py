@@ -11,6 +11,8 @@ import time
 import io
 import json
 import re
+import sys
+import argparse
 try:
     import matplotlib.pyplot as plt
     HAS_MATPLOTLIB = True
@@ -51,7 +53,15 @@ class ASXTrendingStocks:
         os.makedirs(self.config_dir, exist_ok=True)
         os.makedirs(self.output_dir, exist_ok=True)
         
+        self.load_global_settings()
         self.load_config()
+
+    def load_global_settings(self):
+        settings_path = os.path.join(self.config_dir, 'settings.yaml')
+        self.global_settings = {}
+        if os.path.exists(settings_path):
+            with open(settings_path, 'r', encoding='utf-8') as f:
+                self.global_settings = yaml.safe_load(f)
 
     def load_config(self):
         try:
@@ -60,23 +70,28 @@ class ASXTrendingStocks:
                     config = yaml.safe_load(f)
             else:
                 config = {}
+            
+            # Merge with global settings if available
+            g_analyzer = self.global_settings.get('analyzer', {})
                 
             self.growth_stocks = config.get('growth_stocks', [])
             self.foundation_stocks = config.get('foundation_stocks', [])
             self.asx_etfs = config.get('etfs', [])
-            self.weights = config.get('weights', {
+            self.weights = config.get('weights') or g_analyzer.get('weights') or {
                 'price_1d': 0.3, 'price_5d': 0.25, 'price_20d': 0.15,
                 'volume_change': 0.2, 'momentum': 0.1
-            })
+            }
             self.settings = config.get('settings', {
                 'period': '1mo', 'min_data_points': 10,
                 'rsi_period': 14, 'volatility_window': 252,
                 'display_limit': None
             })
-            self.thresholds = config.get('thresholds', {
+            self.thresholds = config.get('thresholds') or g_analyzer.get('thresholds') or {
                 'rsi_upper': 70, 'rsi_lower': 30,
                 'price_change_alert': 5.0, 'volume_change_alert': 50.0
-            })
+            }
+            self.cache_ttl = g_analyzer.get('cache_ttl_minutes', 10)
+            self.cache_file = os.path.join(self.output_dir, 'asx_analyzer.json')
         except Exception as e:
             Colors.warn(f"Warning: Could not load config file ({e}). Using defaults.")
             self.growth_stocks = []
@@ -361,6 +376,19 @@ class ASXTrendingStocks:
             f.write('\n'.join(lines))
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--force", action="store_true", help="Bypass cache")
+    args = parser.parse_args()
+
+    # Cache Check
     analyzer = ASXTrendingStocks()
+    if not args.force and os.path.exists(analyzer.cache_file):
+        mtime = os.path.getmtime(analyzer.cache_file)
+        elapsed = (time.time() - mtime) / 60
+        if elapsed < analyzer.cache_ttl:
+            from datetime import datetime
+            print(f"Using cached results ({round(elapsed, 1)} min ago). Use --force to refresh.")
+            sys.exit(0)
+
     market_data = analyzer.get_trending_stocks()
     analyzer.save_results(market_data)

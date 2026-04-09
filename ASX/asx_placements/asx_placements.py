@@ -37,12 +37,34 @@ def _dim(m):  print(f"{_C.DIM}{m}{_C.R}",  end="", flush=True)
 def _info(m): print(f"{_C.DIM}{m}{_C.R}")
 
 # ── Constants ────────────────────────────────────────────────────────────────
-API_BASE = "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements"
-PRICE_API = "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header"
-PDF_CDN = "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/"
-PDF_TOKEN = "83ff96335c2d45a094df02a206a39ff4"
-JSON_OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "asx_placements.json")
-ITEMS_PER_PAGE = 100
+# ── Configuration ────────────────────────────────────────────────────────────
+def load_config():
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    settings_path = os.path.join(root_dir, "config", "settings.yaml")
+    cfg = {}
+    if os.path.exists(settings_path):
+        with open(settings_path, "r", encoding="utf-8") as f:
+            cfg = yaml.safe_load(f)
+    
+    api = cfg.get("api", {})
+    scanners = cfg.get("scanners", {})
+    
+    return {
+        "API_BASE": api.get("announcements_base", "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements"),
+        "PRICE_API": api.get("company_header", "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header"),
+        "PDF_CDN": api.get("pdf_cdn", "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/"),
+        "PDF_TOKEN": api.get("pdf_token", "83ff96335c2d45a094df02a206a39ff4"),
+        "ITEMS_PER_PAGE": scanners.get("items_per_page", 100),
+        "JSON_OUT": os.path.join(root_dir, "output", "asx_placements.json")
+    }
+
+_CFG = load_config()
+API_BASE = _CFG["API_BASE"]
+PRICE_API = _CFG["PRICE_API"]
+PDF_CDN = _CFG["PDF_CDN"]
+PDF_TOKEN = _CFG["PDF_TOKEN"]
+JSON_OUT = _CFG["JSON_OUT"]
+ITEMS_PER_PAGE = _CFG["ITEMS_PER_PAGE"]
 
 PLACEMENT_KEYWORDS = (
     "placement", "capital rais", "capital raise", "share purchase plan", "spp",
