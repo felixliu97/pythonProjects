@@ -186,11 +186,11 @@ class ASXTrendingStocks:
         
         return {
             'score': round(float(score), 2),
-            'price_change_1d': round(float(price_1d), 2),
+            'price_change_1d': round(float(price_1d), 3),
             'price_diff_1d': round(float(diff_1d), 3),
-            'price_change_5d': round(float(price_5d), 2),
+            'price_change_5d': round(float(price_5d), 3),
             'price_diff_5d': round(float(last_price - data['Close'].iloc[-6]), 3) if len(data) >= 6 else 0,
-            'price_change_20d': round(float(price_20d), 2),
+            'price_change_20d': round(float(price_20d), 3),
             'volume_change': round(float(vol_change), 2),
             'momentum': round(float(momentum), 2),
             'volatility': round(float(volatility), 2) if not np.isnan(volatility) else 0,
@@ -266,7 +266,7 @@ class ASXTrendingStocks:
         }
 
     def get_global_timeline(self):
-        """Aggregate all timeline events from asx_catalysts.yaml and sort them"""
+        """Aggregate all FUTURE key catalysts from asx_catalysts.yaml and sort them"""
         catalysts_path = os.path.join(self.config_dir, 'asx_catalysts.yaml')
         if not os.path.exists(catalysts_path):
             return []
@@ -279,18 +279,19 @@ class ASXTrendingStocks:
             all_events = []
             for s in stocks:
                 ticker = s.get('Ticker', '???')
-                timeline = s.get('Timeline', [])
-                for item in timeline:
-                    time_label = str(item.get('Time', ''))
-                    event_text = item.get('Event', '')
+                catalysts = s.get('Catalysts', [])
+                for cat_text in catalysts:
+                    # Extract a display time label (e.g., "2026 4月")
+                    match = re.search(r'(\d{4})[年/\s]?(\d{1,2}月|[QqHh][1-4]|年中|年底|下旬|上旬)', cat_text)
+                    time_label = match.group(0) if match else "Future"
                     
                     # Sort logic: approximate date
-                    sort_date = self._approximate_date(time_label)
+                    sort_date = self._approximate_date(cat_text)
                     
                     all_events.append({
                         'ticker': ticker,
                         'time': time_label,
-                        'event': event_text,
+                        'event': cat_text,
                         'sort_key': sort_date
                     })
             
@@ -298,7 +299,7 @@ class ASXTrendingStocks:
             all_events.sort(key=lambda x: x['sort_key'])
             
             # Filter out past events (keep current day and future)
-            cutoff = datetime.now().strftime('%Y-%m-%d')
+            cutoff = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d') # Small buffer
             return [e for e in all_events if e['sort_key'] >= cutoff]
             
         except Exception as e:
@@ -310,25 +311,33 @@ class ASXTrendingStocks:
         label = label.lower().strip()
         
         # Standard YYYY-MM-DD
-        if re.match(r'\d{4}-\d{2}-\d{2}', label):
-            return label
+        if re.search(r'\d{4}-\d{2}-\d{2}', label):
+            m = re.search(r'\d{4}-\d{2}-\d{2}', label)
+            return m.group(0)
         
         # YYYY-MM
-        if re.match(r'\d{4}-\d{2}$', label):
-            return f"{label}-31"
+        if re.search(r'\d{4}-\d{2}', label):
+            m = re.search(r'\d{4}-\d{2}', label)
+            return f"{m.group(0)}-28"
             
         # Quarter/Half/Year
         match_year = re.search(r'(\d{4})', label)
         year = match_year.group(1) if match_year else "2026"
         
-        if 'q1' in label: return f"{year}-01-01"
-        if 'q2' in label: return f"{year}-04-01"
-        if 'q3' in label: return f"{year}-07-01"
-        if 'q4' in label: return f"{year}-10-01"
-        if 'h1' in label: return f"{year}-01-01"
-        if 'h2' in label: return f"{year}-07-01"
-        if '年中' in label: return f"{year}-06-01"
-        if '年底' in label: return f"{year}-12-01"
+        # Chinese Month: "4月"
+        match_month = re.search(r'(\d{1,2})月', label)
+        if match_month:
+            month = int(match_month.group(1))
+            return f"{year}-{month:02d}-15"
+
+        if 'q1' in label: return f"{year}-02-15"
+        if 'q2' in label: return f"{year}-05-15"
+        if 'q3' in label: return f"{year}-08-15"
+        if 'q4' in label: return f"{year}-11-15"
+        if 'h1' in label: return f"{year}-03-15"
+        if 'h2' in label: return f"{year}-09-15"
+        if '年中' in label: return f"{year}-06-15"
+        if '年底' in label: return f"{year}-12-15"
         
         return f"{year}-12-31" # Default to end of year if unknown
 

@@ -75,6 +75,15 @@ def generate_dashboard():
     template_dir = os.path.join(root_dir, "templates")
     env = Environment(loader=FileSystemLoader(template_dir))
     
+    # Add custom filters
+    def trim_zeros(value, precision=3):
+        try:
+            if value is None: return "-"
+            return ('{:.%df}' % precision).format(float(value)).rstrip('0').rstrip('.')
+        except:
+            return value
+    env.filters['trim_zeros'] = trim_zeros
+    
     try:
         # 3. Ensure assets are propagated
         css_src = os.path.join(template_dir, "base.css")
@@ -93,7 +102,7 @@ def generate_dashboard():
         err(f"Template rendering failed: {e}")
 
 def main():
-    parser = argparse.ArgumentParser(description="ASX Project v1.0 Runner")
+    parser = argparse.ArgumentParser(description="ASX Project v1.1 Runner")
     subparsers = parser.add_subparsers(dest="command")
     
     subparsers.add_parser("catalysts")
@@ -117,34 +126,34 @@ def main():
     args = parser.parse_args()
     
     if args.command == "catalysts":
-        if run_script("asx_catalysts/asx_catalysts.py"):
+        if run_script("scripts/asx_catalysts.py"):
             generate_dashboard()
     elif args.command == "analyzer":
         analyzer_args = ["--force"] if args.force else []
-        if run_script("asx_analyzer/asx_analyzer.py", analyzer_args):
+        if run_script("scripts/asx_analyzer.py", analyzer_args):
             generate_dashboard()
     elif args.command == "announcements":
         ann_args = ["--months", str(args.months)]
         if args.no_pdf: ann_args.append("--no-pdf")
-        if run_script("asx_announcements/asx_announcements.py", ann_args):
+        if run_script("scripts/asx_announcements.py", ann_args):
             generate_dashboard()
     elif args.command == "placements":
-        if run_script("asx_placements/asx_placements.py", ["--months", str(args.months)]):
+        if run_script("scripts/asx_placements.py", ["--months", str(args.months)]):
             generate_dashboard()
     elif args.command == "dashboard":
         generate_dashboard()
     elif args.command == "all":
         section("=== Full Pipeline Run ===")
-        run_script("asx_catalysts/asx_catalysts.py")
+        run_script("scripts/asx_catalysts.py")
         
         analyzer_args = ["--force"] if args.force else []
-        run_script("asx_analyzer/asx_analyzer.py", analyzer_args)
+        run_script("scripts/asx_analyzer.py", analyzer_args)
         
         ann_args = ["--months", str(args.months)]
         if args.no_pdf: ann_args.append("--no-pdf")
-        run_script("asx_announcements/asx_announcements.py", ann_args)
+        run_script("scripts/asx_announcements.py", ann_args)
         
-        run_script("asx_placements/asx_placements.py", ["--months", str(args.months)])
+        run_script("scripts/asx_placements.py", ["--months", str(args.months)])
         generate_dashboard()
     else:
         parser.print_help()
