@@ -346,7 +346,7 @@ def main() -> None:
             diff = round(((cur_px - cp) / cp) * 100, 2)
 
         yaml_data.append({
-            "ASX_Code": sym, "Company": ev.get("company", name_map.get(sym, "")),
+            "ASX_Code": sym, "Company": ev.get("company") or name_map.get(sym, ""),
             "Headline": ev.get("headline", ""), "Date": ev.get("date", ""),
             "CR_Price": cp if cp not in (None, "") else "", "Current_Price": cur_px if cur_px is not None else "",
             "Price_Diff_%": diff if diff is not None else "",

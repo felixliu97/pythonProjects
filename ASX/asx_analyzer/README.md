@@ -1,33 +1,33 @@
-# ASX Market Analyzer
+# ASX Market Momentum Analyzer
 
-A multi-threaded technical analysis engine that identifies trending stocks and ETFs. It evaluates momentum using a combination of price action, volume spikes, and relative strength (RSI).
+Advanced technical screening engine that pulls live market data via `yfinance` and calculates proprietary momentum scores for a curated list of ASX tickers.
 
 ## Quick Start
 
 ```bash
-# Process market data and refresh dashboard
+# Full pipeline: scan and update dashboard
 python run.py analyzer
+
+# Bypass cache and force a fresh data pull
+python run.py analyzer --force
 ```
 
-## Configuration
+## Directory Structure
 
-The application reads `config/asx_analyzer.yaml` for watchlists and scoring parameters.
+```text
+asx_analyzer/
+├── asx_analyzer.py    # The core analysis engine
+└── README.md          # Technical documentation
+```
 
-**Key Config Sections:**
-- `growth_stocks`: High-momentum, catalyst-driven opportunities.
-- `foundation_stocks`: Stable, large-cap portfolio anchors.
-- `etfs`: ETF ticker strings (e.g., `VAS.AX`).
-- `weights`: Scoring weights for the 100-point algorithm.
+## Momentum Scoring Algorithm (100-Point Scale)
 
-## Scoring Algorithm
+The `ASXTrendingStocks` engine calculates a weighted score based on five key technical dimensions:
 
-The "Momentum Score" is a hard-quantitative algorithm that prevents penny-stock outliers from destabilizing the ranks.
-
-**Current Formula & Weights:**
-- **1D Price Change** (30%): Near-term absolute velocity.
-- **5D Price Change** (25%): Weekly confirmation pivot.
+- **1D Price Change** (30%): Immediate price action.
+- **5D Price Change** (25%): Weekly trend momentum.
 - **20D Price Change** (15%): Monthly trend anchor.
-- **Volume Surge (volume_change)** (20%): `(Current / Average Vol) - 1`. **Note: Capped at maximum 400%** to prevent 10x anomalous penny stock volume spikes from blindly dictating the score.
+- **Volume Surge (volume_change)** (20%): `(Current / Average Vol) - 1`. **Note: Capped at maximum 400%** to prevent anomalous penny stock volume spikes from blindly dictating the score.
 - **Mom / Trend (momentum)** (10%): `(RSI - 50)`. Uses relative divergence instead of redundant raw price action.
 
 > [!IMPORTANT]  
@@ -38,7 +38,7 @@ The "Momentum Score" is a hard-quantitative algorithm that prevents penny-stock 
 ## Output
 
 This module operates as a **Headless Data Engine**:
-1. Processes market data for all configured tickers.
+1. Processes market data for all configured tickers in `config/asx_analyzer.yaml`.
 2. Exports structured research to `output/asx_analyzer.json`.
 3. Automatically triggers a dashboard refresh via `run.py`.
 

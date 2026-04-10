@@ -500,11 +500,16 @@
                                         </td>
                                         <td style="min-width: 80px;">
                                              {% set pval = 50 %}
-                                             {% if c.Probability.startswith('极高') %}{% set pval = 90 %}{% elif c.Probability.startswith('高') %}{% set pval = 75 %}{% elif c.Probability.startswith('中高') %}{% set pval = 65 %}{% elif c.Probability.startswith('中') %}{% set pval = 50 %}{% else %}{% set pval = 30 %}{% endif %}
+                                             {% set pcolor = 'var(--warning)' %}
+                                             {% if c.Probability.startswith('极高') %}{% set pval = 95 %}{% set pcolor = 'var(--positive)' %}
+                                             {% elif c.Probability.startswith('高') %}{% set pval = 80 %}{% set pcolor = 'var(--positive)' %}
+                                             {% elif c.Probability.startswith('中高') %}{% set pval = 65 %}{% set pcolor = 'var(--warning)' %}
+                                             {% elif c.Probability.startswith('中') %}{% set pval = 50 %}{% set pcolor = 'var(--warning)' %}
+                                             {% else %}{% set pval = 30 %}{% set pcolor = 'var(--negative)' %}{% endif %}
                                              <div style="width:100%; height:8px; background:var(--border); border-radius:4px; margin-bottom:4px; overflow: hidden;">
-                                                 <div style="width:{{ pval }}%; height:100%; background:var(--primary);"></div>
+                                                 <div style="width:{{ pval }}%; height:100%; background:{{ pcolor }};"></div>
                                              </div>
-                                             <span style="font-size:0.75rem; font-weight: 600;">{{ c.Probability }}</span>
+                                             <span style="font-size:0.75rem; font-weight: 600; color: {{ pcolor }};">{{ c.Probability }}</span>
                                         </td>
                                         <td class="dim" style="max-width: 250px;">{{ c.Core_Notes }}</td>
                                     </tr>

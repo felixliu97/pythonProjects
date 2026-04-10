@@ -31,10 +31,10 @@ asx_placements/
 
 1. **Fetch Announcements** — Polls the ASX API for "issued capital" announcements.
 2. **Intelligent Filtering** — Uses a keyword engine to separate actual placements from administrative noise (Cleansing Notices, Appendix 2A, etc.).
-3. **Data Extraction** —
+3. **Data Extraction** — 
    - **PDF Parsing**: Regex-based extraction of placement price from the shared PDF cache.
    - **Real-time Sync**: Fetches current share prices via the ASX Company API concurrently.
-4. **Data Engine Export** —
+4. **Data Engine Export** — 
    - `config/asx_placements.yaml`: Persistent history and tracking DB.
    - `output/asx_placements.json`: Integrated into the unified dashboard.
 

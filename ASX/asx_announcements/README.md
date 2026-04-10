@@ -26,7 +26,7 @@ asx_announcements/
 ## How It Works
 
 1. **Fetch Price-Sensitive Announcements** — Directly requests `priceSensitiveOnly=true` announcements from the ASX MarkIt Digital API.
-2. **Local PDF Verification** — Scans existing PDFs in the shared `../.pdf_cache/` directory. If missing, dynamically downloads from the ASX CDN.
+2. **Local PDF Verification** — Scans existing PDFs in the shared `.pdf_cache/` directory. If missing, dynamically downloads from the ASX CDN.
 3. **Extract & Summarize** — Uses `pdfplumber` to pull the first several paragraphs of the PDF into a concise string format.
 4. **Data Engine Export** — Outputs:
    - `config/asx_announcements.yaml` — Persistent local history.

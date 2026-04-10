@@ -10,7 +10,7 @@ The suite follows a **Headless Data Engine** pattern: individual modules extract
 ASX/
 │
 ├── asx_analyzer/         # Momentum, volume, and RSI screener for Stocks/ETFs
-├── asx_announcements/    # price-sensitive market announcement tracker
+├── asx_announcements/    # Price-sensitive market announcement tracker
 ├── asx_catalysts/        # Fundamental catalyst radar & database
 ├── asx_placements/       # Capital raising discovery & PDF extractor
 │
