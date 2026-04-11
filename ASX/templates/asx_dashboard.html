@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ASX Pro Analysis Suite v2.1</title>
+    <title>ASX Pro Analysis Suite v1.2</title>
     <link rel="stylesheet" href="base.css">
     <link href="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet"
         type="text/css">
@@ -165,77 +165,6 @@
             display: block;
         }
 
-        /* Timeline Styles */
-        .timeline-container {
-            position: relative;
-            padding: 1rem 0;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .timeline-container::before {
-            content: '';
-            position: absolute;
-            left: 20px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--border);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            padding-left: 50px;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: 15px;
-            top: 5px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: 3px solid var(--bg-card);
-            z-index: 2;
-        }
-
-        .timeline-date {
-            display: inline-block;
-            padding: 2px 8px;
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-content {
-            background: var(--bg-main);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            transition: transform 0.2s;
-        }
-
-        .timeline-content:hover {
-            transform: translateX(5px);
-            border-color: var(--primary);
-        }
-
-        .timeline-ticker {
-            font-weight: 800;
-            color: var(--text-main);
-            margin-right: 0.5rem;
-            background: var(--primary);
-            color: white;
-            padding: 2px 6px;
-            border-top-left-radius: 4px;
-            border-bottom-right-radius: 4px;
-        }
     </style>
 </head>
 
@@ -249,7 +178,7 @@
         <header>
             <div>
                 <h1>ASX Pro <span style="color:var(--primary)">Suite</span> <span
-                        style="font-size: 0.9rem; vertical-align: middle; background: var(--border); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); font-weight: 600;">v1.1</span>
+                        style="font-size: 0.9rem; vertical-align: middle; background: var(--border); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); font-weight: 600;">v1.2</span>
                 </h1>
                 <p class="timestamp">Market Engine Sync: {{ timestamp }}</p>
             </div>
@@ -574,10 +503,7 @@
             <section id="tab-catalysts" class="tab-pane" style="display:none">
                 <div class="card">
                     <div class="sub-tabs">
-                        <button class="sub-tab active" onclick="switchSubTab('stock-view', this)">Stock Analysis
-                            View</button>
-                        <button class="sub-tab" onclick="switchSubTab('timeline-view', this)">Master Catalyst
-                            Timeline</button>
+                        <button class="sub-tab active" onclick="switchSubTab('stock-view', this)">Stock Analysis View</button>
                     </div>
 
                     <!-- Stock View Sub-Tab -->
@@ -600,13 +526,13 @@
                                     {% if catalysts.catalysts %}
                                     {% for c in catalysts.catalysts %}
                                     <tr>
-                                        <td>
+                                        <td style="width: 100px; min-width: 100px;">
                                             <div class="bold" style="font-size: 1.1rem; color: var(--primary);">{{
                                                 c.Ticker }}</div>
                                             <div class="badge badge-sector" style="margin-top: 5px;">{{ c.Sector }}
                                             </div>
                                         </td>
-                                        <td>
+                                        <td style="width: 220px; min-width: 220px;">
                                             {% if c.Timeline %}
                                             <div style="display: flex; flex-direction: column; gap: 4px;">
                                                 {% for tl in c.Timeline %}
@@ -618,7 +544,7 @@
                                             </div>
                                             {% else %}-{% endif %}
                                         </td>
-                                        <td>
+                                        <td style="min-width: 280px;">
                                             <div style="display: flex; flex-direction: column; gap: 6px;">
                                                 {% for cat in c.Catalysts %}
                                                 <div
@@ -627,7 +553,7 @@
                                                 {% endfor %}
                                             </div>
                                         </td>
-                                        <td>
+                                        <td style="min-width: 280px;">
                                             <div style="display: flex; flex-direction: column; gap: 6px;">
                                                 {% for r in c.Risks %}
                                                 <div
@@ -636,7 +562,7 @@
                                                 {% endfor %}
                                             </div>
                                         </td>
-                                        <td>
+                                        <td style="width: 120px; min-width: 120px;">
                                             <div style="display: flex; flex-direction: column; gap: 4px;">
                                                 {% for e in c.Earnings_Window %}
                                                 <div
@@ -645,14 +571,14 @@
                                                 {% endfor %}
                                             </div>
                                         </td>
-                                        <td>
+                                        <td style="width: 100px; min-width: 100px;">
                                             {% set crp = c.CR_Risk.split('(')[0].strip() if '(' in c.CR_Risk else
                                             c.CR_Risk %}
                                             {% set cr_cls = 'cr-high' if '高' in crp else ('cr-med' if '中' in crp else
                                             'cr-low') %}
                                             <span class="cr-pill {{ cr_cls }}">{{ crp }}</span>
                                         </td>
-                                        <td style="min-width: 80px;">
+                                        <td style="width: 160px; min-width: 160px;">
                                             {% set pval = 50 %}
                                             {% set pcolor = 'var(--warning)' %}
                                             {% if c.Probability.startswith('极高') %}{% set pval = 95 %}{% set pcolor =
@@ -672,7 +598,7 @@
                                             <span style="font-size:0.75rem; font-weight: 600; color: {{ pcolor }};">{{
                                                 c.Probability }}</span>
                                         </td>
-                                        <td class="dim" style="max-width: 250px;">{{ c.Core_Notes }}</td>
+                                        <td class="dim" style="min-width: 400px;">{{ c.Core_Notes }}</td>
                                     </tr>
                                     {% endfor %}
                                     {% endif %}
@@ -681,27 +607,6 @@
                         </div>
                     </div>
 
-                    <!-- Interactive Timeline Sub-Tab -->
-                    <div id="timeline-view" class="tab-content">
-                        <div class="timeline-container">
-                            {% if analyzer.global_timeline %}
-                            {% for event in analyzer.global_timeline %}
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <div class="timeline-date">{{ event.time }}</div>
-                                <div class="timeline-content">
-                                    <span class="timeline-ticker">{{ event.ticker }}</span>
-                                    <span style="font-weight: 500;">{{ event.event }}</span>
-                                </div>
-                            </div>
-                            {% endfor %}
-                            {% else %}
-                            <div style="padding: 2rem; text-align: center; color: var(--text-dim);">
-                                No upcoming global catalysts found for 2026.
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
                 </div>
             </section>
 
@@ -816,11 +721,20 @@
             tableIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
-                    tables[id] = new DataTable(el, {
+                    const config = {
                         searchable: true,
                         fixedHeight: false,
                         perPage: 25
-                    });
+                    };
+                    
+                    // Default sort for Placements: Date (Column 0) descending
+                    if (id === 'placTable') {
+                        config.columns = [
+                            { select: 0, sort: 'desc' }
+                        ];
+                    }
+                    
+                    tables[id] = new DataTable(el, config);
                 }
             });
         }

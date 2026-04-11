@@ -1,65 +1,57 @@
-import yaml
-import os
-import re
+"""
+ASX Catalyst Data Synchronization (Refactored)
+
+Extracts consolidated fundamental data from the database and exports 
+a structured JSON snapshot for the dashboard.
+"""
+
 import json
 from datetime import datetime
 
-# Current reference date for "past" vs "future"
-TODAY = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-
-class _C:
-    R=chr(27)+'[0m'; GREEN=chr(27)+'[92m'; YELLOW=chr(27)+'[93m'
-def _ok(m):   print(f"{_C.GREEN}{m}{_C.R}")
-def _warn(m): print(f"{_C.YELLOW}{m}{_C.R}")
-
-# Paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-JSON_FILE = os.path.join(os.path.dirname(ROOT_DIR), "config", "asx_catalysts.yaml")
-JSON_OUT = os.path.join(os.path.dirname(ROOT_DIR), "output", "asx_catalysts.json")
+# Local Imports
+try:
+    from db_manager import db
+    from db_models import CatalystMaster
+    from utils import logger, load_config
+except ImportError:
+    from scripts.db_manager import db
+    from scripts.db_models import CatalystMaster
+    from scripts.utils import logger, load_config
 
 def process_catalysts():
-    """Headless data processing for Catalyst Radar"""
-    try:
-        with open(JSON_FILE, 'r', encoding='utf-8') as f:
-            stocks = yaml.safe_load(f)
-    except Exception as e:
-        _warn(f"Error loading YAML from {JSON_FILE}: {e}")
-        return
+    """Fetch sorted catalyst data from DB and export to JSON snapshot."""
+    _CFG = load_config()
+    JSON_OUT = _CFG["CAT_JSON_OUT"]
+    
+    session = db.get_session()
+    results = session.query(CatalystMaster).all()
+    
+    stocks_data = []
+    for m in results:
+        # Use child relationship with item_type filtering
+        items = m.items
+        stock_item = {
+            "Ticker": m.symbol,
+            "Company": m.company,
+            "Sector": m.sector,
+            "Catalysts": [i.content for i in items if i.is_active and i.item_type == 'catalyst'],
+            "Risks": [i.content for i in items if i.is_active and i.item_type == 'risk'],
+            "Earnings_Window": [i.content for i in items if i.is_active and i.item_type == 'earnings'],
+            "CR_Risk": m.cr_risk,
+            "Probability": m.probability,
+            "Core_Notes": m.core_notes,
+            "Timeline": [{"Time": i.label, "Event": i.content} for i in items if i.is_active and i.item_type == 'milestone']
+        }
+        stocks_data.append(stock_item)
 
-    def breakout_key(s):
-        # Probability (High -> Low)
-        p = s.get("Probability", "").strip()
-        p_score = 0
-        if p.startswith("极高"): p_score = -6
-        elif p.startswith("高"): p_score = -5
-        elif p.startswith("中高"): p_score = -4
-        elif p.startswith("中低"): p_score = -2
-        elif p.startswith("中"): p_score = -3
-        elif p.startswith("低"): p_score = -1
-        
-        # CR Risk (Low -> High)
-        cr = s.get("CR_Risk", "").strip()
-        cr_score = 4 # Default to Medium
-        if cr.startswith("极低"): cr_score = 1
-        elif cr.startswith("低"): cr_score = 2
-        elif cr.startswith("中低"): cr_score = 3
-        elif cr.startswith("中"): cr_score = 4
-        elif cr.startswith("高"): cr_score = 5
-        elif cr.startswith("极高"): cr_score = 6
-        
-        return (p_score, cr_score, s.get("Ticker", ""))
-        
-    if stocks:
-        stocks.sort(key=breakout_key)
-
-    # Export processed data to JSON for the dashboard
+    # Export processed data for Dashboard usage
     with open(JSON_OUT, 'w', encoding='utf-8') as f:
         json.dump({
-            'catalysts': stocks, 
+            'catalysts': stocks_data, 
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }, f, indent=2, ensure_ascii=False)
         
-    _ok(f"Headless Sync: Exported {len(stocks or [])} sorted stocks to {JSON_OUT}")
+    logger.info(f"Catalysts Sync: Exported {len(stocks_data)} records to {JSON_OUT}")
 
 if __name__ == "__main__":
     process_catalysts()

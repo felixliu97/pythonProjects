@@ -1,8 +1,8 @@
 """
-ASX Price Sensitive Announcements Scanner
+ASX Price Sensitive Announcements Scanner (Refactored)
 
-Scans ASX announcements for strictly price-sensitive events (utilizing API filters),
-downloads PDFs, extracts summaries, and outputs to YAML and JSON.
+Scans ASX announcements for price-sensitive events, downloads PDFs, 
+extracts summaries, and syncs to PostgreSQL database.
 """
 
 import argparse
@@ -15,52 +15,35 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Set, Tuple
-import yaml
-import requests
 import json
+import requests
+from sqlalchemy import func
+
+# Local Imports
+try:
+    from db_manager import db
+    from db_models import Stock, Announcement
+    from db_schemas import AnnouncementSchema
+    from utils import logger, load_config, normalize_date, get_root_dir
+except ImportError:
+    from scripts.db_manager import db
+    from scripts.db_models import Stock, Announcement
+    from scripts.db_schemas import AnnouncementSchema
+    from scripts.utils import logger, load_config, normalize_date, get_root_dir
 
 try:
     import pdfplumber
     PDF_SUPPORT = True
 except ImportError:
     PDF_SUPPORT = False
-    print("Warning: pdfplumber not installed. PDF analysis disabled.")
+    logger.warning("pdfplumber not installed. PDF analysis disabled.")
 
-class _C:
-    R=chr(27)+'[0m'; DIM=chr(27)+'[2m'; GREEN=chr(27)+'[92m'
-    YELLOW=chr(27)+'[93m'; BOLD=chr(27)+'[1m'
-def _ok(m):   print(f"{_C.GREEN}{m}{_C.R}")
-def _warn(m): print(f"{_C.YELLOW}{m}{_C.R}")
-def _dim(m):  print(f"{_C.DIM}{m}{_C.R}",  end="", flush=True)
-def _info(m): print(f"{_C.DIM}{m}{_C.R}")
-
-# ── Configuration ────────────────────────────────────────────────────────────
-def load_config():
-    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    settings_path = os.path.join(root_dir, "config", "settings.yaml")
-    cfg = {}
-    if os.path.exists(settings_path):
-        with open(settings_path, "r", encoding="utf-8") as f:
-            cfg = yaml.safe_load(f)
-    
-    api = cfg.get("api", {})
-    scanners = cfg.get("scanners", {})
-    
-    return {
-        "API_BASE": api.get("announcements_base", "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements"),
-        "HEADER_API": api.get("company_header", "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header"),
-        "PDF_CDN": api.get("pdf_cdn", "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/"),
-        "PDF_TOKEN": api.get("pdf_token", "83ff96335c2d45a094df02a206a39ff4"),
-        "ITEMS_PER_PAGE": scanners.get("items_per_page", 100),
-        "JSON_OUT": os.path.join(root_dir, "output", "asx_announcements.json")
-    }
-
+# --- Configuration ---
 _CFG = load_config()
 API_BASE = _CFG["API_BASE"]
 HEADER_API = _CFG["HEADER_API"]
 PDF_CDN = _CFG["PDF_CDN"]
 PDF_TOKEN = _CFG["PDF_TOKEN"]
-JSON_OUT = _CFG["JSON_OUT"]
 ITEMS_PER_PAGE = _CFG["ITEMS_PER_PAGE"]
 
 NOISE_KEYWORDS = (
@@ -71,56 +54,29 @@ NOISE_KEYWORDS = (
     "disclosure document", "dividend/distribution", "investor webinar presentation"
 )
 
-def normalize_date(date_str: str) -> str:
-    if not date_str: return ""
-    try:
-        if "/" in date_str:
-            return datetime.strptime(date_str, "%m/%d/%Y").strftime("%Y-%m-%d")
-        return date_str
-    except Exception:
-        return date_str
-
-def read_existing_yaml(yaml_path: str) -> Tuple[Optional[str], Set[str], List[Dict]]:
+def load_existing_from_db() -> Tuple[Optional[str], Set[str]]:
+    """Loads max date and existing unique keys from DB to prevent duplicates."""
     existing_keys = set()
     max_date = None
-    existing_anns = []
-
-    if not os.path.exists(yaml_path):
-        return None, existing_keys, existing_anns
 
     try:
-        with open(yaml_path, 'r', encoding='utf-8') as f:
-            data = yaml.safe_load(f)
-        if not data:
-            data = []
-            
-        for row in data:
-            sym = str(row.get("ASX_Code", "")).strip()
-            raw_date = str(row.get("Date", "")).strip()
-            date = normalize_date(raw_date)
-            headline = str(row.get("Headline", "")).strip()
-            
-            if sym and date:
-                key = f"{sym}_{date}_{headline[:50]}"
-                existing_keys.add(key)
-                if max_date is None or date > max_date:
-                    max_date = date
-                existing_anns.append({
-                    "ASX_Code": sym,
-                    "Company": str(row.get("Company", "")),
-                    "Headline": headline,
-                    "Date": date,
-                    "Summary": str(row.get("Summary", "")),
-                    "PDF_Link": str(row.get("PDF_Link", "")),
-                    "Rating": int(row.get("Rating", 2))
-                })
+        session = db.get_session()
+        max_date_res = session.query(func.max(Announcement.event_date)).scalar()
+        if max_date_res:
+            max_date = max_date_res.strftime("%Y-%m-%d")
+        
+        # Get all unique_keys
+        keys = session.query(Announcement.unique_key).all()
+        existing_keys = {k[0] for k in keys}
+        
     except Exception as e:
-        print(f"Warning: Could not read existing YAML: {e}")
-        return None, set(), []
+        logger.warning(f"Could not read from DB: {e}")
+        return None, set()
 
-    return max_date, existing_keys, existing_anns
+    return max_date, existing_keys
 
 def fetch_announcements(months: int = 2, start_override: Optional[str] = None) -> List[Dict]:
+    """Fetches raw announcement items from ASX API."""
     end_date = datetime.now() + timedelta(days=1)
     if start_override:
         start_date = datetime.strptime(start_override, "%Y-%m-%d")
@@ -138,7 +94,7 @@ def fetch_announcements(months: int = 2, start_override: Optional[str] = None) -
     session.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
     all_items = []
     page = 0
-    _info(f"Fetching ASX price-sensitive announcements ({start_date:%Y-%m-%d} -> {end_date:%Y-%m-%d})...")
+    logger.info(f"Fetching ASX price-sensitive announcements ({start_date:%Y-%m-%d} -> {end_date:%Y-%m-%d})...")
 
     while True:
         params["page"] = page
@@ -146,7 +102,8 @@ def fetch_announcements(months: int = 2, start_override: Optional[str] = None) -
             r = session.get(API_BASE, params=params, timeout=30)
             r.raise_for_status()
             data = r.json()
-        except:
+        except Exception as e:
+            logger.error(f"API Request failed: {e}")
             break
 
         items = data.get("data", {}).get("items", [])
@@ -154,165 +111,142 @@ def fetch_announcements(months: int = 2, start_override: Optional[str] = None) -
         if not items: break
 
         all_items.extend(items)
-        _dim(f"\r  Fetched {len(all_items)}/{total} announcements...")
+        # Update line (using direct print for progress bar)
+        print(f"\r  Fetched {len(all_items)}/{total} announcements...", end="", flush=True)
         if len(all_items) >= total: break
         page += 1
         time.sleep(0.3)
-    _info(f"\n  Total fetched: {len(all_items)}")
+    
+    print() # New line after loop
     return all_items
 
 def fetch_company_name(symbol: str, session: requests.Session) -> Tuple[str, str]:
+    """Fetch company display name from ASX header API."""
+    url = HEADER_API.format(symbol)
     try:
-        url = HEADER_API.format(symbol)
         r = session.get(url, timeout=10)
-        data = r.json().get("data", {})
-        return symbol, data.get("displayName", "")
-    except:
-        return symbol, ""
+        if r.status_code == 200:
+            dn = r.json().get("data", {}).get("displayName", "")
+            if dn: return symbol, dn
+    except: pass
+    return symbol, ""
 
-def sanitize_filename(name: str) -> str:
-    valid_chars = "-_.() " + string.ascii_letters + string.digits
-    cleaned = ''.join(c for c in name if c in valid_chars)
-    return cleaned.strip()[:80]
+def process_event(event: Dict, session: requests.Session, pdf_dir: str, no_pdf: bool) -> Dict:
+    """Processes a single event: downloads PDF and extracts keywords/summaries."""
+    ev = event.copy()
+    if no_pdf or not PDF_SUPPORT or not ev.get("doc_keys"):
+        return ev
+    
+    doc_key = ev["doc_keys"][0]
+    pdf_url = f"{PDF_CDN}{doc_key}?access_token={PDF_TOKEN}"
+    local_pdf = os.path.join(pdf_dir, f"{doc_key}.pdf")
 
-def download_pdf(doc_key: str, session: requests.Session) -> Optional[bytes]:
-    url = f"{PDF_CDN}{doc_key}?access_token={PDF_TOKEN}"
-    try:
-        r = session.get(url, timeout=30)
-        if r.content[:4] == b"%PDF":
-            return r.content
-    except:
-        pass
-    return None
+    # Download if not exists
+    if not os.path.exists(local_pdf):
+        try:
+            r = session.get(pdf_url, timeout=20)
+            if r.status_code == 200:
+                with open(local_pdf, 'wb') as f:
+                    f.write(r.content)
+        except: pass
+    
+    # Extract Text
+    if os.path.exists(local_pdf):
+        try:
+            with pdfplumber.open(local_pdf) as pdf:
+                full_text = []
+                for page in pdf.pages[:3]: # Scan first 3 pages
+                    full_text.append(page.extract_text() or "")
+                text = " ".join(full_text).lower()
+                
+                # Simple summary extraction (first sentence of body)
+                summary_match = re.search(r'(?i)(?:overview|summary|highlights|announcement)\s*(.*?\.)', text)
+                if summary_match:
+                    ev["summary"] = summary_match.group(1).capitalize()
+        except: pass
 
-def extract_pdf_summary(pdf_bytes: bytes, max_pages: int = 5) -> str:
-    if not PDF_SUPPORT or not pdf_bytes: return ""
-    parts = []
-    try:
-        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-            for page in pdf.pages[:max_pages]:
-                pt = page.extract_text()
-                if pt: parts.append(pt)
-        text = "\n".join(parts)
-        return _parse_summary(text)
-    except:
-        return ""
+    return ev
 
-def _parse_summary(text: str) -> str:
-    if not text: return ""
-    lines = text.split("\n")
-    body_lines = []
-    skip_patterns = re.compile(
-        r"^(?:asx\s*(?:announcement|release)|page\s+\d|\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)|"
-        r"(?:abn|acn|arbn)|for\s+immediate|media\s+release|not\s+for\s+distribution|www\.|level\s+\d|suite\s+\d|"
-        r"\d+\s+\w+\s+street|tel[:\s]|fax[:\s]|phone[:\s]|e[\s-]*mail|po\s+box)",
-        re.IGNORECASE
-    )
-    for line in lines:
-        stripped = line.strip()
-        if len(stripped) < 15 or skip_patterns.search(stripped): continue
-        if stripped == stripped.upper() and len(stripped) < 80: continue
-        body_lines.append(stripped)
-        if len(body_lines) >= 6: break
-    if not body_lines: return ""
-    body_text = " ".join(body_lines)
-    sentences = re.split(r"(?<=[.!?])\s+", body_text)
-    summary = ""
-    for s in sentences:
-        if len(summary) + len(s) > 300: break
-        summary = (summary + " " + s).strip()
-    return summary if summary else body_text[:300]
-
-def calculate_rating(headline: str, summary: str) -> int:
-    hl = headline.lower()
-    if any(kw in hl for kw in ["discovery", "high-grade", "high grade", "bonanza", "spectacular", "exceptional", "tier 1", "world class", "maiden resource", "production commenced", "etf", "inclusion", "index", "msci", "s&p", "streaming", "offtake", "fortune 500", "patent granted", "white house", "fast-41"]):
-        return 5
-    is_billion = any(kw in hl for kw in ["billion", "bn", " b ", "b$"])
-    has_large_money = is_billion or (any(kw in hl for kw in ["$", "million", " m ", "m$"]) and any(f"{i}00" in hl for i in range(1, 10)))
-    if has_large_money:
-        if any(kw in hl for kw in ["commitment", "offer", "strategic", "agreement", "financing", "funding", "hybrid", "securities", "launch", "collaboration"]):
-            return 5
-        return 4
-    if any(kw in hl for kw in ["resource upgrade", "binding offtake", "major acquisition", "dfs", "pfs", "feasibility", "final investment decision", "fid", "takeover", "merger", "award", "contract", "financing", "funding", "facility", "agreement", "strategic"]):
-        return 4
-    if any(kw in hl for kw in ["high-grade", "high grade"]) and any(kw in hl for kw in ["assay", "results", "drilling"]):
-        return 4
-    if any(kw in hl for kw in ["assay", "results", "drilling", "commenced", "strategic partnership", "mou", "capital raise", "placement", "acquisition"]):
-        return 3
-    if any(kw in (summary.lower() if summary else "") for kw in ["high-grade", "high grade", "discovery"]):
-        return 3
-    if any(kw in hl for kw in ["termination", "withdrawal", "disappointing", "delay", "failed", "cancelled"]):
-        return 1
-    return 2
-
-def process_event(event: Dict, session: requests.Session, pdf_dir: str, skip_pdf: bool) -> Dict:
-    summary = ""
-    if not skip_pdf:
-        for doc_key in event.get("doc_keys", []):
-            safe_hl = sanitize_filename(event['headline'])
-            pdf_filename = f"{event['date']}_[{event['symbol']}]_{safe_hl}.pdf"
-            pdf_path = os.path.join(pdf_dir, pdf_filename)
-            pdf_bytes = None
-            if os.path.exists(pdf_path):
-                with open(pdf_path, "rb") as f:
-                    content = f.read()
-                    if content[:4] == b"%PDF": pdf_bytes = content
-            if not pdf_bytes:
-                pdf_bytes = download_pdf(doc_key, session)
-                if pdf_bytes:
-                    with open(pdf_path, "wb") as f: f.write(pdf_bytes)
-            if pdf_bytes:
-                summary = extract_pdf_summary(pdf_bytes)
-                if summary: break
-    event["Summary"] = summary if summary else event["headline"]
-    event["Rating"] = calculate_rating(event["headline"], event["Summary"])
-    return event
+def save_to_db(new_events: List[Dict]) -> None:
+    """Validate and save new events to the database using Pydantic schemas."""
+    count = 0
+    session = db.get_session()
+    
+    for ev in new_events:
+        try:
+            symbol = ev.get("symbol")
+            event_date = ev.get("date")
+            headline = ev.get("headline", "")
+            
+            # Re-calculate unique_key (consistent with main duplication logic)
+            unique_key = f"{symbol}_{event_date}_{headline[:100]}"
+            
+            # Map scraper dict to Schema for validation
+            schema_input = {
+                "ASX_Code": symbol,
+                "Company": ev.get("company", ""),
+                "Headline": headline,
+                "Date": event_date,
+                "Summary": ev.get("summary") or "",
+                "PDF_Link": ev.get("pdf_link") or (f"{PDF_CDN}{ev['doc_keys'][0]}?access_token={PDF_TOKEN}" if ev.get("doc_keys") else ""),
+                "Rating": ev.get("rating") or 2
+            }
+            v_ann = AnnouncementSchema(**schema_input)
+            
+            ann = Announcement(
+                symbol=v_ann.ASX_Code,
+                company=v_ann.Company,
+                headline=v_ann.Headline,
+                event_date=v_ann.Date,
+                summary=v_ann.Summary,
+                pdf_link=v_ann.PDF_Link,
+                rating=v_ann.Rating,
+                unique_key=unique_key
+            )
+            session.add(ann)
+            count += 1
+        except Exception as e:
+            logger.debug(f"Validation skipped for item: {e}")
+    
+    session.commit()
+    logger.info(f"DB Sync: Added {count} new announcements to PostgreSQL.")
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="ASX Price Sensitive Announcements Scanner")
-    parser.add_argument("--months", type=int, default=2, help="Lookback months (default: 2)")
-    parser.add_argument("--no-pdf", action="store_true", help="Skip PDF download & extraction")
-    parser.add_argument("--full-refresh", action="store_true", help="Ignore existing database; full re-scan")
+    parser = argparse.ArgumentParser(description="ASX Announcements Scanner")
+    parser.add_argument("--months", type=int, default=2)
+    parser.add_argument("--no-pdf", action="store_true")
+    parser.add_argument("--full-refresh", action="store_true")
     args = parser.parse_args()
 
-    root = os.path.dirname(os.path.abspath(__file__))
-    pdf_dir = os.path.abspath(os.path.join(root, "..", ".pdf_cache"))
-    os.makedirs(pdf_dir, exist_ok=True)
-    config_dir = os.path.abspath(os.path.join(root, "..", "config"))
-    os.makedirs(config_dir, exist_ok=True)
-    yaml_db = os.path.join(config_dir, "asx_announcements.yaml")
+    root_dir = get_root_dir()
+    pdf_dir = root_dir / ".pdf_cache"
+    pdf_dir.mkdir(exist_ok=True)
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0"})
+    session_req = requests.Session()
+    session_req.headers.update({"User-Agent": "Mozilla/5.0"})
 
     existing_keys = set()
     start_override = None
-    existing_anns = []
 
     if not args.full_refresh:
-        max_date, existing_keys, existing_anns = read_existing_yaml(yaml_db)
+        max_date, existing_keys = load_existing_from_db()
         if max_date:
             start_override = max_date
-            _info(f"Checking for new announcements starting from {max_date}...")
-        else:
-            _info("No existing database found.")
+            logger.info(f"Resuming announcements from {max_date}...")
     
     raw_items = fetch_announcements(args.months, start_override)
     events_map = {}
+    
     for item in raw_items:
         hl = item.get("headline", "")
         if any(nk in hl.lower() for nk in NOISE_KEYWORDS): continue
         sym = item.get("symbol", "")
         if not sym: continue
-        date_str = item.get("date", "")
-        try:
-            utc_dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-            date_display = (utc_dt + timedelta(hours=10)).strftime("%Y-%m-%d")
-        except:
-            date_display = date_str[:10] if date_str else ""
-
-        dedup_key = f"{sym}_{date_display}_{hl[:50]}"
+        
+        date_display = normalize_date(item.get("date", ""))
+        dedup_key = f"{sym}_{date_display}_{hl[:100]}"
         if dedup_key in existing_keys: continue
+        
         doc_key = item.get("documentKey", "")
         if dedup_key not in events_map:
             events_map[dedup_key] = {
@@ -324,52 +258,29 @@ def main() -> None:
                 events_map[dedup_key]["doc_keys"].append(doc_key)
 
     events_list = list(events_map.values())
-    processed_events = []
-    if events_list:
-        _info(f"Processing {len(events_list)} new announcements...")
-        workers = min(10, max(1, len(events_list)))
-        with ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = {executor.submit(process_event, ev, session, pdf_dir, args.no_pdf): ev for ev in events_list}
-            for future in as_completed(futures):
-                processed_events.append(future.result())
-        print()
-
-    new_anns_mapped = []
-    for ev in processed_events:
-        pdf_link = f"{PDF_CDN}{ev['doc_keys'][0]}?access_token={PDF_TOKEN}" if ev.get("doc_keys") else ""
-        new_anns_mapped.append({
-            "ASX_Code": ev["symbol"], "Company": "", 
-            "Headline": ev.get("headline", ""), "Date": ev.get("date", ""),
-            "Summary": ev.get("Summary", ""), "PDF_Link": pdf_link,
-            "Rating": ev.get("Rating", 2)
-        })
-
-    all_announcements = existing_anns + new_anns_mapped
-    if not all_announcements:
-        print("No data.")
+    if not events_list:
+        logger.info("No new announcements found.")
         return
 
-    symbols_to_fetch = list({ann["ASX_Code"] for ann in all_announcements if not ann.get("Company")})
+    logger.info(f"Processing {len(events_list)} new announcements...")
+    new_events = []
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = {executor.submit(process_event, ev, session_req, str(pdf_dir), args.no_pdf): ev for ev in events_list}
+        for future in as_completed(futures):
+            new_events.append(future.result())
+
+    # Fetch names for new companies if missing
+    symbols_to_fetch = list({ev["symbol"] for ev in new_events if not ev.get("company")})
     if symbols_to_fetch:
-        _info(f"Fetching names for {len(symbols_to_fetch)} symbols...")
+        logger.info(f"Fetching names for {len(symbols_to_fetch)} symbols...")
         name_map = {}
         with ThreadPoolExecutor(max_workers=20) as executor:
-            for sym, dname in executor.map(lambda s: fetch_company_name(s, session), symbols_to_fetch):
+            for sym, dname in executor.map(lambda s: fetch_company_name(s, session_req), symbols_to_fetch):
                 if dname: name_map[sym] = dname
-        for ann in all_announcements:
-            if ann["ASX_Code"] in name_map: ann["Company"] = name_map[ann["ASX_Code"]]
+        for ev in new_events:
+            if ev["symbol"] in name_map: ev["company"] = name_map[ev["symbol"]]
 
-    all_announcements.sort(key=lambda x: (x.get("Date", ""), x.get("Rating", 2)), reverse=True)
-    one_week_ago = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
-    all_announcements = [ann for ann in all_announcements if ann.get("Date", "") >= one_week_ago]
-    
-    with open(yaml_db, "w", encoding="utf-8") as f:
-        yaml.dump(all_announcements, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    
-    with open(JSON_OUT, "w", encoding="utf-8") as f:
-        json.dump({'announcements': all_announcements, 'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}, f, indent=2, ensure_ascii=False)
-    
-    _ok(f"Headless Sync: Exported {len(all_announcements)} valid announcements to {JSON_OUT}")
+    save_to_db(new_events)
 
 if __name__ == "__main__":
     main()
