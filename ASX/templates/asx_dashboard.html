@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ASX Pro Analysis Suite v1.2</title>
+    <title>ASX Pro Analysis Suite v1.3</title>
     <link rel="stylesheet" href="base.css">
     <link href="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet"
         type="text/css">
@@ -165,6 +165,21 @@
             display: block;
         }
 
+        .sparkline-img {
+            max-height: 32px;
+            width: 100px;
+            display: block;
+            pointer-events: none;
+            filter: var(--sparkline-filter);
+        }
+
+        [data-theme="dark"] {
+            --sparkline-filter: invert(0.8) sepia(1) saturate(5) hue-rotate(175deg);
+        }
+
+        [data-theme="light"] {
+            --sparkline-filter: none;
+        }
     </style>
 </head>
 
@@ -178,7 +193,7 @@
         <header>
             <div>
                 <h1>ASX Pro <span style="color:var(--primary)">Suite</span> <span
-                        style="font-size: 0.9rem; vertical-align: middle; background: var(--border); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); font-weight: 600;">v1.2</span>
+                        style="font-size: 0.9rem; vertical-align: middle; background: var(--border); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); font-weight: 600;">v1.3</span>
                 </h1>
                 <p class="timestamp">Market Engine Sync: {{ timestamp }}</p>
             </div>
@@ -241,7 +256,6 @@
                                         <th data-type="number">Price</th>
                                         <th>Trend</th>
                                         <th data-type="number">P/E</th>
-                                        <th data-type="number">P/S</th>
                                         <th data-type="number">Score</th>
                                         <th data-type="number">1D %</th>
                                         <th data-type="number">5D %</th>
@@ -271,13 +285,10 @@
                                         <td class="bold"><span style="display:none">{{
                                                 "%010.3f"|format(s.current_price|default(0)) }}</span>${{
                                             s.current_price|trim_zeros }}</td>
-                                        <td>{{ s.sparkline | safe }}</td>
+                                        <td><img src="{{ s.sparkline }}" class="sparkline-img" alt="Trend"></td>
                                         <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.pe if s.pe is
-                                                number else 99999.0) + 10000.0) }}</span>{{ "%.1f"|format(s.pe) if s.pe
-                                            is number else '-' }}</td>
-                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.ps if s.ps is
-                                                number else 99999.0) + 10000.0) }}</span>{{ "%.3f"|format(s.ps) if s.ps
-                                            is number else '-' }}</td>
+                                                number else 99999.0) + 10000.0) }}</span>{{ "%.1f"|format(s.pe) if (s.pe
+                                            is number and s.pe > 0) else "-" }}</td>
                                         <td>
                                             <span style="display:none">{{ "%010.3f"|format(s.score|default(0) + 10000.0)
                                                 }}</span>
@@ -288,20 +299,21 @@
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.price_change_1d > 0 else ('neg' if s.price_change_1d < 0 else 'dim') }}">
-                                            <span style="display:none">{{
-                                                "%010.3f"|format((s.price_change_1d|default(0)) + 10000.0) }}</span>{{
-                                            s.price_diff_1d|trim_zeros }} ({{ "%+ .2f"|format(s.price_change_1d) }}%)
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_1d|default(0))
+                                                + 10000.0) }}</span>{{
+                                            s.price_change_1d|trim_zeros }} ({{ "%+ .2f"|format(s.price_diff_1d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.price_change_5d > 0 else ('neg' if s.price_change_5d < 0 else 'dim') }}">
-                                            <span style="display:none">{{
-                                                "%010.3f"|format((s.price_change_5d|default(0)) + 10000.0) }}</span>{{
-                                            s.price_diff_5d|trim_zeros }} ({{ "%+ .2f"|format(s.price_change_5d) }}%)
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_5d|default(0))
+                                                + 10000.0) }}</span>{{
+                                            s.price_change_5d|trim_zeros }} ({{ "%+ .2f"|format(s.price_diff_5d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.momentum > 0 else ('neg' if s.momentum < 0 else 'dim') }}">
                                             <span style="display:none">{{ "%010.3f"|format(s.momentum|default(0) +
-                                                10000.0) }}</span>{{ "%+.1f"|format(s.momentum) }}%</td>
+                                                10000.0) }}</span>{{ "%+.1f"|format(s.momentum) }}%
+                                        </td>
                                         <td class="dim"><span style="display:none">{{
                                                 "%010.3f"|format(s.volatility|default(0)) }}</span>{{
                                             "%.1f"|format(s.volatility) }}%</td>
@@ -332,7 +344,6 @@
                                         <th data-type="number">Price</th>
                                         <th>Trend</th>
                                         <th data-type="number">P/E</th>
-                                        <th data-type="number">P/S</th>
                                         <th data-type="number">Score</th>
                                         <th data-type="number">1D %</th>
                                         <th data-type="number">5D %</th>
@@ -362,13 +373,10 @@
                                         <td class="bold"><span style="display:none">{{
                                                 "%010.3f"|format(s.current_price|default(0)) }}</span>${{
                                             s.current_price|trim_zeros }}</td>
-                                        <td>{{ s.sparkline | safe }}</td>
+                                        <td><img src="{{ s.sparkline }}" class="sparkline-img" alt="Trend"></td>
                                         <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.pe if s.pe is
-                                                number else 99999.0) + 10000.0) }}</span>{{ "%.1f"|format(s.pe) if s.pe
-                                            is number else '-' }}</td>
-                                        <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.ps if s.ps is
-                                                number else 99999.0) + 10000.0) }}</span>{{ "%.3f"|format(s.ps) if s.ps
-                                            is number else '-' }}</td>
+                                                number else 99999.0) + 10000.0) }}</span>{{ "%.1f"|format(s.pe) if (s.pe
+                                            is number and s.pe > 0) else "-" }}</td>
                                         <td>
                                             <span style="display:none">{{ "%010.3f"|format(s.score|default(0) + 10000.0)
                                                 }}</span>
@@ -379,20 +387,21 @@
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.price_change_1d > 0 else ('neg' if s.price_change_1d < 0 else 'dim') }}">
-                                            <span style="display:none">{{
-                                                "%010.3f"|format((s.price_change_1d|default(0)) + 10000.0) }}</span>{{
-                                            s.price_diff_1d|trim_zeros }} ({{ "%+ .2f"|format(s.price_change_1d) }}%)
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_1d|default(0))
+                                                + 10000.0) }}</span>{{
+                                            s.price_change_1d|trim_zeros }} ({{ "%+ .2f"|format(s.price_diff_1d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.price_change_5d > 0 else ('neg' if s.price_change_5d < 0 else 'dim') }}">
-                                            <span style="display:none">{{
-                                                "%010.3f"|format((s.price_change_5d|default(0)) + 10000.0) }}</span>{{
-                                            s.price_diff_5d|trim_zeros }} ({{ "%+ .2f"|format(s.price_change_5d) }}%)
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_5d|default(0))
+                                                + 10000.0) }}</span>{{
+                                            s.price_change_5d|trim_zeros }} ({{ "%+ .2f"|format(s.price_diff_5d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.momentum > 0 else ('neg' if s.momentum < 0 else 'dim') }}">
                                             <span style="display:none">{{ "%010.3f"|format(s.momentum|default(0) +
-                                                10000.0) }}</span>{{ "%+.1f"|format(s.momentum) }}%</td>
+                                                10000.0) }}</span>{{ "%+.1f"|format(s.momentum) }}%
+                                        </td>
                                         <td class="dim"><span style="display:none">{{
                                                 "%010.3f"|format(s.volatility|default(0)) }}</span>{{
                                             "%.1f"|format(s.volatility) }}%</td>
@@ -418,7 +427,6 @@
                                     <tr>
                                         <th>Ticker</th>
                                         <th>Fund Name</th>
-                                        <th>Sector</th>
                                         <th data-type="number">Total Assets</th>
                                         <th data-type="number">Price</th>
                                         <th>Trend</th>
@@ -442,7 +450,6 @@
                                                 style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                                 {{ e.name }}</div>
                                         </td>
-                                        <td class="dim">{{ e.industry }}</td>
                                         <td class="dim">
                                             <span style="display:none">{{ "%015d"|format(e.marketCap|default(0))
                                                 }}</span>{% if e.marketCap > 1000000000 %}{{
@@ -452,7 +459,7 @@
                                         <td class="bold"><span style="display:none">{{
                                                 "%010.3f"|format(e.current_price|default(0)) }}</span>${{
                                             e.current_price|trim_zeros }}</td>
-                                        <td>{{ e.sparkline | safe }}</td>
+                                        <td><img src="{{ e.sparkline }}" class="sparkline-img" alt="Trend"></td>
                                         <td class="dim bold" style="color: var(--positive);"><span
                                                 style="display:none">{{ "%010.3f"|format(e.yield|default(0)) }}</span>{{
                                             "%.2f"|format(e.yield) }}%</td>
@@ -466,20 +473,21 @@
                                         </td>
                                         <td
                                             class="{{ 'pos' if e.price_change_1d > 0 else ('neg' if e.price_change_1d < 0 else 'dim') }}">
-                                            <span style="display:none">{{
-                                                "%010.3f"|format((e.price_change_1d|default(0)) + 10000.0) }}</span>
-                                            {{ e.price_diff_1d|trim_zeros }} ({{ "%+ .2f"|format(e.price_change_1d) }}%)
+                                            <span style="display:none">{{ "%010.3f"|format((e.price_diff_1d|default(0))
+                                                + 10000.0) }}</span>
+                                            {{ e.price_change_1d|trim_zeros }} ({{ "%+ .2f"|format(e.price_diff_1d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if e.price_change_5d > 0 else ('neg' if e.price_change_5d < 0 else 'dim') }}">
-                                            <span style="display:none">{{
-                                                "%010.3f"|format((e.price_change_5d|default(0)) + 10000.0) }}</span>
-                                            {{ e.price_diff_5d|trim_zeros }} ({{ "%+ .2f"|format(e.price_change_5d) }}%)
+                                            <span style="display:none">{{ "%010.3f"|format((e.price_diff_5d|default(0))
+                                                + 10000.0) }}</span>
+                                            {{ e.price_change_5d|trim_zeros }} ({{ "%+ .2f"|format(e.price_diff_5d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if e.momentum > 0 else ('neg' if e.momentum < 0 else 'dim') }}">
                                             <span style="display:none">{{ "%010.3f"|format(e.momentum|default(0) +
-                                                10000.0) }}</span>{{ "%+.1f"|format(e.momentum) }}%</td>
+                                                10000.0) }}</span>{{ "%+.1f"|format(e.momentum) }}%
+                                        </td>
                                         <td class="dim"><span style="display:none">{{
                                                 "%010.3f"|format(e.volatility|default(0)) }}</span>{{
                                             "%.1f"|format(e.volatility) }}%</td>
@@ -503,7 +511,8 @@
             <section id="tab-catalysts" class="tab-pane" style="display:none">
                 <div class="card">
                     <div class="sub-tabs">
-                        <button class="sub-tab active" onclick="switchSubTab('stock-view', this)">Stock Analysis View</button>
+                        <button class="sub-tab active" onclick="switchSubTab('stock-view', this)">Stock Analysis
+                            View</button>
                     </div>
 
                     <!-- Stock View Sub-Tab -->
@@ -518,7 +527,7 @@
                                         <th>Risks</th>
                                         <th>Earnings</th>
                                         <th>CR Risk</th>
-                                        <th>Prob.</th>
+                                        <th>Breakout Prob.</th>
                                         <th>Notes</th>
                                     </tr>
                                 </thead>
@@ -571,34 +580,54 @@
                                                 {% endfor %}
                                             </div>
                                         </td>
-                                        <td style="width: 100px; min-width: 100px;">
-                                            {% set crp = c.CR_Risk.split('(')[0].strip() if '(' in c.CR_Risk else
-                                            c.CR_Risk %}
-                                            {% set cr_cls = 'cr-high' if '高' in crp else ('cr-med' if '中' in crp else
-                                            'cr-low') %}
-                                            <span class="cr-pill {{ cr_cls }}">{{ crp }}</span>
+                                        <td style="width: 120px; min-width: 120px;">
+                                            {% set risk_parts = c.CR_Risk.split(' ', 1) %}
+                                            {% set risk_lvl = risk_parts[0] %}
+                                            {% set risk_reason = risk_parts[1] if risk_parts|length > 1 else "" %}
+
+                                            {% set cr_cls = 'cr-high' if '高' in risk_lvl else ('cr-med' if '中' in
+                                            risk_lvl else 'cr-low') %}
+                                            <div style="margin-bottom: 6px;"><span class="cr-pill {{ cr_cls }}">{{
+                                                    risk_lvl }}</span></div>
+                                            {% if risk_reason %}
+                                            <div class="dim"
+                                                style="font-size: 0.7rem; line-height: 1.2; word-break: break-all;">{{
+                                                risk_reason }}</div>
+                                            {% endif %}
                                         </td>
-                                        <td style="width: 160px; min-width: 160px;">
+                                        <td style="width: 180px; min-width: 180px;">
+                                            {% set prob_parts = c.Breakout_Probability.split(' ', 1) %}
+                                            {% set prob_lvl = prob_parts[0] %}
+                                            {% set prob_reason = prob_parts[1] if prob_parts|length > 1 else "" %}
+
                                             {% set pval = 50 %}
                                             {% set pcolor = 'var(--warning)' %}
-                                            {% if c.Probability.startswith('极高') %}{% set pval = 95 %}{% set pcolor =
+                                            {% if prob_lvl.startswith('极高') %}{% set pval = 95 %}{% set pcolor =
                                             'var(--positive)' %}
-                                            {% elif c.Probability.startswith('高') %}{% set pval = 80 %}{% set pcolor =
+                                            {% elif prob_lvl.startswith('高') %}{% set pval = 80 %}{% set pcolor =
                                             'var(--positive)' %}
-                                            {% elif c.Probability.startswith('中高') %}{% set pval = 65 %}{% set pcolor =
+                                            {% elif prob_lvl.startswith('中高') %}{% set pval = 65 %}{% set pcolor =
                                             'var(--warning)' %}
-                                            {% elif c.Probability.startswith('中') %}{% set pval = 50 %}{% set pcolor =
+                                            {% elif prob_lvl.startswith('中') %}{% set pval = 50 %}{% set pcolor =
                                             'var(--warning)' %}
                                             {% else %}{% set pval = 30 %}{% set pcolor = 'var(--negative)' %}{% endif %}
+
                                             <div
-                                                style="width:100%; height:8px; background:var(--border); border-radius:4px; margin-bottom:4px; overflow: hidden;">
+                                                style="width:100%; height:6px; background:var(--border); border-radius:4px; margin-bottom:6px; overflow: hidden;">
                                                 <div style="width:{{ pval }}%; height:100%; background:{{ pcolor }};">
                                                 </div>
                                             </div>
-                                            <span style="font-size:0.75rem; font-weight: 600; color: {{ pcolor }};">{{
-                                                c.Probability }}</span>
+                                            <div class="bold"
+                                                style="font-size:0.75rem; color: {{ pcolor }}; margin-bottom: 4px;">{{
+                                                prob_lvl }}</div>
+                                            {% if prob_reason %}
+                                            <div class="dim"
+                                                style="font-size: 0.7rem; line-height: 1.2; word-break: break-all;">{{
+                                                prob_reason }}</div>
+                                            {% endif %}
                                         </td>
-                                        <td class="dim" style="min-width: 400px;">{{ c.Core_Notes }}</td>
+                                        <td class="dim" style="min-width: 300px; font-size: 0.8rem;">{{ c.Core_Notes }}
+                                        </td>
                                     </tr>
                                     {% endfor %}
                                     {% endif %}
@@ -680,13 +709,15 @@
                                 <td class="bold dim" style="font-size: 0.8rem;">{{ p.Company }}</td>
                                 <td style="font-size: 0.85rem;">{{ p.Headline }}</td>
                                 <td class="bold"><span style="display:none">{{ "%010.3f"|format(p.CR_Price|float if
-                                        p.CR_Price else 0.0) }}</span>${{ p.CR_Price|trim_zeros }}</td>
+                                        p.CR_Price else 0.0) }}</span>{% if p.CR_Price %}${{ p.CR_Price|trim_zeros }}{%
+                                    else %}N/A{% endif %}</td>
                                 <td class="bold"><span style="display:none">{{ "%010.3f"|format(p.Current_Price|float if
-                                        p.Current_Price else 0.0) }}</span>${{ p.Current_Price|trim_zeros }}</td>
+                                        p.Current_Price else 0.0) }}</span>{% if p.Current_Price %}${{
+                                    p.Current_Price|trim_zeros }}{% else %}N/A{% endif %}</td>
                                 <td
-                                    class="{{ 'pos' if p['Price_Diff_%'] > 0 else ('neg' if p['Price_Diff_%'] < 0 else 'dim') }}">
-                                    <span style="display:none">{{ "%010.3f"|format(p['Price_Diff_%']|default(0) +
-                                        10000.0) }}</span>{{ "%+ .2f"|format(p['Price_Diff_%']) }}%
+                                    class="{{ 'pos' if p['Price_Diff_%']|default(0, True) > 0 else ('neg' if p['Price_Diff_%']|default(0, True) < 0 else 'dim') }}">
+                                    <span style="display:none">{{ "%010.3f"|format(p['Price_Diff_%']|default(0, True) +
+                                        10000.0) }}</span>{{ "%+ .2f"|format(p['Price_Diff_%']|default(0, True)) }}%
                                 </td>
                                 <td><a href="{{ p.PDF_Link }}" target="_blank"
                                         style="font-size: 1.4rem; text-decoration: none;">📄</a></td>
@@ -726,14 +757,14 @@
                         fixedHeight: false,
                         perPage: 25
                     };
-                    
+
                     // Default sort for Placements: Date (Column 0) descending
                     if (id === 'placTable') {
                         config.columns = [
                             { select: 0, sort: 'desc' }
                         ];
                     }
-                    
+
                     tables[id] = new DataTable(el, config);
                 }
             });

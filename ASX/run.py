@@ -56,105 +56,115 @@ def run_script(script_path: str, args: list = None) -> bool:
         return False
 
 def load_db_data() -> dict:
-    """Fetch consolidated data from the database, aligned with the dashboard template."""
-    session = db.get_session()
-    
-    # 1. Catalyst Data
-    masters = session.query(CatalystMaster).all()
-    catalysts_list = []
-    for m in masters:
-        items = m.items
-        catalysts_list.append({
-            "Ticker": m.symbol,
-            "Company": m.company,
-            "Sector": m.sector,
-            "Catalysts": [i.content for i in items if i.is_active and i.item_type == 'catalyst'],
-            "Risks": [i.content for i in items if i.is_active and i.item_type == 'risk'],
-            "Earnings_Window": [i.content for i in items if i.is_active and i.item_type == 'earnings'],
-            "CR_Risk": m.cr_risk,
-            "Probability": m.probability,
-            "Core_Notes": m.core_notes,
-            "Timeline": [{"Time": i.label, "Event": i.content} for i in items if i.is_active and i.item_type == 'milestone']
-        })
-    
-    def breakout_key(s):
-        p = (s.get("Probability") or "").strip()
-        score = {"极高": -6, "高": -5, "中高": -4, "中": -3, "中低": -2, "低": -1}
-        p_score = next((v for k, v in score.items() if p.startswith(k)), 0)
-        return (p_score, (s.get("Ticker") or ""))
-    
-    catalysts_list.sort(key=breakout_key)
+    """Fetch consolidated data from the database using explicit queries (Decoupled Edition)."""
+    with db.session_scope() as session:
+        # 1. Catalyst Data
+        masters = session.query(CatalystMaster).all()
+        catalysts_list = []
+        for m in masters:
+            # Explicit query instead of m.items
+            items = session.query(CatalystItem).filter_by(symbol=m.symbol, is_active=True).all()
+            
+            catalysts_list.append({
+                "Ticker": m.symbol,
+                "Company": m.company,
+                "Sector": m.sector,
+                "Catalysts": [i.content for i in items if i.item_type == 'catalyst'],
+                "Risks": [i.content for i in items if i.item_type == 'risk'],
+                "Earnings_Window": [i.content for i in items if i.item_type == 'earnings'],
+                "CR_Risk": f"{m.cr_risk} {m.cr_risk_reason}".strip(),
+                "Breakout_Probability": f"{m.breakout_probability} {m.breakout_probability_reason}".strip(),
+                "Core_Notes": m.core_notes,
+                "Timeline": [{"Time": i.label, "Event": i.content} for i in items if i.item_type == 'milestone']
+            })
+        
+        def breakout_key(s):
+            p = (s.get("Breakout_Probability") or "").strip()
+            p_scores = {"极高": -6, "高": -5, "中高": -4, "中": -3, "中低": -2, "低": -1}
+            p_val = next((v for k, v in p_scores.items() if p.startswith(k)), 0)
+            
+            cr = (s.get("CR_Risk") or "").strip()
+            cr_scores = {"极低": 1, "低": 2, "中低": 3, "中": 4, "中高": 5, "高": 6}
+            cr_val = next((v for k, v in cr_scores.items() if cr.startswith(k)), 10)
+            
+            return (p_val, cr_val, (s.get("Ticker") or ""))
+        
+        catalysts_list.sort(key=breakout_key)
 
-    # 2. Announcements (Last 14 days)
-    cutoff = (datetime.now() - timedelta(days=14)).date()
-    ann_res = session.query(Announcement).filter(Announcement.event_date >= cutoff).order_by(Announcement.event_date.desc()).all()
-    ann_list = [{
-        "ASX_Code": a.symbol,
-        "Company": a.company,
-        "Headline": a.headline,
-        "Date": a.event_date.strftime("%Y-%m-%d") if a.event_date else "",
-        "Summary": a.summary,
-        "PDF_Link": a.pdf_link,
-        "Rating": a.rating
-    } for a in ann_res]
+        # 2. Announcements (Last 14 days)
+        cutoff = (datetime.now() - timedelta(days=14)).date()
+        ann_res = session.query(Announcement).filter(Announcement.event_date >= cutoff).order_by(Announcement.event_date.desc()).all()
+        ann_list = [{
+            "ASX_Code": a.symbol,
+            "Company": a.company,
+            "Headline": a.headline,
+            "Date": a.event_date.strftime("%Y-%m-%d") if a.event_date else "",
+            "Summary": a.summary,
+            "PDF_Link": a.pdf_link,
+            "Rating": a.rating
+        } for a in ann_res]
 
-    # 3. Placements
-    plac_res = session.query(Placement).order_by(Placement.event_date.desc()).limit(150).all()
-    plac_list = [{
-        "ASX_Code": p.symbol,
-        "Company": p.company,
-        "Headline": p.headline,
-        "Date": p.event_date.strftime("%Y-%m-%d") if p.event_date else "",
-        "CR_Price": p.cr_price,
-        "Current_Price": p.current_price,
-        "Price_Diff_%": p.price_diff_percent,
-        "PDF_Link": p.pdf_link
-    } for p in plac_res]
+        # 3. Placements
+        plac_res = session.query(Placement).order_by(Placement.event_date.desc()).limit(150).all()
+        plac_list = [{
+            "ASX_Code": p.symbol,
+            "Company": p.company,
+            "Headline": p.headline,
+            "Date": p.event_date.strftime("%Y-%m-%d") if p.event_date else "",
+            "CR_Price": p.cr_price,
+            "Current_Price": p.current_price,
+            "Price_Diff_%": p.price_diff_percent or 0.0,
+            "PDF_Link": p.pdf_link
+        } for p in plac_res]
 
-    # 4. Market Trends (Categorized for Template)
-    trends = session.query(MarketTrend).filter_by(is_active=True).all()
-    
-    analyzer_data = {
-        "growth_stocks": [],
-        "foundation_stocks": [],
-        "etfs": [],
-        "global_timeline": [] # Filled by analyzer if needed, or fetched here
-    }
-    
-    for t in trends:
-        if not t.stock: continue
-        s_obj = {
-            "symbol": t.symbol,
-            "name": t.stock.name,
-            "industry": t.stock.industry,
-            "current_price": t.current_price or 0.0,
-            "marketCap": t.market_cap or 0,
-            "pe": t.pe,
-            "ps": t.ps,
-            "yield": t.yield_val or 0.0,
-            "score": t.score or 0.0,
-            "price_change_1d": t.price_change_1d or 0.0,
-            "price_diff_1d": t.price_diff_1d or 0.0,
-            "price_change_5d": t.price_change_5d or 0.0,
-            "price_diff_5d": t.price_diff_5d or 0.0,
-            "momentum": t.momentum or 0.0,
-            "volatility": t.volatility or 0.0,
-            "volume_change": t.volume_change or 0.0,
-            "rsi": t.rsi or 50.0,
-            "sparkline": generate_sparkline(t.price_history)
+        # 4. Market Trends (Categorized for Template)
+        trends = session.query(MarketTrend).filter_by(is_active=True).all()
+        
+        # Build a stock lookup cache to avoid N+1 queries during categorization
+        stocks = session.query(Stock).all()
+        stock_map = {s.symbol: s for s in stocks}
+
+        analyzer_data = {
+            "growth_stocks": [],
+            "foundation_stocks": [],
+            "etfs": [],
+            "global_timeline": []
         }
-        if t.stock.stock_type == 'growth': analyzer_data["growth_stocks"].append(s_obj)
-        elif t.stock.stock_type == 'foundation': analyzer_data["foundation_stocks"].append(s_obj)
-        elif t.stock.stock_type == 'etf': analyzer_data["etfs"].append(s_obj)
+        
+        for t in trends:
+            stock = stock_map.get(t.symbol)
+            if not stock: continue
+            
+            s_obj = {
+                "symbol": t.symbol,
+                "name": stock.name,
+                "industry": stock.industry,
+                "current_price": t.current_price or 0.0,
+                "marketCap": t.market_cap or 0,
+                "pe": t.pe,
+                "yield": t.yield_val or 0.0,
+                "score": t.score or 0.0,
+                "price_change_1d": t.price_change_1d or 0.0,
+                "price_diff_1d": t.price_diff_1d or 0.0,
+                "price_change_5d": t.price_change_5d or 0.0,
+                "price_diff_5d": t.price_diff_5d or 0.0,
+                "momentum": t.momentum or 0.0,
+                "volatility": t.volatility or 0.0,
+                "volume_change": t.volume_change or 0.0,
+                "rsi": t.rsi or 50.0,
+                "sparkline": generate_sparkline(t.price_history)
+            }
+            if stock.stock_type == 'growth': analyzer_data["growth_stocks"].append(s_obj)
+            elif stock.stock_type == 'foundation': analyzer_data["foundation_stocks"].append(s_obj)
+            elif stock.stock_type == 'etf': analyzer_data["etfs"].append(s_obj)
 
-    # 5. Result Construction
-    return {
-        "analyzer": analyzer_data,
-        "catalysts": {"catalysts": catalysts_list},
-        "announcements": {"announcements": ann_list},
-        "placements": {"placements": plac_list},
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
+        return {
+            "analyzer": analyzer_data,
+            "catalysts": {"catalysts": catalysts_list},
+            "announcements": {"announcements": ann_list},
+            "placements": {"placements": plac_list},
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
 
 def build_dashboard():
     """Render the dashboard using Jinja2 templates."""

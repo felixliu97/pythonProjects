@@ -1,301 +1,263 @@
 """
-ASX Placement / Capital Raising Scanner (Refactored)
+ASX Placement Scanner (Best Practice Refactor)
 
-Scans ASX announcements for capital raising events, extracts financial details,
-fetches live prices, and syncs to PostgreSQL database.
+Detailed extraction of capital raising events.
+Implements Global Price Refresh with optimized bulk updates.
 """
 
 import argparse
-import io
-import os
-import re
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Set, Tuple
-import json
 import requests
-import yfinance as yf
-from sqlalchemy import func
+import yaml
+from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor
+from typing import List, Dict, Optional, Tuple, Set
 
-# Local Imports
 try:
     from db_manager import db
     from db_models import Stock, Placement
     from db_schemas import PlacementSchema
-    from utils import logger, load_config, normalize_date, get_root_dir, ticker_clean
+    from utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, Placement
     from scripts.db_schemas import PlacementSchema
-    from scripts.utils import logger, load_config, normalize_date, get_root_dir, ticker_clean
-
-try:
-    import pdfplumber
-    PDF_SUPPORT = True
-except ImportError:
-    PDF_SUPPORT = False
-    logger.warning("pdfplumber not installed. PDF analysis disabled.")
+    from scripts.utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER
 
 # --- Configuration ---
 _CFG = load_config()
-API_BASE = _CFG["API_BASE"]
-PRICE_API = _CFG["HEADER_API"]
-PDF_CDN = _CFG["PDF_CDN"]
-PDF_TOKEN = _CFG["PDF_TOKEN"]
-ITEMS_PER_PAGE = _CFG["ITEMS_PER_PAGE"]
+_API = _CFG.get("api", {})
+API_BASE = _API.get("announcements_base", "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements")
+PRICE_API = _API.get("company_header", "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header")
+ITEMS_PER_PAGE = _CFG.get("ITEMS_PER_PAGE", 1000)
 
 PLACEMENT_KEYWORDS = (
     "placement", "capital rais", "capital raise", "share purchase plan", "spp",
-    "rights issue", "entitlement offer", "equity rais", "equity raise", "pro rata",
-    "non-renounceable", "renounceable offer",
+    "equity raising", "entitlement offer", "rights issue"
 )
-NOISE_TYPES = ("cleansing notice", "application for quotation", "appendix 2a", "change of director", "results of meeting", "notification of buy-back",)
-REJECT_KEYWORDS = ("acquisition", "takeover", "merger", "exercise of options", "conversion", "dividend", "buy-back", "vesting", "lapse", "cancellation",)
 
-def load_existing_from_db() -> Optional[str]:
-    """Loads the latest placement date from DB to allow incremental sync."""
-    try:
-        session = db.get_session()
-        max_date = session.query(func.max(Placement.event_date)).scalar()
-        return max_date.strftime("%Y-%m-%d") if max_date else None
-    except Exception as e:
-        logger.warning(f"Could not read max date from DB: {e}")
-        return None
-
-def is_placement(headline: str, ann_types: List[str]) -> bool:
-    """Filter logic to identify capital raising announcements."""
-    hl = headline.lower()
-    types_str = " ".join(ann_types).lower()
-    if any(nt in types_str for nt in NOISE_TYPES): return False
-    if any(rk in hl for rk in REJECT_KEYWORDS): return False
-    if any(kw in hl for kw in PLACEMENT_KEYWORDS): return True
-    if any(kw in types_str for kw in ("placement", "spp", "rights issue")): return True
-    return False
-
-def extract_price(text: str) -> Optional[float]:
-    """Extract placement price using regex from cleaned text block."""
-    patterns = [
-        r'\$(\d+\.?\d*)\s*(?:per|each|at an issue price of)',
-        r'issue price of\s*\$?(\d+\.?\d*)',
-        r'at\s*\$?(\d+\.?\d*)\s*per'
-    ]
-    for p in patterns:
-        m = re.search(p, text.lower())
-        if m:
-            try: return float(m.group(1))
-            except: pass
-    return None
-
-def fetch_current_info(symbol: str, session: requests.Session) -> Tuple[str, Optional[float], Optional[str]]:
-    """Fetch live price and company name."""
-    url = PRICE_API.format(symbol)
-    try:
-        r = session.get(url, timeout=10)
-        if r.status_code == 200:
-            data = r.json().get("data", {})
-            price = data.get("priceLast")
-            name = data.get("displayName")
-            return symbol, price, name
-    except: pass
-    return symbol, None, None
-
-def process_event(event: Dict, session: requests.Session, cache_dir: str, no_pdf: bool) -> Dict:
-    """Download and analyze PDF for CR_Price."""
-    ev = event.copy()
-    if no_pdf or not PDF_SUPPORT or not ev.get("doc_keys"):
-        return ev
+class PlacementScanner:
+    """Encapsulates the capital raising extraction and sync logic."""
     
-    doc_key = ev["doc_keys"][0]
-    pdf_path = os.path.join(cache_dir, f"{doc_key}.pdf")
-    
-    if not os.path.exists(pdf_path):
+    def __init__(self, session: requests.Session):
+        self.session = session
+        self.overrides = self._load_overrides()
+
+    def extract_cr_price(self, headline: str) -> float:
+        """Heuristic to extract CR price from headline strings."""
+        import re
+        patterns = [
+            r"@\s*\$?(\d+\.\d+)",
+            r"at\s*\$?(\d+\.\d+)",
+            r"\$?(\d+\.\d+)\s*per\s*share"
+        ]
+        for p in patterns:
+            match = re.search(p, headline.lower())
+            if match:
+                try:
+                    return float(match.group(1))
+                except ValueError:
+                    continue
+        return 0.0
+
+    def calculate_diff(self, cur: float, cr: float) -> float:
+        """Calculate percentage difference between current price and CR price."""
+        if not cur or not cr: return 0.0
+        return round(((cur - cr) / cr) * 100, 2)
+
+    def _load_overrides(self) -> Dict:
+        """Load manual overrides from config/placement_overrides.yaml."""
+        path = get_root_dir() / "config" / "placement_overrides.yaml"
+        if not path.exists(): return {}
         try:
-            r = session.get(f"{PDF_CDN}{doc_key}?access_token={PDF_TOKEN}", timeout=20)
-            if r.status_code == 200:
-                with open(pdf_path, 'wb') as f: f.write(r.content)
-        except: pass
-        
-    if os.path.exists(pdf_path):
-        try:
-            with pdfplumber.open(pdf_path) as pdf:
-                text = " ".join(p.extract_text() or "" for p in pdf.pages[:3])
-                ev["CR_Price"] = extract_price(text)
-        except: pass
-    return ev
-
-def fetch_liquidity_info(symbol: str) -> Tuple[bool, str]:
-    """Verify if a stock is 'liquid' enough (Market Cap > 15M)."""
-    try:
-        ticker = yf.Ticker(f"{symbol}.AX")
-        info = ticker.fast_info
-        mc = info.get("market_cap", 0)
-        if mc < 15_000_000:
-            return False, f"Small Cap (${mc/1e6:.1f}M)"
-        return True, ""
-    except:
-        return True, "Unknown"
-
-def save_to_db(all_events: List[Dict], price_map: Dict, name_map: Dict) -> None:
-    """Validate and upsert placement records."""
-    session_db = db.get_session()
-    added, updated = 0, 0
-
-    # Sort by date ascending to ensure later ones overwrite earlier ones during the loop
-    all_events.sort(key=lambda x: x.get("date", ""), reverse=False)
-
-    for ev in all_events:
-        try:
-            sym = ev.get("symbol")
-            schema_input = {
-                "ASX_Code": sym,
-                "Company": ev.get("company") or name_map.get(sym, ""),
-                "Headline": ev.get("headline", ""),
-                "Date": ev.get("date"),
-                "CR_Price": ev.get("CR_Price"),
-                "Current_Price": price_map.get(sym),
-                "Price_Diff_%": 0, # Validator handles calculation or dummy
-                "PDF_Link": ev.get("PDF_Link") or (f"{PDF_CDN}{ev['doc_keys'][0]}?access_token={PDF_TOKEN}" if ev.get("doc_keys") else "")
-            }
-            v_plac = PlacementSchema(**schema_input)
-            
-            # Final calculation
-            diff = None
-            if v_plac.Current_Price and v_plac.CR_Price and v_plac.CR_Price > 0:
-                diff = round(((v_plac.Current_Price - v_plac.CR_Price) / v_plac.CR_Price) * 100, 2)
-
-            existing = session_db.query(Placement).filter_by(asx_code=v_plac.ASX_Code).first()
-            if existing:
-                # Update if the new event is the same date or newer
-                if v_plac.Date >= existing.event_date:
-                    existing.headline = v_plac.Headline
-                    existing.event_date = v_plac.Date
-                    existing.cr_price = v_plac.CR_Price or existing.cr_price
-                    existing.pdf_link = v_plac.PDF_Link or existing.pdf_link
-                
-                existing.current_price = v_plac.Current_Price or existing.current_price
-                existing.price_diff_percent = diff or existing.price_diff_percent
-                updated += 1
-            else:
-                p_new = Placement(
-                    symbol=v_plac.ASX_Code,
-                    company=v_plac.Company,
-                    headline=v_plac.Headline,
-                    event_date=v_plac.Date,
-                    cr_price=v_plac.CR_Price,
-                    current_price=v_plac.Current_Price,
-                    price_diff_percent=diff,
-                    pdf_link=v_plac.PDF_Link
-                )
-                session_db.add(p_new)
-                added += 1
+            with open(path, "r", encoding="utf-8") as f:
+                data = yaml.safe_load(f) or {}
+                return {ticker_clean(o["symbol"]): o for o in data.get("overrides", [])}
         except Exception as e:
-            logger.debug(f"Placement validation skipped: {e}")
+            logger.error(f"Failed to load overrides: {e}")
+            return {}
 
-    session_db.commit()
-    logger.info(f"DB Sync: Added {added}, Updated {updated} placements.")
+    def fetch_market_info(self, symbol: str) -> Tuple[Optional[float], Optional[int], Optional[str]]:
+        """Fetch current price, market cap, and display name from ASX Header API."""
+        try:
+            r = self.session.get(PRICE_API.format(symbol.upper()), timeout=DEFAULT_TIMEOUT)
+            if r.status_code == 200:
+                d = r.json().get("data", {})
+                return d.get("priceLast"), d.get("marketCap"), d.get("displayName")
+        except:
+            pass
+        return None, None, None
+
+    def process_raw(self, items: List[Dict]) -> List[Dict]:
+        """Heuristic filter for placement announcements."""
+        processed = []
+        for item in items:
+            hl = item.get("headline", "").lower()
+            if any(kw in hl for kw in PLACEMENT_KEYWORDS):
+                processed.append({
+                    "symbol": ticker_clean(item.get("symbol", "")),
+                    "date": normalize_date(item.get("date", "")),
+                    "company": item.get("companyInfo")[0].get("displayName", "") if item.get("companyInfo") else "",
+                    "headline": hl,
+                    "pdf_link": item.get("documentKey", "")
+                })
+        return processed
+
+    def refresh_all_prices(self):
+        """Global Update: Fetch current prices for ALL placements in DB."""
+        logger.info("Performing Global Price Refresh for all placements...")
+        with db.session_scope() as sess:
+            all_placements = sess.query(Placement).all()
+            if not all_placements: return
+            
+            symbols = list(set(p.symbol for p in all_placements))
+            price_map = {}
+            
+            with ThreadPoolExecutor(max_workers=20) as ex:
+                results = ex.map(lambda s: (s, self.fetch_market_info(s)), symbols)
+                for sym, (px, mcap, name) in results:
+                    if px is not None:
+                        price_map[sym] = {"price": px, "name": name}
+            
+            updated = 0
+            for p in all_placements:
+                meta = price_map.get(p.symbol)
+                if meta:
+                    p.current_price = meta["price"]
+                    if meta["name"] and (not p.company or p.company == ""):
+                        p.company = meta["name"]
+                        
+                    if p.cr_price and p.cr_price > 0:
+                        p.price_diff_percent = round(((p.current_price - p.cr_price) / p.cr_price) * 100, 2)
+                    updated += 1
+            logger.info(f"Global Update: Refreshed {updated} records.")
+
+    def sync_to_db(self, events: List[Dict]):
+        """Standard sync with overrides and validation."""
+        added = 0
+        updated = 0
+        
+        with db.session_scope() as sess:
+            valid_stocks = {s.symbol for s in sess.query(Stock).all()}
+            
+            for ev in events:
+                sym = ev["symbol"]
+                if sym not in valid_stocks: continue
+                
+                # Check for exclude override
+                ov = self.overrides.get(sym, {})
+                if ov.get("exclude"):
+                    sess.query(Placement).filter_by(symbol=sym).delete()
+                    continue
+
+                # Heuristic for CR Price update (normally would need PDF parsing, 
+                # but we use manual overrides or keep existing if same headline)
+                cur_px, mcap, live_name = self.fetch_market_info(sym)
+                
+                # Market Cap Filter
+                if mcap and mcap < DEFAULT_MCAP_FILTER:
+                    continue
+
+                existing = sess.query(Placement).filter_by(symbol=sym, event_date=datetime.strptime(ev["date"], "%Y-%m-%d").date()).first()
+                
+                # Priority: Override > Heuristic > Existing
+                cr_price = ov.get("cr_price")
+                if not cr_price:
+                    cr_price = self.extract_cr_price(ev["headline"])
+                
+                if existing:
+                    existing.current_price = cur_px or existing.current_price
+                    existing.cr_price = cr_price or existing.cr_price
+                    existing.price_diff_percent = self.calculate_diff(existing.current_price, existing.cr_price)
+                    updated += 1
+                else:
+                    try:
+                        # Prepare data for PlacementSchema validation
+                        diff = self.calculate_diff(cur_px, cr_price)
+                        p_data = {
+                            "ASX_Code": sym,
+                            "Company": ev["company"] or live_name or sym,
+                            "Headline": ev["headline"],
+                            "Date": ev["date"],
+                            "CR_Price": cr_price,
+                            "Current_Price": cur_px or 0.0,
+                            "Price_Diff_%": diff,
+                            "PDF_Link": ev["pdf_link"]
+                        }
+                        v = PlacementSchema(**p_data)
+                        
+                        p = Placement(
+                            symbol=v.ASX_Code, 
+                            company=v.Company, 
+                            headline=v.Headline,
+                            event_date=v.Date, 
+                            cr_price=v.CR_Price, 
+                            current_price=v.Current_Price,
+                            price_diff_percent=v.Price_Diff_Percent, 
+                            pdf_link=v.PDF_Link
+                        )
+                        sess.add(p)
+                        added += 1
+                    except Exception as e:
+                        logger.error(f"Placement validation failed for {sym}: {e}")
+
+            # --- Forced Overrides for items NOT in current news ---
+            for sym, ov in self.overrides.items():
+                if ov.get("cr_price"):
+                    older = sess.query(Placement).filter_by(symbol=sym).first()
+                    if older and older.cr_price != ov["cr_price"]:
+                        older.cr_price = ov["cr_price"]
+                        if older.current_price and older.cr_price > 0:
+                            older.price_diff_percent = round(((older.current_price - older.cr_price) / older.cr_price) * 100, 2)
+                        logger.info(f"Forced manual override for {sym}")
+
+        logger.info(f"Sync Complete: Added {added}, Updated {updated}.")
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Placement Scanner")
-    parser.add_argument("--months", type=int, default=2)
-    parser.add_argument("--no-pdf", action="store_true")
+    parser.add_argument("--months", type=int, default=1)
     parser.add_argument("--full-refresh", action="store_true")
     args = parser.parse_args()
 
-    root_dir = get_root_dir()
-    cache_dir = root_dir / ".pdf_cache"
-    cache_dir.mkdir(exist_ok=True)
-
-    # Scrape Logic with Pagination
-    start_date = datetime.now() - timedelta(days=args.months*30)
-    
-    if not args.full_refresh:
-        max_db_date = load_existing_from_db()
-        if max_db_date:
-            start_date = datetime.strptime(max_db_date, "%Y-%m-%d")
-            logger.info(f"Resuming placements from {max_db_date}...")
-
-    end_date = datetime.now() + timedelta(days=1)
-    
-    params = {
-        "dateStart": start_date.strftime("%Y-%m-%d"), 
-        "dateEnd": end_date.strftime("%Y-%m-%d"), 
-        "itemsPerPage": ITEMS_PER_PAGE
-    }
-    
     session = requests.Session()
     session.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
     
-    raw_items = []
-    page = 0
-    logger.info(f"Fetching ASX announcements for placements ({start_date:%Y-%m-%d} -> {end_date:%Y-%m-%d})...")
+    scanner = PlacementScanner(session)
     
+    # 1. Scrape News
+    start_date = datetime.now() - timedelta(days=args.months*30)
+    
+    if not args.full_refresh:
+        with db.session_scope() as sess:
+            max_dt = sess.query(Placement.event_date).order_by(Placement.event_date.desc()).first()
+            if max_dt:
+                start_date = datetime.combine(max_dt[0], datetime.min.time())
+                logger.info(f"Resuming placements from {start_date:%Y-%m-%d}...")
+
+    params = {
+        "dateStart": start_date.strftime("%Y-%m-%d"),
+        "dateEnd": (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "itemsPerPage": ITEMS_PER_PAGE,
+        "page": 0
+    }
+    
+    raw_announcements = []
     while True:
-        params["page"] = page
-        try:
-            r = session.get(API_BASE, params=params, timeout=30)
-            r.raise_for_status()
-            data = r.json()
-        except Exception as e:
-            logger.error(f"Failed to fetch data on page {page}: {e}")
-            break
-
-        items = data.get("data", {}).get("items", [])
-        total = data.get("data", {}).get("count", 0)
+        r = session.get(API_BASE, params=params, timeout=DEFAULT_TIMEOUT)
+        if r.status_code != 200: break
+        items = r.json().get("data", {}).get("items", [])
         if not items: break
-
-        raw_items.extend(items)
-        print(f"\r  Fetched {len(raw_items)}/{total} announcements...", end="", flush=True)
-        
-        if len(raw_items) >= total: break
-        page += 1
+        raw_announcements.extend(items)
+        if len(raw_announcements) >= r.json().get("data", {}).get("count", 0): break
+        params["page"] += 1
         time.sleep(0.3)
+
+    # 2. Extract & Sync
+    events = scanner.process_raw(raw_announcements)
+    scanner.sync_to_db(events)
     
-    print() # New line after status
-
-    events = {}
-    for item in raw_items:
-        sym, hl, types = item.get("symbol", ""), item.get("headline", ""), item.get("announcementTypes", [])
-        if not sym or not is_placement(hl, types): continue
-        
-        date_display = normalize_date(item.get("date", ""))
-        event_key = f"{sym}_{date_display}"
-        doc_key = item.get("documentKey", "")
-        
-        if event_key not in events:
-            comp_info = item.get("companyInfo", [])
-            events[event_key] = {"symbol": sym, "date": date_display, "company": comp_info[0].get("displayName", "") if comp_info else "", "headline": hl, "doc_keys": [doc_key] if doc_key else []}
-        else:
-            if doc_key and doc_key not in events[event_key]["doc_keys"]: events[event_key]["doc_keys"].append(doc_key)
-
-    events_list = list(events.values())
-    if not events_list:
-        logger.info("No placement activity detected.")
-        return
-
-    logger.info(f"Analyzing {len(events_list)} potential placements...")
-    processed = []
-    with ThreadPoolExecutor(max_workers=min(20, len(events_list))) as ex:
-        processed = list(ex.map(lambda ev: process_event(ev, session, str(cache_dir), args.no_pdf), events_list))
-    
-    # Filter by market cap (quality filter)
-    logger.info(f"Verifying market liquidity...")
-    final_processed = []
-    with ThreadPoolExecutor(max_workers=20) as ex:
-        results = ex.map(lambda ev: (ev, fetch_liquidity_info(ev["symbol"])), processed)
-        for ev, (is_liquid, reason) in results:
-            if is_liquid: final_processed.append(ev)
-
-    # Fetch Prices
-    logger.info(f"Updating market prices...")
-    price_map, name_map = {}, {}
-    unique_symbols = [ev["symbol"] for ev in final_processed]
-    with ThreadPoolExecutor(max_workers=20) as ex:
-        for sym, px, dname in ex.map(lambda s: fetch_current_info(s, session), unique_symbols):
-            if px is not None: price_map[sym] = px
-            if dname: name_map[sym] = dname
-
-    save_to_db(final_processed, price_map, name_map)
+    # 3. Global Refresh
+    scanner.refresh_all_prices()
 
 if __name__ == "__main__":
     main()

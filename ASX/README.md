@@ -1,134 +1,137 @@
-# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.2`
+# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.6 - Technical Spec`
 
-一个强大的自动化投研数据管线，用于分析 ASX（澳大利亚证券交易所）股票，主要聚焦于高增长潜力以及基本面催化剂（Catalysts）的追踪。
-
-## 🚀 核心功能 (Key Features)
-
-- **自动化流水线 (Automated Pipeline)**：自动抓取最新的市场公告，分析技术面动能，并生成具备高级质感的 HTML 交互式仪表盘。
-- **可视化趋势分析 (Visual Trends)**：仪表盘内置 **SVG Sparklines(迷你走势图)**，直观展示过去 30 个交易日的价格动能轨迹。
-- **基本面深度增强 (Fundamental Enrichment)**：自动集成 **市值 (Market Cap)**、**市盈率 (P/E)**、**市销率 (P/S)** 及 **股息收益率 (Yield)** 等核心指标。
-- **增量同步与并发抓取 (Performance)**：支持批量下载与高并发基本面拉取，提供“断点续传”模式。
-
-### 📊 核心视图 (Core Views)
-*   **📊 Market Trends**: 全市场动能扫描，包含 1D/5D 涨跌、RSI、成交量激增及综合动能评分。
-*   **🚀 Catalyst Radar**: 深度基本面追踪，包含个股催化剂、风险点记录、融资风险 (CR Risk) 及季度财报窗口。
-*   **📢 News Feed**: 过去 14 天 ASX 公告实时流，集成 AI 生成的摘要与重要度评级。
-*   **💰 Capital Placements**: 实时跟踪市场融资动向，涵盖增发 (Placement) 与配售权益 (Entitlement Offer)。
-
-## 🛠️ 快速开始 (Getting Started)
-
-### 1. 环境准备 (Prerequisites)
-打开项目根目录下的 `.env` 文件，并填入您的数据库连接凭证和其他必要的 API Token：
-```bash
-# 请不要将真实的密码提交到代码仓库中
-```
-
-### 2. 运行完整流水线 (Full Pipeline Execution)
-```bash
-python run.py all
-```
-该命令将按顺序运行各项数据爬虫任务（增量模式），执行技术指标分析，并最终在 `output/asx_dashboard.html` 路径下生成最新的可视化报告。
-
-**注意**：使用 `python run.py all --force` 可以强制忽略增量的断点记录，执行完整的历史数据回溯抓取和更新。
-
-
-### 3. 人机协作的基础研究更新 (Manual Research Update)
-1. **数据导出 (Export)**：`python run.py llm-export --ticker RML`
-   - 将会在 `config/` 目录下生成供编辑的 `temp_update.yaml` 文件。
-2. **AI 编辑 (Edit)**：将 YAML 文件连同您搜集的相关研报发给您偏好的大语言模型（如 Claude / GPT-4），让其基于最新内容更新催化剂、风险或时间表等条目。
-3. **数据导入 (Import)**：`python run.py llm-import`
-   - 内置的 **Smart Sync（智能同步）** 引擎会自动分析和比对变更，将数据库中被 LLM 抛弃的旧记录进行软删除（状态退役），并安全激活大模型更新的新条目。
-
-### 4. 数据库管理 (Database Management)
-- **Schema 定义**：结构定义由 `scripts/db_models.py` 控制。原始的 SQL DDL 语句保留在 `docs/schema.sql` 供技术参考。
-- **自动初始化**：`scripts/db_manager.py` 通过 SQLAlchemy 自动在默认的 `postgres` 数据库中创建对应的 Schema 和表结构，无需手动干预。
-- **安全重置**：如果发生意外，可运行 `python scripts/reseed_asx.py` 来完全清空当前的 Schema 并从旧版的 YAML 静态源文件重新填充数据库。
+这是一个完全解耦的自动化投研数据管线。本文件作为系统的 **唯一事实来源 (Source of Truth)**，详细记录了所有模块的核心逻辑与架构算法，旨在使开发者能够基于此文档重构整个系统。
 
 ---
 
-## 💡 LLM 工作流典型应用场景 (Use Cases)
+## 🏗️ 1. 全局架构与设计哲学
 
-本系统在设计上原生隔离了**数据提取(Export)**、**大模型推理(Reasoning)**和**数据库状态同步(Import)**，从而确保大模型在自由编辑内容时不会破坏关系型数据库的约束规则。
+系统设计核心：**数据源动态化、存储解耦化、UI 静态化**。
 
-### 场景 1：批量检查多个股票的最新动态
-**需求：** 生成包含多个股票基本面的概要数据，发给大语言模型（LLM），让其结合近期资讯批量检查是否有更新。
-**当前设计如何满足：**
-系统允许通过逗号分隔的列表或直接使用 `ALL` 关键字，一次性导出多只或所有股票的标准数据结构。
-```bash
-python run.py llm-export --ticker "BOT,LOT,RML"
-# 或者导出整个数据库的所有股票盘点：
-python run.py llm-export --ticker ALL
+### 1.1 数据流向 (Data Flow)
+```mermaid
+graph TD
+    A[ASX/Markit API] --> B{采集层 Scrapers}
+    B -->|Announcements| C[(Announcements Tab)]
+    B -->|Placements| D[(Placements Tab)]
+    C & D --> E{分析层 Analyzer}
+    E -->|Technicals/SCD2| F[(Market Trends Tab)]
+    G[LLM Workflow] -->|Export/Import| H[(Catalyst Tables)]
+    F & H & C & D --> I[Jinja2 Renderer]
+    I --> J[asx_dashboard.html]
 ```
-拿到生成的 `config/temp_update.yaml` 文件后，你可以将其作为上下文（Context）连同最近的新闻、网络搜索文章等打包发送给大模型（如 Claude / GPT-4），并附上指令：*“请对比这些 YAML 原生数据以及我提供的新闻，更新这几只股票的核心逻辑（core_notes）、主要催化剂（catalysts）或关键时间线（timeline）。请直接输出更新合并后的 YAML。”* 大模型生成修改完毕的 YAML 后，覆盖本地的 `temp_update.yaml`，最后执行 `python run.py llm-import` 即可完成批量更新的无缝数据库入库。
 
-### 场景 2：个股财报/年报深度研读与解构
-**需求：** 阅读完某家公司长达百页的最新财务报告后，针对性地为其补充最新的投资备忘录和时间表节点。
-**当前设计如何满足：**
-```bash
-python run.py llm-export --ticker DXB
-```
-导出单只股票（如 DXB）的数据后，连同财报原始文字发送给 LLM 进行逻辑梳理。LLM 会在 `timeline` 数组下追加新的里程碑节点。依靠 `scripts/llm_workflow.py` 内部实现的智能 SCD Type 2（慢变维追踪）逻辑，系统在 import 读取时，会自动发现**新增**的项目并为其打上生效时间戳，而对于 LLM 去除的原有废弃信息，系统会自动对其进行“软删除”（置为 `is_active=False`）。这意味着你的面板永远只显示最新视角，但底层数据库保留了每一次你和大模型复盘时的推理逻辑快照。
-
-### 场景 3：随时查看股票的历史技术面与动能演变
-**需求：** HTML 仪表盘虽然漂亮，但只展示昨晚收盘的瞬间表现。若我想回源追查过去一个月的技术指标轨迹怎么做？
-**当前设计如何满足：**
-系统并非只有最新切片。核心历史表 `market_trends` 记录着运行流水线时的每天的精确快照。
-当你需要深度挖掘某只股票此前的回踩记录（例如查阅过去两周某一天的 RSI 数据、量价激增 `volume_change` 的幅度）时：
-利用任意基础数据库可视化工具（如 DBeaver 或者 PgAdmin）连接您的 Postgres：
-```sql
-SELECT current_price, score, rsi, volume_change, valid_from 
-FROM asx.market_trends 
-WHERE symbol = 'BOT' 
-ORDER BY valid_from DESC;
-```
-由于采用了时间戳隔离，每天抓取的 `analyzer` 结果都会完好保留，供您进行跨图表比对分析。
-
-### 场景 4：手动加入一只新潜力股，并建立完整的投资档案
-**需求：** 我发现了一只很有潜力的新股票（例如 NEU），我想快速将它纳入正在追踪的 "Growth / Catalyst" 分区下，且不破坏现有历史库。
-**当前设计如何满足：**
-为了保护现有数据的长效性（SCD Type 2 历史记录），我们单独抽离了安全的添加渠道，完整闭环如下：
-1. **基础信息注册**：直接使用独立的脚本来注入公司架构体系：
-   ```bash
-   python scripts/add_stock.py NEU "Neuren Pharmaceuticals Limited" "Healthcare" --type growth
-   ```
-2. **导出骨架档案**：刚加进去的股票催化剂大多是空白的，为了让 LLM 来帮助快速建档，只需导出该票的初始结构：
-   ```bash
-   python run.py llm-export --ticker NEU
-   ```
-3. **大模型投喂范例 (Prompt 建议)**：将生成的 `config/temp_update.yaml` 与财报、新闻或者研究分析师的 PDF 一并喂给大模型（如 Claude），发出如下具体要求：
-   > *"我刚将 NEU 这只股票加入了追踪观察池。请详细研读附件中的近期关键公告。参考你拿到的基础 YAML 模板：请提取核心逻辑至 `Core_Notes`，分析可能的融资风险至 `CR_Risk`。将近期重点逻辑划分为 `Catalysts` 和 `Risks` 数组项。最关键的是，帮我抓取未来的事件窗口并罗列在 `Timeline` 中。请保证严格遵守 YAML 语法结构并输出最终答案。"*
-4. **导入激活**：LLM 会交出这份结构清晰的公司画像，将内容粘贴覆盖至临时文件并执行 `python run.py llm-import` 将新认知写入数据库。再次执行 `python run.py all` 即可见最终完全体图表挂载成功。
+### 1.2 全解耦存储 (Total Decoupling)
+- **无外键约束**: 数据库 `stocks`, `announcements`, `placements` 等表之间不建立物理外键。
+- **关联逻辑**: 统一通过 `symbol` (Ticker) 在应用层进行 `JOIN`。
+- **目的**: 防止级联删除风险，确保即便主表 Stock 被删除，历史研究快照依然可查。
 
 ---
 
-## 📊 数据指标与计算逻辑 (Metric Definitions & Logic)
+## 🛠️ 2. 模块逻辑解析 (Reconstruction Guide)
 
-为了帮助投研决策，仪表盘中包含了一系列经过清洗和计算的量化指标。以下是核心逻辑说明：
+### 2.1 基础架构与连接 (`db_manager.py` & `db_models.py`)
+- **连接管理**: 使用 SQLAlchemy 的 `scoped_session` 实现线程安全的单例连接池。
+- **自动初始化**: `init_db()` 会检查 `asx` schema 是否存在，若不存在则创建 schema 并根据 `db_models.py` 自动反射（Metadata.create_all）所有表定义。
+- **事务控制**: 使用 `@contextmanager` 封装 `session_scope`，实现异常自动 Rollback 与资源自动回收。
 
-### 1. 迷你走势图 (Sparklines)
-- **数据源**：从数据库 `market_trends.price_history` 字段读取最近 30 个交易日的收盘价。
-- **防止溢出**：系统在每次同步时会自动对历史价格执行 `[-30:]` 切片，仅保留最新 30 天数据，确保数据库存储不会随时间无限膨胀。
-- **渲染逻辑**：将价格序列归一化至 100x30 的 SVG 空间。
-- **颜色代码**：收盘价 ≥ 30天前起始价时显示 **绿色 (#10b981)**，否则显示 **红色 (#ef4444)**。
+### 2.2 公告采集与评级 (`asx_announcements.py`)
+- **增量续传算法**: 
+    1. 查询数据库中最新的 `event_date`。
+    2. 若存在且未开启 `--full-refresh`，则将抓取起始日设为该日期（Resumption）。
+    3. 若不存在，则回退至命令行指定的 `--months`（默认 1 个月）。
+- **启发式评分引擎 (Rating Engine 1-5)**:
+    - **Base**: 默认 1 分（常规行政/公告）。
+    - **+2 分 (API Signal)**: 匹配 API 端的 `isPriceSensitive` 真值标志。
+    - **+2 分 (High Value)**: 匹配 "assay", "drilling", "results", "high-grade", "maiden", "resource", "approval" 等核心发现词。
+    - **+1 分 (Mid Value)**: 匹配 "trading halt", "placement", "quarterly", "half year", "guidance" 等运营/资金融通词。
+    - **Summary 逻辑**: 自动从 `announcementTypes` 列表聚合而成（如 "Trading Halt, Market Sensitive"）。
+- **公司名解析 (3-Tier Fallback)**:
+    1. 优先使用 API 的 `companyInfo.displayName`。
+    2. 若 API 为空，则实时匹配本地 `stocks` 表中的 `name` 字段。
+    3. 极端情况下回退到 Symbol 原文。解决部分公告显示为 "ASX" 的回退错误。
+- **Rate Limiting**: API 分页请求之间强制 `time.sleep(0.3)`。
 
-### 2. 综合评分 (Proprietary Score)
-该指标旨在量化短期动能与技术面健康度，公式如下：
-`Score = (Momentum * 0.4) + (Vol_Surge * 0.1) - (Volatility * 0.1) + RSI_Adjustment`
-- **RSI 超买惩罚**：若 RSI > 70，扣分 `(RSI - 70) * 0.2`。
-- **RSI 超卖奖励**：若 RSI < 30，加分 `(30 - RSI) * 0.3`（视为潜在的底部反转动能）。
+### 2.3 融资增发监测 (`asx_placements.py`)
+- **正则价格提取 (`extract_cr_price`)**:
+    - `pattern_1`: `@ \$?(\d+\.\d+)`
+    - `pattern_2`: `at \$?(\d+\.\d+)`
+    - `pattern_3`: `\$?(\d+\.\d+) per share`
+- **市值过滤**: 市值低于 **$15,000,000 AUD** (Constant: `DEFAULT_MCAP_FILTER`) 的项目被静默丢弃。
+- **并发刷新与名录回填**: 
+    - 采用 `ThreadPoolExecutor(max_workers=20)` 异步轮询最新市价。
+    - **自动补全**: 若融资记录缺少 `company` 字段，会在刷新市价时自动从 Markit API 增量提取并回填名称。
 
-### 3. 技术指标 (Technical Metrics)
-- **动能 (Mom. %)**：计算 5 个交易日的相对涨跌幅：`((当前价 - 5日前价) / 5日前价) * 100`。
-- **波动率 (Volatility)**：计算过去一个月的日收益率标准差，并进行百分比缩放。
-- **成交量激增 (Vol Surge)**：对比当日成交量与过去 10 个交易日的移动平均成交量：`((今日量 - 10日均量) / 10日均量) * 100`。
+### 2.4 动能分析与评分 (`asx_analyzer.py`)
+- **技术指标定义**:
+    - **RSI**: 14 日均线计算。
+    - **Momentum**: `(当前价 - 周期均价) / 标准差` (Z-Score 变体)。
+    - **Volatility**: 日收益率的标准差百分比。
+- **综合权重评分 (Proprietary Score)**:
+    - **Base**: 50.0。
+    - **修正**: 
+        - RSI < 30: +10 分；RSI > 70: -5 分。
+        - 动量修正：`momentum * 5`。
+        - 价格激增：`1d_diff * 2 + 5d_diff * 1.5`。
+        - 成交量激增：`Vol_Change > 50%` 时 +5 分。
+    - **Range**: 强制限制在 [0, 100] 区间。
 
-### 4. 基本面清洗 (Fundamental Cleaning)
-- **股息率 (Yield)**：自动识别 `yfinance` 返回的原始数据格式。如果是小数（如 0.045）则乘以 100 转换为百分比（4.5%）；如果是整数（如 4.5）则直接保留。
-- **市值 (Cap)**：自动将原始数值转换为可读的 `b` (Billion) 或 `m` (Million) 格式。
+### 2.5 缓慢变化维 (SCD Type 2) 逻辑实现
+在 `market_trends` 和 `catalyst_items` 中应用：
+1. **同步时**: 找出 `symbol` 对应且 `is_active=True` 的记录。
+2. **比较**: 若内容发生显著变化，则将旧记录 `is_active` 置为 `False`，设置 `valid_to` 为当前时间。
+3. **新增**: 插入新记录，`is_active=True`, `valid_from=Now`。
 
 ---
 
-## 📜 技术参考：SQL Schema 数据定义 (Technical Reference)
+## 💡 3. LLM 协作工作流详解 (`llm_workflow.py`)
 
-整个数据库的 schema 创建联机语句已提取并在 `docs/schema.sql` 中统一维护。该文件提供了一种幂等（idempotent）的方式来独立重建数据库底层结构。
-**警告 (CAUTION)**：在生产环境中运行该文件里的 `DROP` 段落将**永久删除所有数据**，请谨慎操作。
+系统并非简单的文件覆盖，而是实现了 **Segment-Level Sync (分节同步)**：
+
+- **Export**: 根据 `symbol` 将 `CatalystMaster`（静态属性）与 `CatalystItem`（动态条目）聚合为一个 Pydantic 模型，输出 YAML。
+- **Import**:
+    - **Master 更新**: 直接更新 `cr_risk`, `probability` 及其 `reason` 字段。
+    - **Item 智能识别**: 
+        - 读取 YAML 中的 `Catalysts`, `Risks`, `Timeline` 数组。
+        - 将其与数据库中的内容进行布隆过滤器式的比对。
+        - **新条目**: 插入。
+        - **消失的条目**: 软删除（退役）。
+        - **存在的条目**: 维持现状。
+
+---
+
+## 📑 4. 数据字典与 ID 生成
+
+- **`unique_key` 生成公式**: `ASXCode_Date_Headline[:100]`。用于保证采集层（Announcements）的幂等性，防止重复插入。
+- **`price_history` 存储**: 逗号分隔的字符串（最近 10 次价格），减少 JSONB 膨胀，加速 Sparkline 生成。
+
+---
+
+## 🏁 5. 开发与重构指令
+
+### 5.1 环境初始化
+```bash
+# 1. 复制环境
+cp .env.example .env
+
+# 2. 数据库重建 (幂等)
+python run.py reseed
+```
+
+### 5.2 核心运行命令映射
+- `run.py all`: 顺序调用 `asx_announcements -> asx_placements -> asx_analyzer -> asx_catalysts -> build_dashboard`。
+- `run.py llm-export --ticker <T>`: 调用 `llm_workflow.py export <T>`。
+
+---
+
+## 🧪 6. 测试与验证规范
+
+修改后必须运行以下测试以确保逻辑闭环 (测试套件已在 v1.6 完成收束合并)：
+- `test_announcements.py`: 验证采集、Rating 启发式算法、Summary 提取及唯一键幂等性。
+- `test_placements.py`: 验证融资价格正则提取、市价同步及缺失公司名回填。
+- `test_analysis.py`: 验证动量评分 (Z-Score) 及催化剂导出逻辑。
+- `test_dashboard.py`: 验证 P/E 负值处理、Sparkline 生成及前端模板渲染。
+- `test_infrastructure.py`: 验证 `utils` 工具函数、数据库解耦及 Resumption 边界条件。
+
+**警告**: 任何对 `db_models.py` 的修改必须运行 `reseed` 校验，并确保 `scripts/db_schemas.py` 同步更新。
+

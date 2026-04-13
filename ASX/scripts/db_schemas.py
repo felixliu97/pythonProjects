@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator, HttpUrl
+from pydantic import BaseModel, Field, field_validator, HttpUrl, ConfigDict
 from typing import List, Optional, Dict, Union
 from datetime import date, datetime
 
@@ -8,18 +8,17 @@ class StockSchema(BaseModel):
     industry: Optional[str] = None
     stock_type: str = Field(..., pattern="^(growth|foundation|etf)$")
 
-    @validator('symbol')
-    def clean_symbol(cls, v):
+    @field_validator('symbol')
+    @classmethod
+    def clean_symbol(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()
 
 class MilestoneSchema(BaseModel):
     """Note: These keys match the original YAML keys for compatibility"""
+    model_config = ConfigDict(populate_by_name=True)
+    
     Time: str = Field(..., alias="time_label")
     Event: str = Field(..., alias="event_desc")
-    
-    class Config:
-        populate_by_name = True
-        allow_population_by_field_name = True
 
 class CatalystSchema(BaseModel):
     """
@@ -32,20 +31,39 @@ class CatalystSchema(BaseModel):
     Risks: List[str] = []
     Earnings_Window: List[str] = []
     CR_Risk: str
-    Probability: str
+    CR_Risk_Reason: Optional[str] = ""
+    Breakout_Probability: Optional[str] = Field(None, alias="Probability")
+    Breakout_Probability_Reason: Optional[str] = ""
     Core_Notes: str
     Timeline: List[Dict[str, str]] = [] # [{"Time": "...", "Event": "..."}]
 
-    @validator('Ticker')
-    def clean_ticker(cls, v):
+    model_config = ConfigDict(populate_by_name=True)
+
+    @field_validator('Ticker')
+    @classmethod
+    def clean_ticker(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()
+
+    @field_validator('Catalysts', 'Risks', 'Earnings_Window', mode='before')
+    @classmethod
+    def handle_dict_items(cls, v):
+        """Convert any dict-style list items (key: value) to plain strings."""
+        if not isinstance(v, list):
+            return v
+        processed = []
+        for item in v:
+            if isinstance(item, dict):
+                # Convert {key: value} to "key: value"
+                processed.append(", ".join([f"{k}: {v}" for k, v in item.items()]))
+            else:
+                processed.append(str(item))
+        return processed
 
 class MarketTrendSchema(BaseModel):
     symbol: str
     current_price: Optional[float] = None
     market_cap: Optional[int] = None
     pe: Optional[float] = None
-    ps: Optional[float] = None
     yield_val: Optional[float] = None
     score: float = 0.0
     price_change_1d: float = 0.0
@@ -59,8 +77,9 @@ class MarketTrendSchema(BaseModel):
     price_history: Optional[str] = None
     market_date: Optional[date] = None
     
-    @validator('symbol')
-    def clean_symbol(cls, v):
+    @field_validator('symbol')
+    @classmethod
+    def clean_symbol(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()
 
 class AnnouncementSchema(BaseModel):
@@ -72,11 +91,14 @@ class AnnouncementSchema(BaseModel):
     PDF_Link: Optional[str] = ""
     Rating: int = Field(2, ge=1, le=5)
 
-    @validator('ASX_Code')
-    def clean_asx_code(cls, v):
+    @field_validator('ASX_Code')
+    @classmethod
+    def clean_asx_code(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()
 
 class PlacementSchema(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     ASX_Code: str
     Company: str
     Headline: str
@@ -86,9 +108,7 @@ class PlacementSchema(BaseModel):
     Price_Diff_Percent: Optional[float] = Field(None, alias="Price_Diff_%")
     PDF_Link: Optional[str] = ""
 
-    class Config:
-        populate_by_name = True
-
-    @validator('ASX_Code')
-    def clean_asx_code(cls, v):
+    @field_validator('ASX_Code')
+    @classmethod
+    def clean_asx_code(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()

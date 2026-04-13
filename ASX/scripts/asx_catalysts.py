@@ -1,57 +1,78 @@
 """
-ASX Catalyst Data Synchronization (Refactored)
+ASX Catalyst JSON Generator (Best Practice Refactor)
 
-Extracts consolidated fundamental data from the database and exports 
-a structured JSON snapshot for the dashboard.
+Aggregates fundamental research from the database and exports a 
+structured JSON file for the dashboard frontend.
 """
 
+import sys
 import json
-from datetime import datetime
+import os
+from typing import List, Dict, Any
 
-# Local Imports
 try:
     from db_manager import db
-    from db_models import CatalystMaster
-    from utils import logger, load_config
+    from db_models import CatalystMaster, CatalystItem
+    from db_schemas import CatalystSchema
+    from utils import logger, get_root_dir
 except ImportError:
     from scripts.db_manager import db
-    from scripts.db_models import CatalystMaster
-    from scripts.utils import logger, load_config
+    from scripts.db_models import CatalystMaster, CatalystItem
+    from scripts.db_schemas import CatalystSchema
+    from scripts.utils import logger, get_root_dir
 
-def process_catalysts():
-    """Fetch sorted catalyst data from DB and export to JSON snapshot."""
-    _CFG = load_config()
-    JSON_OUT = _CFG["CAT_JSON_OUT"]
+def export_catalysts():
+    """Aggregate DB records into the JSON format expected by asx_dashboard.html."""
+    logger.info("Generating Catalyst JSON for dashboard...")
     
-    session = db.get_session()
-    results = session.query(CatalystMaster).all()
+    output_path = get_root_dir() / "output" / "asx_catalysts.json"
+    output_path.parent.mkdir(exist_ok=True)
     
-    stocks_data = []
-    for m in results:
-        # Use child relationship with item_type filtering
-        items = m.items
-        stock_item = {
-            "Ticker": m.symbol,
-            "Company": m.company,
-            "Sector": m.sector,
-            "Catalysts": [i.content for i in items if i.is_active and i.item_type == 'catalyst'],
-            "Risks": [i.content for i in items if i.is_active and i.item_type == 'risk'],
-            "Earnings_Window": [i.content for i in items if i.is_active and i.item_type == 'earnings'],
-            "CR_Risk": m.cr_risk,
-            "Probability": m.probability,
-            "Core_Notes": m.core_notes,
-            "Timeline": [{"Time": i.label, "Event": i.content} for i in items if i.is_active and i.item_type == 'milestone']
-        }
-        stocks_data.append(stock_item)
-
-    # Export processed data for Dashboard usage
-    with open(JSON_OUT, 'w', encoding='utf-8') as f:
-        json.dump({
-            'catalysts': stocks_data, 
-            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        }, f, indent=2, ensure_ascii=False)
+    with db.session_scope() as sess:
+        masters = sess.query(CatalystMaster).all()
+        export_data = []
         
-    logger.info(f"Catalysts Sync: Exported {len(stocks_data)} records to {JSON_OUT}")
+        for master in masters:
+            try:
+                # 1. Gather child items manually (Total Decoupling)
+                active_items = sess.query(CatalystItem).filter_by(
+                    symbol=master.symbol, 
+                    is_active=True
+                ).all()
+                
+                catalysts = [i.content for i in active_items if i.item_type == 'catalyst']
+                risks = [i.content for i in active_items if i.item_type == 'risk']
+                earnings = [i.content for i in active_items if i.item_type == 'earnings']
+                timeline = [{"Time": i.label, "Event": i.content} for i in active_items if i.item_type == 'milestone']
+                
+                # 2. Map to Schema for final validation/serialization
+                v = CatalystSchema(
+                    Ticker=master.symbol,
+                    Company=master.company,
+                    Sector=master.sector or "Unknown",
+                    Catalysts=catalysts,
+                    Risks=risks,
+                    Earnings_Window=earnings,
+                    CR_Risk=master.cr_risk or "Unknown",
+                    CR_Risk_Reason=master.cr_risk_reason or "",
+                    Breakout_Probability=master.breakout_probability or "N/A",
+                    Breakout_Probability_Reason=master.breakout_probability_reason or "",
+                    Core_Notes=master.core_notes or "",
+                    Timeline=timeline
+                )
+                
+                # Use model_dump for clean dict with aliased names if any
+                export_data.append(v.model_dump())
+            except Exception as e:
+                logger.error(f"Failed to export {master.symbol}: {e}")
+                
+        # Write JSON
+        try:
+            with open(output_path, "w", encoding="utf-8") as f:
+                json.dump(export_data, f, indent=2, ensure_ascii=False)
+            logger.info(f"Catalysts Sync: Exported {len(export_data)} records to {output_path}")
+        except Exception as e:
+            logger.error(f"Failed to write JSON output: {e}")
 
 if __name__ == "__main__":
-    process_catalysts()
+    export_catalysts()

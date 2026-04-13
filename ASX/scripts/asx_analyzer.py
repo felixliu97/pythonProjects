@@ -1,327 +1,252 @@
 """
-ASX Market Momentum & Trend Analyzer (Refactored)
+ASX Market Momentum Analyzer (Best Practice Refactor)
 
-Analyzes stock technicals (RSI, Momentum, Volatility) using yfinance data,
-calculates custom scores, and syncs snapshots to PostgreSQL.
+Calculates technical momentum metrics (RSI, EMA, Score) for all watched stocks.
+Enriches data with fundamental descriptors from the ASX Header API.
 """
 
-import argparse
-import json
-import os
 import sys
+import json
 import time
-import warnings
-import concurrent.futures
-from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional
-
-import numpy as np
-import pandas as pd
-import yfinance as yf
+import requests
 import yaml
+import pandas as pd
+import numpy as np
+import yfinance as yf
+from datetime import datetime, date, timedelta
+from concurrent.futures import ThreadPoolExecutor
+from typing import List, Dict, Optional, Tuple, Any
 
-# Local Imports
 try:
     from db_manager import db
     from db_models import Stock, MarketTrend
+    from sqlalchemy import create_engine, text, Engine, event
+    from sqlalchemy.orm import sessionmaker, scoped_session, Session
     from db_schemas import MarketTrendSchema
-    from utils import logger, get_root_dir, ticker_to_ax
+    from utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, MarketTrend
     from scripts.db_schemas import MarketTrendSchema
-    from scripts.utils import logger, get_root_dir, ticker_to_ax
+    from scripts.utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER
 
-warnings.filterwarnings('ignore')
+# --- Configuration ---
+_CFG = load_config()
+_API = _CFG.get("api", {})
+DESC_API = _API.get("company_header", "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header")
+STATS_API = "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/key-statistics"
 
-class ASXTrendingStocks:
-    """Core analysis engine for ASX momentum and technical trends."""
+class MomentumAnalyzer:
+    """Analyzes technical and fundamental metrics for a list of tickers."""
     
-    def __init__(self):
-        self.root_dir = get_root_dir()
-        self.config_file = self.root_dir / 'config' / 'asx_analyzer.yaml'
-        self.output_dir = self.root_dir / 'output'
-        self.cache_file = self.output_dir / 'asx_analyzer.json'
-        self.output_dir.mkdir(exist_ok=True)
-        
-        self.settings = {"period": "1mo", "min_data_points": 10, "display_limit": 50}
-        self._load_settings()
+    def __init__(self, session: requests.Session):
+        self.session = session
 
-    def _load_settings(self):
-        """Load settings from config/settings.yaml if available."""
-        settings_path = self.root_dir / "config" / "settings.yaml"
-        if settings_path.exists():
-            with open(settings_path, "r", encoding="utf-8") as f:
-                cfg = yaml.safe_load(f)
-                self.settings.update(cfg.get("analyzer", {}))
+    def standardize_text(self, text: Optional[str]) -> str:
+        """Standardize industry/name strings (Title Case, trim, remove clutter)."""
+        if not text or text.lower() in ["none", "n/a", "-"]:
+            return "Other"
+        
+        # Remove common clutter
+        import re
+        text = re.sub(r'\(REITs\)', '', text, flags=re.IGNORECASE)
+        text = re.sub(r' Group$', '', text, flags=re.IGNORECASE)
+        
+        return text.strip().title()
 
-    def fetch_data(self, symbols: List[str]) -> Dict[str, pd.DataFrame]:
-        """Fetch historical price data in bulk with robust ticker mapping."""
-        logger.info(f"Downloading data for {len(symbols)} symbols...")
-        data_map = {}
-        
-        # Ensure all tickers have .AX suffix for download
-        ax_tickers = list(set([ticker_to_ax(s) for s in symbols]))
-        
+    def fetch_fundamentals(self, symbol: str) -> Dict[str, Any]:
+        """Fetch fundamental descriptors and stats from ASX API."""
+        out = {}
         try:
-            # Bulk download is much more efficient and stable than threading single calls
-            df_all = yf.download(ax_tickers, period=self.settings["period"], interval="1d", progress=False, group_by='ticker')
+            # 1. Basic Header (Market Cap, Industry)
+            r1 = self.session.get(f"{DESC_API.format(symbol.upper())}", timeout=DEFAULT_TIMEOUT)
+            if r1.status_code == 200:
+                out.update(r1.json().get("data", {}))
             
-            # Check if df_all is MultiIndex (multiple tickers) or standard (single ticker)
-            is_multi = isinstance(df_all.columns, pd.MultiIndex)
-            
-            for s in symbols:
-                ax_s = ticker_to_ax(s)
-                try:
-                    if is_multi:
-                        if ax_s in df_all.columns.get_level_values(0):
-                            # Use xs to robustly extract the sub-dataframe for the ticker
-                            df_s = df_all.xs(ax_s, level=0, axis=1).dropna(subset=['Close'])
-                            if not df_s.empty:
-                                data_map[s] = df_s.copy()
-                    else:
-                        # Single successfully downloaded ticker might return standard DataFrame
-                        if not df_all.empty:
-                            data_map[s] = df_all.copy()
-                except KeyError:
-                    continue
+            # 2. Key Statistics (PE, Yield)
+            r2 = self.session.get(f"{STATS_API.format(symbol.upper())}", timeout=DEFAULT_TIMEOUT)
+            if r2.status_code == 200:
+                stats = r2.json().get("data", {})
+                # Normalize keys for easier mapping
+                out["pe"] = stats.get("priceEarningsRatio")
+                out["yield_val"] = stats.get("yieldAnnual")
         except Exception as e:
-            logger.error(f"Bulk download failed: {e}")
-            
-        return data_map
+            logger.debug(f"Fundamental fetch failed for {symbol}: {e}")
+        return out
 
-    def calculate_rsi(self, series: pd.Series, period: int = 14) -> float:
+    def calculate_rsi(self, series, period: int = 14) -> float:
         """Calculate Relative Strength Index."""
         if len(series) < period: return 50.0
         delta = series.diff()
         gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
         rs = gain / loss
-        rsi = 100 - (100 / (1 + rs))
-        return float(rsi.iloc[-1])
+        return 100 - (100 / (1 + rs.iloc[-1])) if not np.isnan(rs.iloc[-1]) else 50.0
 
-    def fetch_fundamentals(self, symbols: List[str]) -> Dict[str, Any]:
-        """Fetch fundamental data (Info) for symbols using parallel execution."""
-        logger.info(f"Fetching fundamental descriptors for {len(symbols)} tickers...")
-        results = {}
-        
-        def get_info(s):
-            try:
-                ticker = yf.Ticker(ticker_to_ax(s))
-                info = ticker.info
-                # yfinance reports dividendYield as a fraction (0.04) or whole (4.0). 
-                # Standards suggest fraction, but we verify to avoid 1000%+ bugs.
-                raw_yield = info.get("dividendYield")
-                cleaned_yield = 0.0
-                if raw_yield:
-                    if raw_yield > 1.0: # Likely already scaled (e.g., 4.5% as 4.5)
-                        cleaned_yield = raw_yield
-                    else: # Likely fraction (e.g., 0.045)
-                        cleaned_yield = raw_yield * 100
-                
-                return s, {
-                    "marketCap": info.get("marketCap"),
-                    "pe": info.get("trailingPE") or info.get("forwardPE"),
-                    "ps": info.get("priceToSalesTrailing12Months"),
-                    "industry": info.get("industry") or info.get("sector"),
-                    "yield": cleaned_yield
-                }
-            except Exception:
-                return s, {}
+    def analyze_ticker(self, symbol: str, stock_type: str) -> Optional[MarketTrendSchema]:
+        """Process a single ticker for technical and fundamental data."""
+        try:
+            # 1. Fundamentals via ASX API (Primary for current price and metadata)
+            funds = self.fetch_fundamentals(symbol)
+            mcap = funds.get("marketCap")
+            pe = funds.get("pe")
+            yield_v = funds.get("yield_val")
+            industry = self.standardize_text(funds.get("industryGroup"))
+            comp_name = funds.get("displayName")
+            live_px = funds.get("priceLast")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            futures = [executor.submit(get_info, s) for s in symbols]
-            for future in concurrent.futures.as_completed(futures):
-                s, info = future.result()
-                if info: results[s] = info
-        return results
-
-    def analyze_stock(self, symbol: str, df: pd.DataFrame, stock_info: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Compute momentum, volatility, RSI and custom scores."""
-        if len(df) < self.settings["min_data_points"]: return None
-        
-        close = df['Close'].values.flatten()
-        vol = df['Volume'].values.flatten()
-        
-        cur_px = float(close[-1])
-        px_5d = float(close[-5]) if len(close) >= 5 else float(close[0])
-        px_1d = float(close[-2]) if len(close) >= 2 else float(close[0])
-        
-        # Historical price history for sparklines (comma separated)
-        hist_prices = ",".join([str(round(float(p), 4)) for p in close[-30:]]) if len(close) >= 2 else str(cur_px)
-        
-        # Extract the date of the last bar for deduplication
-        m_date = df.index[-1].date()
-        
-        # Metrics
-        mom = ((cur_px - px_5d) / px_5d) * 100
-        volat = (np.std(np.diff(close) / close[:-1])) * 100
-        change_1d = ((cur_px - px_1d) / px_1d) * 100
-        
-        avg_vol = np.mean(vol[-10:]) if len(vol) >= 10 else np.mean(vol)
-        vol_change = ((vol[-1] - avg_vol) / avg_vol) * 100 if avg_vol > 0 else 0
-        
-        rsi = float(self.calculate_rsi(df['Close']))
-        
-        # Basic Scoring logic (Momentum weighted)
-        score = (mom * 0.4) + (vol_change * 0.1) - (volat * 0.1)
-        if rsi > 70: score -= (rsi - 70) * 0.2 # Penalty for overbought
-        if rsi < 30: score += (30 - rsi) * 0.3 # Bonus for oversold recovery
-
-        return {
-            "symbol": symbol,
-            "name": stock_info.get("name", ""),
-            "industry": stock_info.get("industry") or stock_info.get("sector", ""),
-            "current_price": round(cur_px, 3),
-            "score": round(score, 2),
-            "price_change_1d": round(change_1d, 2),
-            "price_diff_1d": round(cur_px - px_1d, 3),
-            "price_change_5d": round(mom, 2),
-            "price_diff_5d": round(cur_px - px_5d, 3),
-            "momentum": round(mom, 2),
-            "volatility": round(volat, 2),
-            "volume_change": round(vol_change, 2),
-            "rsi": round(rsi, 2),
-            "marketCap": stock_info.get("marketCap"),
-            "pe": stock_info.get("pe"),
-            "ps": stock_info.get("ps"),
-            "yield": stock_info.get("yield"),
-            "price_history": hist_prices,
-            "market_date": m_date.isoformat()
-        }
-
-    def save_to_db(self, data: List[Dict[str, Any]]):
-        """Sync technical snapshots to DB using Pydantic validation."""
-        session = db.get_session()
-        count = 0
-        now = datetime.now()
-        
-        for s in data:
-            try:
-                # 0. Sync Industry to Stock master table if missing
-                if s.get('industry'):
-                    stock = session.query(Stock).filter_by(symbol=s['symbol']).first()
-                    if stock and not stock.industry:
-                        stock.industry = s['industry']
-                        session.flush()
-
-                schema_input = {
-                    "symbol": s.get('symbol'),
-                    "current_price": s.get('current_price'),
-                    "market_cap": s.get('marketCap'),
-                    "pe": s.get('pe'),
-                    "ps": s.get('ps'),
-                    "yield_val": s.get('yield'),
-                    "score": s.get('score'),
-                    "price_change_1d": s.get('price_change_1d'),
-                    "price_diff_1d": s.get('price_diff_1d'),
-                    "price_change_5d": s.get('price_change_5d'),
-                    "price_diff_5d": s.get('price_diff_5d'),
-                    "momentum": s.get('momentum'),
-                    "volatility": s.get('volatility'),
-                    "volume_change": s.get('volume_change'),
-                    "rsi": s.get('rsi'),
-                    "price_history": s.get('price_history'),
-                    "market_date": s.get('market_date')
-                }
-                v_trend = MarketTrendSchema(**schema_input)
-                
-                active_trend = session.query(MarketTrend).filter_by(symbol=v_trend.symbol, is_active=True).first()
-                
-                if active_trend:
-                    # If it's the same market date, update the existing record with possibly new fundamental/history data
-                    if active_trend.market_date == v_trend.market_date:
-                        active_trend.current_price = v_trend.current_price
-                        active_trend.market_cap = v_trend.market_cap
-                        active_trend.pe = v_trend.pe
-                        active_trend.ps = v_trend.ps
-                        active_trend.yield_val = v_trend.yield_val
-                        active_trend.score = v_trend.score
-                        active_trend.price_change_1d = v_trend.price_change_1d
-                        active_trend.price_diff_1d = v_trend.price_diff_1d
-                        active_trend.price_change_5d = v_trend.price_change_5d
-                        active_trend.price_diff_5d = v_trend.price_diff_5d
-                        active_trend.momentum = v_trend.momentum
-                        active_trend.volatility = v_trend.volatility
-                        active_trend.volume_change = v_trend.volume_change
-                        active_trend.rsi = v_trend.rsi
-                        active_trend.price_history = v_trend.price_history
-                        count += 1
-                        continue
-                        
-                    # Retirement logic for truly new dates
-                    active_trend.is_active = False
-                    active_trend.valid_to = now
-                
-                new_trend = MarketTrend(
-                    symbol=v_trend.symbol,
-                    current_price=v_trend.current_price,
-                    market_cap=v_trend.market_cap,
-                    pe=v_trend.pe,
-                    ps=v_trend.ps,
-                    yield_val=v_trend.yield_val,
-                    score=v_trend.score,
-                    price_change_1d=v_trend.price_change_1d,
-                    price_diff_1d=v_trend.price_diff_1d,
-                    price_change_5d=v_trend.price_change_5d,
-                    price_diff_5d=v_trend.price_diff_5d,
-                    momentum=v_trend.momentum,
-                    volatility=v_trend.volatility,
-                    volume_change=v_trend.volume_change,
-                    rsi=v_trend.rsi,
-                    market_date=v_trend.market_date,
-                    valid_from=now,
-                    is_active=True
-                )
-                session.add(new_trend)
-                count += 1
-            except Exception as e:
-                logger.debug(f"Trend validation skipped for {s.get('symbol')}: {e}")
-                
-        session.commit()
-        logger.info(f"Market Momentum: Synced {count} snapshots to DB.")
-
-    def run_pipeline(self):
-        """Full execution flow."""
-        logger.info("Starting Market Momentum Analysis with Fundamentals...")
-        if not self.config_file.exists():
-            logger.error(f"Config file not found: {self.config_file}")
-            return
+            # 2. Technicals via yfinance
+            asx_sym = f"{symbol}.AX"
+            ticker = yf.Ticker(asx_sym)
+            hist = ticker.history(period="1mo")
+            if hist.empty: return None
             
-        with open(self.config_file, 'r', encoding='utf-8') as f:
-            cfg = yaml.safe_load(f)
+            close = hist['Close']
+            # Prioritize Live API price over yfinance
+            curr_px = live_px if live_px is not None else close.iloc[-1]
+            prev_px = close.iloc[-2] if len(close) > 1 else curr_px
+            px_5d = close.iloc[-5] if len(close) > 5 else close.iloc[0]
             
-        stocks_meta = cfg.get('growth_stocks', []) + cfg.get('foundation_stocks', []) + cfg.get('etfs', [])
-        symbols = [s['symbol'] for s in stocks_meta]
-        meta_map = {s['symbol']: s for s in stocks_meta}
-        
-        # 1. Fetch Technical Data (Bulk)
-        hist_data = self.fetch_data(symbols)
-        
-        # 2. Fetch Fundamental Data (Parallel)
-        fundamentals = self.fetch_fundamentals(symbols)
-        
-        results = []
-        for sym, df in hist_data.items():
-            # Merge YAML meta, Live Fundamentals and Technical results
-            enriched_meta = meta_map.get(sym, {}).copy()
-            enriched_meta.update(fundamentals.get(sym, {}))
+            price_change_1d = round(curr_px - prev_px, 4)
+            price_diff_1d = round((price_change_1d / prev_px) * 100, 2) if prev_px else 0
+            price_change_5d = round(curr_px - px_5d, 4)
+            price_diff_5d = round((price_change_5d / px_5d) * 100, 2) if px_5d else 0
             
-            res = self.analyze_stock(sym, df, enriched_meta)
-            if res: results.append(res)
+            # Momentum proxies
+            volatility = round(close.pct_change().std() * 100, 2)
+            momentum = round((curr_px - close.mean()) / close.std(), 2) if close.std() > 0 else 0
+            rsi = round(self.calculate_rsi(close), 2)
             
-        self.save_to_db(results)
+            # Volume change
+            vol_mean = hist['Volume'].mean()
+            vol_last = hist['Volume'].iloc[-1]
+            vol_change = round((vol_last - vol_mean) / vol_mean * 100, 2) if vol_mean > 0 else 0
+            
+            # 3. Scoring logic
+            metrics = {
+                "price_diff_1d": price_diff_1d,
+                "price_diff_5d": price_diff_5d,
+                "momentum": momentum,
+                "vol_change": vol_change,
+                "rsi": rsi
+            }
+            score = self.calculate_score(metrics)
+            
+            return MarketTrendSchema(
+                symbol=symbol,
+                market_date=date.today(),
+                current_price=curr_px,
+                price_diff_1d=price_diff_1d,
+                price_change_1d=price_change_1d,
+                price_diff_5d=price_diff_5d,
+                price_change_5d=price_change_5d,
+                momentum=momentum,
+                volatility=volatility,
+                volume=int(hist['Volume'].iloc[-1]),
+                volume_change=vol_change,
+                rsi=rsi,
+                score=round(score, 1),
+                price_history=",".join([f"{p:.3f}" for p in close.tail(10).values]),
+                market_cap=mcap,
+                pe=pe,
+                yield_val=yield_v
+            ), (industry, comp_name)
+        except Exception as e:
+            logger.error(f"Analysis failed for {symbol}: {e}")
+            return None, (None, None)
+
+    def calculate_score(self, m: Dict[str, float]) -> float:
+        """Proprietary scoring math based on various indicators."""
+        cfg = load_config().get("analyzer", {}).get("weights", {})
         
-        # Save snapshot to JSON for backup
-        with open(self.cache_file, 'w', encoding='utf-8') as f:
-            json.dump(results, f, indent=2)
+        score = 50.0 # Neural base
         
-        logger.info("Pipeline execution complete.")
+        # Trend indicators
+        if m['rsi'] < 30: score += 10
+        if m['rsi'] > 70: score -= 5
+        
+        # Momentum
+        score += m['momentum'] * 5
+        
+        # Price Action
+        score += m['price_diff_1d'] * 2
+        score += m['price_diff_5d'] * 1.5
+        
+        # Volume
+        if m['vol_change'] > 50: score += 5
+        
+        return min(max(round(score, 1), 0), 100)
+
+    def main_sync(self, include_discovery: bool = False):
+        """Analyze watched stocks and sync snapshots to DB."""
+        logger.info("Starting Market Momentum Analysis...")
+        with db.session_scope() as sess:
+            # Selective Query: Only core types by default
+            target_types = ['growth', 'foundation', 'etf']
+            if include_discovery:
+                target_types.append('discovery')
+                
+            stocks = sess.query(Stock).filter(Stock.stock_type.in_(target_types)).all()
+            
+            if not stocks:
+                logger.warning("No target stocks found in DB. Check stock_types.")
+                return
+
+            logger.info(f"Processing {len(stocks)} symbols (Target Types: {target_types})...")
+            results = []
+            
+            # Parallelize analysis
+            with ThreadPoolExecutor(max_workers=10) as ex:
+                futures = {ex.submit(self.analyze_ticker, s.symbol, s.stock_type): s for s in stocks}
+                for future, stock_obj in futures.items():
+                    result = future.result()
+                    if result:
+                        res, meta = result
+                        if res:
+                            # UNIFIED RE-CRAWL: Always overwrite name/industry
+                            if meta[0]: stock_obj.industry = meta[0]
+                            if meta[1]: stock_obj.name = meta[1]
+                            results.append(res)
+            
+            now = datetime.now()
+            sync_count = 0
+            
+            for r in results:
+                # Standard SCD Type 2 logic for snapshots
+                # Check if a snapshot for THIS market_date already exists
+                existing = sess.query(MarketTrend).filter_by(symbol=r.symbol, market_date=r.market_date).first()
+                
+                params = r.model_dump(exclude={"symbol"})
+                
+                if existing:
+                    # Update existing snapshot for the day
+                    for k, v in params.items(): setattr(existing, k, v)
+                    existing.valid_from = now
+                else:
+                    # Retire old active record
+                    sess.query(MarketTrend).filter_by(symbol=r.symbol, is_active=True).update({
+                        "is_active": False, "valid_to": now
+                    })
+                    # Add new active record
+                    new_trend = MarketTrend(symbol=r.symbol, is_active=True, valid_from=now, **params)
+                    sess.add(new_trend)
+                
+                sync_count += 1
+            
+            logger.info(f"Market Analysis Complete: Synced {sync_count} snapshots.")
+
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser(description="ASX Market Momentum Analyzer")
+    parser.add_argument("--discovery", action="store_true", help="Include 'discovery' stocks in analysis")
+    args = parser.parse_args()
+
+    session = requests.Session()
+    session.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+    
+    analyzer = MomentumAnalyzer(session)
+    analyzer.main_sync(include_discovery=args.discovery)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--force", action="store_true")
-    args = parser.parse_args()
-    
-    analyzer = ASXTrendingStocks()
-    analyzer.run_pipeline()
+    main()
