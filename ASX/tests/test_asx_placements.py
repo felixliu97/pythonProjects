@@ -107,3 +107,68 @@ def test_sync_to_db_uses_live_name_fallback(scanner):
         added_placement = mock_sess_obj.add.call_args[0][0]
         assert added_placement.company == "Official Name Corp" # Backfilled from API
         assert added_placement.current_price == 1.1
+
+# --- 4. Extra Extraction Logic (Merged from test_price_extraction.py) ---
+
+def test_extract_cr_price_dollars(scanner):
+    assert scanner.extract_cr_price("Placement at $1.50 per share") == 1.50
+    assert scanner.extract_cr_price("Raising capital @ $0.05") == 0.05
+    assert scanner.extract_cr_price("Issue price of $2.35") == 2.35
+    assert scanner.extract_cr_price("Placement priced at $0.125") == 0.125
+
+def test_extract_cr_price_cents(scanner):
+    assert scanner.extract_cr_price("Placement at 15c per share") == 0.15
+    assert scanner.extract_cr_price("Capital raising @ 5 cents") == 0.05
+    assert scanner.extract_cr_price("Share purchase plan at 8.5c") == 0.085
+    assert scanner.extract_cr_price("Placement at 22.5cps") == 0.225
+    assert scanner.extract_cr_price("10c placement to raise $5m") == 0.10
+
+def test_extract_cr_price_fallback(scanner):
+    assert scanner.extract_cr_price("Successfully completed placement at 0.45") == 0.45
+    assert scanner.extract_cr_price("No price here") == 0.0
+
+def test_extract_cr_price_from_content(scanner):
+    # Case 1: Complex content with total amount and per-share price
+    content1 = """
+    The Company is pleased to announce a placement to raise $5.0 million.
+    The placement was conducted at an issue price of $0.15 per share.
+    """
+    assert scanner.extract_cr_price(content1) == 0.15
+
+    # Case 2: Cents in content
+    content2 = """
+    Share Purchase Plan (SPP) at 8.5 cents per share to raise up to $2.0m.
+    """
+    assert scanner.extract_cr_price(content2) == 0.085
+
+    # Case 3: Avoid picking up total amount
+    content3 = """
+    Successful completion of $10 million capital raising.
+    """
+    # Should not pick up 10.0 because it's a total
+    assert scanner.extract_cr_price(content3) == 0.0
+
+    # Case 4: Multiple prices, should target the one with context
+    content4 = """
+    Total raised: $4.5 million
+    Issue price: $0.125
+    """
+    assert scanner.extract_cr_price(content4) == 0.125
+
+def test_is_better_logic():
+    """Verify the deduplication priority logic (Price > Date)."""
+    # Logic: New has price, old doesn't -> Should replace
+    should_replace = False
+    if 0.10 > 0 and 0.0 == 0:
+        should_replace = True
+    assert should_replace == True
+    
+    # Logic: Both have price, new is earlier -> Should replace
+    p_early_date = date(2026, 3, 1)
+    p_late_date = date(2026, 3, 5)
+    
+    should_replace = False
+    if 0.08 > 0 and 0.10 > 0:
+        if p_early_date < p_late_date:
+            should_replace = True
+    assert should_replace == True

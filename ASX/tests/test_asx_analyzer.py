@@ -1,7 +1,6 @@
 import pytest
 import requests
 from scripts.asx_analyzer import MomentumAnalyzer
-from scripts.asx_catalysts import export_catalysts
 
 @pytest.fixture
 def analyzer():
@@ -37,9 +36,3 @@ def test_analyzer_field_presence(analyzer):
     """Verify that MomentumAnalyzer has required extraction methods."""
     assert hasattr(analyzer, 'fetch_fundamentals')
     assert hasattr(analyzer, 'analyze_ticker')
-
-# --- 2. Catalyst Management ---
-
-def test_catalyst_export_function():
-    """Verify that asx_catalysts has the core export function."""
-    assert callable(export_catalysts)

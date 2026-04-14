@@ -111,6 +111,24 @@ def get_pdf_filename(ev: Dict) -> str:
     headline = clean_filename(ev.get("headline", "announcement"))
     return f"{date_val}_[{symbol}]_{headline}.pdf"
 
+def get_asx_pdf_url(doc_key: str, date_val: Any) -> str:
+    """
+    Convert a Markit documentKey into a full CDN network URL using settings.yaml.
+    Format: {pdf_cdn}{doc_key}?access_token={pdf_token}
+    """
+    if not doc_key: return ""
+    # If it's already a full URL, return it
+    if doc_key.startswith("http"): return doc_key
+    
+    cfg = load_config().get("api", {})
+    cdn_base = cfg.get("pdf_cdn", "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/")
+    token = cfg.get("pdf_token", "")
+    
+    if not token:
+        logger.warning("No pdf_token found in settings.yaml. PDF links may be broken.")
+        
+    return f"{cdn_base}{doc_key}?access_token={token}"
+
 def generate_sparkline(prices_str: Optional[str]) -> str:
     """Generate a compact SVG sparkline from a comma-separated string of prices."""
     if not prices_str: return ""

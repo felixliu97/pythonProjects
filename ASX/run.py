@@ -62,6 +62,9 @@ def load_db_data() -> dict:
         masters = session.query(CatalystMaster).all()
         catalysts_list = []
         for m in masters:
+            # Latest Market Trend
+            trend = session.query(MarketTrend).filter_by(symbol=m.symbol, is_active=True).order_by(MarketTrend.id.desc()).first()
+            
             # Explicit query instead of m.items
             items = session.query(CatalystItem).filter_by(symbol=m.symbol, is_active=True).all()
             
@@ -69,13 +72,29 @@ def load_db_data() -> dict:
                 "Ticker": m.symbol,
                 "Company": m.company,
                 "Sector": m.sector,
+                "Current_Price": trend.current_price if trend else None,
+                "Price_Change_1d": trend.price_change_1d if trend else 0,
+                "Price_Diff_1d": trend.price_diff_1d if trend else 0,
+                "Guidance_Price": m.guidance_price,
+                "Guidance_Price_Reason": m.guidance_price_reason,
                 "Catalysts": [i.content for i in items if i.item_type == 'catalyst'],
                 "Risks": [i.content for i in items if i.item_type == 'risk'],
                 "Earnings_Window": [i.content for i in items if i.item_type == 'earnings'],
-                "CR_Risk": f"{m.cr_risk} {m.cr_risk_reason}".strip(),
-                "Breakout_Probability": f"{m.breakout_probability} {m.breakout_probability_reason}".strip(),
+                "CR_Risk": m.cr_risk or "Unknown",
+                "CR_Risk_Reason": m.cr_risk_reason or "",
+                "Breakout_Probability": m.breakout_probability or "N/A",
+                "Breakout_Probability_Reason": m.breakout_probability_reason or "",
                 "Core_Notes": m.core_notes,
-                "Timeline": [{"Time": i.label, "Event": i.content} for i in items if i.item_type == 'milestone']
+                "Timeline": sorted(
+                    [
+                        {"Time": label, "Event": "; ".join(contents)}
+                        for label, contents in {
+                            m.label: list(dict.fromkeys([m2.content for m2 in items if m2.item_type == 'milestone' and m2.label == m.label]))
+                            for m in items if m.item_type == 'milestone'
+                        }.items()
+                    ],
+                    key=lambda x: x['Time']
+                )
             })
         
         def breakout_key(s):
@@ -93,7 +112,12 @@ def load_db_data() -> dict:
 
         # 2. Announcements (Last 14 days)
         cutoff = (datetime.now() - timedelta(days=14)).date()
-        ann_res = session.query(Announcement).filter(Announcement.event_date >= cutoff).order_by(Announcement.event_date.desc()).all()
+        ann_res = session.query(Announcement).filter(
+            Announcement.event_date >= cutoff
+        ).order_by(
+            Announcement.event_date.desc(), 
+            Announcement.rating.desc()
+        ).all()
         ann_list = [{
             "ASX_Code": a.symbol,
             "Company": a.company,

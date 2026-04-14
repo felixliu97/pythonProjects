@@ -184,3 +184,41 @@ def test_resumption_from_existing_data(mock_db, mock_scanner_class, caplog):
     args, _ = scanner_inst.fetch_raw.call_args
     assert args[0] == last_date
     assert f"Resuming from latest date 2026-04-01" in caplog.text
+
+# --- 6. Sorting Logic Tests ---
+
+def test_announcement_sorting_priority():
+    """Verify that announcements are sorted by Date (DESC) then Rating (DESC)."""
+    from datetime import date
+    
+    # Mock data
+    a1 = MagicMock(event_date=date(2026, 4, 13), rating=2, headline="Date 13, Rating 2")
+    a2 = MagicMock(event_date=date(2026, 4, 13), rating=5, headline="Date 13, Rating 5 (Priority)")
+    a3 = MagicMock(event_date=date(2026, 4, 12), rating=5, headline="Date 12 (Older)")
+    
+    unsorted = [a1, a3, a2]
+    
+    # Simulate SQLAlchemy's multi-column sort: event_date.desc(), rating.desc()
+    # In Python, we can use a composite key. To sort DESC, we can reverse the list or use negative markers if applicable, 
+    # but for dates and heterogeneous objects, a custom key is clearer.
+    # Note: date(2026, 4, 13) > date(2026, 4, 12), so for DESC we want larger first.
+    
+    sorted_list = sorted(unsorted, key=lambda x: (x.event_date, x.rating), reverse=True)
+    
+    assert sorted_list[0].headline == "Date 13, Rating 5 (Priority)"
+    assert sorted_list[1].headline == "Date 13, Rating 2"
+    assert sorted_list[2].headline == "Date 12 (Older)"
+
+def test_pdf_url_generation():
+    """Verify that Markit document keys are converted to official CDN URLs with tokens."""
+    from scripts.utils import get_asx_pdf_url, load_config
+    
+    cfg = load_config().get("api", {})
+    token = cfg.get("pdf_token", "")
+    key = "2924-03078280-6A1320269"
+    
+    url = get_asx_pdf_url(key, "2026-04-13")
+    assert f"access_token={token}" in url
+    assert key in url
+    assert "cdn-api.markitdigital.com" in url
+

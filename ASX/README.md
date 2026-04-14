@@ -1,4 +1,4 @@
-# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.6 - Technical Spec`
+# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.3 - Tech Spec`
 
 这是一个完全解耦的自动化投研数据管线。本文件作为系统的 **唯一事实来源 (Source of Truth)**，详细记录了所有模块的核心逻辑与架构算法，旨在使开发者能够基于此文档重构整个系统。
 
@@ -126,12 +126,14 @@ python run.py reseed
 
 ## 🧪 6. 测试与验证规范
 
-修改后必须运行以下测试以确保逻辑闭环 (测试套件已在 v1.6 完成收束合并)：
-- `test_announcements.py`: 验证采集、Rating 启发式算法、Summary 提取及唯一键幂等性。
-- `test_placements.py`: 验证融资价格正则提取、市价同步及缺失公司名回填。
-- `test_analysis.py`: 验证动量评分 (Z-Score) 及催化剂导出逻辑。
-- `test_dashboard.py`: 验证 P/E 负值处理、Sparkline 生成及前端模板渲染。
-- `test_infrastructure.py`: 验证 `utils` 工具函数、数据库解耦及 Resumption 边界条件。
+修改后必须运行以下测试以确保逻辑闭环 (测试套件已在 v1.7 完成脚本对齐式合并，遵循 **“一脚本一测试”** 原则)：
+- `test_asx_announcements.py`: 验证抓取频率、Rating 启发式算法、Summary 提取及唯一键幂等性。
+- `test_asx_placements.py`: 验证融资价格正则提取、市价同步及缺失公司名回填。
+- `test_asx_analyzer.py`: 验证动量评分 (Z-Score) 及评分边界。
+- `test_asx_catalysts.py`: 验证催化剂数据导出。
+- `test_db_manager.py`: 验证数据库连接、解耦架构及数据完整性。
+- `test_utils.py`: 验证通用工具函数（日期格式化、Sparkline 生成等）。
+- `test_run.py`: 验证主运行逻辑、Dashboard 渲染及前端展示逻辑。
 
 **警告**: 任何对 `db_models.py` 的修改必须运行 `reseed` 校验，并确保 `scripts/db_schemas.py` 同步更新。
 

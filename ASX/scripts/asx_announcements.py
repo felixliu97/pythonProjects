@@ -16,12 +16,12 @@ try:
     from db_manager import db
     from db_models import Announcement, Stock
     from db_schemas import AnnouncementSchema
-    from utils import logger, load_config, normalize_date, ticker_clean
+    from utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Announcement, Stock
     from scripts.db_schemas import AnnouncementSchema
-    from scripts.utils import logger, load_config, normalize_date, ticker_clean
+    from scripts.utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url
 
 # --- Configuration ---
 _CFG = load_config()
@@ -143,9 +143,12 @@ class AnnouncementScanner:
                     continue
                 
                 # Double check against DB (Case of overlap or near-miss)
-                exists = sess.query(Announcement.id).filter_by(unique_key=unique_key).first()
-                if exists:
+                existing_record = sess.query(Announcement).filter_by(unique_key=unique_key).first()
+                if existing_record:
                     existing_keys.add(unique_key)
+                    # Force update if link is broken (contains asxpdf) or empty
+                    if not existing_record.pdf_link or "asxpdf" in existing_record.pdf_link:
+                        existing_record.pdf_link = get_asx_pdf_url(item.get("documentKey", ""), dt)
                     continue
                 
                 try:
@@ -169,7 +172,7 @@ class AnnouncementScanner:
                         Headline=hl,
                         Summary=summary_text,
                         Date=dt,
-                        PDF_Link=item.get("documentKey", ""),
+                        PDF_Link=get_asx_pdf_url(item.get("documentKey", ""), dt),
                         Rating=self.calculate_rating(hl, summary_text, is_ps)
                     )
                     

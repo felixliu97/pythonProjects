@@ -66,6 +66,8 @@ class CatalystMaster(Base):
     breakout_probability = Column(String(500))
     breakout_probability_reason = Column(Text)
     core_notes = Column(Text)
+    guidance_price = Column(String(500))
+    guidance_price_reason = Column(Text)
 
 class CatalystItem(Base):
     __tablename__ = 'catalyst_items'
