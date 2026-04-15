@@ -1,0 +1,37 @@
+# ASX Analysis Suite Global Settings
+
+api:
+  announcements_base: "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements"
+  company_header: "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header"
+  pdf_cdn: "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/"
+  # Manual update required if expired
+  pdf_token: "83ff96335c2d45a094df02a206a39ff4"
+
+scanners:
+  lookback_months: 2
+  items_per_page: 100
+  pdf_cache_dir: ".pdf_cache"
+  output_dir: "output"
+
+analyzer:
+  cache_ttl_minutes: 10
+  cache_file: "output/asx_analyzer.json"
+  weights:
+    price_1d: 0.3
+    price_5d: 0.25
+    price_20d: 0.15
+    volume_change: 0.2
+    momentum: 0.1
+  thresholds:
+    rsi_upper: 70
+    rsi_lower: 30
+    price_change_alert: 5.0
+    volume_change_alert: 50.0
+
+styles:
+  theme: "dark"
+  primary_color: "#2563eb"
+  secondary_color: "#64748b"
+  positive_color: "#1d9e75"
+  negative_color: "#e24b4a"
+  warning_color: "#ef9f27"

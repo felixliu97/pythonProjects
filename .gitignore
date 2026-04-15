@@ -53,8 +53,6 @@ Test/
 TradingBot/
 
 # ASX Project
-ASX/config/
-ASX/output/
 ASX/.pdf_cache/
 
 # Commodity Dashboard
@@ -65,4 +63,4 @@ FullStack/commodity_dashboard/frontend/openapi-ts-error-*.log
 FullStack/commodity_dashboard/frontend/npm-debug.log*
 FullStack/commodity_dashboard/frontend/yarn-debug.log*
 FullStack/commodity_dashboard/frontend/yarn-error.log*
-FullStack/commodity_dashboard/frontend/pnpm-debug.log*
+FullStack/commodity_dashboard/frontend/pnpm-debug.log*
