@@ -36,3 +36,21 @@ def test_analyzer_field_presence(analyzer):
     """Verify that MomentumAnalyzer has required extraction methods."""
     assert hasattr(analyzer, 'fetch_fundamentals')
     assert hasattr(analyzer, 'analyze_ticker')
+
+def test_score_clamped_to_boundaries(analyzer):
+    """Score must always be in [0, 100] even with extreme inputs."""
+    # Extremely bullish signals should cap at 100
+    m_extreme_up = {
+        'rsi': 10, 'momentum': 10.0,
+        'price_diff_1d': 50.0, 'price_diff_5d': 100.0,
+        'vol_change': 500
+    }
+    assert 0 <= analyzer.calculate_score(m_extreme_up) <= 100
+    
+    # Extremely bearish signals should floor at 0
+    m_extreme_down = {
+        'rsi': 95, 'momentum': -10.0,
+        'price_diff_1d': -50.0, 'price_diff_5d': -100.0,
+        'vol_change': -90
+    }
+    assert 0 <= analyzer.calculate_score(m_extreme_down) <= 100

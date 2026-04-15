@@ -23,12 +23,12 @@ try:
     from sqlalchemy import create_engine, text, Engine, event
     from sqlalchemy.orm import sessionmaker, scoped_session, Session
     from db_schemas import MarketTrendSchema
-    from utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER
+    from utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_sydney_time
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, MarketTrend
     from scripts.db_schemas import MarketTrendSchema
-    from scripts.utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER
+    from scripts.utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_sydney_time
 
 # --- Configuration ---
 _CFG = load_config()
@@ -134,7 +134,7 @@ class MomentumAnalyzer:
             
             return MarketTrendSchema(
                 symbol=symbol,
-                market_date=date.today(),
+                market_date=get_sydney_time().date(),
                 current_price=curr_px,
                 price_diff_1d=price_diff_1d,
                 price_change_1d=price_change_1d,
@@ -177,14 +177,14 @@ class MomentumAnalyzer:
         
         return min(max(round(score, 1), 0), 100)
 
-    def main_sync(self, include_discovery: bool = False):
+    def main_sync(self, include_announcement: bool = False):
         """Analyze watched stocks and sync snapshots to DB."""
         logger.info("Starting Market Momentum Analysis...")
         with db.session_scope() as sess:
             # Selective Query: Only core types by default
             target_types = ['growth', 'foundation', 'etf']
-            if include_discovery:
-                target_types.append('discovery')
+            if include_announcement:
+                target_types.append('announcement')
                 
             stocks = sess.query(Stock).filter(Stock.stock_type.in_(target_types)).all()
             
@@ -208,7 +208,7 @@ class MomentumAnalyzer:
                             if meta[1]: stock_obj.name = meta[1]
                             results.append(res)
             
-            now = datetime.now()
+            now = get_sydney_time()
             sync_count = 0
             
             for r in results:
@@ -239,14 +239,14 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Market Momentum Analyzer")
-    parser.add_argument("--discovery", action="store_true", help="Include 'discovery' stocks in analysis")
+    parser.add_argument("--announcement", action="store_true", help="Include 'announcement' stocks in analysis")
     args = parser.parse_args()
 
     session = requests.Session()
     session.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
     
     analyzer = MomentumAnalyzer(session)
-    analyzer.main_sync(include_discovery=args.discovery)
+    analyzer.main_sync(include_announcement=args.announcement)
 
 if __name__ == "__main__":
     main()

@@ -60,6 +60,7 @@ class LLMWorkflow:
                     "Breakout_Probability": master.breakout_probability,
                     "Breakout_Probability_Reason": master.breakout_probability_reason,
                     "Core_Notes": master.core_notes,
+                    "Rating": master.rating or "观望",
                     "Timeline": [{"Time": i.label, "Event": i.content} for i in active_items if i.item_type == 'milestone']
                 })
         
@@ -100,6 +101,7 @@ class LLMWorkflow:
                         master.cr_risk_reason = valid_c.CR_Risk_Reason
                         master.breakout_probability = valid_c.Breakout_Probability
                         master.breakout_probability_reason = valid_c.Breakout_Probability_Reason
+                        master.rating = valid_c.Rating
                         
                         # 2. Sync Child Lists (SCD Type 2)
                         db.sync_list_data(sess, CatalystItem, "symbol", master.symbol, valid_c.Catalysts, item_type='catalyst')

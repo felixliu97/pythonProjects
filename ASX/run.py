@@ -18,20 +18,20 @@ from jinja2 import Environment, FileSystemLoader
 try:
     from scripts.db_manager import db
     from scripts.db_models import Stock, CatalystMaster, Announcement, Placement, CatalystItem, MarketTrend
-    from scripts.utils import logger, load_config, get_root_dir, generate_sparkline
+    from scripts.utils import logger, load_config, get_root_dir, generate_sparkline, get_sydney_time
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "scripts"))
     from db_manager import db
     from db_models import Stock, CatalystMaster, Announcement, Placement, CatalystItem, MarketTrend
-    from utils import logger, load_config, get_root_dir, generate_sparkline
+    from utils import logger, load_config, get_root_dir, generate_sparkline, get_sydney_time
 
 def trim_zeros(value):
-    """Jinja2 filter to trim trailing zeros from floats, max 3 decimals."""
+    """Jinja2 filter to trim trailing zeros from floats, max 4 decimals."""
     if value is None or value == "": return ""
     try:
         f_val = float(value)
-        # Force round to 3 decimals first
-        s = f"{f_val:.3f}"
+        # Force round to 4 decimals first
+        s = f"{f_val:.4f}"
         if '.' in s:
             s = s.rstrip('0').rstrip('.')
         return s
@@ -72,11 +72,7 @@ def load_db_data() -> dict:
                 "Ticker": m.symbol,
                 "Company": m.company,
                 "Sector": m.sector,
-                "Current_Price": trend.current_price if trend else None,
-                "Price_Change_1d": trend.price_change_1d if trend else 0,
-                "Price_Diff_1d": trend.price_diff_1d if trend else 0,
-                "Guidance_Price": m.guidance_price,
-                "Guidance_Price_Reason": m.guidance_price_reason,
+                "Rating": m.rating or "观望",
                 "Catalysts": [i.content for i in items if i.item_type == 'catalyst'],
                 "Risks": [i.content for i in items if i.item_type == 'risk'],
                 "Earnings_Window": [i.content for i in items if i.item_type == 'earnings'],
@@ -98,6 +94,10 @@ def load_db_data() -> dict:
             })
         
         def breakout_key(s):
+            rating = s.get("Rating", "观望")
+            r_scores = {"强力买入": -10, "买入": -5, "观望": 0, "卖出": 5, "强力卖出": 10}
+            r_val = r_scores.get(rating, 0)
+            
             p = (s.get("Breakout_Probability") or "").strip()
             p_scores = {"极高": -6, "高": -5, "中高": -4, "中": -3, "中低": -2, "低": -1}
             p_val = next((v for k, v in p_scores.items() if p.startswith(k)), 0)
@@ -106,12 +106,12 @@ def load_db_data() -> dict:
             cr_scores = {"极低": 1, "低": 2, "中低": 3, "中": 4, "中高": 5, "高": 6}
             cr_val = next((v for k, v in cr_scores.items() if cr.startswith(k)), 10)
             
-            return (p_val, cr_val, (s.get("Ticker") or ""))
+            return (r_val, p_val, cr_val, (s.get("Ticker") or ""))
         
         catalysts_list.sort(key=breakout_key)
 
         # 2. Announcements (Last 14 days)
-        cutoff = (datetime.now() - timedelta(days=14)).date()
+        cutoff = (get_sydney_time() - timedelta(days=14)).date()
         ann_res = session.query(Announcement).filter(
             Announcement.event_date >= cutoff
         ).order_by(
@@ -187,7 +187,7 @@ def load_db_data() -> dict:
             "catalysts": {"catalysts": catalysts_list},
             "announcements": {"announcements": ann_list},
             "placements": {"placements": plac_list},
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            "timestamp": get_sydney_time().strftime("%Y-%m-%d %H:%M:%S")
         }
 
 def build_dashboard():

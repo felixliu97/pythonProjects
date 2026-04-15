@@ -140,7 +140,7 @@ def reseed():
                         sym = v.ASX_Code if hasattr(v, 'ASX_Code') else v.symbol
                         
                         if sym not in registered_symbols:
-                            stock = Stock(symbol=sym, name=v.Company, stock_type='discovery')
+                            stock = Stock(symbol=sym, name=v.Company, stock_type='announcement')
                             sess.add(stock)
                             sess.flush()
                             registered_symbols.add(sym)

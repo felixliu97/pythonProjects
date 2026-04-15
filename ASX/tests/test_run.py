@@ -2,6 +2,20 @@ import pytest
 import base64
 from jinja2 import Environment
 from scripts.utils import generate_sparkline
+from run import trim_zeros
+
+# --- 0. trim_zeros Filter ---
+
+def test_trim_zeros_4_decimal_precision():
+    """trim_zeros should preserve up to 4 decimal places and strip trailing zeros."""
+    assert trim_zeros(0.7625) == "0.7625"    # 4 decimals preserved
+    assert trim_zeros(0.125) == "0.125"       # 3 decimals preserved
+    assert trim_zeros(1.50) == "1.5"          # trailing zeros stripped
+    assert trim_zeros(2.0) == "2"             # integer-like
+    assert trim_zeros(0.0325) == "0.0325"     # 4 decimals preserved
+    assert trim_zeros(None) == ""
+    assert trim_zeros("") == ""
+
 
 # --- 1. Visual Formatting Logic (Dashboard) ---
 

@@ -8,7 +8,8 @@ import os
 import re
 import yaml
 import logging
-from datetime import datetime, date
+from datetime import datetime, date, timezone
+import pytz
 from pathlib import Path
 from typing import Dict, Any, Optional
 
@@ -79,14 +80,38 @@ def load_config() -> Dict[str, Any]:
     return cfg
 
 # --- Shared Helpers ---
+def get_sydney_time() -> datetime:
+    """Returns the current time in Australia/Sydney."""
+    return datetime.now(pytz.timezone("Australia/Sydney"))
+
 def normalize_date(d: Any) -> str:
-    """Standardize date strings/objects to YYYY-MM-DD."""
-    if not d: return datetime.now().strftime("%Y-%m-%d")
-    if isinstance(d, (datetime, date)): 
+    """Standardize date strings/objects to YYYY-MM-DD (Localized to Sydney)."""
+    if not d: 
+        return get_sydney_time().strftime("%Y-%m-%d")
+    
+    if isinstance(d, (datetime, date)):
+        # If it's a naive datetime, assume it's already local/market time
+        # If it's aware, convert it to Sydney
+        if isinstance(d, datetime) and d.tzinfo:
+            d = d.astimezone(pytz.timezone("Australia/Sydney"))
         return d.strftime("%Y-%m-%d")
-    # Handle common ASX API date strings "2024-04-10T..."
+        
     if isinstance(d, str):
-        return d.split("T")[0]
+        # Handle common ASX API date strings "2024-04-10T22:30:00.000Z" (UTC)
+        if "T" in d:
+            try:
+                # Use dateutil for robust ISO parsing if available, else fromisoformat
+                from dateutil import parser
+                dt = parser.isoparse(d)
+                # Convert to Sydney
+                if dt.tzinfo:
+                    dt = dt.astimezone(pytz.timezone("Australia/Sydney"))
+                return dt.strftime("%Y-%m-%d")
+            except (ImportError, ValueError):
+                # Fallback to simple split if parsing fails, but warn
+                logger.warning(f"Failed to parse ISO date {d} with timezone. Falling back to UTC string split.")
+                return d.split("T")[0]
+        return d
     return str(d)
 
 def ticker_clean(s: str) -> str:

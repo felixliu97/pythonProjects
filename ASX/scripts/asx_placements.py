@@ -20,12 +20,12 @@ try:
     from db_manager import db
     from db_models import Stock, Placement
     from db_schemas import PlacementSchema
-    from utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url
+    from utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url, get_sydney_time
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, Placement
     from scripts.db_schemas import PlacementSchema
-    from scripts.utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url
+    from scripts.utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url, get_sydney_time
 
 # --- Configuration ---
 _CFG = load_config()
@@ -209,30 +209,74 @@ class PlacementScanner:
             logger.info(f"Global Update: Refreshed {updated} records.")
 
     def sync_to_db(self, events: List[Dict]):
-        """Standard sync with overrides and validation."""
+        """Standard sync with overrides and validation.
+        
+        Pipeline Order (filter-first, extract-later):
+        1. Check delete/exclude overrides
+        2. Batch-fetch market info for all symbols
+        3. Filter by market cap (liquidity gate)
+        4. Auto-register unknown stocks with stock_type='announcement'
+        5. Only THEN extract CR price (headline -> PDF fallback)
+        6. Sync to DB
+        """
         added = 0
         updated = 0
+        skipped_low_mcap = 0
         
         with db.session_scope() as sess:
-            valid_stocks = {s.symbol for s in sess.query(Stock).all()}
+            known_stocks = {s.symbol for s in sess.query(Stock).all()}
             
+            # --- Phase 1: Apply delete/exclude overrides ---
+            eligible_events = []
             for ev in events:
                 sym = ev["symbol"]
-                if sym not in valid_stocks: continue
-                
-                # Check for delete/exclude logic during active news sync
                 ov = self.overrides.get(sym, {})
                 if ov.get("delete") or ov.get("exclude"):
                     sess.query(Placement).filter_by(symbol=sym).delete()
                     continue
-
-                # Heuristic for CR Price update (normally would need PDF parsing, 
-                # but we use manual overrides or keep existing if same headline)
-                cur_px, mcap, live_name = self.fetch_market_info(sym)
+                eligible_events.append(ev)
+            
+            # --- Phase 2: Batch-fetch market info for all symbols ---
+            unique_symbols = list(set(ev["symbol"] for ev in eligible_events))
+            market_cache = {}
+            
+            with ThreadPoolExecutor(max_workers=20) as ex:
+                results = ex.map(lambda s: (s, self.fetch_market_info(s)), unique_symbols)
+                for sym, (px, mcap, name) in results:
+                    market_cache[sym] = {"price": px, "mcap": mcap, "name": name}
+            
+            # --- Phase 3: Filter by market cap (liquidity gate) ---
+            liquid_events = []
+            for ev in eligible_events:
+                sym = ev["symbol"]
+                info = market_cache.get(sym, {})
+                mcap = info.get("mcap")
                 
-                # Market Cap Filter
                 if mcap and mcap < DEFAULT_MCAP_FILTER:
+                    skipped_low_mcap += 1
                     continue
+                
+                # Auto-register unknown stocks
+                if sym not in known_stocks:
+                    live_name = info.get("name") or ev.get("company") or sym
+                    new_stock = Stock(symbol=sym, name=live_name, stock_type='announcement')
+                    sess.add(new_stock)
+                    sess.flush()
+                    known_stocks.add(sym)
+                    logger.info(f"Auto-registered new stock: {sym} ({live_name})")
+                
+                liquid_events.append(ev)
+            
+            if skipped_low_mcap > 0:
+                logger.info(f"Liquidity gate: Skipped {skipped_low_mcap} events (mcap < ${DEFAULT_MCAP_FILTER:,}).")
+            
+            # --- Phase 4: Extract CR price and sync (only for valid, liquid stocks) ---
+            for ev in liquid_events:
+                sym = ev["symbol"]
+                ov = self.overrides.get(sym, {})
+                info = market_cache.get(sym, {})
+                cur_px = info.get("price")
+                live_name = info.get("name")
 
                 # Find any existing record for this symbol (Deduplication: One stock, one record)
                 existing = sess.query(Placement).filter_by(symbol=sym).first()
@@ -240,13 +284,15 @@ class PlacementScanner:
                 # Priority: Override > Heuristic
                 cr_price = ov.get("cr_price")
                 
-                # If no override, try extraction (Content > Headline)
-                if not cr_price:
+                # If we already processed this EXACT event successfully, skip extraction
+                already_processed = existing and existing.event_date == datetime.strptime(ev["date"], "%Y-%m-%d").date() and existing.cr_price and existing.cr_price > 0
+                
+                # If no override and not already processed, try extraction (Content > Headline)
+                if not cr_price and not already_processed:
                     # 1. Try Headline first (fast)
                     cr_price = self.extract_cr_price(ev["headline"])
                     
                     # 2. If headline failed or looks suspicious, try PDF content
-                    # (Suspicious if it's 0.0 or if we want high-fidelity for all placements)
                     if not cr_price or cr_price == 0.0:
                         from utils import get_pdf_filename
                         fname = get_pdf_filename(ev)
@@ -257,6 +303,9 @@ class PlacementScanner:
                                 cr_price = self.extract_cr_price(content)
                                 if cr_price > 0:
                                     logger.info(f"Extracted CR Price {cr_price} from content for {sym}")
+                elif already_processed:
+                    # Keep the existing price so downstream logic doesn't think we failed
+                    cr_price = existing.cr_price
                 
                 new_date = datetime.strptime(ev["date"], "%Y-%m-%d").date()
                 
@@ -273,8 +322,6 @@ class PlacementScanner:
                         has_old_price = (existing.cr_price and existing.cr_price > 0)
                         
                         should_replace = False
-                        # If new extraction found a safer price (or 0.0) while old matches a "Total Amount" pattern
-                        # But for now, if it's a new date and it has a price, we replace.
                         if has_new_price and not has_old_price:
                             should_replace = True
                         elif has_new_price == has_old_price: # Both have or both don't
@@ -282,13 +329,9 @@ class PlacementScanner:
                                 should_replace = True
                         
                         # Special Case: If existing price looks like it matched a Total Amount in the headline
-                        # and new extraction (refined regex) gives 0.0, we MUST clear it.
                         if has_old_price and not has_new_price:
-                            # Heuristic: if headline has 'm' or 'million' and cr_price matches that number
                             hl_low = existing.headline.lower()
-                            # Improved heuristic to handle $7.47m (no space) and $7.47 m (with space)
                             if any(x in hl_low for x in ["m", "million", "b", "billion"]):
-                                # Match exact price followed by unit
                                 pattern = fr"{re.escape(str(existing.cr_price))}\s*[mb]"
                                 if re.search(pattern, hl_low):
                                     existing.cr_price = 0.0
@@ -308,7 +351,6 @@ class PlacementScanner:
                                 existing.price_diff_percent = self.calculate_diff(existing.current_price, existing.cr_price)
                 else:
                     try:
-                        # Prepare data for PlacementSchema validation
                         diff = self.calculate_diff(cur_px, cr_price)
                         p_data = {
                             "ASX_Code": sym,
@@ -374,18 +416,22 @@ def main():
     scanner = PlacementScanner(session)
     
     # 1. Scrape News
-    start_date = datetime.now() - timedelta(days=args.months*30)
+    start_date = get_sydney_time() - timedelta(days=args.months*30)
     
     if not args.full_refresh:
         with db.session_scope() as sess:
             max_dt = sess.query(Placement.event_date).order_by(Placement.event_date.desc()).first()
             if max_dt:
-                start_date = datetime.combine(max_dt[0], datetime.min.time())
+                db_date = datetime.combine(max_dt[0], datetime.min.time())
+                # Use the more recent of DB date and (today - 2 days)
+                # to avoid re-processing old data when no new placements were found
+                recent_cutoff = get_sydney_time() - timedelta(days=2)
+                start_date = max(db_date, recent_cutoff.replace(tzinfo=None))
                 logger.info(f"Resuming placements from {start_date:%Y-%m-%d}...")
 
     params = {
         "dateStart": start_date.strftime("%Y-%m-%d"),
-        "dateEnd": (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "dateEnd": (get_sydney_time() + timedelta(days=1)).strftime("%Y-%m-%d"),
         "itemsPerPage": ITEMS_PER_PAGE,
         "page": 0
     }

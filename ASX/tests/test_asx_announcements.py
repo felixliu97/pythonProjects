@@ -164,7 +164,8 @@ def test_resumption_from_empty_db(mock_db, mock_scanner_class):
     
     args, _ = scanner_inst.fetch_raw.call_args
     start_date = args[0]
-    expected_approx = datetime.now() - timedelta(days=30)
+    from scripts.utils import get_sydney_time
+    expected_approx = get_sydney_time() - timedelta(days=30)
     assert abs((start_date - expected_approx).total_seconds()) < 60
 
 def test_resumption_from_existing_data(mock_db, mock_scanner_class, caplog):
@@ -222,3 +223,34 @@ def test_pdf_url_generation():
     assert key in url
     assert "cdn-api.markitdigital.com" in url
 
+# --- 7. Deduplication Tests ---
+
+def test_duplicate_announcement_is_skipped(scanner):
+    """Announcements with an existing unique_key should be skipped, not inserted twice."""
+    mock_sess = MagicMock()
+    
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_stock = MagicMock(symbol="DUP", name="DUP CORP")
+        mock_sess.query.return_value.all.return_value = [mock_stock]
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = None
+        
+        item = {
+            "symbol": "DUP",
+            "headline": "Test Announcement",
+            "date": "2026-04-15T08:00:00.000Z",
+            "announcementTypes": ["General"],
+            "isPriceSensitive": False,
+            "companyInfo": [{"displayName": "DUP CORP"}],
+            "documentKey": "doc_dup"
+        }
+        
+        # First insertion with empty existing keys — should add
+        scanner.process_and_sync([item], set())
+        assert mock_sess.add.call_count == 1
+        
+        # Second insertion with the unique_key already present — should skip
+        existing_key = mock_sess.add.call_args[0][0].unique_key
+        mock_sess.add.reset_mock()
+        scanner.process_and_sync([item], {existing_key})
+        assert mock_sess.add.call_count == 0

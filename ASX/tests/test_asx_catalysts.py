@@ -2,6 +2,7 @@ import pytest
 from scripts.asx_catalysts import export_catalysts
 from scripts.db_manager import db
 from scripts.db_models import CatalystMaster
+from scripts.db_schemas import CatalystSchema
 
 # --- 1. Catalyst Management ---
 
@@ -32,3 +33,46 @@ def test_field_validity():
                 assert len(cr_lvl) <= 4, f"Ticker {m.symbol} CR Risk level seems too long: {cr_lvl}"
             if prob_lvl not in ["Unknown", "N/A"]:
                 assert len(prob_lvl) <= 4, f"Ticker {m.symbol} Probability level seems too long: {prob_lvl}"
+
+# --- 2. Rating Logic ---
+
+def test_catalyst_schema_rating_default():
+    """Verify that CatalystSchema defaults to '观望'."""
+    data = {
+        "Ticker": "MSB",
+        "Company": "Mesoblast",
+        "CR_Risk": "低",
+        "Core_Notes": "Testing"
+    }
+    v = CatalystSchema(**data)
+    assert v.Rating == "观望"
+
+def test_catalyst_schema_rating_explicit():
+    """Verify that CatalystSchema accepts explicit ratings."""
+    data = {
+        "Ticker": "MSB",
+        "Company": "Mesoblast",
+        "CR_Risk": "低",
+        "Core_Notes": "Testing",
+        "Rating": "强力买入"
+    }
+    v = CatalystSchema(**data)
+    assert v.Rating == "强力买入"
+
+def test_sorting_logic_simulation():
+    """Simulate the sorting logic used in run.py."""
+    r_scores = {"强力买入": -10, "买入": -5, "观望": 0, "卖出": 5, "强力卖出": 10}
+    
+    items = [
+        {"Ticker": "A", "Rating": "卖出"},
+        {"Ticker": "B", "Rating": "强力买入"},
+        {"Ticker": "C", "Rating": "观望"},
+        {"Ticker": "D", "Rating": "买入"}
+    ]
+    
+    sorted_items = sorted(items, key=lambda x: r_scores.get(x["Rating"], 0))
+    
+    assert sorted_items[0]["Ticker"] == "B" # Strong Buy
+    assert sorted_items[1]["Ticker"] == "D" # Buy
+    assert sorted_items[2]["Ticker"] == "C" # Hold
+    assert sorted_items[3]["Ticker"] == "A" # Sell

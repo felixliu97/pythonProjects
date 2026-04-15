@@ -6,7 +6,7 @@ class StockSchema(BaseModel):
     symbol: str = Field(..., description="ASX Ticker without .AX")
     name: str
     industry: Optional[str] = None
-    stock_type: str = Field(..., pattern="^(growth|foundation|etf)$")
+    stock_type: str = Field(..., pattern="^(growth|foundation|etf|announcement)$")
 
     @field_validator('symbol')
     @classmethod
@@ -35,6 +35,7 @@ class CatalystSchema(BaseModel):
     Breakout_Probability: Optional[str] = Field(None, alias="Probability")
     Breakout_Probability_Reason: Optional[str] = ""
     Core_Notes: str
+    Rating: str = "观望"
     Timeline: List[Dict[str, str]] = [] # [{"Time": "...", "Event": "..."}]
 
     model_config = ConfigDict(populate_by_name=True)

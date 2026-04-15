@@ -58,6 +58,7 @@ def export_catalysts():
                     Breakout_Probability=master.breakout_probability or "N/A",
                     Breakout_Probability_Reason=master.breakout_probability_reason or "",
                     Core_Notes=master.core_notes or "",
+                    Rating=master.rating or "观望",
                     Timeline=timeline
                 )
                 

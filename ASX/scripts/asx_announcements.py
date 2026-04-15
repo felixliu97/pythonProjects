@@ -16,12 +16,12 @@ try:
     from db_manager import db
     from db_models import Announcement, Stock
     from db_schemas import AnnouncementSchema
-    from utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url
+    from utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Announcement, Stock
     from scripts.db_schemas import AnnouncementSchema
-    from scripts.utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url
+    from scripts.utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time
 
 # --- Configuration ---
 _CFG = load_config()
@@ -59,7 +59,7 @@ class AnnouncementScanner:
 
     def fetch_raw(self, start_date: datetime) -> List[Dict]:
         """Fetch raw announcement JSON from ASX API."""
-        end_date = datetime.now() + timedelta(days=1)
+        end_date = get_sydney_time() + timedelta(days=1)
         
         params = {
             "dateStart": start_date.strftime("%Y-%m-%d"),
@@ -122,15 +122,15 @@ class AnnouncementScanner:
         skipped = 0
         
         with db.session_scope() as sess:
-            # Pre-fetch valid stocks for validation AND name lookup
-            stock_name_map = {s.symbol: s.name for s in sess.query(Stock).all()}
+            # Pre-fetch known stocks for name lookup and auto-registration tracking
+            known_stocks = {s.symbol: s.name for s in sess.query(Stock).all()}
             
             for item in raw_items:
                 sym = ticker_clean(item.get("symbol", ""))
                 hl = item.get("headline", "").strip() # Strip whitespace
                 
                 # Filters
-                if not sym or sym not in stock_name_map: continue
+                if not sym: continue
                 if any(nk in hl.lower() for nk in NOISE_KEYWORDS):
                     skipped += 1
                     continue
@@ -163,7 +163,14 @@ class AnnouncementScanner:
                     if ci and len(ci) > 0 and ci[0].get("displayName"):
                         company_name = ci[0]["displayName"]
                     else:
-                        company_name = stock_name_map.get(sym, sym)
+                        company_name = known_stocks.get(sym, sym)
+                    
+                    # Auto-register unknown stocks
+                    if sym not in known_stocks:
+                        new_stock = Stock(symbol=sym, name=company_name, stock_type='announcement')
+                        sess.add(new_stock)
+                        sess.flush()
+                        known_stocks[sym] = company_name
                     
                     # Validate with Schema
                     v = AnnouncementSchema(
@@ -206,7 +213,7 @@ def main():
     existing_keys = set()
     
     # Calculate start_date (Priority: DB Resumption > months argument)
-    start_date = datetime.now() - timedelta(days=args.months * 30)
+    start_date = get_sydney_time() - timedelta(days=args.months * 30)
     
     if not args.full_refresh:
         with db.session_scope() as sess:
@@ -223,9 +230,6 @@ def main():
 
     raw = scanner.fetch_raw(start_date)
     scanner.process_and_sync(raw, existing_keys)
-
-if __name__ == "__main__":
-    main()
 
 if __name__ == "__main__":
     main()
