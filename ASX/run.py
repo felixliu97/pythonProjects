@@ -215,7 +215,7 @@ def build_dashboard():
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Research Hub Control Center")
-    parser.add_argument("command", choices=["all", "scrape", "analyze", "dashboard", "reseed", "llm-export", "llm-import"], help="Pipeline command to run")
+    parser.add_argument("command", choices=["all", "scrape", "analyze", "dashboard", "reseed", "sync-catalysts", "llm-export", "llm-import"], help="Pipeline command to run")
     parser.add_argument("--ticker", help="Specific ticker for LLM operations")
     parser.add_argument("--force", action="store_true", help="Force a full refresh (ignore incremental sync)")
     args = parser.parse_args()
@@ -225,6 +225,8 @@ def main():
 
     if args.command == "reseed":
         run_script("scripts/reseed_asx.py")
+    elif args.command == "sync-catalysts":
+        run_script("scripts/sync_asx_catalysts.py")
     elif args.command == "scrape":
         run_script("scripts/asx_announcements.py", scrape_args)
         run_script("scripts/asx_placements.py", scrape_args)

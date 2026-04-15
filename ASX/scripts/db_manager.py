@@ -80,6 +80,81 @@ class DBManager:
             self.init_db()
         return self._scoped_session()
 
+    def sync_list_data(
+        self,
+        sess: Session,
+        model_cls: Type,
+        key_field: str,
+        key_val: Any,
+        new_list: List[Any],
+        *,
+        item_type: str,
+        now: Optional[datetime] = None,
+    ) -> None:
+        """SCD Type 2 sync for list-like child data.
+
+        Assumptions:
+        - Child table uses flat storage with: key_field (e.g. symbol), item_type, content, label.
+        - Active rows are indicated by is_active=True; retire rows by setting is_active=False and valid_to.
+        - For milestones, input items are dicts: {"Time": ..., "Event": ...}.
+        """
+        if new_list is None:
+            new_list = []
+
+        now = now or datetime.now()
+
+        q = sess.query(model_cls).filter(
+            getattr(model_cls, key_field) == key_val,
+            model_cls.item_type == item_type,
+            model_cls.is_active.is_(True),
+        )
+        active_rows = q.all()
+
+        def norm_child(v: Any) -> tuple[Optional[str], str]:
+            if item_type == "milestone":
+                if not isinstance(v, dict):
+                    return (None, str(v).strip())
+                label = (v.get("Time") or "").strip() or None
+                content = (v.get("Event") or "").strip()
+                return (label, content)
+
+            return (None, str(v).strip())
+
+        desired = []
+        seen: set[tuple[Optional[str], str]] = set()
+        for v in new_list:
+            k = norm_child(v)
+            if not k[1]:
+                continue
+            if k in seen:
+                continue
+            seen.add(k)
+            desired.append(k)
+
+        existing = {(r.label.strip() if r.label else None, (r.content or "").strip()): r for r in active_rows}
+        desired_set = set(desired)
+
+        # Retire missing
+        for k, row in existing.items():
+            if k not in desired_set:
+                row.is_active = False
+                row.valid_to = now
+
+        # Insert new
+        for label, content in desired:
+            if (label, content) in existing:
+                continue
+            sess.add(
+                model_cls(
+                    **{key_field: key_val},
+                    item_type=item_type,
+                    content=content,
+                    label=label,
+                    valid_from=now,
+                    is_active=True,
+                )
+            )
+
     @contextmanager
     def session_scope(self):
         """Provide a transactional scope around a series of operations."""

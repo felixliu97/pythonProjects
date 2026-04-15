@@ -13,7 +13,8 @@ CREATE TABLE asx.stocks (
     symbol VARCHAR(20) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     industry VARCHAR(255),
-    stock_type VARCHAR(50) NOT NULL -- 'growth', 'foundation', 'etf'
+    stock_type VARCHAR(50) NOT NULL,
+    CONSTRAINT chk_stock_type CHECK (stock_type IN ('growth', 'foundation', 'etf', 'announcement'))
 );
 
 -- 3. Technical & Momentum Metrics (SCD Type 2)
@@ -50,20 +51,21 @@ CREATE TABLE asx.catalyst_masters (
     cr_risk_reason TEXT,
     breakout_probability VARCHAR(500),
     breakout_probability_reason TEXT,
-    core_notes TEXT
+    core_notes TEXT,
+    rating VARCHAR(50) DEFAULT '观望',
+    CONSTRAINT chk_rating CHECK (rating IN ('强力买入', '买入', '观望', '卖出', '强力卖出'))
 );
 
 -- 5. Catalyst Line Items (Many-to-One with Master)
 CREATE TABLE asx.catalyst_items (
     id SERIAL PRIMARY KEY,
     symbol VARCHAR(20), -- Logical Link
-    item_type VARCHAR(50) NOT NULL, -- 'catalyst', 'risk', 'earnings', 'milestone'
+    item_type VARCHAR(50) NOT NULL,
     content TEXT NOT NULL,
-    label VARCHAR(200), -- Used for milestone dates/times
-    
     valid_from TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     valid_to TIMESTAMP,
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE,
+    CONSTRAINT chk_item_type CHECK (item_type IN ('catalyst', 'risk', 'milestone'))
 );
 
 -- 6. Announcements (News Feed)
@@ -77,7 +79,8 @@ CREATE TABLE asx.announcements (
     pdf_link VARCHAR(1000),
     rating INTEGER DEFAULT 2,
     unique_key VARCHAR(500) UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_ann_rating CHECK (rating BETWEEN 1 AND 5)
 );
 
 -- 7. Placements (Capital Raising)

@@ -1,4 +1,4 @@
-# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.4 - Tech Spec`
+# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.5 - Tech Spec`
 
 这是一个完全解耦的自动化投研数据管线。本文件作为系统的 **唯一事实来源 (Source of Truth)**，详细记录了所有模块的核心逻辑与架构算法，旨在使开发者能够基于此文档重构整个系统。
 
@@ -84,6 +84,13 @@ graph TD
 
 ### 2.5 催化剂评级系统 (`asx_catalysts.py`)
 - **五级评级**: `强力买入` > `买入` > `观望` > `卖出` > `强力卖出`。
+- **自动评级矩阵 (BP × CR)**:
+    | Rating | 条件 |
+    |--------|------|
+    | `强力买入` | 极高 BP + 极低 CR |
+    | `买入` | 高 BP + (极低/低/中低) CR，或 极高 BP + 中 CR |
+    | `观望` | 中高/中 BP，或 高 BP + 中+ CR |
+    | `卖出` / `强力卖出` | 手动降级 |
 - **排序优先级**: Rating Score → Breakout Probability → CR Risk → Ticker Name。
 - **Dashboard 展示**: 评级以颜色徽章呈现（绿→灰→红渐变）。
 
@@ -109,6 +116,67 @@ graph TD
         - **消失的条目**: 软删除（退役）。
         - **存在的条目**: 维持现状。
 
+### 3.1 YAML 数据规范 (`config/asx_catalysts.yaml`)
+
+YAML 是催化剂数据的 **唯一事实来源**，通过 `reseed` 同步至数据库。
+
+#### 3.1.1 顶层结构
+
+`config/asx_catalysts.yaml` 是一个 **YAML List**，每个元素代表一个 ticker 的研究卡片。
+
+#### 3.1.2 字段格式定义 (Format Definition)
+
+每个 ticker 条目必须为一个 YAML Mapping，字段定义如下（`*` 表示必填）：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `Ticker`* | `str` | ASX ticker（不含 `.AX`，会在入库时自动清洗为大写） |
+| `Company`* | `str` | 公司全名 |
+| `Sector` | `str` | 行业/赛道描述 |
+| `Catalysts` | `list[str]` | 未来预期事件/催化剂（通常是未来日期、窗口或里程碑预期） |
+| `Risks` | `list[str]` | 风险列表 |
+| `CR_Risk`* | `str` | 融资风险等级（建议：`极低/低/中低/中/中高/高`） |
+| `CR_Risk_Reason` | `str` | 融资风险原因 |
+| `Breakout_Probability`* | `str` | 突破概率（建议：`低/中低/中/中高/高/极高`） |
+| `Breakout_Probability_Reason` | `str` | 突破概率原因 |
+| `Core_Notes`* | `str` | 核心基本面叙事摘要 |
+| `Rating` | `str` | 评级：`强力买入/买入/观望/卖出/强力卖出`（默认 `观望`） |
+| `Timeline` | `list[{Time:str, Event:str}]` | 已发生事件（过去公告/确认事件），用于复盘与时间线对齐 |
+
+字段顺序遵循：
+`Ticker` → `Company` → `Sector` → `Catalysts` → `Risks` → `CR_Risk` → `CR_Risk_Reason` → `Breakout_Probability` → `Breakout_Probability_Reason` → `Core_Notes` → `Rating` → `Timeline`。
+
+#### 3.1.3 Timeline 规则
+
+- **Timeline 规则**:
+    - Timeline 条目 = 已发生的公告，必须有精确 `YYYY-MM-DD` 日期。
+    - 模糊日期（如 `2026-03/04`、`2026-04`）不允许，需搜索确认实际公告日期或删除。
+    - 未来预期事件属于 `Catalysts`，不放 `Timeline`。
+- **Rating 规则**:
+    - 由 BP × CR 矩阵自动推导，手动调整优先。
+    - 有效值: `强力买入`, `买入`, `观望`, `卖出`, `强力卖出`。
+
+#### 3.1.4 示例 (Example)
+
+```yaml
+- Ticker: TM1
+  Company: Terra Metals Limited
+  Sector: PGM - Cu - Ni - Ti - V (多金属战略矿产)
+  Catalysts:
+  - 2026年5月 106 个钻孔的 Assay 结果密集释放窗口
+  Risks:
+  - 股价波动及市场高杠杆炒作风险
+  CR_Risk: 极低
+  CR_Risk_Reason: A$85M 资金在场，SOL 作为战略股东
+  Breakout_Probability: 极高
+  Breakout_Probability_Reason: SW6 块状硫化物物理拦截确认
+  Core_Notes: ...
+  Rating: 强力买入
+  Timeline:
+  - Time: '2026-03-18'
+    Event: Phase 4 正式启动：5台钻机进场
+```
+
 ---
 
 ## 🧰 4. 辅助工具脚本
@@ -116,7 +184,8 @@ graph TD
 | 脚本 | 用途 | 类型 |
 |------|------|------|
 | `add_stock.py` | 手动添加新股票到 DB 并初始化 CatalystMaster | CLI 工具 |
-| `reseed_asx.py` | 从 YAML 完整重建整个 `asx` schema | 恢复工具 |
+| `reseed_asx.py` | 从 YAML 完整重建整个 `asx` schema（DROP → CREATE → SEED） | 恢复工具 |
+| `llm_workflow.py` | LLM 协作导出/导入 (export/import) | 数据同步 |
 
 ---
 
@@ -125,6 +194,15 @@ graph TD
 - **`unique_key` 生成公式**: `ASXCode_Date_Headline[:100]`。用于保证采集层（Announcements）的幂等性，防止重复插入。
 - **`price_history` 存储**: 逗号分隔的字符串（最近 10 次价格），减少 JSONB 膨胀，加速 Sparkline 生成。
 - **CR_Price 精度**: Float 类型，支持最多 4 位小数显示。
+
+### 5.1 数据库约束 (CHECK Constraints)
+
+| 表 | 列 | 约束 |
+|------|------|------|
+| `asx.stocks` | `stock_type` | `IN ('growth', 'foundation', 'etf', 'announcement')` |
+| `asx.catalyst_masters` | `rating` | `IN ('强力买入', '买入', '观望', '卖出', '强力卖出')` |
+| `asx.catalyst_items` | `item_type` | `IN ('catalyst', 'risk', 'milestone')` |
+| `asx.announcements` | `rating` | `BETWEEN 1 AND 5` |
 
 ---
 
@@ -140,9 +218,15 @@ python run.py reseed
 ```
 
 ### 6.2 核心运行命令映射
-- `run.py all`: 顺序调用 `asx_announcements -> asx_placements -> asx_analyzer -> asx_catalysts -> build_dashboard`。
-- `run.py llm-export --ticker <T>`: 调用 `llm_workflow.py export <T>`。
-- `run.py dashboard`: 仅重建 Dashboard HTML。
+| 命令 | 用途 |
+|------|------|
+| `run.py all` | 顺序调用 scrape → analyze → catalysts → build_dashboard |
+| `run.py scrape` | 采集公告 + 融资 (`asx_announcements` + `asx_placements`) |
+| `run.py analyze` | 技术指标计算 + 催化剂 JSON 导出 |
+| `run.py dashboard` | 仅重建 Dashboard HTML |
+| `run.py reseed` | 从 YAML 完整重建 `asx` schema (DROP → SEED) |
+| `run.py llm-export --ticker <T>` | 导出指定 ticker 至 YAML 供 LLM 审阅 |
+| `run.py llm-import` | 从临时 YAML 导入 LLM 更新至 DB |
 
 ---
 

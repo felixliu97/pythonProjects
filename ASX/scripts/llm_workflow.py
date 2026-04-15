@@ -106,7 +106,6 @@ class LLMWorkflow:
                         # 2. Sync Child Lists (SCD Type 2)
                         db.sync_list_data(sess, CatalystItem, "symbol", master.symbol, valid_c.Catalysts, item_type='catalyst')
                         db.sync_list_data(sess, CatalystItem, "symbol", master.symbol, valid_c.Risks, item_type='risk')
-                        db.sync_list_data(sess, CatalystItem, "symbol", master.symbol, valid_c.Earnings_Window, item_type='earnings')
                         db.sync_list_data(sess, CatalystItem, "symbol", master.symbol, valid_c.Timeline, item_type='milestone')
                         
                         success_count += 1

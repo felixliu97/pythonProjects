@@ -8,7 +8,7 @@ caused by the absence of physical foreign keys. Each table is 100% independent.
 from datetime import datetime, date
 from sqlalchemy import (
     Column, String, Integer, Float, Date, DateTime, 
-    Text, BigInteger, Boolean, text
+    Text, BigInteger, Boolean, text, CheckConstraint
 )
 from sqlalchemy.orm import DeclarativeBase
 
@@ -70,7 +70,13 @@ class CatalystMaster(Base):
 
 class CatalystItem(Base):
     __tablename__ = 'catalyst_items'
-    __table_args__ = {'schema': 'asx'}
+    __table_args__ = (
+        CheckConstraint(
+            "item_type IN ('catalyst', 'risk', 'milestone')",
+            name='chk_item_type'
+        ),
+        {'schema': 'asx'}
+    )
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     symbol = Column(String(20), index=True)

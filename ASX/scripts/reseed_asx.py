@@ -102,7 +102,8 @@ def reseed():
                         cr_risk_reason=v_c.CR_Risk_Reason,
                         breakout_probability=v_c.Breakout_Probability, 
                         breakout_probability_reason=v_c.Breakout_Probability_Reason,
-                        core_notes=v_c.Core_Notes
+                        core_notes=v_c.Core_Notes,
+                        rating=v_c.Rating
                     )
                     sess.add(master)
                     sess.flush()
@@ -113,8 +114,6 @@ def reseed():
                         sess.add(CatalystItem(symbol=ticker, item_type='catalyst', content=c, valid_from=now))
                     for r in v_c.Risks: 
                         sess.add(CatalystItem(symbol=ticker, item_type='risk', content=r, valid_from=now))
-                    for e in v_c.Earnings_Window: 
-                        sess.add(CatalystItem(symbol=ticker, item_type='earnings', content=e, valid_from=now))
                     for m in v_c.Timeline: 
                         sess.add(CatalystItem(
                             symbol=ticker, 
