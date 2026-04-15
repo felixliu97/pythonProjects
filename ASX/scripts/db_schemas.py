@@ -29,7 +29,6 @@ class CatalystSchema(BaseModel):
     Sector: Optional[str] = None
     Catalysts: List[str] = []
     Risks: List[str] = []
-    Earnings_Window: List[str] = []
     CR_Risk: str
     CR_Risk_Reason: Optional[str] = ""
     Breakout_Probability: Optional[str] = Field(None, alias="Probability")
@@ -45,7 +44,7 @@ class CatalystSchema(BaseModel):
     def clean_ticker(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()
 
-    @field_validator('Catalysts', 'Risks', 'Earnings_Window', mode='before')
+    @field_validator('Catalysts', 'Risks', mode='before')
     @classmethod
     def handle_dict_items(cls, v):
         """Convert any dict-style list items (key: value) to plain strings."""

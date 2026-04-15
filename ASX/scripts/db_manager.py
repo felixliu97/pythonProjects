@@ -23,10 +23,10 @@ load_dotenv(dotenv_path=env_path)
 
 try:
     from db_models import Base
-    from utils import logger
+    from utils import logger, get_sydney_time
 except ImportError:
     from scripts.db_models import Base
-    from scripts.utils import logger
+    from scripts.utils import logger, get_sydney_time
 
 # DB Connection Config from Environment Variables (with explicit fallbacks)
 DB_USER = os.getenv("DB_USER", "postgres")
@@ -101,7 +101,7 @@ class DBManager:
         if new_list is None:
             new_list = []
 
-        now = now or datetime.now()
+        now = now or get_sydney_time().replace(tzinfo=None)
 
         q = sess.query(model_cls).filter(
             getattr(model_cls, key_field) == key_val,

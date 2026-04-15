@@ -10,6 +10,7 @@ import os
 import argparse
 import subprocess
 import json
+import shutil
 from datetime import datetime, timedelta
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
@@ -55,6 +56,29 @@ def run_script(script_path: str, args: list = None) -> bool:
         logger.error(f"Execution failed for {script_path}: {e}")
         return False
 
+def clean_pycache(root_dir: Path) -> None:
+    for d in root_dir.rglob("__pycache__"):
+        if d.is_dir():
+            shutil.rmtree(d, ignore_errors=True)
+
+    for d in root_dir.rglob(".pytest_cache"):
+        if d.is_dir():
+            shutil.rmtree(d, ignore_errors=True)
+
+    for f in root_dir.rglob("*.pyc"):
+        if f.is_file():
+            try:
+                f.unlink()
+            except OSError:
+                pass
+
+    for f in root_dir.rglob("*.pyo"):
+        if f.is_file():
+            try:
+                f.unlink()
+            except OSError:
+                pass
+
 def load_db_data() -> dict:
     """Fetch consolidated data from the database using explicit queries (Decoupled Edition)."""
     with db.session_scope() as session:
@@ -75,7 +99,6 @@ def load_db_data() -> dict:
                 "Rating": m.rating or "观望",
                 "Catalysts": [i.content for i in items if i.item_type == 'catalyst'],
                 "Risks": [i.content for i in items if i.item_type == 'risk'],
-                "Earnings_Window": [i.content for i in items if i.item_type == 'earnings'],
                 "CR_Risk": m.cr_risk or "Unknown",
                 "CR_Risk_Reason": m.cr_risk_reason or "",
                 "Breakout_Probability": m.breakout_probability or "N/A",
@@ -218,36 +241,68 @@ def main():
     parser.add_argument("command", choices=["all", "scrape", "analyze", "dashboard", "reseed", "sync-catalysts", "llm-export", "llm-import"], help="Pipeline command to run")
     parser.add_argument("--ticker", help="Specific ticker for LLM operations")
     parser.add_argument("--force", action="store_true", help="Force a full refresh (ignore incremental sync)")
+    parser.add_argument("--clean-pycache", action="store_true", help="Clean __pycache__/.pyc/.pytest_cache after the command finishes")
     args = parser.parse_args()
 
     # Shared flags for scrapers
     scrape_args = ["--full-refresh"] if args.force else []
 
-    if args.command == "reseed":
-        run_script("scripts/reseed_asx.py")
-    elif args.command == "sync-catalysts":
-        run_script("scripts/sync_asx_catalysts.py")
-    elif args.command == "scrape":
-        run_script("scripts/asx_announcements.py", scrape_args)
-        run_script("scripts/asx_placements.py", scrape_args)
-    elif args.command == "analyze":
-        run_script("scripts/asx_analyzer.py")
-        run_script("scripts/asx_catalysts.py")
-    elif args.command == "dashboard":
-        build_dashboard()
-    elif args.command == "all":
-        run_script("scripts/asx_announcements.py", scrape_args)
-        run_script("scripts/asx_placements.py", scrape_args)
-        run_script("scripts/asx_analyzer.py")
-        run_script("scripts/asx_catalysts.py")
-        build_dashboard()
-    elif args.command == "llm-export":
-        if not args.ticker:
-            logger.error("LLM Export requires --ticker <SYMBOL>")
-            return
-        run_script("scripts/llm_workflow.py", ["export", args.ticker.upper()])
-    elif args.command == "llm-import":
-        run_script("scripts/llm_workflow.py", ["import"])
+    root_dir = get_root_dir()
+    exit_code = 0
+    try:
+        if args.command == "reseed":
+            ok = run_script("scripts/reseed_asx.py")
+            if not ok:
+                exit_code = 1
+        elif args.command == "sync-catalysts":
+            ok = run_script("scripts/sync_asx_catalysts.py")
+            if not ok:
+                exit_code = 1
+        elif args.command == "scrape":
+            ok1 = run_script("scripts/asx_announcements.py", scrape_args)
+            ok2 = run_script("scripts/asx_placements.py", scrape_args)
+            if not (ok1 and ok2):
+                exit_code = 1
+        elif args.command == "analyze":
+            ok1 = run_script("scripts/asx_analyzer.py")
+            ok2 = run_script("scripts/asx_catalysts.py")
+            if not (ok1 and ok2):
+                exit_code = 1
+        elif args.command == "dashboard":
+            try:
+                build_dashboard()
+            except Exception as e:
+                logger.error(f"Dashboard build failed: {e}")
+                exit_code = 1
+        elif args.command == "all":
+            ok1 = run_script("scripts/asx_announcements.py", scrape_args)
+            ok2 = run_script("scripts/asx_placements.py", scrape_args)
+            ok3 = run_script("scripts/asx_analyzer.py")
+            ok4 = run_script("scripts/asx_catalysts.py")
+            if not (ok1 and ok2 and ok3 and ok4):
+                exit_code = 1
+            try:
+                build_dashboard()
+            except Exception as e:
+                logger.error(f"Dashboard build failed: {e}")
+                exit_code = 1
+        elif args.command == "llm-export":
+            if not args.ticker:
+                logger.error("LLM Export requires --ticker <SYMBOL>")
+                exit_code = 1
+            else:
+                ok = run_script("scripts/llm_workflow.py", ["export", args.ticker.upper()])
+                if not ok:
+                    exit_code = 1
+        elif args.command == "llm-import":
+            ok = run_script("scripts/llm_workflow.py", ["import"])
+            if not ok:
+                exit_code = 1
+    finally:
+        if args.clean_pycache:
+            clean_pycache(root_dir)
+
+    raise SystemExit(exit_code)
 
 if __name__ == "__main__":
     main()

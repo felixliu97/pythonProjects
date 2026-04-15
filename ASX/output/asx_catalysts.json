@@ -14,7 +14,6 @@
       "生物芯片商业化落地面临严格的全球监管审批周期",
       "高额研发支出依赖持续的融资及政府资助"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中",
     "CR_Risk_Reason": "拥有 A$20M+ 现金，但长期研发投入巨大",
     "Breakout_Probability": "中高",
@@ -45,7 +44,6 @@
       "地缘政治风险：阿根廷宏观经济政策波动对跨境资本流动的影响",
       "Juncal 项目 1% NSR (归 Elemental Royalty) 对长期经济性的轻微影响"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "低",
     "CR_Risk_Reason": "2026年2月23日完成 A$4.56M 配售，已为 Juncal 勘探提供资金保障；Guanaco-Amancaya 生产性现金流支撑",
     "Breakout_Probability": "中高",
@@ -87,7 +85,6 @@
       "HPAL 工艺在建设和运行初期的高技术/故障风险",
       "巨量建设资本支出 (Capex) 筹集过程中的股权稀释风险"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中低",
     "CR_Risk_Reason": "DFS 由住友/三菱联合体资助至A$98.5M；IFD认定强化官方融资支持路径；近期运营资金有保障",
     "Breakout_Probability": "高",
@@ -133,7 +130,6 @@
       "合约覆盖度偏低（约3Mlb至2030年初），铀现货价格下行将直接冲击收入",
       "⚠️ FY26产量指引已正式下调至 1.40-1.45 Mlb（原1.6Mlb），Q3实产203,000lb远低于指引240-270Klb；4月15日发布后股价暴跌约14%"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "A$208M现金及流动资产，零负债；FY26产量已产生运营现金流；无近期股权融资压力",
     "Breakout_Probability": "中",
@@ -170,7 +166,6 @@
       "每笔约 US$7.5M 的长期 API 采购承诺 (2028-2030年，每年一次)，成本受汇率波动影响",
       "Sofdra 作为首个且唯一获批治疗原发性腋下多汗症的 NCE，市场教育与渗透仍需时间"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "API 协议修订成功推迟了至少20个月的采购压力；结合 A$45M 融资，短期生存压力完全消除",
     "Breakout_Probability": "高",
@@ -216,7 +211,6 @@
       "2026年3月大额融资后的筹码消化压力",
       "分析师已将2026年预期从盈利下修至亏损（建设期会计成本所致），共识目标价下调10%至AU$1.80"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "A$383M 融资包已全额落地，首金前无融资需求",
     "Breakout_Probability": "高",
@@ -246,7 +240,6 @@
       "MCB 资本支出在通胀背景下较 2021年研究估算显著上升 (原 Capex ~US$253M，现预计更高)",
       "MIC 作为菲律宾主权基金的政策风险及 SODOR 股权安排复杂性"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中",
     "CR_Risk_Reason": "MIC OLSA 首批注资已到位；但全项目建设资金仍依赖融资方案落地，FID 前存在阶段性资金缺口风险",
     "Breakout_Probability": "中高",
@@ -284,7 +277,6 @@
       "首个生产周期的建设与调试进度风险",
       "铜/金价格波动对 1.3%-1.5% CuEq 边际储量开发价值的影响"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "低",
     "CR_Risk_Reason": "pre-production Capex 仅需 A$15M，Glencore 协议支持下的低门槛投产能力",
     "Breakout_Probability": "高",
@@ -321,7 +313,6 @@
       "铜价波动对高杠杆复产项目的净现值影响",
       "2026年1月 A$41M 增长融资后的筹码消化压力"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "2025年底完成 A$80M 融资；2026年1月追加 A$41M 增长融资；2026年3月完成 A$5M 供股；现金储备 A$75M+；近期无融资压力",
     "Breakout_Probability": "高",
@@ -356,7 +347,6 @@
       "NSW1 仍需在 6 个月内锁定剩余 A$31.6M 建设融资",
       "SA1 首气项目爬坡期的技术调试及运营稳定性风险"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中",
     "CR_Risk_Reason": "NSW1 FID 已通过且补助锁定，但配套融资仍需在半年内完成；SA1 已进入收入期",
     "Breakout_Probability": "极高",
@@ -400,7 +390,6 @@
       "公司面临 2028 年 NDA 申报前的持续高额临床支出压力",
       "若统计回顾建议大幅增加样本量，将导致试验周期显著拉长且融资压力激增"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中高",
     "CR_Risk_Reason": "虽然入组全额完成，但 Phase 3 核心结果未出前仍有高度波动性",
     "Breakout_Probability": "中高",
@@ -435,7 +424,6 @@
       "锂价波动对项目经济性的持续压力（DFS 基于特定锂价假设）",
       "近期 A$3.46M 配售相对于项目建设规模极为有限，建设期仍需大规模融资"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中高",
     "CR_Risk_Reason": "近期融资仅A$3.46M，相对于大规模建设极为有限；EIA通过后需要大规模股权/债务融资；EU Just Transition Fund 资助仅€36M，不足以覆盖建设总成本",
     "Breakout_Probability": "中高",
@@ -469,7 +457,6 @@
       "西澳容量定价 (Reserve Capacity Price) 波动对长期收益率的影响",
       "EPC 成本受劳动力和材料价格波动的超支风险"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中",
     "CR_Risk_Reason": "A$2.2亿融资包接近交割，但最终信用审批落地前仍存在阶段性风险",
     "Breakout_Probability": "高",
@@ -504,7 +491,6 @@
       "3月融资当日股价暴跌约20%（较A$0.23收盘价折价约21.7%），历史频繁增发已使散户深度套牢",
       "Pivotal Trial 启动将需要 US$50M+ 级别融资，2026-2027年内大概率再次大规模资本募集；现金runway延至Q4 2026"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "高",
     "CR_Risk_Reason": "A$2000万融资后现金runway仅延至Q4 2026；Pivotal Trial 启动将需要 US$50M+ 级别融资，2026-2027年内大概率再次大规模资本募集",
     "Breakout_Probability": "中高",
@@ -537,7 +523,6 @@
       "金/铜价回调对 Mineral Hill 小规模生产商的成本边际压缩",
       "铜精矿首产时间表（目标mid-2026）延期的风险"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "A$50M Misima 首付款已到账；A$10M 第二笔递延款将于2026年7月11日到账；公司已转型为无净债务的现金流正生产商",
     "Breakout_Probability": "高",
@@ -573,7 +558,6 @@
       "⚠️ 4月6日火灾导致处理厂暂停约3周（预期4月25日前后复产）；首批发货时间线或推至5-6月",
       "2026年2月 A$76M 配售稀释后股价已从高位回落约12-19%（近期波动明显）"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "2026年2月完成 A$76M 配售 + A$5M SPP，Pro-forma 现金约 A$145M；无近期股权融资需求",
     "Breakout_Probability": "高",
@@ -619,7 +603,6 @@
       "国际供应链在地缘政治下的不确定性对后续精炼厂选址及包销的影响",
       "巴西州政府环境审批流程潜在的行政延期风险（LI审批目标6月）"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中",
     "CR_Risk_Reason": "Caldeira 品位极高且处于地表，Capex 较低；但 LI 获批后的建设资金仍需具体落实",
     "Breakout_Probability": "极高",
@@ -656,7 +639,6 @@
       "Junction Dam 项目在 Native Title 清关状态下的节奏性延期风险",
       "多项目并行模式下的 A$4M 资本消耗效率监控"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中",
     "CR_Risk_Reason": "Junction Dam 两阶段 A$4M 钻探全额资金已落实；但多项目并行模式下总现金消耗仍需持续关注",
     "Breakout_Probability": "中高",
@@ -692,7 +674,6 @@
       "资源行业资本开支周期的潜在收缩对施工订单的影响",
       "估值高位下任何低于 30% 增速预期对股价的敏感影响"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "老牌龙头，资产负债表极度健壮，无信贷压力",
     "Breakout_Probability": "高",
@@ -732,7 +713,6 @@
       "低市值 (Micro-cap) 导致股价受投机情绪驱动极大，125%单日涨幅后获利回吐压力显著",
       "8月财报季静默期机构对 CBM 商业化确定性的重新评估可能引发股价波动"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "低",
     "CR_Risk_Reason": "公司声明 Tanjung Enim 25 MMSCFD 开发已获全额资助；目前暂无迫切融资需求",
     "Breakout_Probability": "高",
@@ -775,7 +755,6 @@
       "新工厂已及时投产，但产能爬坡期的毛利率优化仍需关注",
       "R&D 设施2025年11月火灾后重建中，预计2026年9月完成 (保险全额赔付，未影响主生产线)"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "销售现金回笼强劲，Port Melbourne 工厂资金已落实，无近期融资需求",
     "Breakout_Probability": "高",
@@ -808,7 +787,6 @@
       "Nasdaq 上市执行节奏：2026年Q4可能需要股票合并以满足 Nasdaq 入场价格要求",
       "Antimony Ridge 地表高品位样品与钻探规模化资源量之间仍需数据闭环"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中",
     "CR_Risk_Reason": "FAST-41 获批极大降低了联邦许可风险；A$27.1M 后续资金将随 Nasdaq 挂牌进程同步落地",
     "Breakout_Probability": "极高",
@@ -855,7 +833,6 @@
       "作为微型市值的科技初创公司，客户获取成本与销售周期仍是主要障碍",
       "A$3.93M 尾款到账 (预计2026年10月31日前) 的执行节点风险"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中低",
     "CR_Risk_Reason": "A$3.93M 首期合同款已于3月31日正式结算，Q3 4C将确认；ARR 向 $15M 目标迈进",
     "Breakout_Probability": "高",
@@ -890,7 +867,6 @@
       "A$85M 配售后的新股筹码在高位可能带来的巨大获利回吐压力",
       "极其强烈的股价波动及市场高杠杆炒作风险（股价已从0.018低点涨至0.28左右，但较高点0.47回落）"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "极低",
     "CR_Risk_Reason": "A$85M 资金在场，SOL (Soul Patts) 作为战略股东，钻探资金弹药极其充足",
     "Breakout_Probability": "极高",
@@ -934,7 +910,6 @@
       "跨洋探勘推高 Capex/Opex，中期将重现融资诉求",
       "⚠️ 2026年4月16日约15,845,431股自愿托管股份解锁，可能带来短期抛压"
     ],
-    "Earnings_Window": [],
     "CR_Risk": "中",
     "CR_Risk_Reason": "4月16日约15.8M托管股解锁可能带来短期流动性压力；低Capex模式缓解部分压力",
     "Breakout_Probability": "中高",

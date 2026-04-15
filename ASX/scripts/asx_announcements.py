@@ -8,7 +8,6 @@ performs heuristic rating/summarization, and syncs to PostgreSQL.
 import sys
 import argparse
 import time
-import requests
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple, Set
 
@@ -16,12 +15,12 @@ try:
     from db_manager import db
     from db_models import Announcement, Stock
     from db_schemas import AnnouncementSchema
-    from utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time
+    from utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time, get_http_session
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Announcement, Stock
     from scripts.db_schemas import AnnouncementSchema
-    from scripts.utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time
+    from scripts.utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time, get_http_session
 
 # --- Configuration ---
 _CFG = load_config()
@@ -54,7 +53,7 @@ MID_VALUE_KEYWORDS = [
 class AnnouncementScanner:
     """Encapsulates the announcement scraping and processing logic."""
     
-    def __init__(self, session: requests.Session):
+    def __init__(self, session):
         self.session = session
 
     def fetch_raw(self, start_date: datetime) -> List[Dict]:
@@ -206,8 +205,7 @@ def main():
     parser.add_argument("--full-refresh", action="store_true")
     args = parser.parse_args()
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+    session = get_http_session()
     
     scanner = AnnouncementScanner(session)
     existing_keys = set()

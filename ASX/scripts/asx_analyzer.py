@@ -23,18 +23,20 @@ try:
     from sqlalchemy import create_engine, text, Engine, event
     from sqlalchemy.orm import sessionmaker, scoped_session, Session
     from db_schemas import MarketTrendSchema
-    from utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_sydney_time
+    from utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_sydney_time, get_http_session
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, MarketTrend
     from scripts.db_schemas import MarketTrendSchema
-    from scripts.utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_sydney_time
+    from scripts.utils import logger, load_config, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_sydney_time, get_http_session
 
 # --- Configuration ---
 _CFG = load_config()
 _API = _CFG.get("api", {})
 DESC_API = _API.get("company_header", "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header")
 STATS_API = "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/key-statistics"
+
+_WORKERS = int(_CFG.get("concurrency", {}).get("analyzer_workers", 10))
 
 class MomentumAnalyzer:
     """Analyzes technical and fundamental metrics for a list of tickers."""
@@ -196,7 +198,7 @@ class MomentumAnalyzer:
             results = []
             
             # Parallelize analysis
-            with ThreadPoolExecutor(max_workers=10) as ex:
+            with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
                 futures = {ex.submit(self.analyze_ticker, s.symbol, s.stock_type): s for s in stocks}
                 for future, stock_obj in futures.items():
                     result = future.result()
@@ -242,8 +244,7 @@ def main():
     parser.add_argument("--announcement", action="store_true", help="Include 'announcement' stocks in analysis")
     args = parser.parse_args()
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+    session = get_http_session()
     
     analyzer = MomentumAnalyzer(session)
     analyzer.main_sync(include_announcement=args.announcement)

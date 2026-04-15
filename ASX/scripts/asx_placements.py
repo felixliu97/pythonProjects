@@ -20,12 +20,12 @@ try:
     from db_manager import db
     from db_models import Stock, Placement
     from db_schemas import PlacementSchema
-    from utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url, get_sydney_time
+    from utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url, get_sydney_time, get_http_session
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, Placement
     from scripts.db_schemas import PlacementSchema
-    from scripts.utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url, get_sydney_time
+    from scripts.utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url, get_sydney_time, get_http_session
 
 # --- Configuration ---
 _CFG = load_config()
@@ -33,6 +33,8 @@ _API = _CFG.get("api", {})
 API_BASE = _API.get("announcements_base", "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements")
 PRICE_API = _API.get("company_header", "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header")
 ITEMS_PER_PAGE = _CFG.get("ITEMS_PER_PAGE", 1000)
+
+_WORKERS = int(_CFG.get("concurrency", {}).get("placements_workers", 20))
 
 PLACEMENT_KEYWORDS = (
     "placement", "capital rais", "capital raise", "share purchase plan", "spp",
@@ -189,7 +191,7 @@ class PlacementScanner:
             symbols = list(set(p.symbol for p in all_placements))
             price_map = {}
             
-            with ThreadPoolExecutor(max_workers=20) as ex:
+            with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
                 results = ex.map(lambda s: (s, self.fetch_market_info(s)), symbols)
                 for sym, (px, mcap, name) in results:
                     if px is not None:
@@ -240,7 +242,7 @@ class PlacementScanner:
             unique_symbols = list(set(ev["symbol"] for ev in eligible_events))
             market_cache = {}
             
-            with ThreadPoolExecutor(max_workers=20) as ex:
+            with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
                 results = ex.map(lambda s: (s, self.fetch_market_info(s)), unique_symbols)
                 for sym, (px, mcap, name) in results:
                     market_cache[sym] = {"price": px, "mcap": mcap, "name": name}
@@ -410,8 +412,7 @@ def main():
     parser.add_argument("--full-refresh", action="store_true")
     args = parser.parse_args()
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+    session = get_http_session()
     
     scanner = PlacementScanner(session)
     

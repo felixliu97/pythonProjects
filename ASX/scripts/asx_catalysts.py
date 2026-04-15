@@ -42,7 +42,6 @@ def export_catalysts():
                 
                 catalysts = [i.content for i in active_items if i.item_type == 'catalyst']
                 risks = [i.content for i in active_items if i.item_type == 'risk']
-                earnings = [i.content for i in active_items if i.item_type == 'earnings']
                 timeline = [{"Time": i.label, "Event": i.content} for i in active_items if i.item_type == 'milestone']
                 
                 # 2. Map to Schema for final validation/serialization
@@ -52,7 +51,6 @@ def export_catalysts():
                     Sector=master.sector or "Unknown",
                     Catalysts=catalysts,
                     Risks=risks,
-                    Earnings_Window=earnings,
                     CR_Risk=master.cr_risk or "Unknown",
                     CR_Risk_Reason=master.cr_risk_reason or "",
                     Breakout_Probability=master.breakout_probability or "N/A",

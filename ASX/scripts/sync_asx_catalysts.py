@@ -16,12 +16,12 @@ try:
     from db_manager import db
     from db_models import Stock, CatalystMaster, CatalystItem
     from db_schemas import CatalystSchema
-    from utils import logger
+    from utils import logger, get_sydney_time
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, CatalystMaster, CatalystItem
     from scripts.db_schemas import CatalystSchema
-    from scripts.utils import logger
+    from scripts.utils import logger, get_sydney_time
 
 
 def sync_from_yaml(yaml_path: str = "config/asx_catalysts.yaml") -> None:
@@ -33,7 +33,7 @@ def sync_from_yaml(yaml_path: str = "config/asx_catalysts.yaml") -> None:
     if isinstance(data, dict):
         data = [data]
 
-    now = datetime.now()
+    now = get_sydney_time().replace(tzinfo=None)
     synced = 0
 
     with db.session_scope() as sess:

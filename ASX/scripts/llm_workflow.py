@@ -54,7 +54,6 @@ class LLMWorkflow:
                     "Sector": master.sector,
                     "Catalysts": [i.content for i in active_items if i.item_type == 'catalyst'],
                     "Risks": [i.content for i in active_items if i.item_type == 'risk'],
-                    "Earnings_Window": [i.content for i in active_items if i.item_type == 'earnings'],
                     "CR_Risk": master.cr_risk,
                     "CR_Risk_Reason": master.cr_risk_reason,
                     "Breakout_Probability": master.breakout_probability,
