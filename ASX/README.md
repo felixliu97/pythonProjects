@@ -12,14 +12,17 @@
 ```mermaid
 graph TD
     A[ASX/Markit API] --> B{采集层 Scrapers}
-    B -->|Announcements| C[(Announcements Tab)]
-    B -->|Placements| D[(Placements Tab)]
+    B -->|Announcements| C[(DB: Announcements)]
+    B -->|Placements| D[(DB: Placements)]
     C & D --> E{分析层 Analyzer}
-    E -->|Technicals/SCD2| F[(Market Trends Tab)]
-    G[LLM Workflow] -->|Export/Import| H[(Catalyst Tables)]
-    F & H & C & D --> I[Jinja2 Renderer]
+    E -->|Technicals/SCD2| F[(DB: Market Trends)]
+    Y[config/asx_catalysts.yaml] -->|直接读取| I[Jinja2 Renderer]
+    Y -->|sync-catalysts| H[(DB: Catalyst Tables)]
+    F & C & D --> I
     I --> J[asx_dashboard.html]
 ```
+
+**核心原则**: `config/asx_catalysts.yaml` 是催化剂数据的唯一源头。Dashboard 直接读取 YAML，DB 仅作为同步备份（支持 SCD2 历史追踪）。
 
 ### 1.2 全解耦存储 (Total Decoupling)
 - **无外键约束**: 数据库 `stocks`, `announcements`, `placements` 等表之间不建立物理外键。
@@ -82,7 +85,10 @@ graph TD
         - 成交量激增：`Vol_Change > 50%` 时 +5 分。
     - **Range**: 强制限制在 [0, 100] 区间。
 
-### 2.5 催化剂评级系统 (`asx_catalysts.py`)
+### 2.5 催化剂评级系统
+- **数据源**: `config/asx_catalysts.yaml`（唯一源头，人工维护 + Git 版本控制）。
+- **Dashboard 读取**: `build_dashboard()` 通过 `load_catalysts_from_yaml()` 直接从 YAML 加载，不经 DB。
+- **DB 同步**: `run.py all` 或 `run.py sync-catalysts` 将 YAML 同步到 DB（支持 SCD2 历史追踪）。
 - **五级评级**: `强力买入` > `买入` > `观望` > `卖出` > `强力卖出`。
 - **自动评级矩阵 (BP × CR)**:
     | Rating | 条件 |
@@ -118,7 +124,7 @@ graph TD
 
 ### 3.1 YAML 数据规范 (`config/asx_catalysts.yaml`)
 
-YAML 是催化剂数据的 **唯一事实来源**，通过 `reseed` 同步至数据库。
+YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML；DB 通过 `sync-catalysts` 保持同步。
 
 #### 3.1.1 顶层结构
 
@@ -185,6 +191,7 @@ YAML 是催化剂数据的 **唯一事实来源**，通过 `reseed` 同步至数
 |------|------|------|
 | `add_stock.py` | 手动添加新股票到 DB 并初始化 CatalystMaster | CLI 工具 |
 | `reseed_asx.py` | 从 YAML 完整重建整个 `asx` schema（DROP → CREATE → SEED） | 恢复工具 |
+| `sync_asx_catalysts.py` | 增量同步 YAML → DB（SCD2 逻辑，不 DROP 表） | 数据同步 |
 | `llm_workflow.py` | LLM 协作导出/导入 (export/import) | 数据同步 |
 
 ---
@@ -220,11 +227,12 @@ python run.py reseed
 ### 6.2 核心运行命令映射
 | 命令 | 用途 |
 |------|------|
-| `run.py all` | 顺序调用 scrape → analyze → catalysts → build_dashboard |
+| `run.py all` | 顺序调用 scrape → analyze → sync-catalysts → build_dashboard |
 | `run.py scrape` | 采集公告 + 融资 (`asx_announcements` + `asx_placements`) |
-| `run.py analyze` | 技术指标计算 + 催化剂 JSON 导出 |
-| `run.py dashboard` | 仅重建 Dashboard HTML |
+| `run.py analyze` | 技术指标计算 |
+| `run.py dashboard` | 仅重建 Dashboard HTML（catalysts 直接读 YAML） |
 | `run.py reseed` | 从 YAML 完整重建 `asx` schema (DROP → SEED) |
+| `run.py sync-catalysts` | 增量同步 YAML → DB（不 DROP 表） |
 | `run.py llm-export --ticker <T>` | 导出指定 ticker 至 YAML 供 LLM 审阅 |
 | `run.py llm-import` | 从临时 YAML 导入 LLM 更新至 DB |
 
@@ -243,9 +251,9 @@ pytest tests/ -v
 | `test_asx_announcements.py` | `asx_announcements.py` | Rating 启发式、Summary 提取、唯一键幂等性、增量续传、时区感知 |
 | `test_asx_placements.py` | `asx_placements.py` | CR价格正则提取、市价同步、名录回填、**Filter-First Pipeline（监控列表/市值门控）** |
 | `test_asx_analyzer.py` | `asx_analyzer.py` | 动量评分 (Z-Score) 及评分边界 |
-| `test_asx_catalysts.py` | `asx_catalysts.py` | 催化剂导出、字段有效性、**Rating Schema 默认值/排序逻辑** |
+| `test_asx_catalysts.py` | `asx_catalysts.py` | 催化剂字段有效性、**Rating Schema 默认值/排序逻辑** |
 | `test_db_manager.py` | `db_manager.py` | 数据库连接、解耦架构及数据完整性 |
 | `test_utils.py` | `utils.py` | 通用工具函数、日期格式化、Sparkline 生成、**Sydney 时区转换** |
-| `test_run.py` | `run.py` | 主运行逻辑、Dashboard 渲染及前端展示逻辑 |
+| `test_run.py` | `run.py` | 主运行逻辑、Dashboard 渲染、**YAML 直读催化剂排序/默认值**、前端展示逻辑 |
 
 **警告**: 任何对 `db_models.py` 的修改必须运行 `reseed` 校验，并确保 `scripts/db_schemas.py` 同步更新。

@@ -79,90 +79,54 @@ def test_announcement_link_logic():
     assert "href=\"https://asx.com.au/pdf/123\"" in res
 
 def test_timeline_sorting():
-    """Verify that timeline items are sorted by the 'Time' (Date) field."""
-    from run import load_db_data
-    from unittest.mock import MagicMock, patch
+    """Verify that timeline items loaded from YAML are sorted by the 'Time' field."""
+    import yaml
+    from unittest.mock import patch
+    from run import load_catalysts_from_yaml
     
-    # Mock database session and data
-    mock_catalyst = MagicMock()
-    mock_catalyst.symbol = "TEST"
-    mock_catalyst.company = "Test Co"
-    mock_catalyst.sector = "Tech"
-    mock_catalyst.cr_risk = "Low"
-    mock_catalyst.cr_risk_reason = ""
-    mock_catalyst.breakout_probability = "High"
-    mock_catalyst.breakout_probability_reason = ""
-    mock_catalyst.core_notes = ""
+    yaml_content = [{
+        "Ticker": "TEST", "Company": "Test Co", "Sector": "Tech",
+        "CR_Risk": "Low", "Breakout_Probability": "High", "Core_Notes": "",
+        "Rating": "观望",
+        "Timeline": [
+            {"Time": "2026-04-10", "Event": "Event 2"},
+            {"Time": "2026-03-20", "Event": "Event 1"},
+            {"Time": "2026-05-01", "Event": "Event 3"},
+        ]
+    }]
     
-    # Unsorted items (April before March)
-    it1 = MagicMock(item_type='milestone', label='2026-04-10', content='Event 2')
-    it2 = MagicMock(item_type='milestone', label='2026-03-20', content='Event 1')
-    it3 = MagicMock(item_type='milestone', label='2026-05-01', content='Event 3')
+    def mock_open_yaml(*a, **kw):
+        from io import StringIO
+        return StringIO(yaml.dump(yaml_content, allow_unicode=True))
     
-    with patch("run.db.session_scope") as mock_scope:
-        mock_sess = MagicMock()
-        mock_scope.return_value.__enter__.return_value = mock_sess
+    with patch("builtins.open", mock_open_yaml):
+        result = load_catalysts_from_yaml()
+        timeline = result[0]["Timeline"]
         
-        # 1. Mock the symbols query
-        mock_sess.query.return_value.all.side_effect = [[mock_catalyst], [it1, it2, it3], [], [], []]
-        
-        # 2. Mock individual table mocks if needed (but load_db_data uses query(Stock), query(CatalystMaster) etc)
-        # We need to simulate the return values for CatalystMaster, Stock, Announcement, Placement, MarketTrend
-        # Re-mocking more broadly:
-        mock_sess.query.return_value.filter_by.return_value.all.return_value = [it1, it2, it3]
-        mock_sess.query.return_value.order_by.return_value.limit.return_value.all.return_value = []
-        
-        data = load_db_data()
-        timeline = data['catalysts']['catalysts'][0]['Timeline']
-        
-        # Expected: Event 1 (March), Event 2 (April), Event 3 (May)
-        assert timeline[0]['Time'] == '2026-03-20'
-        assert timeline[1]['Time'] == '2026-04-10'
-        assert timeline[2]['Time'] == '2026-05-01'
+        assert timeline[0]["Time"] == "2026-03-20"
+        assert timeline[1]["Time"] == "2026-04-10"
+        assert timeline[2]["Time"] == "2026-05-01"
 
-def test_timeline_merging():
-    """Verify that multiple timeline items on the same date are merged and deduplicated."""
-    from run import load_db_data
-    from unittest.mock import MagicMock, patch
+
+def test_catalysts_from_yaml_defaults():
+    """Verify that missing YAML fields get sensible defaults."""
+    import yaml
+    from unittest.mock import patch
+    from run import load_catalysts_from_yaml
     
-    mock_catalyst = MagicMock()
-    mock_catalyst.symbol = "TEST"
-    mock_catalyst.company = "Test Co"
-    mock_catalyst.sector = "Tech"
-    mock_catalyst.cr_risk = "Low"
-    mock_catalyst.cr_risk_reason = ""
-    mock_catalyst.breakout_probability = "High"
-    mock_catalyst.breakout_probability_reason = ""
-    mock_catalyst.core_notes = ""
+    yaml_content = [{"Ticker": "MIN", "Company": "Minimal Co"}]
     
-    # 1. Exact duplicates on same day
-    # 2. Different events on same day
-    # 3. Different day
-    it1 = MagicMock(item_type='milestone', label='2026-04-10', content='Duplicate Event')
-    it2 = MagicMock(item_type='milestone', label='2026-04-10', content='Duplicate Event')
-    it3 = MagicMock(item_type='milestone', label='2026-04-10', content='Unique Event')
-    it4 = MagicMock(item_type='milestone', label='2026-03-20', content='Earlier Event')
+    def mock_open_yaml(*a, **kw):
+        from io import StringIO
+        return StringIO(yaml.dump(yaml_content, allow_unicode=True))
     
-    with patch("run.db.session_scope") as mock_scope:
-        mock_sess = MagicMock()
-        mock_scope.return_value.__enter__.return_value = mock_sess
-        
-        mock_sess.query.return_value.filter_by.return_value.all.return_value = [it1, it2, it3, it4]
-        mock_sess.query.return_value.all.return_value = [mock_catalyst]
-        # Skip other table queries
-        mock_sess.query.return_value.order_by.return_value.limit.return_value.all.return_value = []
-        
-        data = load_db_data()
-        timeline = data['catalysts']['catalysts'][0]['Timeline']
-        
-        # Expected sorting: March then April
-        assert len(timeline) == 2
-        
-        # March entry
-        assert timeline[0]['Time'] == '2026-03-20'
-        assert timeline[0]['Event'] == 'Earlier Event'
-        
-        # April entry (merged and deduplicated)
-        assert timeline[1]['Time'] == '2026-04-10'
-        # 'Duplicate Event' + 'Unique Event'
-        assert timeline[1]['Event'] == 'Duplicate Event; Unique Event'
+    with patch("builtins.open", mock_open_yaml):
+        result = load_catalysts_from_yaml()
+        c = result[0]
+        assert c["Ticker"] == "MIN"
+        assert c["Rating"] == "观望"
+        assert c["CR_Risk"] == "Unknown"
+        assert c["Breakout_Probability"] == "N/A"
+        assert c["Timeline"] == []
+        assert c["Catalysts"] == []
+        assert c["Risks"] == []

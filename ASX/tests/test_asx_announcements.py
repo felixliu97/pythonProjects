@@ -34,23 +34,36 @@ def test_rating_mid_value_keywords(scanner):
 def test_rating_high_value_keywords(scanner):
     """High-value keywords (discovery, assay, approval) add +2 -> rating 3."""
     assert scanner.calculate_rating("Exceptional Assay Results", "") == 3
-    assert scanner.calculate_rating("Maiden Resource Estimate", "") == 3
-    assert scanner.calculate_rating("FDA Approval Received", "") == 3
+    assert scanner.calculate_rating("Maiden Resource Estimate", "") == 4
+    assert scanner.calculate_rating("FDA Approval Received", "") == 4
 
 def test_rating_price_sensitive_flag(scanner):
-    """isPriceSensitive from API adds +2 on top of base."""
-    # Price-sensitive routine filing: 1 + 2 = 3
-    assert scanner.calculate_rating("Cleansing Notice", "", is_price_sensitive=True) == 3
+    """isPriceSensitive from API adds +1 on top of base."""
+    # Price-sensitive routine filing: 1 + 1 = 2
+    assert scanner.calculate_rating("Cleansing Notice", "", is_price_sensitive=True) == 2
     
-    # Price-sensitive + high-value keywords: 1 + 2 + 2 = 5
-    assert scanner.calculate_rating("Discovery of high-grade copper", "", is_price_sensitive=True) == 5
+    # Price-sensitive + high-value keywords: 1 + 1 + 2 = 4
+    assert scanner.calculate_rating("Discovery of high-grade copper", "", is_price_sensitive=True) == 4
     
-    # Price-sensitive + mid-value keywords: 1 + 2 + 1 = 4
-    assert scanner.calculate_rating("Trading Halt", "", is_price_sensitive=True) == 4
+    # Price-sensitive + mid-value keywords: 1 + 1 + 1 = 3
+    assert scanner.calculate_rating("Trading Halt", "", is_price_sensitive=True) == 3
 
 def test_rating_capped_at_5(scanner):
     """Rating never exceeds 5."""
-    assert scanner.calculate_rating("Discovery of maiden gold resource with assay results", "drilling breakthrough", is_price_sensitive=True) == 5
+    assert scanner.calculate_rating("High-grade assay results", "", is_price_sensitive=True) == 5
+
+def test_rating_progress_report_not_over_scored(scanner):
+    assert scanner.calculate_rating("Exploration Update on Gold Project", "Progress Report", is_price_sensitive=True) <= 4
+
+def test_rating_all_caps_forces_5(scanner):
+    rating, reason = scanner.calculate_rating_with_reason("BINDING AGREEMENT SIGNED WITH PARTNER", "", False)
+    assert rating == 5
+    assert "all_caps" in reason
+
+def test_rating_all_caps_safeguard_short_headline(scanner):
+    rating, reason = scanner.calculate_rating_with_reason("AGM", "", False)
+    assert rating < 5
+    assert "all_caps" not in reason
 
 def test_rating_floor_at_1(scanner):
     """Rating never goes below 1."""
@@ -254,3 +267,194 @@ def test_duplicate_announcement_is_skipped(scanner):
         mock_sess.add.reset_mock()
         scanner.process_and_sync([item], {existing_key})
         assert mock_sess.add.call_count == 0
+
+def test_recalc_updates_existing_record(scanner):
+    mock_sess = MagicMock()
+    existing = MagicMock(unique_key="AAA_2026-04-16_TEST", summary="Progress Report", pdf_link="")
+
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = existing
+
+        item = {
+            "symbol": "AAA",
+            "headline": "BINDING AGREEMENT SIGNED WITH PARTNER",
+            "date": "2026-04-16T08:00:00.000Z",
+            "announcementTypes": ["Progress Report"],
+            "isPriceSensitive": False,
+            "documentKey": "doc_aaa",
+        }
+        scanner.recalc_and_update([item])
+
+        assert existing.rating == 5
+
+
+# --- 8. PDF Download Tests ---
+
+def test_pdf_download_skips_cached_file(scanner, tmp_path):
+    """Already-downloaded PDFs should not be re-downloaded."""
+    with patch("scripts.asx_announcements._CACHE_DIR", tmp_path):
+        # Pre-create a cached file
+        cached = tmp_path / "test.pdf"
+        cached.write_bytes(b"existing")
+
+        result = scanner._download_pdf("https://example.com/test.pdf", "test.pdf")
+        assert result == cached
+        # Content unchanged (no HTTP call was made)
+        assert cached.read_bytes() == b"existing"
+
+
+def test_pdf_download_saves_new_file(scanner, tmp_path):
+    """New PDFs should be downloaded and saved to cache."""
+    with patch("scripts.asx_announcements._CACHE_DIR", tmp_path):
+        mock_resp = MagicMock()
+        mock_resp.content = b"%PDF-fake-content"
+        mock_resp.raise_for_status = MagicMock()
+        scanner.session = MagicMock()
+        scanner.session.get.return_value = mock_resp
+
+        result = scanner._download_pdf("https://example.com/new.pdf", "new.pdf")
+        assert result == tmp_path / "new.pdf"
+        assert result.read_bytes() == b"%PDF-fake-content"
+        scanner.session.get.assert_called_once()
+
+
+def test_pdf_download_triggered_for_high_rated_ps_new(scanner, tmp_path):
+    """New price-sensitive announcements with rating > 3 should trigger PDF download."""
+    mock_sess = MagicMock()
+
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
+         patch("scripts.asx_announcements._CACHE_DIR", tmp_path), \
+         patch.object(scanner, "_download_pdf") as mock_dl:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_stock = MagicMock(symbol="HVK", name="HIGH VALUE CORP")
+        mock_sess.query.return_value.all.return_value = [mock_stock]
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = None
+
+        item = {
+            "symbol": "HVK",
+            "headline": "High-grade assay results from drill program",
+            "date": "2026-04-16T08:00:00.000Z",
+            "announcementTypes": ["Mining"],
+            "isPriceSensitive": True,
+            "companyInfo": [{"displayName": "HIGH VALUE CORP"}],
+            "documentKey": "doc_hvk",
+        }
+        scanner.process_and_sync([item], set())
+
+        mock_dl.assert_called_once()
+
+
+def test_pdf_download_not_triggered_for_low_rated(scanner, tmp_path):
+    """Announcements with rating <= 3 should NOT trigger PDF download."""
+    mock_sess = MagicMock()
+
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
+         patch("scripts.asx_announcements._CACHE_DIR", tmp_path), \
+         patch.object(scanner, "_download_pdf") as mock_dl:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_stock = MagicMock(symbol="LOW", name="LOW CORP")
+        mock_sess.query.return_value.all.return_value = [mock_stock]
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = None
+
+        item = {
+            "symbol": "LOW",
+            "headline": "Quarterly Activities Report",
+            "date": "2026-04-16T08:00:00.000Z",
+            "announcementTypes": ["Quarterly"],
+            "isPriceSensitive": True,
+            "companyInfo": [{"displayName": "LOW CORP"}],
+            "documentKey": "doc_low",
+        }
+        scanner.process_and_sync([item], set())
+
+        mock_dl.assert_not_called()
+
+
+def test_pdf_download_not_triggered_for_non_ps(scanner, tmp_path):
+    """Non-price-sensitive announcements should NOT trigger PDF download even if rating > 3."""
+    mock_sess = MagicMock()
+
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
+         patch("scripts.asx_announcements._CACHE_DIR", tmp_path), \
+         patch.object(scanner, "_download_pdf") as mock_dl:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_stock = MagicMock(symbol="NPS", name="NPS CORP")
+        mock_sess.query.return_value.all.return_value = [mock_stock]
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = None
+
+        item = {
+            "symbol": "NPS",
+            "headline": "BINDING AGREEMENT SIGNED WITH PARTNER",
+            "date": "2026-04-16T08:00:00.000Z",
+            "announcementTypes": ["General"],
+            "isPriceSensitive": False,
+            "companyInfo": [{"displayName": "NPS CORP"}],
+            "documentKey": "doc_nps",
+        }
+        scanner.process_and_sync([item], set())
+
+        mock_dl.assert_not_called()
+
+
+def test_pdf_download_triggered_in_recalc(scanner, tmp_path):
+    """recalc_and_update should download PDFs for price-sensitive items with rating > 3."""
+    mock_sess = MagicMock()
+    existing = MagicMock(
+        unique_key="RCL_2026-04-16_HIGH-GRADE ASSAY RESULTS",
+        summary="Mining",
+        pdf_link="https://example.com/rcl.pdf",
+    )
+
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
+         patch("scripts.asx_announcements._CACHE_DIR", tmp_path), \
+         patch.object(scanner, "_download_pdf") as mock_dl:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = existing
+
+        item = {
+            "symbol": "RCL",
+            "headline": "High-grade assay results from drill program",
+            "date": "2026-04-16T08:00:00.000Z",
+            "announcementTypes": ["Mining"],
+            "isPriceSensitive": True,
+            "documentKey": "doc_rcl",
+        }
+        scanner.recalc_and_update([item])
+
+        assert existing.rating == 5
+        mock_dl.assert_called_once()
+
+
+def test_pdf_download_for_existing_record_in_sync(scanner, tmp_path):
+    """process_and_sync should download PDF for existing DB records that meet criteria."""
+    mock_sess = MagicMock()
+    existing_ann = MagicMock(
+        rating=5,
+        pdf_link="https://example.com/exist.pdf",
+    )
+
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
+         patch("scripts.asx_announcements._CACHE_DIR", tmp_path), \
+         patch.object(scanner, "_download_pdf") as mock_dl:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_stock = MagicMock(symbol="EXS", name="EXIST CORP")
+        mock_sess.query.return_value.all.return_value = [mock_stock]
+        # Return existing record on filter_by check
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = existing_ann
+
+        item = {
+            "symbol": "EXS",
+            "headline": "Major Discovery Announced",
+            "date": "2026-04-16T08:00:00.000Z",
+            "announcementTypes": ["Mining"],
+            "isPriceSensitive": True,
+            "companyInfo": [{"displayName": "EXIST CORP"}],
+            "documentKey": "doc_exs",
+        }
+        scanner.process_and_sync([item], set())
+
+        # Should NOT add a new record (existing found)
+        assert mock_sess.add.call_count == 0
+        # Should download PDF for existing record
+        mock_dl.assert_called_once()

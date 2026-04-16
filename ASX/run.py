@@ -11,6 +11,7 @@ import argparse
 import subprocess
 import json
 import shutil
+import yaml
 from datetime import datetime, timedelta
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
@@ -18,12 +19,12 @@ from jinja2 import Environment, FileSystemLoader
 # Local Imports
 try:
     from scripts.db_manager import db
-    from scripts.db_models import Stock, CatalystMaster, Announcement, Placement, CatalystItem, MarketTrend
+    from scripts.db_models import Stock, Announcement, Placement, MarketTrend
     from scripts.utils import logger, load_config, get_root_dir, generate_sparkline, get_sydney_time
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "scripts"))
     from db_manager import db
-    from db_models import Stock, CatalystMaster, Announcement, Placement, CatalystItem, MarketTrend
+    from db_models import Stock, Announcement, Placement, MarketTrend
     from utils import logger, load_config, get_root_dir, generate_sparkline, get_sydney_time
 
 def trim_zeros(value):
@@ -39,10 +40,10 @@ def trim_zeros(value):
     except (ValueError, TypeError):
         return str(value)
 
-def run_script(script_path: str, args: list = None) -> bool:
+def run_script(script: str, args: list[str] | None = None) -> bool:
     """Execute a Python script relative to the root directory."""
     root_dir = get_root_dir()
-    full_path = root_dir / script_path
+    full_path = root_dir / script
     if not full_path.exists():
         logger.error(f"Script not found: {full_path}")
         return False
@@ -79,43 +80,40 @@ def clean_pycache(root_dir: Path) -> None:
             except OSError:
                 pass
 
+def load_catalysts_from_yaml() -> list:
+    """Load catalyst data directly from YAML (single source of truth)."""
+    yaml_path = get_root_dir() / "config" / "asx_catalysts.yaml"
+    with open(yaml_path, "r", encoding="utf-8") as f:
+        raw = yaml.safe_load(f) or []
+    
+    catalysts_list = []
+    for entry in raw:
+        catalysts_list.append({
+            "Ticker": entry.get("Ticker", ""),
+            "Company": entry.get("Company", ""),
+            "Sector": entry.get("Sector", ""),
+            "Rating": entry.get("Rating", "观望"),
+            "Catalysts": entry.get("Catalysts", []),
+            "Risks": entry.get("Risks", []),
+            "CR_Risk": entry.get("CR_Risk", "Unknown"),
+            "CR_Risk_Reason": entry.get("CR_Risk_Reason", ""),
+            "Breakout_Probability": entry.get("Breakout_Probability", "N/A"),
+            "Breakout_Probability_Reason": entry.get("Breakout_Probability_Reason", ""),
+            "Core_Notes": entry.get("Core_Notes", ""),
+            "Timeline": sorted(
+                entry.get("Timeline", []),
+                key=lambda x: x.get("Time", "")
+            )
+        })
+    return catalysts_list
+
 def load_db_data() -> dict:
-    """Fetch consolidated data from the database using explicit queries (Decoupled Edition)."""
+    """Fetch consolidated data: catalysts from YAML, dynamic data from DB."""
     with db.session_scope() as session:
-        # 1. Catalyst Data
-        masters = session.query(CatalystMaster).all()
-        catalysts_list = []
-        for m in masters:
-            # Latest Market Trend
-            trend = session.query(MarketTrend).filter_by(symbol=m.symbol, is_active=True).order_by(MarketTrend.id.desc()).first()
-            
-            # Explicit query instead of m.items
-            items = session.query(CatalystItem).filter_by(symbol=m.symbol, is_active=True).all()
-            
-            catalysts_list.append({
-                "Ticker": m.symbol,
-                "Company": m.company,
-                "Sector": m.sector,
-                "Rating": m.rating or "观望",
-                "Catalysts": [i.content for i in items if i.item_type == 'catalyst'],
-                "Risks": [i.content for i in items if i.item_type == 'risk'],
-                "CR_Risk": m.cr_risk or "Unknown",
-                "CR_Risk_Reason": m.cr_risk_reason or "",
-                "Breakout_Probability": m.breakout_probability or "N/A",
-                "Breakout_Probability_Reason": m.breakout_probability_reason or "",
-                "Core_Notes": m.core_notes,
-                "Timeline": sorted(
-                    [
-                        {"Time": label, "Event": "; ".join(contents)}
-                        for label, contents in {
-                            m.label: list(dict.fromkeys([m2.content for m2 in items if m2.item_type == 'milestone' and m2.label == m.label]))
-                            for m in items if m.item_type == 'milestone'
-                        }.items()
-                    ],
-                    key=lambda x: x['Time']
-                )
-            })
+        # 1. Catalyst Data (from YAML directly)
+        catalysts_list = load_catalysts_from_yaml()
         
+        # Sort catalysts by rating/breakout/cr_risk
         def breakout_key(s):
             rating = s.get("Rating", "观望")
             r_scores = {"强力买入": -10, "买入": -5, "观望": 0, "卖出": 5, "强力卖出": 10}
@@ -133,12 +131,11 @@ def load_db_data() -> dict:
         
         catalysts_list.sort(key=breakout_key)
 
-        # 2. Announcements (Last 14 days)
-        cutoff = (get_sydney_time() - timedelta(days=14)).date()
+        # 2. Announcements
+        today = get_sydney_time().date()
         ann_res = session.query(Announcement).filter(
-            Announcement.event_date >= cutoff
+            Announcement.event_date == today,
         ).order_by(
-            Announcement.event_date.desc(), 
             Announcement.rating.desc()
         ).all()
         ann_list = [{
@@ -148,7 +145,7 @@ def load_db_data() -> dict:
             "Date": a.event_date.strftime("%Y-%m-%d") if a.event_date else "",
             "Summary": a.summary,
             "PDF_Link": a.pdf_link,
-            "Rating": a.rating
+            "Rating": a.rating,
         } for a in ann_res]
 
         # 3. Placements
@@ -234,6 +231,11 @@ def build_dashboard():
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
     
+    # Copy static assets (base.css) from templates to output
+    css_src = template_dir / "base.css"
+    if css_src.exists():
+        shutil.copy2(css_src, output_path.parent / "base.css")
+    
     logger.info(f"Dashboard successfully updated: {output_path}")
 
 def main():
@@ -241,7 +243,7 @@ def main():
     parser.add_argument("command", choices=["all", "scrape", "analyze", "dashboard", "reseed", "sync-catalysts", "llm-export", "llm-import"], help="Pipeline command to run")
     parser.add_argument("--ticker", help="Specific ticker for LLM operations")
     parser.add_argument("--force", action="store_true", help="Force a full refresh (ignore incremental sync)")
-    parser.add_argument("--clean-pycache", action="store_true", help="Clean __pycache__/.pyc/.pytest_cache after the command finishes")
+    # pycache/pytest_cache cleanup runs automatically after every command
     args = parser.parse_args()
 
     # Shared flags for scrapers
@@ -264,9 +266,8 @@ def main():
             if not (ok1 and ok2):
                 exit_code = 1
         elif args.command == "analyze":
-            ok1 = run_script("scripts/asx_analyzer.py")
-            ok2 = run_script("scripts/asx_catalysts.py")
-            if not (ok1 and ok2):
+            ok = run_script("scripts/asx_analyzer.py")
+            if not ok:
                 exit_code = 1
         elif args.command == "dashboard":
             try:
@@ -278,7 +279,7 @@ def main():
             ok1 = run_script("scripts/asx_announcements.py", scrape_args)
             ok2 = run_script("scripts/asx_placements.py", scrape_args)
             ok3 = run_script("scripts/asx_analyzer.py")
-            ok4 = run_script("scripts/asx_catalysts.py")
+            ok4 = run_script("scripts/sync_asx_catalysts.py")
             if not (ok1 and ok2 and ok3 and ok4):
                 exit_code = 1
             try:
@@ -299,8 +300,7 @@ def main():
             if not ok:
                 exit_code = 1
     finally:
-        if args.clean_pycache:
-            clean_pycache(root_dir)
+        clean_pycache(root_dir)
 
     raise SystemExit(exit_code)
 

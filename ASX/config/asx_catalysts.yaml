@@ -114,7 +114,7 @@
   Catalysts:
   - 2026年4月下旬 发布 Q3 FY26 季报：关注季度处方量、净收入及更新后的现金消耗预测
   - 2026年8月 发布 FY26 全年报，详细披露 API 协议修订对中长期 COGS 和毛利的影响
-  - 2026年H2 在 Kaken 技术支持下推进第二 API 供应商的选定与技术转移；目标COGS降低25-40%
+  - 2026年H2 第二API供应商技术转移推进中（term sheet已于4月16日签署）；目标COGS降低25-40%
   Risks:
   - 415M 新股入场后的短期抛压与股权稀释对 EPS 的长期稀释效应
   - 引入第二 API 供应商的技术转移周期较长（需 Kaken 技术支持，周期可能长达数年）
@@ -124,7 +124,7 @@
   CR_Risk_Reason: API 协议修订成功推迟了至少20个月的采购压力；结合 A$45M 融资，短期生存压力完全消除
   Breakout_Probability: 高
   Breakout_Probability_Reason: API 协议修订成功极大改善了商业化阶段的财务灵活性；Sofdra 已获 FDA 批准，62,500张处方量印证商业化动能
-  Core_Notes: BOT 成功实现了财务防线的重大加固。2026年3月30日宣布成功修订API供应协议，将原定2026年4月和2027年1月的两笔关键API采购（合计约US$15M）推迟至2027/28年。2026年4月10日，4.15亿新股正式挂牌，标志着 A$45M 融资款项全额就位。H1 FY26 数据：Sofdra 62,500张处方（推出后11个月），A$21.2M净收入（含版税）。API协议修订+融资落地消除了最大的近期流动性风险。SPP最终交割已于4月13日前后完成。
+  Core_Notes: BOT 成功实现了财务防线的重大加固。2026年3月30日宣布成功修订API供应协议，将原定2026年4月和2027年1月的两笔关键API采购（合计约US$15M）推迟至2027/28年。2026年4月10日，4.15亿新股正式挂牌，标志着 A$45M 融资款项全额就位。H1 FY26 数据：Sofdra 62,500张处方（推出后11个月），A$21.2M净收入（含版税）。API协议修订+融资落地消除了最大的近期流动性风险。SPP最终交割已于4月13日前后完成。4月16日与第二API供应商签署term sheet，技术转移即刻启动，预计COGS降低25-40%并提升毛利，供应链进一步去风险化。
   Rating: 买入
   Timeline:
   - Time: '2026-03-20'
@@ -135,8 +135,8 @@
     Event: 股东大会 (EGM) 批准 A$45M 融资剩余批次 (Tranche 2 ~A$25M + SPP A$5M 期权发行)
   - Time: '2026-04-10'
     Event: 4.15亿新股正式在 ASX 挂牌交易；A$45M 专项融资及 SPP 资金全部入账
-  - Time: '2026-04-13'
-    Event: SPP 最终交割与认购结果公告完成
+  - Time: '2026-04-16'
+    Event: 与第二API供应商签署term sheet协议；技术转移即刻启动；将协商正式商业API供应协议；预计COGS降低25-40%并提升毛利
 
 - Ticker: BTR
   Company: Brightstar Resources Limited
@@ -155,11 +155,13 @@
   CR_Risk_Reason: A$383M 融资包已全额落地，首金前无融资需求
   Breakout_Probability: 高
   Breakout_Probability_Reason: 资金全额锁定，核心风险已收窄至工程执行阶段；DFS 2.0 NPV A$606M / IRR 74%；分析师下修系建设期会计亏损所致，不影响项目经济性本质
-  Core_Notes: BTR 已通过 A$383M 的巨额融资锁定投产资金。分析师近期将2026年收入预测从AU$231M下调至AU$205M，并将盈利预期转为亏损（EPS -AU$0.025），共识目标价同步下调10%至AU$1.80，主要反映建设期摊销及债务利息成本，不影响项目长期NPV逻辑。DFS 2.0 经济性极强 (NPV A$606M / IRR 74%)，FID 已完成，资金全额锁定。
+  Core_Notes: BTR 已通过 A$383M 的巨额融资锁定投产资金。分析师近期将2026年收入预测从AU$231M下调至AU$205M，并将盈利预期转为亏损（EPS -AU$0.025），共识目标价同步下调10%至AU$1.80，主要反映建设期摊销及债务利息成本，不影响项目长期NPV逻辑。DFS 2.0 经济性极强 (NPV A$606M / IRR 74%)，FID 已完成，资金全额锁定。4月15日 Aquirian 旗下 Drillforce 签署 Lord Byron 钻爆服务协议（3年/~A$48M）及 Goldfields Hub SFA（5年+延展），标志建设承包商签约正式启动。
   Rating: 买入
   Timeline:
   - Time: '2026-03-20'
     Event: 宣布完成 A$193M 股权融资及 US$120M 债务安排；Goldfields 项目至投产资金全面锁定；FID 正式完成
+  - Time: '2026-04-15'
+    Event: Aquirian (ASX:AQN) 旗下 Drillforce 与 BTR 签署 Lord Byron 露天矿钻爆服务协议（3年期，合同价值约A$48M，2026年9月起）；同时签署覆盖 Goldfields Hub（Lord Byron/Cork Tree Well/Lady Shenton）的战略框架协议（SFA，5年+延展），条件为BTR完成FID
 
 - Ticker: CLA
   Company: Celsius Resources Limited
@@ -673,3 +675,37 @@
     Event: 重力测量结果公布：成功识别 Linka 项目深部侵入体靶点，完成钻探设计去风险
   - Time: '2026-04-16'
     Event: 15,845,431 股自愿托管股份解锁释放
+
+- Ticker: EMV
+  Company: EMVISION MEDICAL DEVICES LTD
+  Sector: Health Care - Health Care Equipment & Services
+  Catalysts:
+  - 关键临床/产品验证与商业化推进节点（待补充具体时间）
+  - 业务进展更新与潜在合作/订单信息（关注公告）
+  Risks:
+  - 研发与商业化推进周期长；进展不及预期可能引发估值回撤
+  - 现金流为负，后续融资可能带来稀释
+  CR_Risk: 高
+  CR_Risk_Reason: 近年财务数据表现为持续亏损/现金流为负，若商业化节奏偏慢更可能触发融资需求
+  Breakout_Probability: 中
+  Breakout_Probability_Reason: 当前缺少明确的近期强催化剂公开信息；后续需结合临床/产品与商业化节点进一步评估
+  Core_Notes: EMV 属于医疗设备赛道（ASX 行业分类：Health Care Equipment & Services）。近期公开公告以常规披露为主；建议进一步补充核心产品路径、监管/临床里程碑与商业化节奏后再更新评级与催化剂列表。
+  Rating: 观望
+  Timeline: []
+
+- Ticker: CU6
+  Company: CLARITY PHARMACEUTICALS LTD
+  Sector: Health Care - Pharmaceuticals, Biotechnology & Life Sciences
+  Catalysts:
+  - 商业制造相关进展：已披露签署 Commercial Manufacturing Agreement（关注后续里程碑与收入落地）
+  - 关键研发/临床/监管节点推进（待补充具体项目与时间表）
+  Risks:
+  - 生物医药研发不确定性高，临床/监管风险可能导致进度延误
+  - 现金流为负，若资本市场环境转弱可能需要融资
+  CR_Risk: 中
+  CR_Risk_Reason: 市值与流动性相对更好但仍处研发投入期；若研发/商业化节点延后，融资需求上升
+  Breakout_Probability: 中高
+  Breakout_Probability_Reason: 近期公告包含制造合作协议类信息，若后续落地进展明确，可能形成阶段性催化剂
+  Core_Notes: CU6 属于生物医药赛道（ASX 行业分类：Pharmaceuticals, Biotechnology & Life Sciences）。近期公告出现制造合作协议等偏“进展型”信息，建议补充核心管线、临床阶段与关键数据读出节点，再更新 Breakout/CR/Rating。
+  Rating: 观望
+  Timeline: []
