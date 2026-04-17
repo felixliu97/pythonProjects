@@ -56,9 +56,16 @@ class MarketTrend(Base):
 
 class CatalystMaster(Base):
     __tablename__ = 'catalyst_masters'
-    __table_args__ = {'schema': 'asx'}
-    
+    __table_args__ = (
+        CheckConstraint(
+            "stage IN ('阶段1-无人关注期', '阶段2-验证突破期', '阶段3-现金流确认期', '阶段4-行业统治期', '阶段5-估值溢价期', '未分类')",
+            name='chk_stage'
+        ),
+        {'schema': 'asx'}
+    )
+
     symbol = Column(String(20), primary_key=True)
+    stage = Column(String(50), default="未分类")
     company = Column(String(255), nullable=False)
     sector = Column(String(255))
     cr_risk = Column(String(500))

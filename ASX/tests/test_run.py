@@ -79,33 +79,33 @@ def test_announcement_link_logic():
     assert "href=\"https://asx.com.au/pdf/123\"" in res
 
 def test_timeline_sorting():
-    """Verify that timeline items loaded from YAML are sorted by the 'Time' field."""
+    """Verify that timeline items loaded from YAML are sorted by the 'Date' field."""
     import yaml
     from unittest.mock import patch
     from run import load_catalysts_from_yaml
-    
+
     yaml_content = [{
         "Ticker": "TEST", "Company": "Test Co", "Sector": "Tech",
         "CR_Risk": "Low", "Breakout_Probability": "High", "Core_Notes": "",
         "Rating": "观望",
         "Timeline": [
-            {"Time": "2026-04-10", "Event": "Event 2"},
-            {"Time": "2026-03-20", "Event": "Event 1"},
-            {"Time": "2026-05-01", "Event": "Event 3"},
+            {"Date": "2026-04-10", "Event": "Event 2"},
+            {"Date": "2026-03-20", "Event": "Event 1"},
+            {"Date": "2026-05-01", "Event": "Event 3"},
         ]
     }]
-    
+
     def mock_open_yaml(*a, **kw):
         from io import StringIO
         return StringIO(yaml.dump(yaml_content, allow_unicode=True))
-    
+
     with patch("builtins.open", mock_open_yaml):
         result = load_catalysts_from_yaml()
         timeline = result[0]["Timeline"]
-        
-        assert timeline[0]["Time"] == "2026-03-20"
-        assert timeline[1]["Time"] == "2026-04-10"
-        assert timeline[2]["Time"] == "2026-05-01"
+
+        assert timeline[0]["Date"] == "2026-03-20"
+        assert timeline[1]["Date"] == "2026-04-10"
+        assert timeline[2]["Date"] == "2026-05-01"
 
 
 def test_catalysts_from_yaml_defaults():

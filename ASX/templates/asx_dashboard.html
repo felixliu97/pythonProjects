@@ -94,6 +94,52 @@
             border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
+        /* Stage Badge Styles */
+        .stage-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.65rem;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .stage-1 {
+            background: rgba(107, 114, 128, 0.15);
+            color: #6b7280;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+
+        .stage-2 {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .stage-3 {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .stage-4 {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .stage-5 {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .stage-unclassified {
+            background: rgba(156, 163, 175, 0.1);
+            color: #9ca3af;
+            border: 1px solid rgba(156, 163, 175, 0.2);
+        }
+
         .dataTable-wrapper .dataTable-top {
             padding: 0 0 1.5rem 0;
         }
@@ -186,14 +232,14 @@
         }
 
         /* Catalyst Table Optimization */
-        #catalystTable {
+        .catalyst-table {
             table-layout: fixed;
             width: 100%;
             font-size: 0.825rem;
         }
 
-        #catalystTable th,
-        #catalystTable td {
+        .catalyst-table th,
+        .catalyst-table td {
             overflow-wrap: break-word;
             word-wrap: break-word;
             word-break: break-word;
@@ -201,14 +247,15 @@
             vertical-align: top;
         }
 
-        #catalystTable th:nth-child(1), #catalystTable td:nth-child(1) { width: 8%; }
-        #catalystTable th:nth-child(2), #catalystTable td:nth-child(2) { width: 14%; }
-        #catalystTable th:nth-child(3), #catalystTable td:nth-child(3) { width: 18%; }
-        #catalystTable th:nth-child(4), #catalystTable td:nth-child(4) { width: 18%; }
-        #catalystTable th:nth-child(5), #catalystTable td:nth-child(5) { width: 10%; }
-        #catalystTable th:nth-child(6), #catalystTable td:nth-child(6) { width: 10%; }
-        #catalystTable th:nth-child(7), #catalystTable td:nth-child(7) { width: 12%; }
-        #catalystTable th:nth-child(8), #catalystTable td:nth-child(8) { width: 10%; }
+        .catalyst-table th:nth-child(1), .catalyst-table td:nth-child(1) { width: 5%; }
+        .catalyst-table th:nth-child(2), .catalyst-table td:nth-child(2) { width: 9%; }
+        .catalyst-table th:nth-child(3), .catalyst-table td:nth-child(3) { width: 14%; }
+        .catalyst-table th:nth-child(4), .catalyst-table td:nth-child(4) { width: 16%; }
+        .catalyst-table th:nth-child(5), .catalyst-table td:nth-child(5) { width: 14%; }
+        .catalyst-table th:nth-child(6), .catalyst-table td:nth-child(6) { width: 7%; }
+        .catalyst-table th:nth-child(7), .catalyst-table td:nth-child(7) { width: 10%; }
+        .catalyst-table th:nth-child(8), .catalyst-table td:nth-child(8) { width: 10%; }
+        .catalyst-table th:nth-child(9), .catalyst-table td:nth-child(9) { width: 15%; }
 
         .catalyst-item, .risk-item {
             font-size: 0.75rem;
@@ -561,111 +608,184 @@
                 </div>
             </section>
 
+            {% macro render_catalyst_table(catalyst_list) %}
+            <div class="table-container">
+                <table class="catalyst-table">
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Ticker Name</th>
+                            <th>Timeline</th>
+                            <th>Key Catalysts</th>
+                            <th>Risks</th>
+                            <th>Rating</th>
+                            <th>CR Risk</th>
+                            <th>Breakout Prob.</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if catalyst_list %}
+                        {% for c in catalyst_list %}
+                        <tr>
+                            <td>
+                                {% set stage_short = c.Stage|default('未分类') %}
+                                {% set stage_cls = 'stage-1' if '阶段1' in stage_short else ('stage-2' if '阶段2' in stage_short else ('stage-3' if '阶段3' in stage_short else ('stage-4' if '阶段4' in stage_short else ('stage-5' if '阶段5' in stage_short else 'stage-unclassified')))) %}
+                                <span class="stage-badge {{ stage_cls }}">{{ stage_short[:3] }}</span>
+                            </td>
+                            <td>
+                                <div class="bold" style="font-size: 0.95rem; color: var(--primary);">{{
+                                    c.Ticker }}</div>
+                                <div class="badge badge-sector" style="margin-top: 3px; padding: 1px 5px; font-size: 0.6rem;">{{ c.Sector }}
+                                </div>
+                            </td>
+                            <td>
+                                {% if c.Timeline %}
+                                <div style="display: flex; flex-direction: column; gap: 2px;">
+                                    {% for tl in c.Timeline %}
+                                    <div
+                                        style="font-size: 0.68rem; border-left: 2px solid var(--primary); padding-left: 4px; line-height: 1.1;">
+                                        <span class="bold">{{ tl.Date }}:</span> {{ tl.Event }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                <div style="display: flex; flex-direction: column; gap: 3px;">
+                                    {% for cat in c.Catalysts %}
+                                    <div class="catalyst-item"
+                                        style="background: rgba(16, 185, 129, 0.05); border: 1px solid var(--border); border-left: 2px solid #10b981; font-size: 0.7rem; padding: 3px 5px;">
+                                        {{ cat }}</div>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; flex-direction: column; gap: 3px;">
+                                    {% for r in c.Risks %}
+                                    <div class="risk-item"
+                                        style="background: rgba(239, 68, 68, 0.04); border: 1px solid var(--border); border-left: 2px solid #ef4444; font-size: 0.7rem; padding: 3px 5px;">
+                                        {{ r }}</div>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                {% set r = c.Rating or "观望" %}
+                                {% set r_cls = 'rating-strong-buy' if r == '强力买入' else ('rating-buy' if r == '买入' else ('rating-hold' if r == '观望' else ('rating-sell' if r == '卖出' else 'rating-strong-sell'))) %}
+                                <div class="rating-badge {{ r_cls }}">{{ r }}</div>
+                            </td>
+                            <td>
+                                {% set risk_lvl = c.CR_Risk.strip() if c.CR_Risk else "Unknown" %}
+                                {% set risk_reason = c.CR_Risk_Reason.strip() if c.CR_Risk_Reason else "" %}
+                                {% set cr_cls = 'cr-high' if '高' in risk_lvl else ('cr-med' if '中' in risk_lvl else 'cr-low') %}
+                                <div style="margin-bottom: 2px;"><span class="cr-pill {{ cr_cls }}" style="font-size: 0.6rem; padding: 1px 4px;">{{
+                                        risk_lvl }}</span></div>
+                                {% if risk_reason %}
+                                <div class="dim" style="font-size: 0.65rem; line-height: 1.1;">{{ risk_reason }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set prob_lvl = c.Breakout_Probability.strip() if c.Breakout_Probability else "N/A" %}
+                                {% set prob_reason = c.Breakout_Probability_Reason.strip() if c.Breakout_Probability_Reason else "" %}
+                                {% set pr_cls = 'cr-low' if '高' in prob_lvl else ('cr-med' if '中' in prob_lvl else 'cr-high') %}
+                                <div style="margin-bottom: 2px;"><span class="cr-pill {{ pr_cls }}" style="font-size: 0.6rem; padding: 1px 4px;">{{
+                                    prob_lvl }}</span></div>
+                                {% if prob_reason %}
+                                <div class="dim" style="font-size: 0.65rem; line-height: 1.1;">{{
+                                        prob_reason }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="dim" style="font-size: 0.68rem; line-height: 1.2;">{{ c.Core_Notes }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            {% endmacro %}
+
             <!-- Catalysts Tab -->
             <section id="tab-catalysts" class="tab-pane" style="display:none">
                 <div class="card">
                     <div class="sub-tabs">
-                        <button class="sub-tab active" onclick="switchSubTab('stock-view', this)">Stock Analysis
-                            View</button>
+                        <button class="sub-tab active" onclick="switchStageTab('all', this)">全部</button>
+                        {% set stages = [] %}
+                        {% for c in catalysts.catalysts %}
+                            {% if c.Stage and c.Stage not in stages %}
+                                {% set _ = stages.append(c.Stage) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% for stage in stages|sort %}
+                        <button class="sub-tab" onclick="switchStageTab('{{ stage|replace(' ', '-')|replace('/', '-') }}', this)">{{ stage }}</button>
+                        {% endfor %}
                     </div>
 
-                    <!-- Stock View Sub-Tab -->
-                    <div id="stock-view" class="tab-content active">
-                        <div class="table-container">
-                            <table id="catalystTable">
-                                <thead>
-                                    <tr>
-                                        <th>Ticker Name</th>
-                                        <th>Timeline</th>
-                                        <th>Key Catalysts</th>
-                                        <th>Risks</th>
-                                        <th>Rating</th>
-                                        <th>CR Risk</th>
-                                        <th>Breakout Prob.</th>
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if catalysts.catalysts %}
-                                    {% for c in catalysts.catalysts %}
-                                    <tr>
-                                        <td>
-                                            <div class="bold" style="font-size: 0.95rem; color: var(--primary);">{{
-                                                c.Ticker }}</div>
-                                            <div class="badge badge-sector" style="margin-top: 3px; padding: 1px 5px; font-size: 0.6rem;">{{ c.Sector }}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {% if c.Timeline %}
-                                            <div style="display: flex; flex-direction: column; gap: 2px;">
-                                                {% for tl in c.Timeline %}
-                                                <div
-                                                    style="font-size: 0.68rem; border-left: 2px solid var(--primary); padding-left: 4px; line-height: 1.1;">
-                                                    <span class="bold">{{ tl.Time }}:</span> {{ tl.Event }}
-                                                </div>
-                                                {% endfor %}
-                                            </div>
-                                            {% else %}-{% endif %}
-                                        </td>
-                                        <td>
-                                            <div style="display: flex; flex-direction: column; gap: 3px;">
-                                                {% for cat in c.Catalysts %}
-                                                <div class="catalyst-item"
-                                                    style="background: rgba(16, 185, 129, 0.05); border: 1px solid var(--border); border-left: 2px solid #10b981; font-size: 0.7rem; padding: 3px 5px;">
-                                                    {{ cat }}</div>
-                                                {% endfor %}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="display: flex; flex-direction: column; gap: 3px;">
-                                                {% for r in c.Risks %}
-                                                <div class="risk-item"
-                                                    style="background: rgba(239, 68, 68, 0.04); border: 1px solid var(--border); border-left: 2px solid #ef4444; font-size: 0.7rem; padding: 3px 5px;">
-                                                    {{ r }}</div>
-                                                {% endfor %}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {% set r = c.Rating or "观望" %}
-                                            {% set r_cls = 'rating-strong-buy' if r == '强力买入' else ('rating-buy' if r == '买入' else ('rating-hold' if r == '观望' else ('rating-sell' if r == '卖出' else 'rating-strong-sell'))) %}
-                                            <div class="rating-badge {{ r_cls }}">{{ r }}</div>
-                                        </td>
-                                        <td>
-                                            {% set risk_lvl = c.CR_Risk.strip() if c.CR_Risk else "Unknown" %}
-                                            {% set risk_reason = c.CR_Risk_Reason.strip() if c.CR_Risk_Reason else "" %}
- 
-                                            {% set cr_cls = 'cr-high' if '高' in risk_lvl else ('cr-med' if '中' in
-                                            risk_lvl else 'cr-low') %}
-                                            <div style="margin-bottom: 2px;"><span class="cr-pill {{ cr_cls }}" style="font-size: 0.6rem; padding: 1px 4px;">{{
-                                                    risk_lvl }}</span></div>
-                                            {% if risk_reason %}
-                                            <div class="dim" style="font-size: 0.65rem; line-height: 1.1;">{{ risk_reason }}</div>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% set prob_lvl = c.Breakout_Probability.strip() if c.Breakout_Probability else "N/A" %}
-                                            {% set prob_reason = c.Breakout_Probability_Reason.strip() if c.Breakout_Probability_Reason else "" %}
- 
-                                            {# High Prob is Good -> Green (cr-low), Low Prob is Bad -> Red (cr-high) #}
-                                            {% set pr_cls = 'cr-low' if '高' in prob_lvl else ('cr-med' if '中' in prob_lvl else 'cr-high') %}
-                                            
-                                            <div style="margin-bottom: 2px;"><span class="cr-pill {{ pr_cls }}" style="font-size: 0.6rem; padding: 1px 4px;">{{
-                                                prob_lvl }}</span></div>
-                                            {% if prob_reason %}
-                                            <div class="dim" style="font-size: 0.65rem; line-height: 1.1;">{{
-                                                prob_reason }}</div>
-                                            {% endif %}
-                                        </td>
-                                        <td class="dim" style="font-size: 0.68rem; line-height: 1.2;">{{ c.Core_Notes }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
+                    <!-- All Stages View -->
+                    <div id="stage-all" class="stage-content active">
+                        {{ render_catalyst_table(catalysts.catalysts) }}
                     </div>
+
+                    <!-- Stage Trading Strategy Notes -->
+                    {% set stage_notes = {
+                        '阶段1-无人关注期': {
+                            'color': '#6b7280',
+                            'summary': '赔率最大但成功率最低 — 小仓试错，严格止损',
+                            'buy': 'CR完成后股价企稳；关键审批/资源确认前低吸；管理层增持信号',
+                            'sell': '融资失败或稀释超预期→立即止损；现金runway<6个月→清仓；硬止损 -20%',
+                            'position': '极小仓1-2%，分散3-5个标的；总敞口≤组合10%'
+                        },
+                        '阶段2-验证突破期': {
+                            'color': '#3b82f6',
+                            'summary': '确定性开始出现 — 验证通过后分批加仓',
+                            'buy': 'DFS/临床验证成功后首次回调(-10~20%)；Offtake/合同签约确认；建设融资close后',
+                            'sell': '验证失败(DFS不达标/临床未达终点)→立即止损；项目延期>6个月→减半仓；硬止损 -15%',
+                            'position': '中等仓3-5%；分批建仓(验证前1/3, 验证后2/3)'
+                        },
+                        '阶段3-现金流确认期': {
+                            'color': '#10b981',
+                            'summary': '最稳定的主升浪 — 重仓持有，拿住不动',
+                            'buy': '季报超预期后技术性回调；机构增持(substantial holder notice)；行业利好催化',
+                            'sell': '收入增速连续两季<30%→减仓1/3；毛利率下滑>5pp→警惕；trailing stop从高点-15%',
+                            'position': '重仓5-10%；允许持有穿越波动'
+                        },
+                        '阶段4-行业统治期': {
+                            'color': '#8b5cf6',
+                            'summary': '行业基础设施 — 持有享受复利，不追高',
+                            'buy': '行业逆风恐慌回调；竞争对手退出/并购整合带来份额提升',
+                            'sell': '市场份额被侵蚀→逐步减仓；管理层重大变动→重新评估；增速降至个位数→考虑退出',
+                            'position': '持有为主5-8%，不追高不加仓'
+                        },
+                        '阶段5-估值溢价期': {
+                            'color': '#f59e0b',
+                            'summary': '收割阶段 — 贪婪是最大敌人，分批止盈',
+                            'buy': '不建议新建仓；已持有则继续但不加仓',
+                            'sell': 'PE>80×且增速放缓→分批止盈(每涨20%卖1/4)；机构净减持→加速退出；散户蜂拥→反向信号',
+                            'position': '逐步减至2-3%；锁定利润为第一优先级'
+                        }
+                    } %}
+
+                    <!-- Per-Stage Views -->
+                    {% for stage in stages|sort %}
+                    {% set stage_id = stage|replace(' ', '-')|replace('/', '-') %}
+                    {% set stage_catalysts = catalysts.catalysts|selectattr('Stage', 'equalto', stage)|list %}
+                    {% set note = stage_notes.get(stage, {}) %}
+                    <div id="stage-{{ stage_id }}" class="stage-content" style="display:none">
+                        {% if note %}
+                        <div style="margin-bottom: 1rem; padding: 10px 14px; background: {{ note.color }}0a; border-left: 4px solid {{ note.color }}; border-radius: 6px; font-size: 0.78rem; line-height: 1.5;">
+                            <div style="font-weight: 800; color: {{ note.color }}; margin-bottom: 6px;">{{ note.summary }}</div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                                <div><span style="font-weight: 700; color: var(--positive);">买点：</span>{{ note.buy }}</div>
+                                <div><span style="font-weight: 700; color: var(--negative);">卖点/止损：</span>{{ note.sell }}</div>
+                                <div><span style="font-weight: 700; color: var(--primary);">仓位：</span>{{ note.position }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {{ render_catalyst_table(stage_catalysts) }}
+                    </div>
+                    {% endfor %}
                 </div>
             </section>
+
 
             <!-- News Feed Tab -->
             <section id="tab-announcements" class="tab-pane" style="display:none">
@@ -674,9 +794,11 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Code</th>
+                                <th>Ticker</th>
                                 <th>Company</th>
                                 <th>Headline & Summary</th>
+                                <th data-type="number">Price</th>
+                                <th data-type="number">1D %</th>
                                 <th>Rating</th>
                                 <th>PDF</th>
                             </tr>
@@ -695,6 +817,11 @@
                                         style="background: var(--bg-main); padding: 8px; border-radius: 6px; border-left: 3px solid var(--border);">
                                         {{ a.Summary }}
                                     </div>
+                                </td>
+                                <td class="bold"><span style="display:none">{{ "%010.3f"|format(a.Current_Price|default(0)) }}</span>{% if a.Current_Price is not none %}${{ a.Current_Price|trim_zeros }}{% else %}-{% endif %}</td>
+                                <td class="{{ 'pos' if a.Price_Diff_1d and a.Price_Diff_1d > 0 else ('neg' if a.Price_Diff_1d and a.Price_Diff_1d < 0 else 'dim') }}">
+                                    <span style="display:none">{{ "%010.3f"|format((a.Price_Diff_1d|default(0)) + 10000.0) }}</span>
+                                    {% if a.Price_Change_1d is not none %}{{ a.Price_Change_1d|trim_zeros }} ({{ "%+.2f"|format(a.Price_Diff_1d) }}%){% else %}-{% endif %}
                                 </td>
                                 <td>
                                     <span style="display:none">{{ a.Rating }}</span>
@@ -719,13 +846,13 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Code</th>
-                                <th>Company Name</th>
+                                <th>Ticker</th>
+                                <th>Company</th>
                                 <th>Placement Event Detail</th>
                                 <th>CR Price</th>
-                                <th>Live</th>
+                                <th data-type="number">Price</th>
                                 <th data-type="number">Diff %</th>
-                                <th>Link</th>
+                                <th>PDF</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -812,7 +939,6 @@
             localStorage.setItem('asx-theme', body.dataset.theme);
         }
 
-        window.onload = initDataTables;
         function switchSubTab(contentId, btn) {
             // Hide all tab content in mother section
             const tabContents = btn.closest('.card').querySelectorAll('.tab-content');
@@ -826,6 +952,30 @@
             document.getElementById(contentId).classList.add('active');
             btn.classList.add('active');
         }
+
+        function switchStageTab(stageId, btn) {
+            // Hide all stage content in catalyst section
+            const stageContents = btn.closest('.card').querySelectorAll('.stage-content');
+            stageContents.forEach(c => {
+                c.style.display = 'none';
+                c.classList.remove('active');
+            });
+
+            // Remove active class from all stage buttons
+            const buttons = btn.parentElement.querySelectorAll('.sub-tab');
+            buttons.forEach(b => b.classList.remove('active'));
+
+            // Show target stage
+            const targetId = stageId === 'all' ? 'stage-all' : 'stage-' + stageId;
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.style.display = 'block';
+                target.classList.add('active');
+            }
+            btn.classList.add('active');
+        }
+
+        window.onload = initDataTables;
     </script>
 </body>
 

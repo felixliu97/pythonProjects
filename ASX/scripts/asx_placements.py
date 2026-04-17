@@ -408,7 +408,7 @@ class PlacementScanner:
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Placement Scanner")
-    parser.add_argument("--months", type=int, default=1)
+    parser.add_argument("--months", type=int, default=0)
     parser.add_argument("--full-refresh", action="store_true")
     args = parser.parse_args()
 

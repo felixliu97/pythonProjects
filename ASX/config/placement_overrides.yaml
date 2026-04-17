@@ -1,7 +1,7 @@
 # Manual overrides for ASX Placements
 # Key by symbol and date (optional) to specify exact values
 overrides:
-  - symbol: "ANX"
-    cr_price: 0.023
-  - symbol: "TZL"
-    delete: true
+  - symbol: "LPM"
+    cr_price: 0.1
+  - symbol: "BRU"
+    cr_price: 0.015

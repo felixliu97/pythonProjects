@@ -179,7 +179,7 @@ class MomentumAnalyzer:
         
         return min(max(round(score, 1), 0), 100)
 
-    def main_sync(self, include_announcement: bool = False):
+    def main_sync(self, include_announcement: bool = False, extra_symbols: list = None):
         """Analyze watched stocks and sync snapshots to DB."""
         logger.info("Starting Market Momentum Analysis...")
         with db.session_scope() as sess:
@@ -190,11 +190,17 @@ class MomentumAnalyzer:
                 
             stocks = sess.query(Stock).filter(Stock.stock_type.in_(target_types)).all()
             
+            # Append extra symbols (e.g. today's announcement tickers) not already covered
+            if extra_symbols:
+                covered = {s.symbol for s in stocks}
+                extra = [s for s in sess.query(Stock).filter(Stock.symbol.in_(extra_symbols)).all() if s.symbol not in covered]
+                stocks.extend(extra)
+            
             if not stocks:
                 logger.warning("No target stocks found in DB. Check stock_types.")
                 return
 
-            logger.info(f"Processing {len(stocks)} symbols (Target Types: {target_types})...")
+            logger.info(f"Processing {len(stocks)} symbols (Target Types: {target_types}{' +' + str(len(extra_symbols or [])) + ' extra' if extra_symbols else ''})...")
             results = []
             
             # Parallelize analysis
@@ -242,12 +248,15 @@ import argparse
 def main():
     parser = argparse.ArgumentParser(description="ASX Market Momentum Analyzer")
     parser.add_argument("--announcement", action="store_true", help="Include 'announcement' stocks in analysis")
+    parser.add_argument("--extra-symbols", type=str, default="", help="Comma-separated extra symbols to include")
     args = parser.parse_args()
+
+    extra = [s.strip() for s in args.extra_symbols.split(",") if s.strip()] if args.extra_symbols else None
 
     session = get_http_session()
     
     analyzer = MomentumAnalyzer(session)
-    analyzer.main_sync(include_announcement=args.announcement)
+    analyzer.main_sync(include_announcement=args.announcement, extra_symbols=extra)
 
 if __name__ == "__main__":
     main()

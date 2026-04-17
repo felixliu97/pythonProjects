@@ -16,8 +16,8 @@ class StockSchema(BaseModel):
 class MilestoneSchema(BaseModel):
     """Note: These keys match the original YAML keys for compatibility"""
     model_config = ConfigDict(populate_by_name=True)
-    
-    Time: str = Field(..., alias="time_label")
+
+    Date: str = Field(..., alias="time_label")
     Event: str = Field(..., alias="event_desc")
 
 class CatalystSchema(BaseModel):
@@ -25,6 +25,7 @@ class CatalystSchema(BaseModel):
     Interface model that maps relational children to lists for LLM/Dashboard compatibility.
     """
     Ticker: str
+    Stage: Optional[str] = "未分类"
     Company: str
     Sector: Optional[str] = None
     Catalysts: List[str] = []
@@ -35,7 +36,7 @@ class CatalystSchema(BaseModel):
     Breakout_Probability_Reason: Optional[str] = ""
     Core_Notes: str
     Rating: str = "观望"
-    Timeline: List[Dict[str, str]] = [] # [{"Time": "...", "Event": "..."}]
+    Timeline: List[Dict[str, str]] = [] # [{"Date": "...", "Event": "..."}]
 
     model_config = ConfigDict(populate_by_name=True)
 

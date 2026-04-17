@@ -146,11 +146,12 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
 | `Breakout_Probability`* | `str` | 突破概率（建议：`低/中低/中/中高/高/极高`） |
 | `Breakout_Probability_Reason` | `str` | 突破概率原因 |
 | `Core_Notes`* | `str` | 核心基本面叙事摘要 |
+| `Stage` | `str` | 生命周期阶段：`阶段1-无人关注期/阶段2-验证突破期/阶段3-现金流确认期/阶段4-行业统治期/阶段5-估值溢价期/未分类` |
 | `Rating` | `str` | 评级：`强力买入/买入/观望/卖出/强力卖出`（默认 `观望`） |
-| `Timeline` | `list[{Time:str, Event:str}]` | 已发生事件（过去公告/确认事件），用于复盘与时间线对齐 |
+| `Timeline` | `list[{Date:str, Event:str}]` | 已发生事件（过去公告/确认事件），用于复盘与时间线对齐 |
 
 字段顺序遵循：
-`Ticker` → `Company` → `Sector` → `Catalysts` → `Risks` → `CR_Risk` → `CR_Risk_Reason` → `Breakout_Probability` → `Breakout_Probability_Reason` → `Core_Notes` → `Rating` → `Timeline`。
+`Ticker` → `Stage` → `Company` → `Sector` → `Catalysts` → `Risks` → `CR_Risk` → `CR_Risk_Reason` → `Breakout_Probability` → `Breakout_Probability_Reason` → `Core_Notes` → `Rating` → `Timeline`。
 
 #### 3.1.3 Timeline 规则
 
@@ -179,7 +180,7 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
   Core_Notes: ...
   Rating: 强力买入
   Timeline:
-  - Time: '2026-03-18'
+  - Date: '2026-03-18'
     Event: Phase 4 正式启动：5台钻机进场
 ```
 
@@ -257,3 +258,34 @@ pytest tests/ -v
 | `test_run.py` | `run.py` | 主运行逻辑、Dashboard 渲染、**YAML 直读催化剂排序/默认值**、前端展示逻辑 |
 
 **警告**: 任何对 `db_models.py` 的修改必须运行 `reseed` 校验，并确保 `scripts/db_schemas.py` 同步更新。
+
+---
+
+## 📊 7. Dashboard 字段命名规范 (Field Naming Standards)
+
+为确保跨 Tab 数据展示的一致性，所有表格字段遵循以下命名规范：
+
+### 7.1 标准化字段名
+
+| 标准字段名 | 适用 Tab | 数据字段 | 说明 |
+|-----------|---------|---------|------|
+| `Ticker` | 全部 | `symbol`, `ASX_Code`, `Ticker` | 股票代码，统一用 `Ticker` |
+| `Company` | News, Placements | `name`, `Company` | 公司名称 |
+| `Date` | News, Placements | `Date`, `event_date` | 公告/融资日期 |
+| `Price` | 全部 | `current_price`, `Current_Price` | 当前股价 |
+| `1D %` | Analyzer, News | `price_diff_1d`, `Price_Diff_1d` | 1日涨跌幅 |
+| `5D %` | Analyzer | `price_diff_5d` | 5日涨跌幅 |
+| `Rating` | News, Catalysts | `Rating` | 评级 1-5 |
+| `PDF` | News, Placements | `PDF_Link` | PDF 链接 |
+| `Diff %` | Placements | `Price_Diff_%` | 相对 CR 价格涨跌幅 |
+
+### 7.2 字段一致性测试
+
+`tests/test_dashboard_fields.py` 包含以下测试：
+- `test_ticker_field_consistency`: 验证 `Ticker` 字段名一致性
+- `test_company_field_consistency`: 验证公司名字段一致性
+- `test_price_field_consistency`: 验证价格字段一致性
+- `test_pdf_field_consistency`: 验证 PDF 字段命名
+- `test_no_duplicate_field_names`: 验证无重复字段名
+
+运行测试：`python -m pytest tests/test_dashboard_fields.py -v`

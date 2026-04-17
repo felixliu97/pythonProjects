@@ -56,6 +56,7 @@ def sync_from_yaml(yaml_path: str = "config/asx_catalysts.yaml") -> None:
                 master = CatalystMaster(symbol=sym)
                 sess.add(master)
 
+            master.stage = v_c.Stage or "未分类"
             master.company = v_c.Company
             master.sector = v_c.Sector
             master.cr_risk = v_c.CR_Risk

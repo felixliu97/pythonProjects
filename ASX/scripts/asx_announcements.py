@@ -347,7 +347,7 @@ class AnnouncementScanner:
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Announcement Scanner")
-    parser.add_argument("--months", type=int, default=1)
+    parser.add_argument("--months", type=int, default=0)
     parser.add_argument("--full-refresh", action="store_true")
     parser.add_argument("--recalc-days", type=int, default=0, help="Recalculate rating/rating_reason for the last N days of announcements fetched")
     parser.add_argument("--all-announcements", action="store_true", help="Fetch all announcements (otherwise only price-sensitive)")

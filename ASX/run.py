@@ -90,6 +90,7 @@ def load_catalysts_from_yaml() -> list:
     for entry in raw:
         catalysts_list.append({
             "Ticker": entry.get("Ticker", ""),
+            "Stage": entry.get("Stage", "未分类"),
             "Company": entry.get("Company", ""),
             "Sector": entry.get("Sector", ""),
             "Rating": entry.get("Rating", "观望"),
@@ -102,7 +103,7 @@ def load_catalysts_from_yaml() -> list:
             "Core_Notes": entry.get("Core_Notes", ""),
             "Timeline": sorted(
                 entry.get("Timeline", []),
-                key=lambda x: x.get("Time", "")
+                key=lambda x: x.get("Date", "")
             )
         })
     return catalysts_list
@@ -138,6 +139,9 @@ def load_db_data() -> dict:
         ).order_by(
             Announcement.rating.desc()
         ).all()
+        # Build price lookup from MarketTrend for price & 1D% display
+        trend_lookup = {t.symbol: t for t in session.query(MarketTrend).filter_by(is_active=True).all()}
+
         ann_list = [{
             "ASX_Code": a.symbol,
             "Company": a.company,
@@ -146,6 +150,9 @@ def load_db_data() -> dict:
             "Summary": a.summary,
             "PDF_Link": a.pdf_link,
             "Rating": a.rating,
+            "Current_Price": (trend_lookup[a.symbol].current_price if a.symbol in trend_lookup else None),
+            "Price_Change_1d": (trend_lookup[a.symbol].price_change_1d or 0.0 if a.symbol in trend_lookup else None),
+            "Price_Diff_1d": (trend_lookup[a.symbol].price_diff_1d or 0.0 if a.symbol in trend_lookup else None),
         } for a in ann_res]
 
         # 3. Placements
@@ -278,7 +285,17 @@ def main():
         elif args.command == "all":
             ok1 = run_script("scripts/asx_announcements.py", scrape_args)
             ok2 = run_script("scripts/asx_placements.py", scrape_args)
-            ok3 = run_script("scripts/asx_analyzer.py")
+            # Only analyze today's announcement symbols (not all 200+ historical ones)
+            ann_syms = []
+            try:
+                today = get_sydney_time().date()
+                with db.session_scope() as sess:
+                    rows = sess.query(Announcement.symbol).filter(Announcement.event_date == today).distinct().all()
+                    ann_syms = [r[0] for r in rows]
+            except Exception:
+                pass
+            analyzer_args = ["--extra-symbols", ",".join(ann_syms)] if ann_syms else []
+            ok3 = run_script("scripts/asx_analyzer.py", analyzer_args)
             ok4 = run_script("scripts/sync_asx_catalysts.py")
             if not (ok1 and ok2 and ok3 and ok4):
                 exit_code = 1
