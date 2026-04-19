@@ -917,22 +917,14 @@
                         fixedHeight: false,
                         perPage: 25
                     };
-
-                    // Default sort for News Feed: Date (Column 0) descending
-                    if (id === 'annTable') {
-                        config.columns = [
-                            { select: 0, sort: 'desc' }
-                        ];
-                    }
-
-                    // Default sort for Placements: Date (Column 0) descending
-                    if (id === 'placTable') {
-                        config.columns = [
-                            { select: 0, sort: 'desc' }
-                        ];
-                    }
-
                     tables[id] = new DataTable(el, config);
+
+                    // Force initial sort to DESC for date-based tables
+                    if (id === 'annTable' || id === 'placTable') {
+                        setTimeout(() => {
+                            tables[id].columns.sort(0, "desc");
+                        }, 10);
+                    }
                 }
             });
         }

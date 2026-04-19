@@ -22,7 +22,10 @@ graph TD
     I --> J[asx_dashboard.html]
 ```
 
-**核心原则**: `config/asx_catalysts.yaml` 是催化剂数据的唯一源头。Dashboard 直接读取 YAML，DB 仅作为同步备份（支持 SCD2 历史追踪）。
+**核心原则**: 
+1. `config/asx_catalysts.yaml` 是催化剂数据的唯一源头。
+2. **完整性优先**: 运行前强制执行 `pytest` 校验，确保 Model、Schema、UI、Doc 四位一体对齐。
+3. **周末智慧跳过**: 周末且数据最新时，自动跳过采集与分析，仅同步配置并渲染 UI。
 
 ### 1.2 全解耦存储 (Total Decoupling)
 - **无外键约束**: 数据库 `stocks`, `announcements`, `placements` 等表之间不建立物理外键。
@@ -219,18 +222,29 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
 
 ---
 
-## 🏁 6. 开发与重构指令
-
-### 6.1 环境初始化
+### 6.1 环境初始化与完整性校验
 ```bash
 # 1. 复制环境
 cp .env.example .env
 
 # 2. 数据库重建 (幂等)
 python run.py reseed
+
+# 3. 运行完整性自检 (run.py 会在执行前自动调用)
+pytest tests/test_system_integrity.py
 ```
 
-### 6.2 核心运行命令映射
+### 6.2 核心运行逻辑与编排
+`run.py` 充当管线指挥官，具备以下高级特性：
+
+1. **🛡️ 完整性检查 (Integrity Guard)**: 在执行 `all` 或 `analyze` 前，强制运行测试套件。若 README 文档滞后或字段不匹配，系统将拒绝执行并报警。
+2. **🛌 周末智慧跳过 (Weekend Smart Skip)**: 
+   - 自动检测悉尼时间是否为周末。
+   - 检查 DB 最新记录是否已达到周五（最新交易日）。
+   - 满足条件时跳过抓取与技术分析，仅执行同步与渲染，极大节省计算资源。
+3. **🌈 彩色化编排**: 使用 ANSI 颜色方案输出日志，区分各模块状态（Cyan 为路径，Green 为成功，Yellow 为警告，Red 为错误）。
+
+### 6.3 运行命令映射
 | 命令 | 用途 |
 |------|------|
 | `run.py all` | 顺序调用 scrape → analyze → sync-catalysts → build_dashboard |
@@ -241,6 +255,12 @@ python run.py reseed
 | `run.py sync-catalysts` | 增量同步 YAML → DB（不 DROP 表） |
 | `run.py llm-export --ticker <T>` | 导出指定 ticker 至 YAML 供 LLM 审阅 |
 | `run.py llm-import` | 从临时 YAML 导入 LLM 更新至 DB |
+
+### 6.4 版本一致性规范
+系统强制执行三位一体版本号 (vX.X) 对齐。版本号必须在以下位置保持一致，否则 Integrity Test 将报错：
+- `README.md` (标题)
+- `templates/asx_dashboard.html` (Title & Header Pill)
+- `tests/test_system_integrity.py` (自动化提取并比对)
 
 ---
 
@@ -254,6 +274,7 @@ pytest tests/ -v
 
 | 测试文件 | 覆盖模块 | 关键验证项 |
 |----------|----------|------------|
+| `test_system_integrity.py` | 全链路 | **版本一致性 (README vs UI)**、DDL 与 Schema 对齐、README 指标更新校验 |
 | `test_asx_announcements.py` | `asx_announcements.py` | Rating 启发式、Summary 提取、唯一键幂等性、增量续传、时区感知 |
 | `test_asx_placements.py` | `asx_placements.py` | CR价格正则提取、市价同步、名录回填、**Filter-First Pipeline（监控列表/市值门控）** |
 | `test_asx_analyzer.py` | `asx_analyzer.py` | 动量评分 (Z-Score) 及评分边界 |

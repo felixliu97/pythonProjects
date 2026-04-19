@@ -276,6 +276,31 @@ def run_integrity_check():
     print(f"{Color.GREEN}{Color.BOLD}✅ System Integrity Verified.{Color.RESET}")
     return True
 
+def should_skip_data_pull():
+    """Returns True if it's weekend and DB already has latest Friday data."""
+    now = get_sydney_time()
+    # 5 is Saturday, 6 is Sunday
+    if now.weekday() not in [5, 6]:
+        return False
+        
+    try:
+        from sqlalchemy import func
+        with db.session_scope() as sess:
+            latest_date = sess.query(func.max(Announcement.event_date)).scalar()
+            if not latest_date:
+                return False
+            
+            # Target is the most recent Friday
+            days_since_friday = 1 if now.weekday() == 5 else 2
+            friday_date = (now - timedelta(days=days_since_friday)).date()
+            
+            if latest_date >= friday_date:
+                print(f"{Color.YELLOW}{Color.BOLD}🛌 Weekend mode active. Database is already up-to-date (Latest: {latest_date}). Skipping pull/analyze...{Color.RESET}")
+                return True
+    except Exception as e:
+        logger.error(f"Error checking weekend skip logic: {e}")
+    return False
+
 def main():
     parser = argparse.ArgumentParser(description="ASX Research Hub Control Center")
     parser.add_argument("command", choices=["all", "scrape", "analyze", "dashboard", "reseed", "sync-catalysts", "llm-export", "llm-import"], help="Pipeline command to run")
@@ -318,22 +343,28 @@ def main():
         elif args.command == "all":
             if not run_integrity_check():
                 sys.exit(1)
-            ok1 = run_script("scripts/asx_announcements.py", scrape_args)
-            ok2 = run_script("scripts/asx_placements.py", scrape_args)
-            # Analyze symbols from the latest available announcement date
-            ann_syms = []
-            try:
-                from sqlalchemy import func
-                with db.session_scope() as sess:
-                    latest_date = sess.query(func.max(Announcement.event_date)).scalar()
-                    if latest_date:
-                        rows = sess.query(Announcement.symbol).filter(Announcement.event_date == latest_date).distinct().all()
-                        ann_syms = [r[0] for r in rows]
-            except Exception as e:
-                logger.error(f"Failed to fetch latest announcement symbols: {e}")
-                pass
-            analyzer_args = ["--extra-symbols", ",".join(ann_syms)] if ann_syms else []
-            ok3 = run_script("scripts/asx_analyzer.py", analyzer_args)
+                
+            skip_pull = should_skip_data_pull() and not args.force
+            
+            ok1, ok2, ok3 = True, True, True
+            if not skip_pull:
+                ok1 = run_script("scripts/asx_announcements.py", scrape_args)
+                ok2 = run_script("scripts/asx_placements.py", scrape_args)
+                # Analyze symbols from the latest available announcement date
+                ann_syms = []
+                try:
+                    from sqlalchemy import func
+                    with db.session_scope() as sess:
+                        latest_date = sess.query(func.max(Announcement.event_date)).scalar()
+                        if latest_date:
+                            rows = sess.query(Announcement.symbol).filter(Announcement.event_date == latest_date).distinct().all()
+                            ann_syms = [r[0] for r in rows]
+                except Exception as e:
+                    logger.error(f"Failed to fetch latest announcement symbols: {e}")
+                    pass
+                analyzer_args = ["--extra-symbols", ",".join(ann_syms)] if ann_syms else []
+                ok3 = run_script("scripts/asx_analyzer.py", analyzer_args)
+            
             ok4 = run_script("scripts/sync_asx_catalysts.py")
             if not (ok1 and ok2 and ok3 and ok4):
                 exit_code = 1
