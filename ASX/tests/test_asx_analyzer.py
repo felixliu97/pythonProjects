@@ -54,3 +54,20 @@ def test_score_clamped_to_boundaries(analyzer):
         'vol_change': -90
     }
     assert 0 <= analyzer.calculate_score(m_extreme_down) <= 100
+
+def test_calculate_rsi(analyzer):
+    """Test RSI calculation with Wilder's smoothing."""
+    import pandas as pd
+    # Standard 14-day sequence: 14 ups, then constant
+    prices = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+    series = pd.Series(prices)
+    rsi = analyzer.calculate_rsi(series, period=14)
+    # Should be 100 or very close to it as there are no down days
+    assert rsi > 99
+    
+    # Sequence with a sharp drop
+    prices_drop = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 10]
+    series_drop = pd.Series(prices_drop)
+    rsi_drop = analyzer.calculate_rsi(series_drop, period=14)
+    # Should be much lower after a massive drop
+    assert rsi_drop < 50

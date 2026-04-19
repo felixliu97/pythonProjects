@@ -16,6 +16,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
+# Force UTF-8 for Windows Terminal compatibility
+if sys.stdout.encoding != 'utf-8':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 # Local Imports
 try:
     from scripts.db_manager import db
@@ -39,6 +44,15 @@ def trim_zeros(value):
         return s
     except (ValueError, TypeError):
         return str(value)
+# Color Constants
+class Color:
+    GREEN = '\033[92m'
+    RED = '\033[91m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    BOLD = '\033[1m'
+    RESET = '\033[0m'
 
 def run_script(script: str, args: list[str] | None = None) -> bool:
     """Execute a Python script relative to the root directory."""
@@ -49,12 +63,14 @@ def run_script(script: str, args: list[str] | None = None) -> bool:
         return False
         
     cmd = [sys.executable, str(full_path)] + (args or [])
-    logger.info(f"Running: {' '.join(cmd)}")
+    # Only print the script basename and arguments for a cleaner look
+    script_display = f"{Path(script).name} {' '.join(args)}" if args else Path(script).name
+    print(f"{Color.CYAN}{Color.BOLD}Running:{Color.RESET} {Color.BLUE}{script_display}{Color.RESET}")
     try:
         subprocess.run(cmd, cwd=str(root_dir), check=True)
         return True
     except subprocess.CalledProcessError as e:
-        logger.error(f"Execution failed for {script_path}: {e}")
+        logger.error(f"Execution failed for {script}: {e}")
         return False
 
 def clean_pycache(root_dir: Path) -> None:
@@ -133,9 +149,11 @@ def load_db_data() -> dict:
         catalysts_list.sort(key=breakout_key)
 
         # 2. Announcements
-        today = get_sydney_time().date()
+        from sqlalchemy import func
+        latest_date = session.query(func.max(Announcement.event_date)).scalar()
+        
         ann_res = session.query(Announcement).filter(
-            Announcement.event_date == today,
+            Announcement.event_date == latest_date,
         ).order_by(
             Announcement.rating.desc()
         ).all()
@@ -153,6 +171,7 @@ def load_db_data() -> dict:
             "Current_Price": (trend_lookup[a.symbol].current_price if a.symbol in trend_lookup else None),
             "Price_Change_1d": (trend_lookup[a.symbol].price_change_1d or 0.0 if a.symbol in trend_lookup else None),
             "Price_Diff_1d": (trend_lookup[a.symbol].price_diff_1d or 0.0 if a.symbol in trend_lookup else None),
+            "RSI": (trend_lookup[a.symbol].rsi if a.symbol in trend_lookup else None),
         } for a in ann_res]
 
         # 3. Placements
@@ -243,7 +262,19 @@ def build_dashboard():
     if css_src.exists():
         shutil.copy2(css_src, output_path.parent / "base.css")
     
-    logger.info(f"Dashboard successfully updated: {output_path}")
+    print(f"{Color.GREEN}{Color.BOLD}✨ Dashboard successfully updated:{Color.RESET} {Color.BLUE}{output_path.name}{Color.RESET}")
+
+def run_integrity_check():
+    """Run system integrity tests before allowing data operations."""
+    print(f"{Color.YELLOW}{Color.BOLD}🛡️  Running System Integrity Check...{Color.RESET}")
+    import pytest
+    # Suppress output unless failed
+    ret = pytest.main(["tests/test_system_integrity.py", "-q", "--no-summary"])
+    if ret != 0:
+        print(f"{Color.RED}{Color.BOLD}❌ Integrity Check FAILED. Please sync DDL, UI, and README before running.{Color.RESET}")
+        return False
+    print(f"{Color.GREEN}{Color.BOLD}✅ System Integrity Verified.{Color.RESET}")
+    return True
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Research Hub Control Center")
@@ -273,6 +304,8 @@ def main():
             if not (ok1 and ok2):
                 exit_code = 1
         elif args.command == "analyze":
+            if not run_integrity_check():
+                sys.exit(1)
             ok = run_script("scripts/asx_analyzer.py")
             if not ok:
                 exit_code = 1
@@ -283,16 +316,21 @@ def main():
                 logger.error(f"Dashboard build failed: {e}")
                 exit_code = 1
         elif args.command == "all":
+            if not run_integrity_check():
+                sys.exit(1)
             ok1 = run_script("scripts/asx_announcements.py", scrape_args)
             ok2 = run_script("scripts/asx_placements.py", scrape_args)
-            # Only analyze today's announcement symbols (not all 200+ historical ones)
+            # Analyze symbols from the latest available announcement date
             ann_syms = []
             try:
-                today = get_sydney_time().date()
+                from sqlalchemy import func
                 with db.session_scope() as sess:
-                    rows = sess.query(Announcement.symbol).filter(Announcement.event_date == today).distinct().all()
-                    ann_syms = [r[0] for r in rows]
-            except Exception:
+                    latest_date = sess.query(func.max(Announcement.event_date)).scalar()
+                    if latest_date:
+                        rows = sess.query(Announcement.symbol).filter(Announcement.event_date == latest_date).distinct().all()
+                        ann_syms = [r[0] for r in rows]
+            except Exception as e:
+                logger.error(f"Failed to fetch latest announcement symbols: {e}")
                 pass
             analyzer_args = ["--extra-symbols", ",".join(ann_syms)] if ann_syms else []
             ok3 = run_script("scripts/asx_analyzer.py", analyzer_args)

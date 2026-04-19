@@ -1,4 +1,4 @@
-# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.5 - Tech Spec`
+# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.4 - Tech Spec`
 
 这是一个完全解耦的自动化投研数据管线。本文件作为系统的 **唯一事实来源 (Source of Truth)**，详细记录了所有模块的核心逻辑与架构算法，旨在使开发者能够基于此文档重构整个系统。
 
@@ -46,9 +46,13 @@ graph TD
     3. 若不存在，则回退至命令行指定的 `--months`（默认 1 个月）。
 - **启发式评分引擎 (Rating Engine 1-5)**:
     - **Base**: 默认 1 分（常规行政/公告）。
-    - **+2 分 (API Signal)**: 匹配 API 端的 `isPriceSensitive` 真值标志。
-    - **+2 分 (High Value)**: 匹配 "assay", "drilling", "results", "high-grade", "maiden", "resource", "approval" 等核心发现词。
-    - **+1 分 (Mid Value)**: 匹配 "trading halt", "placement", "quarterly", "half year", "guidance" 等运营/资金融通词。
+    - **+1 分 (API Signal)**: 匹配 API 端的 `isPriceSensitive` 标志。
+    - **+3 分 (Strong Phrases)**: 标题/摘要匹配 "high-grade assay results", "maiden resource", "dfs results", "fda approval", "binding agreement" 等核心利好短语。
+    - **+2 分 (High Value Keywords)**: 匹配 "assay", "drilling", "high-grade", "discovery", "resource", "acquisition", "merger", "takeover" 等核心关键词。
+    - **+1 分 (Mid Value Keywords)**: 匹配 "trading halt", "placement", "quarterly", "guidance", "revenue", "contract", "operational" 等运营词。
+    - **特殊逻辑**:
+        - **全大写锁定**: 若标题为全大写（且含字母数 > 10），系统视为极其重大突发，强制判定为 **5 分**（如 `NEW BANKING FACILITY`）。
+        - **进展封顶 (Progress Cap)**: 标题含 "progress report" 或 "exploration update" 且未触发 Strong Phrases 时，最高封顶 **4 分**。
     - **Summary 逻辑**: 自动从 `announcementTypes` 列表聚合而成（如 "Trading Halt, Market Sensitive"）。
 - **公司名解析 (3-Tier Fallback)**:
     1. 优先使用 API 的 `companyInfo.displayName`。
@@ -73,9 +77,10 @@ graph TD
 
 ### 2.4 动能分析与评分 (`asx_analyzer.py`)
 - **技术指标定义**:
-    - **RSI**: 14 日均线计算。
-    - **Momentum**: `(当前价 - 周期均价) / 标准差` (Z-Score 变体)。
-    - **Volatility**: 日收益率的标准差百分比。
+    *   **RSI (14-Day)**: 使用 **Wilder's Smoothing (维尔德平滑法)** 计算，并抓取 **6 个月** 历史数据以确保算法完全收敛，消除初始值偏差，对齐 TradingView 标准。
+    *   **Volume**: 记录最新交易日的成交量（已同步至 DDL）。
+    *   **Momentum**: `(当前价 - 周期均价) / 标准差` (Z-Score 变体)。
+    *   **Volatility**: 日收益率的标准差百分比。
 - **综合权重评分 (Proprietary Score)**:
     - **Base**: 50.0。
     - **修正**: 

@@ -73,6 +73,7 @@ class MarketTrendSchema(BaseModel):
     price_diff_5d: float = 0.0
     momentum: float = 0.0
     volatility: float = 0.0
+    volume: Optional[int] = 0
     volume_change: float = 0.0
     rsi: float = 50.0
     price_history: Optional[str] = None

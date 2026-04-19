@@ -1,35 +1,35 @@
-# Business Evaluation Checklist (Buffett Style)
+# 企业评估检查清单（巴菲特风格）
 
-Use this template to audit a company's quality and value. Mark each item based on your research.
+使用此模板审计公司的质量和价值。根据你的研究标记每个项目。
 
-## 1. The Business (Is it a "Wonderful Business"?)
-- [ ] **Simplicity**: Do I understand how the products are made and sold? (Circle of Competence)
-- [ ] **History**: Does the business have a consistent operating history (10+ years)?
-- [ ] **Favorable Long-Term Prospects**: Is the industry growing? Is the product essential?
-- [ ] **Economic Moat**:
-    - [ ] Brand Power (e.g., Coca-Cola, See's Candy)
-    - [ ] Low Cost Producer (e.g., GEICO)
-    - [ ] High Switching Costs (e.g., Apple ecosystem, Enterprise software)
-    - [ ] Toll Bridge / Network Effect (e.g., American Express)
+## 1. 业务（是否是“卓越的业务”？）
+- [ ] **简单性**：我是否理解产品的制造和销售方式？（能力圈）
+- [ ] **历史**：该业务是否具有持续的运营历史（10年以上）？
+- [ ] **良好的长期前景**：行业是否在增长？产品是否必不可少？
+- [ ] **经济护城河**：
+    - [ ] 品牌力量（如：可口可乐、See's Candy）
+    - [ ] 低成本生产商（如：GEICO）
+    - [ ] 高转换成本（如：苹果生态系统、企业级软件）
+    - [ ] 收费桥梁/网络效应（如：美国运通）
 
-## 2. Management (Are they "Partners"?)
-- [ ] **Rationality**: Do they allocate capital to projects with high returns? Do they repurchase shares only when undervalued?
-- [ ] **Candor**: Do they admit mistakes in the annual report? Do they provide the metrics owners need?
-- [ ] **Resistance**: Do they avoid the "Institutional Imperative" (copying others)?
-- [ ] **Owner-Orientation**: Is their compensation tied to unit performance, not just stock price?
+## 2. 管理层（他们是“合伙人”吗？）
+- [ ] **理性**：他们是否将资本配置到高回报的项目上？他们是否仅在股价被低估时回购股票？
+- [ ] **坦诚**：他们是否在年报中承认错误？他们是否提供了所有者需要的指标？
+- [ ] **抵制**：他们是否避免了“机构强迫症”（盲目模仿他人）？
+- [ ] **所有者导向**：他们的薪酬是否与部门绩效挂钩，而非仅仅是股价？
 
-## 3. Financials (The "Real" Numbers)
-- [ ] **Return on Invested Capital (ROIC)**: Is it consistently above 15%?
-- [ ] **Owner Earnings**: Is actual cash flow growing year-over-year?
-- [ ] **Profit Margins**: Are they high and stable?
-- [ ] **Debt**: Is the Debt/Equity ratio low? Can the company pay off debt with < 3 years of earnings?
+## 3. 财务（“真实”的数字）
+- [ ] **资本回报率 (ROIC)**：是否持续高于 15%？
+- [ ] **股东盈余**：实际现金流是否逐年增长？
+- [ ] **利润率**：是否处于高位且稳定？
+- [ ] **债务**：债务/权益比率是否较低？公司能否用低于 3 年的盈利偿还债务？
 
-## 4. Valuation (The "Fair Price")
-- [ ] **Intrinsic Value**: What is the DCF valuation?
-- [ ] **Margin of Safety**: Is the current price at least 20-30% below intrinsic value?
-- [ ] **Opportunity Cost**: Is this at least as good as the next best investment?
+## 4. 估值（“合理的价格”）
+- [ ] **内在价值**：DCF 估值是多少？
+- [ ] **安全边际**：当前价格是否至少低于内在价值 20-30%？
+- [ ] **机会成本**：这是否至少和下一个最佳投资机会一样好？
 
 ---
-### Conclusion
-**Verdict**: [PASS / WATCHLIST / FAIL]
-**Key Risk**: [Summary of the biggest threat to the moat]
+### 结论
+**结论**：[通过 / 观察清单 / 淘汰]
+**核心风险**：[对护城河构成的最大威胁总结]

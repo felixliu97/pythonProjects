@@ -77,13 +77,33 @@ class MomentumAnalyzer:
         return out
 
     def calculate_rsi(self, series, period: int = 14) -> float:
-        """Calculate Relative Strength Index."""
-        if len(series) < period: return 50.0
-        delta = series.diff()
-        gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-        rs = gain / loss
-        return 100 - (100 / (1 + rs.iloc[-1])) if not np.isnan(rs.iloc[-1]) else 50.0
+        """Calculate Relative Strength Index using Wilder's Smoothing (Matching TradingView)."""
+        if len(series) <= period: return 50.0
+        
+        delta = series.diff().dropna()
+        ups = delta.clip(lower=0)
+        downs = -1 * delta.clip(upper=0)
+        
+        # Initial SMA for the first period
+        avg_gain = [ups[:period].mean()]
+        avg_loss = [downs[:period].mean()]
+        
+        # Wilder's Smoothing: (Prev_Avg * 13 + Curr_Val) / 14
+        alpha = 1 / period
+        for i in range(period, len(ups)):
+            avg_gain.append(avg_gain[-1] * (1 - alpha) + ups.iloc[i] * alpha)
+            avg_loss.append(avg_loss[-1] * (1 - alpha) + downs.iloc[i] * alpha)
+            
+        last_gain = avg_gain[-1]
+        last_loss = avg_loss[-1]
+        
+        if last_loss == 0:
+            return 100.0 if last_gain > 0 else 50.0
+            
+        rs = last_gain / last_loss
+        rsi = 100 - (100 / (1 + rs))
+        
+        return float(rsi)
 
     def analyze_ticker(self, symbol: str, stock_type: str) -> Optional[MarketTrendSchema]:
         """Process a single ticker for technical and fundamental data."""
@@ -97,10 +117,10 @@ class MomentumAnalyzer:
             comp_name = funds.get("displayName")
             live_px = funds.get("priceLast")
 
-            # 2. Technicals via yfinance
+            # 2. Technicals via yfinance (Fetch 6 months for indicator convergence)
             asx_sym = f"{symbol}.AX"
             ticker = yf.Ticker(asx_sym)
-            hist = ticker.history(period="1mo")
+            hist = ticker.history(period="6mo")
             if hist.empty: return None
             
             close = hist['Close']
@@ -115,7 +135,7 @@ class MomentumAnalyzer:
             price_diff_5d = round((price_change_5d / px_5d) * 100, 2) if px_5d else 0
             
             # Momentum proxies
-            volatility = round(close.pct_change().std() * 100, 2)
+            volatility = round(close.pct_change(fill_method=None).std() * 100, 2)
             momentum = round((curr_px - close.mean()) / close.std(), 2) if close.std() > 0 else 0
             rsi = round(self.calculate_rsi(close), 2)
             

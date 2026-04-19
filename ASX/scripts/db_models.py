@@ -46,6 +46,7 @@ class MarketTrend(Base):
     price_diff_5d = Column(Float, default=0.0)
     momentum = Column(Float, default=0.0)
     volatility = Column(Float, default=0.0)
+    volume = Column(BigInteger, default=0)
     volume_change = Column(Float, default=0.0)
     rsi = Column(Float, default=50.0)
     

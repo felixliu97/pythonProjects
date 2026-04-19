@@ -149,7 +149,8 @@ class PlacementScanner:
         try:
             with open(path, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f) or {}
-                return {ticker_clean(o["symbol"]): o for o in data.get("overrides", [])}
+                overrides_list = data.get("overrides") or []
+                return {ticker_clean(o["symbol"]): o for o in overrides_list}
         except Exception as e:
             logger.error(f"Failed to load overrides: {e}")
             return {}

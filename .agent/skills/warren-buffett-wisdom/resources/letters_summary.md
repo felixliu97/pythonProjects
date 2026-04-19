@@ -1,36 +1,36 @@
-# Warren Buffett: Shareholder Letters (1977-2025) - Distilled Summary
+# 沃伦·巴菲特：致股东信 (1977-2025) —— 精华总结
 
-This document captures the evolving but consistent wisdom of Warren Buffett as expressed in his annual letters to Berkshire Hathaway shareholders.
+本文档记录了沃伦·巴菲特在伯克希尔·哈撒韦公司年度致股东信中所表达的不断演变但始终如一的智慧。
 
-## The Evolution of Strategy
-- **Early Years (1977-1985):** Focus on "cigar butts" and deep value. Transitioning from Ben Graham's qualitative methods to Charlie Munger's "Wonderful Companies" approach.
-- **Growth Era (1986-2000):** Emphasis on Moats (Coca-Cola, See's Candy). Warning about the "Tech Bubble" and the importance of only investing in what you understand.
-- **Modern Era (2001-Present):** Massive capital allocation, infrastructure, energy, and the dominance of Apple. Focus on "Big Four" engines of Berkshire.
+## 策略的演变
+- **早期阶段 (1977-1985)**：专注于“烟蒂股”和深度价值。从本·格雷厄姆的定量方法转向查理·芒格的“卓越公司”方法。
+- **增长时代 (1986-2000)**：强调护城河（可口可乐、See's Candy）。警告“科技泡沫”，并强调只投资于你理解的领域。
+- **现代时代 (2001-至今)**：大规模资本配置、基础设施、能源以及苹果公司的领导地位。专注于伯克希尔的“四大引擎”。
 
-## Core Lessons recurring in the Letters
+## 信件中反复出现的核心教训
 
-### 1. Economics of the Business
-- **Owner Earnings:** The only metric that truly matters. Defined as: `Net Income + (Depreciation & Amortization) - (Required CapEx)`.
-- **Pricing Power:** "The single most important decision in evaluating a business is pricing power. If you’ve got the power to raise prices without losing business to a competitor, you’ve got a very good business."
-- **Capital Intensity:** Prefer businesses that generate cash without requiring heavy reinvestment in tangible assets to stay competitive.
+### 1. 企业经济学
+- **股东盈余**：唯一真正重要的指标。定义为：`净利润 + (折旧与摊销) - (必要的资本支出)`。
+- **定价权**：“评估一家企业时，最重要的单一决策是定价权。如果你有权在不丢失业务给竞争对手的情况下提高价格，你就拥有了一家非常好的企业。”
+- **资本密集度**：倾向于那些不需要投入大量有形资产就能保持竞争力的现金流企业。
 
-### 2. The Psychology of the Investor
-- **Mr. Market:** The market is your servant, not your master. It offers prices every day; you ignore them when they are silly and exploit them when they are attractive.
-- **Circle of Competence:** "You don't have to be an expert on every company, or even many. You only need to be able to evaluate companies within your circle of competence."
-- **The Institutional Imperative:** The tendency of managers to mindlessly copy their peers in acquisitions, expansion, and compensation. Buffett views this as a major risk.
+### 2. 投资者的心理
+- **市场先生**：市场是你的仆人，而不是你的主人。它每天都提供价格；当价格愚蠢时你忽略它们，当价格有吸引力时你利用它们。
+- **能力圈**：“你不必成为每家公司甚至是很多公司的专家。你只需要能够评估能力圈内的公司。”
+- **机构强迫症**：管理者在收购、扩张和薪酬方面盲目模仿同行的倾向。巴菲特认为这是一个重大风险。
 
-### 3. Management and Integrity
-- **Operating Competence:** Great managers move the needle on unit economics, not just financial engineering.
-- **Allocation Skills:** Most CEOs are great at sales or engineering but have never allocated capital. Buffett looks for "Capital Allocation" experts.
-- **Honesty:** Buffett prizes CEOs who admit mistakes early. "A manager who misleads the public in small things will eventually mislead them in big things."
+### 3. 管理与诚信
+- **运营能力**：优秀的管理层能推动单元经济效益的提升，而不仅仅是财务造假。
+- **配置技巧**：大多数 CEO 擅长销售或工程，但从未配置过资本。巴菲特寻找的是“资本配置”专家。
+- **诚实**：巴菲特推崇及早承认错误的 CEO。“在小事上误导公众的管理者，最终会在大事上误导他们。”
 
-### 4. Valuation and Safety
-- **Margin of Safety:** The gap between price and intrinsic value that provides protection against errors in judgment.
-- **Intrinsic Value:** The discounted value of the cash that can be taken out of a business during its remaining life.
-- **Taxes and Frictions:** Buffett views taxes and trading costs as "frictions" that destroy compounding. Prefer long-term holdings to minimize these.
+### 4. 估值与安全
+- **安全边际**：价格与内在价值之间的差距，为判断错误提供了保护。
+- **内在价值**：一家企业在其余生中可以提取的现金的折现价值。
+- **税收与摩擦**：巴菲特将税收和交易成本视为破坏复利的“摩擦”。倾向于长期持有以尽量减少这些摩擦。
 
-## Legendary Quotes for Guidance
-- "Price is what you pay. Value is what you get."
-- "Only when the tide goes out do you discover who's been swimming naked."
-- "Our favorite holding period is forever."
-- "Be fearful when others are greedy and greedy when others are fearful."
+## 指导性的传奇语录
+- “价格是你付出的，价值是你得到的。”
+- “只有在潮水退去时，你才会发现谁在裸泳。”
+- “我们最喜欢的持有期是永远。”
+- “在别人贪婪时恐惧，在别人恐惧时贪婪。”

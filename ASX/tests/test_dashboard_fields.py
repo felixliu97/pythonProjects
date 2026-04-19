@@ -172,6 +172,59 @@ class TestDashboardFieldConsistency:
             assert field in headers, \
                 f"catalystTable: Expected '{field}' in headers, got {headers}"
 
+    def test_indicator_field_consistency(self, table_headers):
+        """Test that technical indicators (Score, RSI, Vol Surge) exist in relevant tables."""
+        indicator_tabs = {
+            'growthStockTable': ['Score', 'RSI', 'Vol Surge'],
+            'foundationStockTable': ['Score', 'RSI', 'Vol Surge'],
+            'etfTable': ['Score', 'RSI', 'Vol Surge'],
+            'annTable': ['RSI'],
+        }
+
+        for table_id, expected_fields in indicator_tabs.items():
+            if table_id in table_headers:
+                headers = table_headers[table_id]
+                for field in expected_fields:
+                    assert field in headers, \
+                        f"{table_id}: Expected indicator '{field}' in headers, got {headers}"
+
+    def test_fundamental_field_consistency(self, table_headers):
+        """Test that fundamental fields (Cap/Assets, P/E/Yield, Industry) exist in relevant tables."""
+        fundamental_tabs = {
+            'growthStockTable': ['Cap', 'P/E', 'Industry'],
+            'foundationStockTable': ['Cap', 'P/E', 'Industry'],
+        }
+
+        for table_id, expected_fields in fundamental_tabs.items():
+            if table_id in table_headers:
+                headers = table_headers[table_id]
+                for field in expected_fields:
+                    assert field in headers, \
+                        f"{table_id}: Expected fundamental '{field}' in headers, got {headers}"
+        
+        # Special check for ETF table
+        if 'etfTable' in table_headers:
+            headers = table_headers['etfTable']
+            assert 'Total Assets' in headers, f"etfTable: Expected 'Total Assets' in headers, got {headers}"
+            assert 'Yield' in headers, f"etfTable: Expected 'Yield' in headers, got {headers}"
+            assert 'Fund Name' in headers, f"etfTable: Expected 'Fund Name' in headers, got {headers}"
+
+    def test_placement_specific_fields(self, table_headers):
+        """Test that placement-specific fields exist in the placement table."""
+        if 'placTable' in table_headers:
+            headers = table_headers['placTable']
+            expected = ['CR Price', 'Diff %', 'Placement Event Detail']
+            for field in expected:
+                assert field in headers, \
+                    f"placTable: Expected '{field}' in headers, got {headers}"
+
+    def test_announcement_specific_fields(self, table_headers):
+        """Test that announcement-specific fields exist in the news feed table."""
+        if 'annTable' in table_headers:
+            headers = table_headers['annTable']
+            assert 'Headline & Summary' in headers, \
+                f"annTable: Expected 'Headline & Summary' in headers, got {headers}"
+
     def test_no_duplicate_field_names(self, table_headers):
         """Test that no table has duplicate field names."""
         for table_id, headers in table_headers.items():
@@ -189,6 +242,8 @@ class TestDashboardFieldConsistency:
             '1D %': ['growthStockTable', 'foundationStockTable', 'etfTable', 'annTable'],
             'Rating': ['annTable', 'catalystTable'],
             'PDF': ['annTable', 'placTable'],
+            'RSI': ['growthStockTable', 'foundationStockTable', 'etfTable', 'annTable'],
+            'Score': ['growthStockTable', 'foundationStockTable', 'etfTable'],
         }
 
         for field, expected_tabs in standard_fields.items():
