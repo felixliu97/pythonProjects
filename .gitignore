@@ -1,66 +1,41 @@
-localenv/
+# --- IDEs & System ---
 .vscode/
-excels/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Python General ---
 *__pycache__/
 __pycache__/
 *.py[cod]
 *$py.class
-build/
-dist/
 *.spec
+.ipynb_checkpoints/
 
-# Terraform
-/terraform/learn-terraform-docker-container/.terraform.lock.hcl
-/terraform/learn-terraform-docker-container/terraform.tfstate
-/terraform/learn-terraform-docker-container/terraform.tfstate.backup
-/terraform/learn-terraform-docker-container/.terraform/
-.terraform/
-
-# Testing
-/testing/bash/export_variables.sh
-/testing/*.log
-
-# Node
+# --- Environments & Node ---
+.env
+.venv/
+venv/
+env/
 node_modules/
 
-# Streamlit
-.streamlit/secrets.toml
-.streamlit/config.toml
-**/.streamlit/secrets.toml
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# IDEs
-.idea/
-.vscode/
-
-# Rust
-**/target/
-Cargo.lock
-**/*.rs.bk
-
-# Temporary Scripts & Helpers
-build_msvc.ps1
-.cargo/
-Test/
-TradingBot/
+# --- Project Specifics ---
 
 # ASX Project
+ASX/output/
 ASX/.pdf_cache/
+ASX/.pytest_cache/
 
 # Commodity Dashboard
 FullStack/commodity_dashboard/frontend/.next/
 FullStack/commodity_dashboard/backend/commodities_cache.json
 FullStack/commodity_dashboard/frontend/src/api-client/
-FullStack/commodity_dashboard/frontend/openapi-ts-error-*.log
-FullStack/commodity_dashboard/frontend/npm-debug.log*
-FullStack/commodity_dashboard/frontend/yarn-debug.log*
-FullStack/commodity_dashboard/frontend/yarn-error.log*
-FullStack/commodity_dashboard/frontend/pnpm-debug.log*
+
+# Trading & Bots
+TradingBot/
+forex_arbitrage/
+
+# Other
+playground/Test/
+build/
+dist/
