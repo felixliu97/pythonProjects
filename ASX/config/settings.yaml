@@ -13,6 +13,18 @@ scanners:
   pdf_cache_dir: ".pdf_cache"
   output_dir: "output"
 
+concurrency:
+  announcement_pdf_workers: 12
+  analyzer_workers: 16
+  placements_workers: 20
+
+http:
+  analyzer_connect_timeout_seconds: 8
+  analyzer_read_timeout_seconds: 15
+  pdf_connect_timeout_seconds: 10
+  pdf_read_timeout_seconds: 20
+  pdf_chunk_size_bytes: 65536
+
 analyzer:
   cache_ttl_minutes: 10
   cache_file: "output/asx_analyzer.json"

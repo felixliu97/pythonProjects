@@ -15,12 +15,12 @@ import yaml
 try:
     from db_manager import db
     from db_models import Stock, CatalystMaster, CatalystItem
-    from db_schemas import CatalystSchema
+    from db_schemas import validate_catalyst_records
     from utils import logger, get_sydney_time
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, CatalystMaster, CatalystItem
-    from scripts.db_schemas import CatalystSchema
+    from scripts.db_schemas import validate_catalyst_records
     from scripts.utils import logger, get_sydney_time
 
 
@@ -30,20 +30,24 @@ def sync_from_yaml(yaml_path: str = "config/asx_catalysts.yaml") -> None:
     with open(yaml_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or []
 
-    if isinstance(data, dict):
-        data = [data]
+    validated_records = validate_catalyst_records(data)
+    yaml_symbols = {record.Ticker for record in validated_records}
 
     now = get_sydney_time().replace(tzinfo=None)
     synced = 0
+    deleted = 0
 
     with db.session_scope() as sess:
-        for item in data:
-            try:
-                v_c = CatalystSchema(**item)
-            except Exception as e:
-                logger.error(f"Invalid catalyst record: {item.get('Ticker')}: {e}")
-                continue
+        existing_symbols = {
+            symbol for (symbol,) in sess.query(CatalystMaster.symbol).all()
+        }
+        symbols_to_delete = existing_symbols - yaml_symbols
 
+        if symbols_to_delete:
+            deleted = sess.query(CatalystItem).filter(CatalystItem.symbol.in_(symbols_to_delete)).delete(synchronize_session=False)
+            sess.query(CatalystMaster).filter(CatalystMaster.symbol.in_(symbols_to_delete)).delete(synchronize_session=False)
+
+        for v_c in validated_records:
             sym = v_c.Ticker
 
             # Ensure Stock exists (soft requirement for dashboard joins)
@@ -73,7 +77,7 @@ def sync_from_yaml(yaml_path: str = "config/asx_catalysts.yaml") -> None:
 
             synced += 1
 
-    logger.info(f"Synced {synced} catalyst masters from {yaml_path} (no schema drop).")
+    logger.info(f"Synced {synced} catalyst masters from {yaml_path}; removed {len(symbols_to_delete)} masters and {deleted} child rows not present in YAML.")
 
 
 if __name__ == "__main__":

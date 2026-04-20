@@ -14,7 +14,7 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 from datetime import datetime, date, timedelta
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Dict, Optional, Tuple, Any
 
 try:
@@ -37,6 +37,9 @@ DESC_API = _API.get("company_header", "https://asx.api.markitdigital.com/asx-res
 STATS_API = "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/key-statistics"
 
 _WORKERS = int(_CFG.get("concurrency", {}).get("analyzer_workers", 10))
+_HTTP_CFG = _CFG.get("http", {})
+_FUNDAMENTALS_CONNECT_TIMEOUT = float(_HTTP_CFG.get("analyzer_connect_timeout_seconds", 8))
+_FUNDAMENTALS_READ_TIMEOUT = float(_HTTP_CFG.get("analyzer_read_timeout_seconds", 15))
 
 class MomentumAnalyzer:
     """Analyzes technical and fundamental metrics for a list of tickers."""
@@ -61,12 +64,18 @@ class MomentumAnalyzer:
         out = {}
         try:
             # 1. Basic Header (Market Cap, Industry)
-            r1 = self.session.get(f"{DESC_API.format(symbol.upper())}", timeout=DEFAULT_TIMEOUT)
+            r1 = self.session.get(
+                f"{DESC_API.format(symbol.upper())}",
+                timeout=(_FUNDAMENTALS_CONNECT_TIMEOUT, _FUNDAMENTALS_READ_TIMEOUT),
+            )
             if r1.status_code == 200:
                 out.update(r1.json().get("data", {}))
             
             # 2. Key Statistics (PE, Yield)
-            r2 = self.session.get(f"{STATS_API.format(symbol.upper())}", timeout=DEFAULT_TIMEOUT)
+            r2 = self.session.get(
+                f"{STATS_API.format(symbol.upper())}",
+                timeout=(_FUNDAMENTALS_CONNECT_TIMEOUT, _FUNDAMENTALS_READ_TIMEOUT),
+            )
             if r2.status_code == 200:
                 stats = r2.json().get("data", {})
                 # Normalize keys for easier mapping
@@ -226,8 +235,12 @@ class MomentumAnalyzer:
             # Parallelize analysis
             with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
                 futures = {ex.submit(self.analyze_ticker, s.symbol, s.stock_type): s for s in stocks}
-                for future, stock_obj in futures.items():
+                completed = 0
+                succeeded = 0
+                for future in as_completed(futures):
+                    stock_obj = futures[future]
                     result = future.result()
+                    completed += 1
                     if result:
                         res, meta = result
                         if res:
@@ -235,6 +248,11 @@ class MomentumAnalyzer:
                             if meta[0]: stock_obj.industry = meta[0]
                             if meta[1]: stock_obj.name = meta[1]
                             results.append(res)
+                            succeeded += 1
+                    if completed == len(stocks) or completed % max(1, min(10, _WORKERS)) == 0:
+                        logger.info(
+                            f"Market analysis progress: {completed}/{len(stocks)} completed ({succeeded} succeeded, {completed - succeeded} failed)"
+                        )
             
             now = get_sydney_time()
             sync_count = 0

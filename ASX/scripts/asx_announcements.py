@@ -8,9 +8,11 @@ performs heuristic rating/summarization, and syncs to PostgreSQL.
 import sys
 import argparse
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple, Set
 from pathlib import Path
+import tempfile
 
 try:
     from db_manager import db
@@ -28,6 +30,11 @@ _CFG = load_config()
 _API = _CFG.get("api", {})
 API_BASE = _API.get("announcements_base", "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements")
 ITEMS_PER_PAGE = _CFG.get("scanners", {}).get("items_per_page", 1000)
+_PDF_WORKERS = int(_CFG.get("concurrency", {}).get("announcement_pdf_workers", 8))
+_HTTP_CFG = _CFG.get("http", {})
+_PDF_CONNECT_TIMEOUT = float(_HTTP_CFG.get("pdf_connect_timeout_seconds", 10))
+_PDF_READ_TIMEOUT = float(_HTTP_CFG.get("pdf_read_timeout_seconds", 20))
+_PDF_CHUNK_SIZE = int(_HTTP_CFG.get("pdf_chunk_size_bytes", 65536))
 
 _CACHE_DIR = get_root_dir() / ".pdf_cache"
 _CACHE_DIR.mkdir(exist_ok=True)
@@ -96,14 +103,74 @@ class AnnouncementScanner:
         if local_path.exists(): return local_path
         try:
             logger.info(f"Downloading PDF: {filename}...")
-            r = self.session.get(url, timeout=30)
-            r.raise_for_status()
-            with open(local_path, "wb") as f:
-                f.write(r.content)
+            with self.session.get(
+                url,
+                timeout=(_PDF_CONNECT_TIMEOUT, _PDF_READ_TIMEOUT),
+                stream=True,
+            ) as r:
+                r.raise_for_status()
+                with tempfile.NamedTemporaryFile(delete=False, dir=_CACHE_DIR, suffix=".part") as tmp_file:
+                    tmp_path = Path(tmp_file.name)
+                    for chunk in r.iter_content(chunk_size=_PDF_CHUNK_SIZE):
+                        if chunk:
+                            tmp_file.write(chunk)
+                tmp_path.replace(local_path)
             return local_path
         except Exception as e:
+            try:
+                if 'tmp_path' in locals() and tmp_path.exists():
+                    tmp_path.unlink()
+            except OSError:
+                pass
             logger.error(f"Failed to download PDF {filename}: {e}")
             return None
+
+    def _download_pdfs_batch(self, downloads: List[Tuple[str, str]]) -> None:
+        """Download PDFs concurrently with de-duplication."""
+        unique_downloads: List[Tuple[str, str]] = []
+        seen: Set[Tuple[str, str]] = set()
+        skipped_cached = 0
+
+        for url, filename in downloads:
+            if not url or not filename:
+                continue
+            key = (url, filename)
+            if key in seen:
+                continue
+            seen.add(key)
+            if (_CACHE_DIR / filename).exists():
+                skipped_cached += 1
+                continue
+            unique_downloads.append(key)
+
+        if not unique_downloads:
+            if skipped_cached:
+                logger.info(f"All pending PDFs already cached ({skipped_cached} skipped).")
+            return
+
+        workers = max(1, min(_PDF_WORKERS, len(unique_downloads)))
+        if workers == 1:
+            for url, filename in unique_downloads:
+                self._download_pdf(url, filename)
+            return
+
+        if skipped_cached:
+            logger.info(f"Skipping {skipped_cached} cached PDFs. Downloading {len(unique_downloads)} PDFs with {workers} workers...")
+        else:
+            logger.info(f"Downloading {len(unique_downloads)} PDFs with {workers} workers...")
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = [executor.submit(self._download_pdf, url, filename) for url, filename in unique_downloads]
+            completed = 0
+            succeeded = 0
+            for future in as_completed(futures):
+                result = future.result()
+                completed += 1
+                if result:
+                    succeeded += 1
+                if completed == len(unique_downloads) or completed % max(1, min(10, workers)) == 0:
+                    logger.info(
+                        f"PDF download progress: {completed}/{len(unique_downloads)} completed ({succeeded} succeeded, {completed - succeeded} failed)"
+                    )
 
     def fetch_raw(self, start_date: datetime, *, price_sensitive_only: bool = True) -> List[Dict]:
         """Fetch raw announcement JSON from ASX API."""
@@ -241,6 +308,7 @@ class AnnouncementScanner:
         """Filter, validate, and save announcements to the database."""
         added = 0
         skipped = 0
+        pending_downloads: List[Tuple[str, str]] = []
         
         with db.session_scope() as sess:
             # Pre-fetch known stocks for name lookup and auto-registration tracking
@@ -275,10 +343,6 @@ class AnnouncementScanner:
                 dt = normalize_date(item.get("date", ""))
                 unique_key = f"{sym}_{dt}_{hl[:100]}"
                 
-                # Pre-filtered check
-                if unique_key in existing_keys:
-                    continue
-                
                 # Double check against DB (Case of overlap or near-miss)
                 existing_record = sess.query(Announcement).filter_by(unique_key=unique_key).first()
                 if existing_record:
@@ -286,11 +350,15 @@ class AnnouncementScanner:
                     # Force update if link is broken (contains asxpdf) or empty
                     if not existing_record.pdf_link or "asxpdf" in existing_record.pdf_link:
                         existing_record.pdf_link = get_asx_pdf_url(item.get("documentKey", ""), dt)
-                    # Download PDF for existing price-sensitive announcements with rating > 3
+                    # Download PDF for all existing price-sensitive announcements
                     is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
-                    if is_ps and existing_record.rating and existing_record.rating > 3 and existing_record.pdf_link:
+                    if is_ps and existing_record.pdf_link:
                         pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
-                        self._download_pdf(existing_record.pdf_link, get_pdf_filename(pdf_ev))
+                        pending_downloads.append((existing_record.pdf_link, get_pdf_filename(pdf_ev)))
+                    continue
+
+                # Pre-filtered check for known in-memory duplicates that are not in DB
+                if unique_key in existing_keys:
                     continue
                 
                 try:
@@ -341,19 +409,21 @@ class AnnouncementScanner:
                     sess.add(ann)
                     added += 1
                     
-                    # Download PDF for price-sensitive announcements with rating > 3
-                    if is_ps and rating > 3 and v.PDF_Link:
+                    # Download PDF for all price-sensitive announcements
+                    if is_ps and v.PDF_Link:
                         pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
-                        self._download_pdf(v.PDF_Link, get_pdf_filename(pdf_ev))
+                        pending_downloads.append((v.PDF_Link, get_pdf_filename(pdf_ev)))
                 except Exception as e:
                     logger.debug(f"Validation failed for announcement {unique_key}: {e}")
                     
         logger.info(f"Sync Complete: Added {added} new announcements (Filtered {skipped} noise items).")
+        self._download_pdfs_batch(pending_downloads)
 
     def recalc_and_update(self, raw_items: List[Dict]) -> None:
         """Recompute rating/rating_reason for announcements and update DB rows if they exist."""
         updated = 0
         skipped = 0
+        pending_downloads: List[Tuple[str, str]] = []
         with db.session_scope() as sess:
             for item in raw_items:
                 sym = ticker_clean(item.get("symbol", ""))
@@ -383,12 +453,13 @@ class AnnouncementScanner:
                     ann.pdf_link = get_asx_pdf_url(item.get("documentKey", ""), dt)
                 updated += 1
 
-                # Download PDF for price-sensitive announcements with rating > 3
-                if is_ps and rating > 3 and ann.pdf_link:
+                # Download PDF for all price-sensitive announcements
+                if is_ps and ann.pdf_link:
                     pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
-                    self._download_pdf(ann.pdf_link, get_pdf_filename(pdf_ev))
+                    pending_downloads.append((ann.pdf_link, get_pdf_filename(pdf_ev)))
 
         logger.info(f"Recalc Complete: Updated {updated} announcements (Filtered {skipped} noise items).")
+        self._download_pdfs_batch(pending_downloads)
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Announcement Scanner")

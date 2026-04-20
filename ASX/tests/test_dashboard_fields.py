@@ -172,6 +172,11 @@ class TestDashboardFieldConsistency:
             assert field in headers, \
                 f"catalystTable: Expected '{field}' in headers, got {headers}"
 
+    def test_catalyst_rating_uses_hidden_sort_key(self, template_content):
+        """Catalyst Rating column should include a hidden numeric sort key for stable table sorting."""
+        assert '{% set r_sort =' in template_content
+        assert '<span style="display:none">{{ r_sort }}</span>' in template_content
+
     def test_indicator_field_consistency(self, table_headers):
         """Test that technical indicators (Score, RSI, Vol Surge) exist in relevant tables."""
         indicator_tabs = {

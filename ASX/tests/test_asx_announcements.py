@@ -336,8 +336,10 @@ def test_pdf_download_saves_new_file(scanner, tmp_path):
     """New PDFs should be downloaded and saved to cache."""
     with patch("scripts.asx_announcements._CACHE_DIR", tmp_path):
         mock_resp = MagicMock()
-        mock_resp.content = b"%PDF-fake-content"
         mock_resp.raise_for_status = MagicMock()
+        mock_resp.iter_content.return_value = [b"%PDF-", b"fake-content"]
+        mock_resp.__enter__.return_value = mock_resp
+        mock_resp.__exit__.return_value = None
         scanner.session = MagicMock()
         scanner.session.get.return_value = mock_resp
 
@@ -347,8 +349,8 @@ def test_pdf_download_saves_new_file(scanner, tmp_path):
         scanner.session.get.assert_called_once()
 
 
-def test_pdf_download_triggered_for_high_rated_ps_new(scanner, tmp_path):
-    """New price-sensitive announcements with rating > 3 should trigger PDF download."""
+def test_pdf_download_triggered_for_all_ps_new(scanner, tmp_path):
+    """All price-sensitive announcements should trigger PDF download."""
     mock_sess = MagicMock()
 
     with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
@@ -373,34 +375,8 @@ def test_pdf_download_triggered_for_high_rated_ps_new(scanner, tmp_path):
         mock_dl.assert_called_once()
 
 
-def test_pdf_download_not_triggered_for_low_rated(scanner, tmp_path):
-    """Announcements with rating <= 3 should NOT trigger PDF download."""
-    mock_sess = MagicMock()
-
-    with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
-         patch("scripts.asx_announcements._CACHE_DIR", tmp_path), \
-         patch.object(scanner, "_download_pdf") as mock_dl:
-        mock_scope.return_value.__enter__.return_value = mock_sess
-        mock_stock = MagicMock(symbol="LOW", name="LOW CORP")
-        mock_sess.query.return_value.all.return_value = [mock_stock]
-        mock_sess.query.return_value.filter_by.return_value.first.return_value = None
-
-        item = {
-            "symbol": "LOW",
-            "headline": "Quarterly Activities Report",
-            "date": "2026-04-16T08:00:00.000Z",
-            "announcementTypes": ["Quarterly"],
-            "isPriceSensitive": True,
-            "companyInfo": [{"displayName": "LOW CORP"}],
-            "documentKey": "doc_low",
-        }
-        scanner.process_and_sync([item], set())
-
-        mock_dl.assert_not_called()
-
-
 def test_pdf_download_not_triggered_for_non_ps(scanner, tmp_path):
-    """Non-price-sensitive announcements should NOT trigger PDF download even if rating > 3."""
+    """Non-price-sensitive announcements should NOT trigger PDF download."""
     mock_sess = MagicMock()
 
     with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
@@ -425,8 +401,34 @@ def test_pdf_download_not_triggered_for_non_ps(scanner, tmp_path):
         mock_dl.assert_not_called()
 
 
+def test_pdf_download_triggered_for_low_rated_ps(scanner, tmp_path):
+    """Even low-rated price-sensitive announcements should trigger PDF download."""
+    mock_sess = MagicMock()
+
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
+         patch("scripts.asx_announcements._CACHE_DIR", tmp_path), \
+         patch.object(scanner, "_download_pdf") as mock_dl:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_stock = MagicMock(symbol="LOW", name="LOW CORP")
+        mock_sess.query.return_value.all.return_value = [mock_stock]
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = None
+
+        item = {
+            "symbol": "LOW",
+            "headline": "Quarterly Activities Report",
+            "date": "2026-04-16T08:00:00.000Z",
+            "announcementTypes": ["Quarterly"],
+            "isPriceSensitive": True,
+            "companyInfo": [{"displayName": "LOW CORP"}],
+            "documentKey": "doc_low",
+        }
+        scanner.process_and_sync([item], set())
+
+        mock_dl.assert_called_once()
+
+
 def test_pdf_download_triggered_in_recalc(scanner, tmp_path):
-    """recalc_and_update should download PDFs for price-sensitive items with rating > 3."""
+    """recalc_and_update should download PDFs for all price-sensitive items."""
     mock_sess = MagicMock()
     existing = MagicMock(
         unique_key="RCL_2026-04-16_HIGH-GRADE ASSAY RESULTS",
@@ -485,6 +487,39 @@ def test_pdf_download_for_existing_record_in_sync(scanner, tmp_path):
         # Should NOT add a new record (existing found)
         assert mock_sess.add.call_count == 0
         # Should download PDF for existing record
+        mock_dl.assert_called_once()
+
+
+def test_pdf_download_for_existing_record_even_if_unique_key_in_existing_keys(scanner, tmp_path):
+    """Reruns should still backfill PDFs for existing DB records even if unique_key is already in existing_keys."""
+    mock_sess = MagicMock()
+    existing_ann = MagicMock(
+        rating=3,
+        pdf_link="https://example.com/btr.pdf",
+    )
+
+    with patch("scripts.asx_announcements.db.session_scope") as mock_scope, \
+         patch("scripts.asx_announcements._CACHE_DIR", tmp_path), \
+         patch.object(scanner, "_download_pdf") as mock_dl:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        mock_stock = MagicMock(symbol="BTR", name="BRIGHTSTAR RESOURCES LIMITED")
+        mock_sess.query.return_value.all.return_value = [mock_stock]
+        mock_sess.query.return_value.filter_by.return_value.first.return_value = existing_ann
+
+        item = {
+            "symbol": "BTR",
+            "headline": "Record Processing Campaign Delivers 7,900oz Au Production",
+            "date": "2026-04-20T08:00:00.000Z",
+            "announcementTypes": ["Production Report"],
+            "isPriceSensitive": True,
+            "companyInfo": [{"displayName": "BRIGHTSTAR RESOURCES LIMITED"}],
+            "documentKey": "doc_btr",
+        }
+        existing_keys = {"BTR_2026-04-20_Record Processing Campaign Delivers 7,900oz Au Production"}
+
+        scanner.process_and_sync([item], existing_keys)
+
+        assert mock_sess.add.call_count == 0
         mock_dl.assert_called_once()
 
 

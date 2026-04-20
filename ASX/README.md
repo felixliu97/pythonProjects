@@ -176,8 +176,22 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
     - 模糊日期（如 `2026-03/04`、`2026-04`）不允许，需搜索确认实际公告日期或删除。
     - 未来预期事件属于 `Catalysts`，不放 `Timeline`。
 - **Rating 规则**:
-    - 由 BP × CR 矩阵自动推导，手动调整优先。
+    - 默认由 `Breakout_Probability (BP)` 与 `CR_Risk (CR)` 自动推导，若 YAML 显式填写 `Rating`，则以手填值优先。
     - 有效值: `强力买入`, `买入`, `观望`, `卖出`, `强力卖出`。
+    - 评分映射：
+        - `BP`: `低=0`, `中低=1`, `中=2`, `中高=3`, `高=4`, `极高=5`
+        - `CR`: `极低=0`, `低=1`, `中低=2`, `中=3`, `中高=4`, `高=5`
+        - `delta = BP_score - CR_score`
+    - 默认评级矩阵：
+        - `delta >= 4` → `强力买入`
+        - `delta >= 2` 且 `< 4` → `买入`
+        - `delta >= -1` 且 `< 2` → `观望`
+        - `delta >= -3` 且 `< -1` → `卖出`
+        - `delta < -3` → `强力卖出`
+    - 示例：
+        - `BP=高`, `CR=低` → `delta=3` → `买入`
+        - `BP=中`, `CR=中` → `delta=-1` → `观望`
+        - `BP=低`, `CR=高` → `delta=-5` → `强力卖出`
 
 #### 3.1.4 示例 (Example)
 
@@ -239,7 +253,7 @@ cp .env.example .env
 python run.py reseed
 
 # 3. 运行完整性自检 (run.py 会在执行前自动调用)
-pytest tests/test_system_integrity.py
+pytest tests/
 ```
 
 ### 6.2 核心运行逻辑与编排

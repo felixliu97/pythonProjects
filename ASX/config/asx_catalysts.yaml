@@ -264,57 +264,6 @@
     Event: 宣布 NSW1 Horsley Park FID 达成，锁定 A$30.5M 政府补助
   - Date: '2026-04-15'
     Event: SA1 Salisbury 正式实现首批生物甲烷注入Adelaide天然气网 (AGIG)；澳大利亚首个工业级生物甲烷商业运营项目正式启动
-- Ticker: DXB
-  Stage: 阶段2-验证突破期
-  Company: Dimerix Limited
-  Sector: Biotechnology - 临床阶段生物制药 (FSGS / DMX-200)
-  Catalysts:
-  - 2026年4月 极其核心：ACTION3 Phase 3 独立统计假设回顾 (Blinded Review) 结果发布预期
-  - 2026年4月20日 举行新加坡投资者简报会，深度解读 ACTION3 最新进展及商业授权 (Out-licensing) 谈判状态
-  - 2026年5月 临床开发路径确认：是否需要根据盲法回顾调整后续样本量
-  - 2026年H2 潜在的全球范围商业授权协议签署 (尤其是非美/欧地区)
-  Risks:
-  - 若统计回顾建议大幅增加样本量，将导致试验周期显著拉长且融资压力激增
-  - 公司面临 2028 年 NDA 申报前的持续高额临床支出压力
-  CR_Risk: 中高
-  CR_Risk_Reason: 虽然入组全额完成，但 Phase 3 核心结果未出前仍有高度波动性
-  Breakout_Probability: 中高
-  Breakout_Probability_Reason: 中位分析已显示积极信号；FSGS 孤儿药定位使其拥有极高商业弹性
-  Core_Notes: DXB 正在进入最为关键的"统计确认期"。4月盲法统计回顾结果将直接决定 ACTION3 的成败概率。333名成年患者已全部完成给药。4月20日新加坡投资者简报会将提供最新进展与授权谈判状态的首次公开呈现。
-  Rating: 观望
-  Timeline:
-  - Date: '2026-03-09'
-    Event: ACTION3 试验最后一名患者完成首剂给药；独立统计评审启动以回顾统计假设
-  - Date: '2026-03-09'
-    Event: 完成 ACTION3 Phase 3 全员 (333人) 入组
-- Ticker: EMH
-  Stage: 阶段1-无人关注期
-  Company: European Metals Holdings Limited
-  Sector: Lithium - 欧盟战略锂资源开发 (捷克 Cinovec 项目)
-  Catalysts:
-  - 2026年6月30日 极高催化：捷克环境部 EIA 审批截止日 (EIA 已于2025年12月31日提交)，通过则解锁 EU Just Transition Fund €36M 资助条件 (年内最核心环节)
-  - 2026年H1 预期签署正式承购协议 (Off-take)；管理层称正与 OEM 及电池厂进行高级别谈判
-  - 2026年9月 欧洲能源自主化政策 (CRMA 战略项目资格) 对项目的持续溢价；FID 冲刺准备
-  - 2026年底 最终投资决策 (FID) 冲刺
-  - 2026年内 推进 EU Just Transition Fund €36M 资助及其他欧盟机构额外资助的正式拨付
-  Risks:
-  - EIA 审批可能延迟或附加高昂合规成本；捷克环保法规严格，公众咨询期可能带来额外程序
-  - DFS 更新后 NPV 已从 US$1.712B 降至 US$1.455B（因 ASX 要求缩短生产年限至23年）；项目总建设成本高昂，仍需大规模股权或债务融资
-  - 锂价波动对项目经济性的持续压力（DFS 基于特定锂价假设）
-  - 近期 A$3.46M 配售相对于项目建设规模极为有限，建设期仍需大规模融资
-  CR_Risk: 中高
-  CR_Risk_Reason: 近期融资仅A$3.46M，相对于大规模建设极为有限；EIA通过后需要大规模股权/债务融资；EU Just Transition Fund 资助仅€36M，不足以覆盖建设总成本
-  Breakout_Probability: 中高
-  Breakout_Probability_Reason: 项目已被欧盟列为"战略原材料法案 (CRMA)"下的战略项目并被捷克认定为战略矿床，政治确定性高；CEZ (捷克能源巨头) 持股51% (通过Geomet)，政府背书极强；EIA已提交，6月截止日是最后的行政大关
-  Core_Notes: EMH 的 Cinovec 项目是欧洲境内最大的未开发硬岩锂资源（JORC 资源量 747.54Mt @ 0.19% Li）。EU Just Transition Fund 资助为 €36M。DFS（2025年12月完成）：NPV
-    US$1.455B (pre-tax)，IRR 14.8%，23年生产年限。生产规模：37,500 tpa 碳酸锂当量，约占2030年欧盟需求的5.2%。EIA状态：已于2025年12月31日完整提交捷克环境部，现处于公众咨询阶段，6月30日为审批截止期限。区域规划：2026年2月
-    Usti nad Labem 区域获批。CEZ持股51% (通过Geomet)，政府背书极强。CRMA 战略项目资格：已获欧盟委员会认定，提供简化许可流程及优先融资渠道。
-  Rating: 观望
-  Timeline:
-  - Date: '2026-01-22'
-    Event: 完成 A$3.5M 股票配售，确保Cinovec项目审批期间的营运资金
-  - Date: '2026-02-09'
-    Event: Usti nad Labem 区域规划获批 (Regional Land Use Planning Approval)
 - Ticker: FHE
   Stage: 阶段1-无人关注期
   Company: Frontier Energy Limited
@@ -340,35 +289,6 @@
     Event: 获得指示性优先债务条款清单，融资金额达 A$220M；项目融资关键去风险完成
   - Date: '2026-02-28'
     Event: 完成项目预可行性研究 (PFS) 升级；确认 Waroona Stage 1 的经济性与技术路径
-- Ticker: IMU
-  Stage: 阶段1-无人关注期
-  Company: Imugene Limited
-  Sector: Biotechnology - 临床阶段肿瘤免疫疗法 (Azer-cel 异体 CAR-T / CF33 溶瘤病毒 / B细胞疫苗)
-  Catalysts:
-  - 2026年4月21日 ASCO官网公布摘要详情（含展示时间段）
-  - 2026年5月21日 ASCO 完整摘要在官网发布；5月29日-6月2日 ASCO 芝加哥年会 Azer-cel 口头报告展示
-  - 2026年6月 年中临床数据更新：Azer-cel PCNSL/CLL 扩组初期数据；onCARlytics 实体瘤最新剂量递增结果
-  - 2026年7月 Pivotal Trial 设计公告及站点设立进展；JW Therapeutics 中国区合作进展
-  - 2026年9月 ESMO 2026 大会潜在数据展示；若 Pivotal Trial 已启动，首例患者入组公告
-  Risks:
-  - A$2000万融资（2026年3月，发行价A$0.18）进一步稀释每股价值，同时发行等量认股权证（行权价A$0.18，2027年4月到期）
-  - 3月融资当日股价暴跌约20%（较A$0.23收盘价折价约21.7%），历史频繁增发已使散户深度套牢
-  - Pivotal Trial 启动将需要 US$50M+ 级别融资，2026-2027年内大概率再次大规模资本募集；现金runway延至Q4 2026
-  - Azer-cel 响应持续时间数据尚在成熟中，长期持续缓解率不确定性仍存
-  CR_Risk: 高
-  CR_Risk_Reason: A$2000万融资后现金runway仅延至Q4 2026；Pivotal Trial 启动将需要 US$50M+ 级别融资，2026-2027年内大概率再次大规模资本募集
-  Breakout_Probability: 中高
-  Breakout_Probability_Reason: Azer-cel 早期数据亮眼：CLL/SLL患者ORR 100%，边缘区淋巴瘤ORR 80%（CR 75%）；ASCO 2026 口头报告资格强化学术认可度；FDA 已提供 Pivotal
-    Trial 支持性书面纪要
-  Core_Notes: Imugene 战略重心高度聚焦于 Azer-cel。2026年3月宣布A$2000万融资（A$1200万机构配售+A$800万SPP，发行价A$0.18，较收盘折价21.7%），股价当日暴跌约20%。融资主要用于扩展Phase
-    1b研究：扩大Cohort 2、启动Cohort 3 BTKi联合治疗研究。最新早期数据极具吸引力：CLL/SLL患者ORR 100%（4例均PR）；边缘区淋巴瘤ORR 80%（CR 75%）。2026年4月1日宣布Azer-cel数据获选ASCO
-    2026口头报告（Top Tier级别认可），详细时间将于4月21日公布。IMU 股价约A$0.135-0.14，市值约A$48M，持续下行压力明显。
-  Rating: 观望
-  Timeline:
-  - Date: '2026-03-11'
-    Event: 宣布 A$2000万融资计划（A$1200万机构配售+A$800万SPP，发行价A$0.18）；股价当日暴跌约20%；确保 Azer-cel Phase 1b 扩组资金
-  - Date: '2026-04-01'
-    Event: 宣布 Azer-cel 数据获选为 ASCO 2026 口头报告 (Top Tier 级别认可)；完整时间详情将于4月21日随摘要同步发布
 - Ticker: KSN
   Stage: 阶段2-验证突破期
   Company: Kingston Resources Limited

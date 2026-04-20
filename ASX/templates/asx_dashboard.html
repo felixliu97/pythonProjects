@@ -671,7 +671,9 @@
                             </td>
                             <td>
                                 {% set r = c.Rating or "观望" %}
+                                {% set r_sort = 1 if r == '强力买入' else (2 if r == '买入' else (3 if r == '观望' else (4 if r == '卖出' else 5))) %}
                                 {% set r_cls = 'rating-strong-buy' if r == '强力买入' else ('rating-buy' if r == '买入' else ('rating-hold' if r == '观望' else ('rating-sell' if r == '卖出' else 'rating-strong-sell'))) %}
+                                <span style="display:none">{{ r_sort }}</span>
                                 <div class="rating-badge {{ r_cls }}">{{ r }}</div>
                             </td>
                             <td>

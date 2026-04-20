@@ -24,11 +24,13 @@ if sys.stdout.encoding != 'utf-8':
 # Local Imports
 try:
     from scripts.db_manager import db
+    from scripts.db_schemas import validate_catalyst_records
     from scripts.db_models import Stock, Announcement, Placement, MarketTrend
     from scripts.utils import logger, load_config, get_root_dir, generate_sparkline, get_sydney_time
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "scripts"))
     from db_manager import db
+    from db_schemas import validate_catalyst_records
     from db_models import Stock, Announcement, Placement, MarketTrend
     from utils import logger, load_config, get_root_dir, generate_sparkline, get_sydney_time
 
@@ -101,24 +103,26 @@ def load_catalysts_from_yaml() -> list:
     yaml_path = get_root_dir() / "config" / "asx_catalysts.yaml"
     with open(yaml_path, "r", encoding="utf-8") as f:
         raw = yaml.safe_load(f) or []
-    
+
+    validated_records = validate_catalyst_records(raw)
+
     catalysts_list = []
-    for entry in raw:
+    for validated_entry in validated_records:
         catalysts_list.append({
-            "Ticker": entry.get("Ticker", ""),
-            "Stage": entry.get("Stage", "未分类"),
-            "Company": entry.get("Company", ""),
-            "Sector": entry.get("Sector", ""),
-            "Rating": entry.get("Rating", "观望"),
-            "Catalysts": entry.get("Catalysts", []),
-            "Risks": entry.get("Risks", []),
-            "CR_Risk": entry.get("CR_Risk", "Unknown"),
-            "CR_Risk_Reason": entry.get("CR_Risk_Reason", ""),
-            "Breakout_Probability": entry.get("Breakout_Probability", "N/A"),
-            "Breakout_Probability_Reason": entry.get("Breakout_Probability_Reason", ""),
-            "Core_Notes": entry.get("Core_Notes", ""),
+            "Ticker": validated_entry.Ticker,
+            "Stage": validated_entry.Stage,
+            "Company": validated_entry.Company,
+            "Sector": validated_entry.Sector or "",
+            "Rating": validated_entry.Rating,
+            "Catalysts": validated_entry.Catalysts,
+            "Risks": validated_entry.Risks,
+            "CR_Risk": validated_entry.CR_Risk,
+            "CR_Risk_Reason": validated_entry.CR_Risk_Reason,
+            "Breakout_Probability": validated_entry.Breakout_Probability,
+            "Breakout_Probability_Reason": validated_entry.Breakout_Probability_Reason,
+            "Core_Notes": validated_entry.Core_Notes,
             "Timeline": sorted(
-                entry.get("Timeline", []),
+                validated_entry.Timeline,
                 key=lambda x: x.get("Date", "")
             )
         })
@@ -268,15 +272,14 @@ def build_dashboard():
     print(f"{Color.GREEN}{Color.BOLD}✨ Dashboard successfully updated:{Color.RESET} {Color.BLUE}{output_path.name}{Color.RESET}")
 
 def run_integrity_check():
-    """Run system integrity tests before allowing data operations."""
-    print(f"{Color.YELLOW}{Color.BOLD}🛡️  Running System Integrity Check...{Color.RESET}")
+    """Run pytest prerequisites before allowing data operations."""
+    print(f"{Color.YELLOW}{Color.BOLD}🛡️  Running pytest pre-requisite checks...{Color.RESET}")
     import pytest
-    # Suppress output unless failed
-    ret = pytest.main(["tests/test_system_integrity.py", "-q", "--no-summary"])
+    ret = pytest.main(["tests", "-q", "--no-summary"])
     if ret != 0:
-        print(f"{Color.RED}{Color.BOLD}❌ Integrity Check FAILED. Please sync DDL, UI, and README before running.{Color.RESET}")
+        print(f"{Color.RED}{Color.BOLD}❌ Pytest pre-requisite FAILED. Please fix the test suite before running.{Color.RESET}")
         return False
-    print(f"{Color.GREEN}{Color.BOLD}✅ System Integrity Verified.{Color.RESET}")
+    print(f"{Color.GREEN}{Color.BOLD}✅ Pytest pre-requisite passed.{Color.RESET}")
     return True
 
 def should_skip_data_pull():

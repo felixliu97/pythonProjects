@@ -86,7 +86,7 @@ def test_timeline_sorting():
 
     yaml_content = [{
         "Ticker": "TEST", "Company": "Test Co", "Sector": "Tech",
-        "CR_Risk": "Low", "Breakout_Probability": "High", "Core_Notes": "",
+        "CR_Risk": "低", "Breakout_Probability": "高", "Core_Notes": "Valid notes",
         "Rating": "观望",
         "Timeline": [
             {"Date": "2026-04-10", "Event": "Event 2"},
@@ -109,27 +109,66 @@ def test_timeline_sorting():
 
 
 def test_catalysts_from_yaml_defaults():
-    """Verify that missing YAML fields get sensible defaults."""
+    """Verify that schema-backed defaults are applied to optional YAML fields."""
     import yaml
     from unittest.mock import patch
     from run import load_catalysts_from_yaml
-    
-    yaml_content = [{"Ticker": "MIN", "Company": "Minimal Co"}]
-    
+
+    yaml_content = [{
+        "Ticker": "MIN",
+        "Company": "Minimal Co",
+        "CR_Risk": "低",
+        "Breakout_Probability": "中",
+        "Core_Notes": "Testing defaults"
+    }]
+
     def mock_open_yaml(*a, **kw):
         from io import StringIO
         return StringIO(yaml.dump(yaml_content, allow_unicode=True))
-    
+
     with patch("builtins.open", mock_open_yaml):
         result = load_catalysts_from_yaml()
         c = result[0]
         assert c["Ticker"] == "MIN"
+        assert c["Stage"] == "未分类"
         assert c["Rating"] == "观望"
-        assert c["CR_Risk"] == "Unknown"
-        assert c["Breakout_Probability"] == "N/A"
+        assert c["CR_Risk"] == "低"
+        assert c["Breakout_Probability"] == "中"
         assert c["Timeline"] == []
         assert c["Catalysts"] == []
         assert c["Risks"] == []
+
+
+def test_catalyst_schema_rejects_invalid_rating():
+    """Invalid YAML enum values should fail schema validation."""
+    from pydantic import ValidationError
+    from scripts.db_schemas import CatalystSchema
+
+    with pytest.raises(ValidationError):
+        CatalystSchema(
+            Ticker="BAD",
+            Company="Bad Co",
+            CR_Risk="低",
+            Breakout_Probability="中",
+            Core_Notes="Testing",
+            Rating="加仓"
+        )
+
+
+def test_catalyst_schema_rejects_invalid_timeline_date():
+    """Timeline requires exact YYYY-MM-DD dates."""
+    from pydantic import ValidationError
+    from scripts.db_schemas import CatalystSchema
+
+    with pytest.raises(ValidationError):
+        CatalystSchema(
+            Ticker="BAD",
+            Company="Bad Co",
+            CR_Risk="低",
+            Breakout_Probability="中",
+            Core_Notes="Testing",
+            Timeline=[{"Date": "2026-04", "Event": "Bad date"}]
+        )
 
 
 # --- 5. Catalyst Schema & DB Field Validation ---
@@ -160,19 +199,40 @@ def test_catalyst_field_validity():
 
 
 def test_catalyst_schema_rating_default():
-    """Verify that CatalystSchema defaults to '观望'."""
+    """Verify that CatalystSchema derives Rating from Breakout_Probability x CR_Risk."""
     from scripts.db_schemas import CatalystSchema
 
-    v = CatalystSchema(Ticker="MSB", Company="Mesoblast", CR_Risk="低", Core_Notes="Testing")
-    assert v.Rating == "观望"
+    v = CatalystSchema(
+        Ticker="MSB",
+        Company="Mesoblast",
+        CR_Risk="低",
+        Breakout_Probability="高",
+        Core_Notes="Testing"
+    )
+    assert v.Rating == "买入"
 
 
 def test_catalyst_schema_rating_explicit():
-    """Verify that CatalystSchema accepts explicit ratings."""
+    """Verify that explicit YAML Rating overrides the derived matrix rating."""
     from scripts.db_schemas import CatalystSchema
 
-    v = CatalystSchema(Ticker="MSB", Company="Mesoblast", CR_Risk="低", Core_Notes="Testing", Rating="强力买入")
+    v = CatalystSchema(
+        Ticker="MSB",
+        Company="Mesoblast",
+        CR_Risk="低",
+        Breakout_Probability="中",
+        Core_Notes="Testing",
+        Rating="强力买入"
+    )
     assert v.Rating == "强力买入"
+
+
+def test_catalyst_rating_matrix_extremes():
+    """Verify matrix-derived ratings at both optimistic and pessimistic extremes."""
+    from scripts.db_schemas import derive_catalyst_rating
+
+    assert derive_catalyst_rating("极低", "极高") == "强力买入"
+    assert derive_catalyst_rating("高", "低") == "强力卖出"
 
 
 def test_displayed_rating_equals_db_rating():
