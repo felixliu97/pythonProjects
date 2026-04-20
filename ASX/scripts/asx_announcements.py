@@ -41,11 +41,17 @@ NOISE_KEYWORDS = [
 ]
 
 HIGH_VALUE_KEYWORDS = [
+    # Exploration & Mining
     "assay", "drilling", "high-grade", "discovery",
     "maiden", "resource", "phase 3", "fda", "approval",
-    "exceptional", "breakthrough", "acquisition", "merger",
-    "takeover", "binding", "offtake", "definitive", "feasibility study",
-    "term sheet"
+    "exceptional", "breakthrough",
+    # Corporate Actions & M&A
+    "acquisition", "merger", "takeover", "binding", "offtake",
+    "definitive", "feasibility study", "term sheet",
+    "sale and purchase", "monetis",  # SPA, monetise/monetize
+    # Business Catalysts
+    "partnership", "commerciali", "fast-track", "fast track",
+    "commissioning", "first production",
 ]
 
 STRONG_CATALYST_PHRASES = [
@@ -64,13 +70,17 @@ STRONG_CATALYST_PHRASES = [
     "significant discovery",
     "exceptional intercepts",
     "high-grade discovery",
+    "conditional spa",
 ]
 
 MID_VALUE_KEYWORDS = [
     "trading halt", "placement", "capital rais", "share purchase plan",
     "quarterly", "half year", "annual report", "guidance",
     "production", "revenue", "contract", "agreement", "joint venture",
-    "feasibility", "scoping", "update", "progress", "operational"
+    "feasibility", "scoping", "update", "progress", "operational",
+    # Corporate & Financial
+    "upgrade", "milestone", "collaboration", "divest", "invest",
+    "strategic", "joint venture", "restructur",
 ]
 
 class AnnouncementScanner:
@@ -190,6 +200,11 @@ class AnnouncementScanner:
         if re.search(r"\d+(\.\d+)?\s*(g/t|%)", text):
             rating += 1
             reasons.append("impact_data")
+
+        # 2b. Dollar Amount Bonus (e.g. "$15m", "$100 million", "A$50m")
+        if re.search(r"\$\d+(\.\d+)?\s*(m|million|b|billion)", text):
+            rating += 1
+            reasons.append("dollar_amount")
 
         # 3. Phrase/Keyword Scoring
         strong_phrases = cfg["strong_catalyst_phrases"] or []

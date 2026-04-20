@@ -37,7 +37,7 @@ def test_refresh_all_prices_logic(scanner):
     mock_sess_obj.query.return_value.all.return_value = [p1]
     
     # Mock API: New Price 1.2
-    scanner.fetch_market_info = MagicMock(return_value=(1.2, 1000000, "ABC Corp"))
+    scanner.fetch_market_info = MagicMock(return_value=(1.2, 1000000, "ABC Corp", "CS"))
     
     with patch("scripts.asx_placements.db.session_scope") as mock_scope:
         mock_scope.return_value.__enter__.return_value = mock_sess_obj
@@ -54,7 +54,7 @@ def test_refresh_backfills_missing_company_name(scanner):
     mock_sess_obj.query.return_value.all.return_value = [p1]
     
     # Mock API returns official name
-    scanner.fetch_market_info = MagicMock(return_value=(0.002, 10000000, "RED MOUNTAIN MINING LIMITED"))
+    scanner.fetch_market_info = MagicMock(return_value=(0.002, 10000000, "RED MOUNTAIN MINING LIMITED", "CS"))
     
     with patch("scripts.asx_placements.db.session_scope") as mock_scope:
         mock_scope.return_value.__enter__.return_value = mock_sess_obj
@@ -71,7 +71,7 @@ def test_refresh_skips_on_api_failure(scanner):
     mock_sess_obj = MagicMock()
     mock_sess_obj.query.return_value.all.return_value = [p1]
     
-    scanner.fetch_market_info = MagicMock(return_value=(None, None, None))
+    scanner.fetch_market_info = MagicMock(return_value=(None, None, None, None))
     
     with patch("scripts.asx_placements.db.session_scope") as mock_scope:
         mock_scope.return_value.__enter__.return_value = mock_sess_obj
@@ -91,7 +91,7 @@ def test_sync_to_db_uses_live_name_fallback(scanner):
         "pdf_link": "link"
     }
     
-    scanner.fetch_market_info = MagicMock(return_value=(1.1, 100000000, "Official Name Corp"))
+    scanner.fetch_market_info = MagicMock(return_value=(1.1, 100000000, "Official Name Corp", "CS"))
     
     mock_sess_obj = MagicMock()
     # Mock symbols check
@@ -179,7 +179,7 @@ def test_sync_auto_registers_unknown_stocks(scanner, caplog):
     """Stocks not in the watchlist should be auto-registered with stock_type='announcement' 
     and still pass through the liquidity gate if large enough."""
     ev = {
-        "symbol": "UNKNOWN_STOCK",
+        "symbol": "UNKN",
         "date": "2026-04-10",
         "company": "Ghost Corp",
         "headline": "Placement at $1.00",
@@ -187,12 +187,12 @@ def test_sync_auto_registers_unknown_stocks(scanner, caplog):
     }
 
     # market info fetch should occur and return a large market cap
-    scanner.fetch_market_info = MagicMock(return_value=(1.0, 50000000, "Ghost Corp"))
+    scanner.fetch_market_info = MagicMock(return_value=(1.0, 50000000, "Ghost Corp", "CS"))
     scanner._download_pdf = MagicMock()
     
     # We need to test the auto-add logic
     mock_sess_obj = MagicMock()
-    # Watchlist contains only "ABC", not "UNKNOWN_STOCK"
+    # Watchlist contains only "ABC", not "UNKN"
     mock_stock = MagicMock(symbol="ABC")
     mock_sess_obj.query.return_value.all.return_value = [mock_stock]
     # No existing placement
@@ -208,10 +208,10 @@ def test_sync_auto_registers_unknown_stocks(scanner, caplog):
         # Verify the auto-registered stock
         stock_add_call = mock_sess_obj.add.call_args_list[0][0][0]
         assert stock_add_call.__class__.__name__ == "Stock"
-        assert stock_add_call.symbol == "UNKNOWN_STOCK"
+        assert stock_add_call.symbol == "UNKN"
         assert stock_add_call.stock_type == "announcement"
         
-        assert "Auto-registered new stock: UNKNOWN_STOCK" in caplog.text
+        assert "Auto-registered new stock: UNKN" in caplog.text
 
 def test_sync_skips_low_mcap_stocks(scanner, caplog):
     """Stocks below the mcap threshold should be filtered out before CR extraction."""
@@ -224,7 +224,7 @@ def test_sync_skips_low_mcap_stocks(scanner, caplog):
     }
     
     # mcap = 5M < 15M threshold
-    scanner.fetch_market_info = MagicMock(return_value=(0.01, 5_000_000, "Tiny Corp"))
+    scanner.fetch_market_info = MagicMock(return_value=(0.01, 5_000_000, "Tiny Corp", "CS"))
     scanner._download_pdf = MagicMock()
     
     mock_sess_obj = MagicMock()
@@ -244,18 +244,19 @@ def test_sync_skips_low_mcap_stocks(scanner, caplog):
 def test_sync_passes_mcap_none_through(scanner):
     """Stocks where mcap is None (API failure) should pass through the liquidity gate."""
     ev = {
-        "symbol": "APIFAIL",
+        "symbol": "AFAL",
         "date": "2026-04-10",
         "company": "API Fail Corp",
         "headline": "Placement at $0.50",
         "pdf_link": "link"
     }
     
-    # mcap=None simulates a failed API call
-    scanner.fetch_market_info = MagicMock(return_value=(None, None, None))
+    # mcap=None, issueType=None simulates a failed API call
+    # Since AFAL IS in known_stocks, the None issueType check passes
+    scanner.fetch_market_info = MagicMock(return_value=(None, None, None, None))
     
     mock_sess_obj = MagicMock()
-    mock_stock = MagicMock(symbol="APIFAIL")
+    mock_stock = MagicMock(symbol="AFAL")
     mock_sess_obj.query.return_value.all.return_value = [mock_stock]
     mock_sess_obj.query.return_value.filter_by.return_value.first.return_value = None
     
@@ -285,10 +286,10 @@ def test_sync_only_extracts_for_liquid_stocks(scanner):
     
     def market_info_side_effect(sym):
         if sym == "TINY":
-            return (0.01, 5_000_000, "Tiny Corp")        # Below threshold
+            return (0.01, 5_000_000, "Tiny Corp", "CS")     # Below threshold
         elif sym == "BIG":
-            return (2.1, 500_000_000, "Big Corp")         # Above threshold
-        return (None, None, None)
+            return (2.1, 500_000_000, "Big Corp", "CS")      # Above threshold
+        return (None, None, None, None)
     
     scanner.fetch_market_info = MagicMock(side_effect=market_info_side_effect)
     scanner._download_pdf = MagicMock()
@@ -363,7 +364,44 @@ def test_cr_price_4_decimal(scanner):
     diff = scanner.calculate_diff(0.80, 0.7625)
     assert abs(diff - 4.92) < 0.1  # ~4.92%
 
-# --- 8. Resumption Cutoff Tests ---
+# --- 8. Ticker Filtering Tests (merged from test_ticker_filtering.py) ---
+
+def test_placement_scanner_filtering():
+    """Verify that PlacementScanner correctly filters out non-stock items."""
+    market_cache = {
+        "BHP": {"issueType": "CS", "name": "BHP Group"},
+        "SPP": {"issueType": None, "name": None},
+        "BOND": {"issueType": "FLC", "name": "Some Bond"},
+        "LONGTICKER": {"issueType": "CS", "name": "Long Ticker"},
+    }
+
+    events = [
+        {"symbol": "BHP", "company": "BHP"},
+        {"symbol": "SPP", "company": "SPP"},
+        {"symbol": "BOND", "company": "BOND"},
+        {"symbol": "LONGTICKER", "company": "LONG"},
+    ]
+
+    liquid_events = []
+    known_stocks = set()
+
+    for ev in events:
+        sym = ev["symbol"]
+        info = market_cache.get(sym, {})
+        issue_type = info.get("issueType")
+        if not issue_type:
+            if sym not in known_stocks:
+                continue
+        if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
+            continue
+        if len(sym.replace('.AX', '')) > 4:
+            continue
+        liquid_events.append(ev)
+
+    assert len(liquid_events) == 1
+    assert liquid_events[0]["symbol"] == "BHP"
+
+# --- 9. Resumption Cutoff Tests ---
 
 def test_resumption_cutoff_uses_recent_date():
     """Placement resumption should not go further back than 2 days ago."""

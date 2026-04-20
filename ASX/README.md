@@ -269,7 +269,7 @@ pytest tests/test_system_integrity.py
 - `README.md` (标题)
 - `templates/asx_dashboard.html` (Title & Header Pill)
 - `tests/test_system_integrity.py` (自动化提取并比对)
-- `tests/test_ticker_filtering.py` (验证脏数据过滤逻辑)
+- `tests/test_dashboard_fields.py` (跨 Tab 字段命名一致性)
 
 ### 6.5 数据完整性规范 (Data Integrity Standards)
 为确保投研管线的数据纯净，系统强制执行以下准则：
@@ -293,11 +293,10 @@ pytest tests/ -v
 | `test_asx_announcements.py` | `asx_announcements.py` | Rating 启发式、Summary 提取、唯一键幂等性、增量续传、时区感知 |
 | `test_asx_placements.py` | `asx_placements.py` | CR价格正则提取、市价同步、名录回填、**Filter-First Pipeline（监控列表/市值门控）** |
 | `test_asx_analyzer.py` | `asx_analyzer.py` | 动量评分 (Z-Score) 及评分边界 |
-| `test_asx_catalysts.py` | `asx_catalysts.py` | 催化剂字段有效性、**Rating Schema 默认值/排序逻辑** |
 | `test_db_manager.py` | `db_manager.py` | 数据库连接、解耦架构及数据完整性 |
 | `test_utils.py` | `utils.py` | 通用工具函数、日期格式化、Sparkline 生成、**Sydney 时区转换** |
-| `test_ticker_filtering.py` | `asx_announcements.py` / `asx_placements.py` | **脏数据过滤逻辑 (SPP/衍生品拦截)** |
-| `test_run.py` | `run.py` | 主运行逻辑、Dashboard 渲染、**YAML 直读催化剂排序/默认值**、前端展示逻辑 |
+| `test_run.py` | `run.py` | 主运行逻辑、Dashboard 渲染、**YAML 直读催化剂排序/默认值**、催化剂字段有效性、Rating Schema 默认值/排序逻辑 |
+| `test_dashboard_fields.py` | `asx_dashboard.html` | 跨 Tab 字段命名一致性、标准化字段验证 |
 
 **警告**: 任何对 `db_models.py` 的修改必须运行 `reseed` 校验，并确保 `scripts/db_schemas.py` 同步更新。
 

@@ -155,7 +155,7 @@ class PlacementScanner:
             logger.error(f"Failed to load overrides: {e}")
             return {}
 
-    def fetch_market_info(self, symbol: str) -> Tuple[Optional[float], Optional[int], Optional[str]]:
+    def fetch_market_info(self, symbol: str) -> Tuple[Optional[float], Optional[int], Optional[str], Optional[str]]:
         """Fetch current price, market cap, and display name from ASX Header API."""
         try:
             r = self.session.get(PRICE_API.format(symbol.upper()), timeout=DEFAULT_TIMEOUT)

@@ -34,8 +34,8 @@ def test_rating_mid_value_keywords(scanner):
 def test_rating_high_value_keywords(scanner):
     """High-value keywords (discovery, assay, approval) add +2 -> rating 3."""
     assert scanner.calculate_rating("Exceptional Assay Results", "") == 3
-    assert scanner.calculate_rating("Maiden Resource Estimate", "") == 4
-    assert scanner.calculate_rating("FDA Approval Received", "") == 4
+    assert scanner.calculate_rating("Maiden Resource Estimate", "") == 4  # strong phrase
+    assert scanner.calculate_rating("FDA Approval Received", "") == 4  # strong phrase
 
 def test_rating_price_sensitive_flag(scanner):
     """isPriceSensitive from API adds +1 on top of base."""
@@ -64,6 +64,34 @@ def test_rating_all_caps_safeguard_short_headline(scanner):
     rating, reason = scanner.calculate_rating_with_reason("AGM", "", False)
     assert rating < 5
     assert "all_caps" not in reason
+
+def test_rating_corporate_catalysts(scanner):
+    """Corporate actions and business catalysts should score as high-value."""
+    # monetise/monetize → high (+2)
+    assert scanner.calculate_rating("Renegade monetises Carpentaria JV", "", is_price_sensitive=True) >= 4
+    # partnership → high (+2)
+    assert scanner.calculate_rating("Launches Global Partnership Program", "Progress Report", is_price_sensitive=True) >= 3
+    # conditional SPA → strong phrase (+3)
+    assert scanner.calculate_rating("Entry into conditional SPA in respect of CIB", "", is_price_sensitive=True) == 5
+    # fast-track → high (+2)
+    assert scanner.calculate_rating("Fast-Track Mt Chalmers into Development", "") >= 3
+    # commissioning → high (+2)
+    assert scanner.calculate_rating("Commissioning of Processing Plant Complete", "") >= 3
+
+def test_rating_dollar_amount_bonus(scanner):
+    """Headlines with specific dollar amounts get a bonus."""
+    # $15m investment → dollar_amount (+1)
+    assert scanner.calculate_rating("QIC Invests $15m to Fast-Track Development", "") >= 4
+    # $100 million → dollar_amount (+1)
+    assert scanner.calculate_rating("Secures $100 million funding", "") >= 2
+    # No dollar amount → no bonus
+    assert scanner.calculate_rating("Company provides quarterly update", "") == 2
+
+def test_rating_mid_value_new_keywords(scanner):
+    """Newly added mid-value keywords should trigger +1."""
+    assert scanner.calculate_rating("Plant Upgrade Advances", "") == 2
+    assert scanner.calculate_rating("Key Milestone Achieved", "") == 2
+    assert scanner.calculate_rating("Strategic Review Underway", "") == 2
 
 def test_rating_floor_at_1(scanner):
     """Rating never goes below 1."""
@@ -458,3 +486,46 @@ def test_pdf_download_for_existing_record_in_sync(scanner, tmp_path):
         assert mock_sess.add.call_count == 0
         # Should download PDF for existing record
         mock_dl.assert_called_once()
+
+
+# --- Ticker Filtering Tests (merged from test_ticker_filtering.py) ---
+
+def test_ticker_filtering_logic():
+    """Test that the scraper correctly filters out non-stock symbols and derivatives."""
+    from scripts.utils import ticker_clean
+
+    test_items = [
+        {"symbol": "BHP", "headline": "Ordinary Stock - Should Pass",
+         "companyInfo": [{"symbol": "BHP", "issueType": "CS"}]},
+        {"symbol": "VDHG", "headline": "ETF - Should Pass",
+         "companyInfo": [{"symbol": "VDHG", "issueType": "ET"}]},
+        {"symbol": "SPP", "headline": "Ghost Ticker (truncated bond) - Should FAIL",
+         "companyInfo": [{"symbol": "SPPHA", "issueType": "FLC"}]},
+        {"symbol": "CBAHB", "headline": "Preference Share (long ticker) - Should FAIL",
+         "companyInfo": [{"symbol": "CBAHB", "issueType": "CS"}]},
+        {"symbol": "XYZW", "headline": "Warrant - Should FAIL",
+         "companyInfo": [{"symbol": "XYZW", "issueType": "WR"}]},
+    ]
+
+    passed_syms = []
+    for item in test_items:
+        sym = ticker_clean(item.get("symbol", ""))
+        if not sym:
+            continue
+        ci = item.get("companyInfo")
+        is_valid = True
+        if ci and len(ci) > 0:
+            issue_type = ci[0].get("issueType", "")
+            if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
+                is_valid = False
+            real_sym = ci[0].get("symbol", "")
+            if real_sym and len(real_sym.replace('.AX', '')) > 4:
+                is_valid = False
+        if is_valid:
+            passed_syms.append(sym)
+
+    assert "BHP" in passed_syms
+    assert "VDHG" in passed_syms
+    assert "SPP" not in passed_syms
+    assert "CBAHB" not in passed_syms
+    assert "XYZW" not in passed_syms

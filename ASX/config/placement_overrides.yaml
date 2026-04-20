@@ -1,7 +1,7 @@
 # Manual overrides for ASX Placements
 # Key by symbol and date (optional) to specify exact values
 overrides:
-  - symbol: "NMT"
-    cr_price: 0.04
+  # - symbol: "NMT"
+  #   cr_price: 0.04
   # - symbol: "BRU"
   #   delete: true
