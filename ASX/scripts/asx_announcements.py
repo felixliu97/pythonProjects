@@ -32,6 +32,7 @@ ITEMS_PER_PAGE = _CFG.get("scanners", {}).get("items_per_page", 1000)
 _CACHE_DIR = get_root_dir() / ".pdf_cache"
 _CACHE_DIR.mkdir(exist_ok=True)
 
+
 NOISE_KEYWORDS = [
     "appendix 4g", "appendix 3y", "change of director", 
     "becoming a substantial holder", "ceasing to be",
@@ -50,6 +51,7 @@ HIGH_VALUE_KEYWORDS = [
 STRONG_CATALYST_PHRASES = [
     "high-grade assay results",
     "maiden resource estimate",
+    "maiden mre",
     "resource estimate",
     "definitive feasibility study",
     "dfs results",
@@ -58,6 +60,10 @@ STRONG_CATALYST_PHRASES = [
     "fda approval",
     "trial results",
     "phase 3 results",
+    "massive sulphides",
+    "significant discovery",
+    "exceptional intercepts",
+    "high-grade discovery",
 ]
 
 MID_VALUE_KEYWORDS = [
@@ -169,15 +175,23 @@ class AnnouncementScanner:
         is_price_sensitive: bool = False,
     ) -> tuple[int, str]:
         cfg = AnnouncementScanner._load_rating_cfg()
+        import re
 
         text = (headline + " " + summary).lower()
         rating = 1
         reasons: List[str] = []
 
+        # 1. Price Sensitive Bonus
         if is_price_sensitive:
             rating += cfg["price_sensitive_bonus"]
             reasons.append("price_sensitive")
 
+        # 2. Data Impact Bonus (Regex for grades like 150g/t or 2.5%)
+        if re.search(r"\d+(\.\d+)?\s*(g/t|%)", text):
+            rating += 1
+            reasons.append("impact_data")
+
+        # 3. Phrase/Keyword Scoring
         strong_phrases = cfg["strong_catalyst_phrases"] or []
         high_keywords = cfg["high_value_keywords"] or []
         mid_keywords = cfg["mid_value_keywords"] or []
@@ -223,6 +237,22 @@ class AnnouncementScanner:
                 
                 # Filters
                 if not sym: continue
+                    
+                # Strict Security Type Filter: Only allow Ordinary Stocks & ETFs
+                ci = item.get("companyInfo")
+                if ci and len(ci) > 0:
+                    issue_type = ci[0].get("issueType", "")
+                    # CS=Common Stock, CD=CDI, ET=ETF, UI=Units
+                    if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
+                        skipped += 1
+                        continue
+                    
+                    # Filter out derivatives/bonds with long tickers (e.g., SPPHA, CBAHB)
+                    real_sym = ci[0].get("symbol", "")
+                    if real_sym and len(real_sym.replace('.AX', '')) > 4:
+                        skipped += 1
+                        continue
+                        
                 if any(nk in hl.lower() for nk in NOISE_KEYWORDS):
                     skipped += 1
                     continue

@@ -1,4 +1,4 @@
-# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.4 - Tech Spec`
+# ASX 投研仪表盘与自动化管线 (ASX Research Dashboard & Automation) `v1.5 - Tech Spec`
 
 这是一个完全解耦的自动化投研数据管线。本文件作为系统的 **唯一事实来源 (Source of Truth)**，详细记录了所有模块的核心逻辑与架构算法，旨在使开发者能够基于此文档重构整个系统。
 
@@ -63,6 +63,11 @@ graph TD
     3. 极端情况下回退到 Symbol 原文。
 - **Rate Limiting**: API 分页请求之间强制 `time.sleep(0.3)`。
 - **时区标准化**: 所有时间戳统一转为 `Australia/Sydney` 时区（通过 `get_sydney_time()`），确保公告日期与交易日一致。
+- **证券类型与长度过滤 (Security Type Guard)**:
+    - **自动黑名单**: 过滤掉常见的非股票缩写（如 `SPP`, `DIV`, `DRP`, `CR`）。
+    - **Issue Type 验证 (严格准入)**: 仅放行 `CS` (普通股)、`CD` (存托凭证)、`ET/UI` (ETF和信托单位)。
+    - **防御性拦截**: 如果 API 无法识别 Ticker (返回 400/Symbol Not Found)，系统将拦截该 Ticker 的自动注册，防止“幽灵代码”入库。
+    - **Ticker 长度校验**: 强制限制 Ticker 长度 ≤ 4，自动剔除带字母后缀的衍生品。
 
 ### 2.3 融资增发监测 (`asx_placements.py`)
 - **Filter-First Pipeline（先过滤，后提取）**: 
@@ -77,6 +82,9 @@ graph TD
     - **精度**: 支持最多 4 位小数 (如 $0.7625)。
 - **并发刷新与名录回填**: 
     - **自动补全**: 若融资记录缺少 `company` 字段，会在刷新市价时自动从 Markit API 增量提取并回填名称。
+- **证券类型过滤 (Security Type Guard)**:
+    - 与公告爬虫一致，仅允许 `CS`, `CD`, `ET`, `UI` 类型。
+    - 自动拦截市值过低或 Ticker 长度异常的衍生证券。
 
 ### 2.4 动能分析与评分 (`asx_analyzer.py`)
 - **技术指标定义**:
@@ -261,6 +269,13 @@ pytest tests/test_system_integrity.py
 - `README.md` (标题)
 - `templates/asx_dashboard.html` (Title & Header Pill)
 - `tests/test_system_integrity.py` (自动化提取并比对)
+- `tests/test_ticker_filtering.py` (验证脏数据过滤逻辑)
+
+### 6.5 数据完整性规范 (Data Integrity Standards)
+为确保投研管线的数据纯净，系统强制执行以下准则：
+- **禁止幽灵代码**: 严禁注册 API 无法识别的 Ticker（即 Header API 返回 400/Not Found 的 Ticker）。
+- **股票唯一性**: `Placement` 表中的 Ticker 必须在 `Stock` 表中存在，且代码长度不得超过 4 位。
+- **自动拦截机制**: 任何非 `CS`, `CD`, `ET`, `UI` 类型的证券在发现阶段即被物理拦截，不得进入数据库任何表。
 
 ---
 
@@ -281,6 +296,7 @@ pytest tests/ -v
 | `test_asx_catalysts.py` | `asx_catalysts.py` | 催化剂字段有效性、**Rating Schema 默认值/排序逻辑** |
 | `test_db_manager.py` | `db_manager.py` | 数据库连接、解耦架构及数据完整性 |
 | `test_utils.py` | `utils.py` | 通用工具函数、日期格式化、Sparkline 生成、**Sydney 时区转换** |
+| `test_ticker_filtering.py` | `asx_announcements.py` / `asx_placements.py` | **脏数据过滤逻辑 (SPP/衍生品拦截)** |
 | `test_run.py` | `run.py` | 主运行逻辑、Dashboard 渲染、**YAML 直读催化剂排序/默认值**、前端展示逻辑 |
 
 **警告**: 任何对 `db_models.py` 的修改必须运行 `reseed` 校验，并确保 `scripts/db_schemas.py` 同步更新。

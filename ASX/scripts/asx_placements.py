@@ -161,10 +161,10 @@ class PlacementScanner:
             r = self.session.get(PRICE_API.format(symbol.upper()), timeout=DEFAULT_TIMEOUT)
             if r.status_code == 200:
                 d = r.json().get("data", {})
-                return d.get("priceLast"), d.get("marketCap"), d.get("displayName")
+                return d.get("priceLast"), d.get("marketCap"), d.get("displayName"), d.get("issueType")
         except:
             pass
-        return None, None, None
+        return None, None, None, None
 
     def process_raw(self, items: List[Dict]) -> List[Dict]:
         """Heuristic filter for placement announcements."""
@@ -178,7 +178,8 @@ class PlacementScanner:
                     "company": item.get("companyInfo")[0].get("displayName", "") if item.get("companyInfo") else "",
                     "headline": hl,
                     "pdf_link": get_asx_pdf_url(item.get("documentKey", ""), item.get("date", "")),
-                    "documentKey": item.get("documentKey", "")
+                    "documentKey": item.get("documentKey", ""),
+                    "issueType": item.get("companyInfo")[0].get("issueType", "") if item.get("companyInfo") else ""
                 })
         return processed
 
@@ -194,7 +195,7 @@ class PlacementScanner:
             
             with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
                 results = ex.map(lambda s: (s, self.fetch_market_info(s)), symbols)
-                for sym, (px, mcap, name) in results:
+                for sym, (px, mcap, name, itype) in results:
                     if px is not None:
                         price_map[sym] = {"price": px, "name": name}
             
@@ -245,8 +246,8 @@ class PlacementScanner:
             
             with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
                 results = ex.map(lambda s: (s, self.fetch_market_info(s)), unique_symbols)
-                for sym, (px, mcap, name) in results:
-                    market_cache[sym] = {"price": px, "mcap": mcap, "name": name}
+                for sym, (px, mcap, name, itype) in results:
+                    market_cache[sym] = {"price": px, "mcap": mcap, "name": name, "issueType": itype}
             
             # --- Phase 3: Filter by market cap (liquidity gate) ---
             liquid_events = []
@@ -259,9 +260,30 @@ class PlacementScanner:
                     skipped_low_mcap += 1
                     continue
                 
-                # Auto-register unknown stocks
+                # Strict Security Type Filter: Only allow Ordinary Stocks & ETFs
+                issue_type = info.get("issueType")
+                if not issue_type:
+                    # If we can't find the issueType (API error or missing), 
+                    # check if the ticker is already in our whitelist (known_stocks).
+                    # If not, we REJECT it to prevent junk like 'SPP' from being added.
+                    if sym not in known_stocks:
+                        continue
+                    # If it's already known, we proceed (to update prices) but keep a low profile
+                
+                if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
+                    continue
+                
+                # Filter out derivatives/bonds with long tickers
+                if len(sym.replace('.AX', '')) > 4:
+                    continue
+                
+                # Auto-register unknown stocks - ONLY IF WE HAVE VALID INFO
                 if sym not in known_stocks:
-                    live_name = info.get("name") or ev.get("company") or sym
+                    live_name = info.get("name") or ev.get("company")
+                    if not live_name or live_name == sym:
+                        # If we don't even have a proper display name, it's likely junk
+                        continue
+                        
                     new_stock = Stock(symbol=sym, name=live_name, stock_type='announcement')
                     sess.add(new_stock)
                     sess.flush()

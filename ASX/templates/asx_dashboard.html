@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ASX Pro Analysis Suite v1.4</title>
+    <title>ASX Pro Analysis Suite v1.5</title>
     <link rel="stylesheet" href="base.css">
     <link href="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet"
         type="text/css">
@@ -294,7 +294,7 @@
         <header>
             <div>
                 <h1>ASX Pro <span style="color:var(--primary)">Suite</span> <span
-                        style="font-size: 0.9rem; vertical-align: middle; background: var(--border); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); font-weight: 600;">v1.4</span>
+                        style="font-size: 0.9rem; vertical-align: middle; background: var(--border); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); font-weight: 600;">v1.5</span>
                 </h1>
                 <p class="timestamp">Market Engine Sync: {{ timestamp }}</p>
             </div>
@@ -822,7 +822,7 @@
                                 <td class="bold"><span style="display:none">{{ "%010.3f"|format(a.Current_Price|default(0)) }}</span>{% if a.Current_Price is not none %}${{ a.Current_Price|trim_zeros }}{% else %}-{% endif %}</td>
                                 <td class="{{ 'pos' if a.Price_Diff_1d and a.Price_Diff_1d > 0 else ('neg' if a.Price_Diff_1d and a.Price_Diff_1d < 0 else 'dim') }}">
                                     <span style="display:none">{{ "%010.3f"|format((a.Price_Diff_1d|default(0)) + 10000.0) }}</span>
-                                    {% if a.Price_Change_1d is not none %}{{ a.Price_Change_1d|trim_zeros }} ({{ "%+.2f"|format(a.Price_Diff_1d) }}%){% else %}-{% endif %}
+                                    {% if a.Price_Change_1d is not none and a.Price_Diff_1d is not none %}{{ a.Price_Change_1d|trim_zeros }} ({{ "%+.2f"|format(a.Price_Diff_1d) }}%){% else %}-{% endif %}
                                 </td>
                                 <td>
                                     <span style="display:none">{{ a.Rating }}</span>
@@ -831,7 +831,7 @@
                                         {{ a.Rating }}/5
                                     </span>
                                 </td>
-                                <td class="bold {% if a.RSI > 70 %}neg{% elif a.RSI < 30 %}pos{% endif %}">
+                                <td class="bold {% if a.RSI and a.RSI > 70 %}neg{% elif a.RSI and a.RSI < 30 %}pos{% endif %}">
                                     <span style="display:none">{{ "%010.3f"|format(a.RSI|default(0)) }}</span>
                                     {% if a.RSI is not none %}{{ "%.1f"|format(a.RSI) }}{% else %}-{% endif %}
                                 </td>

@@ -160,19 +160,22 @@ def load_db_data() -> dict:
         # Build price lookup from MarketTrend for price & 1D% display
         trend_lookup = {t.symbol: t for t in session.query(MarketTrend).filter_by(is_active=True).all()}
 
-        ann_list = [{
-            "ASX_Code": a.symbol,
-            "Company": a.company,
-            "Headline": a.headline,
-            "Date": a.event_date.strftime("%Y-%m-%d") if a.event_date else "",
-            "Summary": a.summary,
-            "PDF_Link": a.pdf_link,
-            "Rating": a.rating,
-            "Current_Price": (trend_lookup[a.symbol].current_price if a.symbol in trend_lookup else None),
-            "Price_Change_1d": (trend_lookup[a.symbol].price_change_1d or 0.0 if a.symbol in trend_lookup else None),
-            "Price_Diff_1d": (trend_lookup[a.symbol].price_diff_1d or 0.0 if a.symbol in trend_lookup else None),
-            "RSI": (trend_lookup[a.symbol].rsi if a.symbol in trend_lookup else None),
-        } for a in ann_res]
+        ann_list = []
+        for a in ann_res:
+            trend = trend_lookup.get(a.symbol)
+            ann_list.append({
+                "ASX_Code": a.symbol,
+                "Company": a.company,
+                "Headline": a.headline,
+                "Date": a.event_date.strftime("%Y-%m-%d") if a.event_date else "",
+                "Summary": a.summary,
+                "PDF_Link": a.pdf_link,
+                "Rating": a.rating or 0,
+                "Current_Price": trend.current_price if trend else None,
+                "Price_Change_1d": trend.price_change_1d or 0.0 if trend else 0.0,
+                "Price_Diff_1d": trend.price_diff_1d or 0.0 if trend else 0.0,
+                "RSI": trend.rsi if trend else 50.0,
+            })
 
         # 3. Placements
         plac_res = session.query(Placement).order_by(Placement.event_date.desc()).limit(150).all()
