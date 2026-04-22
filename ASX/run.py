@@ -274,13 +274,23 @@ def build_dashboard():
 def run_integrity_check():
     """Run pytest prerequisites before allowing data operations."""
     print(f"{Color.YELLOW}{Color.BOLD}🛡️  Running pytest pre-requisite checks...{Color.RESET}")
-    import pytest
-    ret = pytest.main(["tests", "-q", "--no-summary"])
-    if ret != 0:
+    
+    # Run in a completely isolated subprocess to prevent test configurations
+    # (like in-memory DB and stripped schemas) from polluting the main process.
+    env = os.environ.copy()
+    env["TESTING"] = "true"
+    
+    try:
+        # Run pytest via module to ensure correct path resolution
+        cmd = [sys.executable, "-m", "pytest", "tests", "-q", "--no-summary"]
+        subprocess.run(cmd, env=env, check=True)
+        print(f"{Color.GREEN}{Color.BOLD}✅ Pytest pre-requisite passed.{Color.RESET}")
+        return True
+    except subprocess.CalledProcessError:
         print(f"{Color.RED}{Color.BOLD}❌ Pytest pre-requisite FAILED. Please fix the test suite before running.{Color.RESET}")
+        # Run again without -q to show the actual errors
+        subprocess.run([sys.executable, "-m", "pytest", "tests"], env=env)
         return False
-    print(f"{Color.GREEN}{Color.BOLD}✅ Pytest pre-requisite passed.{Color.RESET}")
-    return True
 
 def should_skip_data_pull():
     """Returns True if it's weekend and DB already has latest Friday data."""

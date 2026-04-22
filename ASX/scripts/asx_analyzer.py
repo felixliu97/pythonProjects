@@ -250,9 +250,11 @@ class MomentumAnalyzer:
                             results.append(res)
                             succeeded += 1
                     if completed == len(stocks) or completed % max(1, min(10, _WORKERS)) == 0:
-                        logger.info(
+                        from utils import print_progress
+                        print_progress(
                             f"Market analysis progress: {completed}/{len(stocks)} completed ({succeeded} succeeded, {completed - succeeded} failed)"
                         )
+                print() # Newline after progress complete
             
             now = get_sydney_time()
             sync_count = 0

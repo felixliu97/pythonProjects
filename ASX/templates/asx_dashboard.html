@@ -378,20 +378,20 @@
                                         </td>
                                         <td class="dim">{{ s.industry }}</td>
                                         <td class="dim">
-                                            <span style="display:none">{{ "%015d"|format(s.marketCap|default(0))
-                                                }}</span>{% if s.marketCap > 1000000000 %}{{
+                                            <span style="display:none">{{ "%015d"|format(s.marketCap|default(0, True))
+                                                }}</span>{% if s.marketCap and s.marketCap > 1000000000 %}{{
                                             "%.1fb"|format(s.marketCap/1000000000) }}{% elif s.marketCap %}{{
                                             "%.1fm"|format(s.marketCap/1000000) }}{% else %}-{% endif %}
                                         </td>
                                         <td class="bold"><span style="display:none">{{
-                                                "%010.3f"|format(s.current_price|default(0)) }}</span>${{
+                                                "%010.3f"|format(s.current_price|default(0, True)) }}</span>${{
                                             s.current_price|trim_zeros }}</td>
                                         <td><img src="{{ s.sparkline }}" class="sparkline-img" alt="Trend"></td>
                                         <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.pe if s.pe is
                                                 number else 99999.0) + 10000.0) }}</span>{{ "%.1f"|format(s.pe) if (s.pe
                                             is number and s.pe > 0) else "-" }}</td>
                                         <td>
-                                            <span style="display:none">{{ "%010.3f"|format(s.score|default(0) + 10000.0)
+                                            <span style="display:none">{{ "%010.3f"|format(s.score|default(0, True) + 10000.0)
                                                 }}</span>
                                             <span
                                                 class="score-pill {{ 'score-high' if s.score > 60 else ('score-med' if s.score > 30 else 'score-low') }}">
@@ -400,29 +400,29 @@
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.price_change_1d > 0 else ('neg' if s.price_change_1d < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_1d|default(0))
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_1d|default(0, True))
                                                 + 10000.0) }}</span>{{
                                             s.price_change_1d|trim_zeros }} ({{ "%+ .2f"|format(s.price_diff_1d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.price_change_5d > 0 else ('neg' if s.price_change_5d < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_5d|default(0))
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_5d|default(0, True))
                                                 + 10000.0) }}</span>{{
                                             s.price_change_5d|trim_zeros }} ({{ "%+ .2f"|format(s.price_diff_5d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.momentum > 0 else ('neg' if s.momentum < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format(s.momentum|default(0) +
+                                            <span style="display:none">{{ "%010.3f"|format(s.momentum|default(0, True) +
                                                 10000.0) }}</span>{{ "%+.1f"|format(s.momentum) }}%
                                         </td>
                                         <td class="dim"><span style="display:none">{{
-                                                "%010.3f"|format(s.volatility|default(0)) }}</span>{{
+                                                "%010.3f"|format(s.volatility|default(0, True)) }}</span>{{
                                             "%.1f"|format(s.volatility) }}%</td>
                                         <td class="{{ 'pos' if s.volume_change > 0 else 'neg' }}"><span
-                                                style="display:none">{{ "%010.3f"|format(s.volume_change|default(0) +
+                                                style="display:none">{{ "%010.3f"|format(s.volume_change|default(0, True) +
                                                 10000.0) }}</span>{{ "%.1f"|format(s.volume_change) }}%</td>
                                         <td class="bold {% if s.rsi > 70 %}neg{% elif s.rsi < 30 %}pos{% endif %}"><span
-                                                style="display:none">{{ "%010.3f"|format(s.rsi|default(0)) }}</span>{{
+                                                style="display:none">{{ "%010.3f"|format(s.rsi|default(0, True)) }}</span>{{
                                             "%.1f"|format(s.rsi) }}</td>
                                     </tr>
                                     {% endfor %}
@@ -466,20 +466,20 @@
                                         </td>
                                         <td class="dim">{{ s.industry }}</td>
                                         <td class="dim">
-                                            <span style="display:none">{{ "%015d"|format(s.marketCap|default(0))
-                                                }}</span>{% if s.marketCap > 1000000000 %}{{
+                                            <span style="display:none">{{ "%015d"|format(s.marketCap|default(0, True))
+                                                }}</span>{% if s.marketCap and s.marketCap > 1000000000 %}{{
                                             "%.1fb"|format(s.marketCap/1000000000) }}{% elif s.marketCap %}{{
                                             "%.1fm"|format(s.marketCap/1000000) }}{% else %}-{% endif %}
                                         </td>
                                         <td class="bold"><span style="display:none">{{
-                                                "%010.3f"|format(s.current_price|default(0)) }}</span>${{
+                                                "%010.3f"|format(s.current_price|default(0, True)) }}</span>${{
                                             s.current_price|trim_zeros }}</td>
                                         <td><img src="{{ s.sparkline }}" class="sparkline-img" alt="Trend"></td>
                                         <td class="dim"><span style="display:none">{{ "%010.3f"|format((s.pe if s.pe is
                                                 number else 99999.0) + 10000.0) }}</span>{{ "%.1f"|format(s.pe) if (s.pe
                                             is number and s.pe > 0) else "-" }}</td>
                                         <td>
-                                            <span style="display:none">{{ "%010.3f"|format(s.score|default(0) + 10000.0)
+                                            <span style="display:none">{{ "%010.3f"|format(s.score|default(0, True) + 10000.0)
                                                 }}</span>
                                             <span
                                                 class="score-pill {{ 'score-high' if s.score > 60 else ('score-med' if s.score > 30 else 'score-low') }}">
@@ -488,29 +488,29 @@
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.price_change_1d > 0 else ('neg' if s.price_change_1d < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_1d|default(0))
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_1d|default(0, True))
                                                 + 10000.0) }}</span>{{
                                             s.price_change_1d|trim_zeros }} ({{ "%+ .2f"|format(s.price_diff_1d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.price_change_5d > 0 else ('neg' if s.price_change_5d < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_5d|default(0))
+                                            <span style="display:none">{{ "%010.3f"|format((s.price_diff_5d|default(0, True))
                                                 + 10000.0) }}</span>{{
                                             s.price_change_5d|trim_zeros }} ({{ "%+ .2f"|format(s.price_diff_5d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if s.momentum > 0 else ('neg' if s.momentum < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format(s.momentum|default(0) +
+                                            <span style="display:none">{{ "%010.3f"|format(s.momentum|default(0, True) +
                                                 10000.0) }}</span>{{ "%+.1f"|format(s.momentum) }}%
                                         </td>
                                         <td class="dim"><span style="display:none">{{
-                                                "%010.3f"|format(s.volatility|default(0)) }}</span>{{
+                                                "%010.3f"|format(s.volatility|default(0, True)) }}</span>{{
                                             "%.1f"|format(s.volatility) }}%</td>
                                         <td class="{{ 'pos' if s.volume_change > 0 else 'neg' }}"><span
-                                                style="display:none">{{ "%010.3f"|format(s.volume_change|default(0) +
+                                                style="display:none">{{ "%010.3f"|format(s.volume_change|default(0, True) +
                                                 10000.0) }}</span>{{ "%.1f"|format(s.volume_change) }}%</td>
                                         <td class="bold {% if s.rsi > 70 %}neg{% elif s.rsi < 30 %}pos{% endif %}"><span
-                                                style="display:none">{{ "%010.3f"|format(s.rsi|default(0)) }}</span>{{
+                                                style="display:none">{{ "%010.3f"|format(s.rsi|default(0, True)) }}</span>{{
                                             "%.1f"|format(s.rsi) }}</td>
                                     </tr>
                                     {% endfor %}
@@ -552,20 +552,20 @@
                                                 {{ e.name }}</div>
                                         </td>
                                         <td class="dim">
-                                            <span style="display:none">{{ "%015d"|format(e.marketCap|default(0))
-                                                }}</span>{% if e.marketCap > 1000000000 %}{{
+                                            <span style="display:none">{{ "%015d"|format(e.marketCap|default(0, True))
+                                                }}</span>{% if e.marketCap and e.marketCap > 1000000000 %}{{
                                             "%.1fb"|format(e.marketCap/1000000000) }}{% elif e.marketCap %}{{
                                             "%.1fm"|format(e.marketCap/1000000) }}{% else %}-{% endif %}
                                         </td>
                                         <td class="bold"><span style="display:none">{{
-                                                "%010.3f"|format(e.current_price|default(0)) }}</span>${{
+                                                "%010.3f"|format(e.current_price|default(0, True)) }}</span>${{
                                             e.current_price|trim_zeros }}</td>
                                         <td><img src="{{ e.sparkline }}" class="sparkline-img" alt="Trend"></td>
                                         <td class="dim bold" style="color: var(--positive);"><span
-                                                style="display:none">{{ "%010.3f"|format(e.yield|default(0)) }}</span>{{
+                                                style="display:none">{{ "%010.3f"|format(e.yield|default(0, True)) }}</span>{{
                                             "%.2f"|format(e.yield) }}%</td>
                                         <td>
-                                            <span style="display:none">{{ "%010.3f"|format(e.score|default(0) + 10000.0)
+                                            <span style="display:none">{{ "%010.3f"|format(e.score|default(0, True) + 10000.0)
                                                 }}</span>
                                             <span
                                                 class="score-pill {{ 'score-high' if e.score > 60 else ('score-med' if e.score > 30 else 'score-low') }}">
@@ -574,29 +574,29 @@
                                         </td>
                                         <td
                                             class="{{ 'pos' if e.price_change_1d > 0 else ('neg' if e.price_change_1d < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format((e.price_diff_1d|default(0))
+                                            <span style="display:none">{{ "%010.3f"|format((e.price_diff_1d|default(0, True))
                                                 + 10000.0) }}</span>
                                             {{ e.price_change_1d|trim_zeros }} ({{ "%+ .2f"|format(e.price_diff_1d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if e.price_change_5d > 0 else ('neg' if e.price_change_5d < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format((e.price_diff_5d|default(0))
+                                            <span style="display:none">{{ "%010.3f"|format((e.price_diff_5d|default(0, True))
                                                 + 10000.0) }}</span>
                                             {{ e.price_change_5d|trim_zeros }} ({{ "%+ .2f"|format(e.price_diff_5d) }}%)
                                         </td>
                                         <td
                                             class="{{ 'pos' if e.momentum > 0 else ('neg' if e.momentum < 0 else 'dim') }}">
-                                            <span style="display:none">{{ "%010.3f"|format(e.momentum|default(0) +
+                                            <span style="display:none">{{ "%010.3f"|format(e.momentum|default(0, True) +
                                                 10000.0) }}</span>{{ "%+.1f"|format(e.momentum) }}%
                                         </td>
                                         <td class="dim"><span style="display:none">{{
-                                                "%010.3f"|format(e.volatility|default(0)) }}</span>{{
+                                                "%010.3f"|format(e.volatility|default(0, True)) }}</span>{{
                                             "%.1f"|format(e.volatility) }}%</td>
                                         <td class="{{ 'pos' if e.volume_change > 0 else 'neg' }}"><span
-                                                style="display:none">{{ "%010.3f"|format(e.volume_change|default(0) +
+                                                style="display:none">{{ "%010.3f"|format(e.volume_change|default(0, True) +
                                                 10000.0) }}</span>{{ "%.1f"|format(e.volume_change) }}%</td>
                                         <td class="bold {% if e.rsi > 70 %}neg{% elif e.rsi < 30 %}pos{% endif %}"><span
-                                                style="display:none">{{ "%010.3f"|format(e.rsi|default(0)) }}</span>{{
+                                                style="display:none">{{ "%010.3f"|format(e.rsi|default(0, True)) }}</span>{{
                                             "%.1f"|format(e.rsi) }}</td>
                                     </tr>
                                     {% endfor %}
@@ -821,9 +821,9 @@
                                         {{ a.Summary }}
                                     </div>
                                 </td>
-                                <td class="bold"><span style="display:none">{{ "%010.3f"|format(a.Current_Price|default(0)) }}</span>{% if a.Current_Price is not none %}${{ a.Current_Price|trim_zeros }}{% else %}-{% endif %}</td>
+                                <td class="bold"><span style="display:none">{{ "%010.3f"|format(a.Current_Price|default(0, True)) }}</span>{% if a.Current_Price is not none %}${{ a.Current_Price|trim_zeros }}{% else %}-{% endif %}</td>
                                 <td class="{{ 'pos' if a.Price_Diff_1d and a.Price_Diff_1d > 0 else ('neg' if a.Price_Diff_1d and a.Price_Diff_1d < 0 else 'dim') }}">
-                                    <span style="display:none">{{ "%010.3f"|format((a.Price_Diff_1d|default(0)) + 10000.0) }}</span>
+                                    <span style="display:none">{{ "%010.3f"|format((a.Price_Diff_1d|default(0, True)) + 10000.0) }}</span>
                                     {% if a.Price_Change_1d is not none and a.Price_Diff_1d is not none %}{{ a.Price_Change_1d|trim_zeros }} ({{ "%+.2f"|format(a.Price_Diff_1d) }}%){% else %}-{% endif %}
                                 </td>
                                 <td>
@@ -834,7 +834,7 @@
                                     </span>
                                 </td>
                                 <td class="bold {% if a.RSI and a.RSI > 70 %}neg{% elif a.RSI and a.RSI < 30 %}pos{% endif %}">
-                                    <span style="display:none">{{ "%010.3f"|format(a.RSI|default(0)) }}</span>
+                                    <span style="display:none">{{ "%010.3f"|format(a.RSI|default(0, True)) }}</span>
                                     {% if a.RSI is not none %}{{ "%.1f"|format(a.RSI) }}{% else %}-{% endif %}
                                 </td>
                                 <td><a href="{{ a.PDF_Link }}" target="_blank"

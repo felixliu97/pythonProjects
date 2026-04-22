@@ -20,9 +20,10 @@ def test_flat_table_independence():
         sess.query(MarketTrend).filter_by(symbol=symbol).delete()
         sess.flush()
         
+        from datetime import date
         # Inserts
         sess.add(Stock(symbol=symbol, name="Independent", stock_type="growth"))
-        sess.add(MarketTrend(symbol=symbol, market_date="2026-04-13", score=99.9))
+        sess.add(MarketTrend(symbol=symbol, market_date=date(2026, 4, 13), score=99.9))
         sess.commit()
         
     with db.session_scope() as sess:

@@ -65,7 +65,10 @@ class PlacementScanner:
                 f.write(r.content)
             return local_path
         except Exception as e:
-            logger.error(f"Failed to download PDF {filename}: {e}")
+            if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
+                logger.warning(f"PDF not available (404): {filename}")
+            else:
+                logger.error(f"Failed to download PDF {filename}: {e}")
             return None
 
     def _extract_text_from_pdf(self, local_path: Path) -> str:
@@ -306,11 +309,14 @@ class PlacementScanner:
                 # Find any existing record for this symbol (Deduplication: One stock, one record)
                 existing = sess.query(Placement).filter_by(symbol=sym).first()
                 
+                new_date = datetime.strptime(ev["date"], "%Y-%m-%d").date()
+                
                 # Priority: Override > Heuristic
                 cr_price = ov.get("cr_price")
                 
-                # If we already processed this EXACT event successfully, skip extraction
-                already_processed = existing and existing.event_date == datetime.strptime(ev["date"], "%Y-%m-%d").date() and existing.cr_price and existing.cr_price > 0
+                # If we already have a valid price and the new event is NOT older, 
+                # any extracted price would be discarded anyway, so skip extraction to save time.
+                already_processed = existing and existing.cr_price and existing.cr_price > 0 and new_date >= existing.event_date
                 
                 # If no override and not already processed, try extraction (Content > Headline)
                 if not cr_price and not already_processed:
@@ -331,8 +337,6 @@ class PlacementScanner:
                 elif already_processed:
                     # Keep the existing price so downstream logic doesn't think we failed
                     cr_price = existing.cr_price
-                
-                new_date = datetime.strptime(ev["date"], "%Y-%m-%d").date()
                 
                 if existing:
                     # Priority 1: Manual Overrides always win and update existing

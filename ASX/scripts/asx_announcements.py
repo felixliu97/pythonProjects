@@ -122,7 +122,10 @@ class AnnouncementScanner:
                     tmp_path.unlink()
             except OSError:
                 pass
-            logger.error(f"Failed to download PDF {filename}: {e}")
+            if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
+                logger.warning(f"PDF not available (404): {filename}")
+            else:
+                logger.error(f"Failed to download PDF {filename}: {e}")
             return None
 
     def _download_pdfs_batch(self, downloads: List[Tuple[str, str]]) -> None:
@@ -168,9 +171,11 @@ class AnnouncementScanner:
                 if result:
                     succeeded += 1
                 if completed == len(unique_downloads) or completed % max(1, min(10, workers)) == 0:
-                    logger.info(
+                    from utils import print_progress
+                    print_progress(
                         f"PDF download progress: {completed}/{len(unique_downloads)} completed ({succeeded} succeeded, {completed - succeeded} failed)"
                     )
+            print() # Newline after progress complete
 
     def fetch_raw(self, start_date: datetime, *, price_sensitive_only: bool = True) -> List[Dict]:
         """Fetch raw announcement JSON from ASX API."""

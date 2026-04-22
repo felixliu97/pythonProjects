@@ -58,6 +58,15 @@ def get_logger(name: str = "asx_pipeline") -> logging.Logger:
 # Global logger instance
 logger = get_logger()
 
+def print_progress(msg: str, end: str = "\r"):
+    """Print a message with a carriage return for single-line progress updates."""
+    import sys
+    # Wrap in colored formatting if it looks like info
+    sys.stdout.write(f"\033[92m{msg}\033[0m{end}")
+    sys.stdout.flush()
+    if end != "\r":
+        sys.stdout.write("\n")
+
 # --- Config Management ---
 def get_root_dir() -> Path:
     """Returns the project root directory."""

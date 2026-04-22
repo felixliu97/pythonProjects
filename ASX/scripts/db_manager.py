@@ -28,15 +28,28 @@ except ImportError:
     from scripts.db_models import Base
     from scripts.utils import logger, get_sydney_time
 
-# DB Connection Config from Environment Variables (with explicit fallbacks)
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASS = os.getenv("DB_PASS", "postgres")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
-DB_NAME = os.getenv("DB_NAME", "postgres")
+def get_db_url() -> str:
+    """Returns the database URL based on the current environment."""
+    if os.getenv("TESTING") == "true":
+        return "sqlite:///:memory:"
+    
+    user = os.getenv("DB_USER", "postgres")
+    pw = os.getenv("DB_PASS", "postgres")
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", "5432")
+    db_name = os.getenv("DB_NAME", "postgres")
+    return f"postgresql://{user}:{pw}@{host}:{port}/{db_name}"
 
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-ROOT_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/postgres"
+def get_root_url() -> str:
+    """Returns the root database URL for existence checks."""
+    if os.getenv("TESTING") == "true":
+        return "sqlite:///:memory:"
+    
+    user = os.getenv("DB_USER", "postgres")
+    pw = os.getenv("DB_PASS", "postgres")
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", "5432")
+    return f"postgresql://{user}:{pw}@{host}:{port}/postgres"
 
 class DBManager:
     """Manages database connections and session lifecycle."""
@@ -49,24 +62,43 @@ class DBManager:
     def init_db(self, create_tables: bool = True):
         """Initialize the database connection and optionally create tables."""
         self.ensure_db_exists()
+        url = get_db_url()
+        
+        # SQLite doesn't support schemas, so we strip them from metadata
+        if "sqlite" in url:
+            for table in Base.metadata.tables.values():
+                table.schema = None
+            if os.getenv("TESTING") == "true":
+                logger.info("🛠️  Testing mode active: Using in-memory SQLite database.")
+        
         # pool_pre_ping=True ensures stale connections are recycled
-        self._engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_size=10, max_overflow=20)
+        if "sqlite" in url:
+            self._engine = create_engine(url)
+        else:
+            self._engine = create_engine(url, pool_pre_ping=True, pool_size=10, max_overflow=20)
+            
         self._SessionFactory = sessionmaker(bind=self._engine)
         self._scoped_session = scoped_session(self._SessionFactory)
         
         if create_tables:
-            with self._engine.connect() as conn:
-                conn.execute(text("CREATE SCHEMA IF NOT EXISTS asx"))
-                conn.commit()
+            if "sqlite" not in url:
+                with self._engine.connect() as conn:
+                    conn.execute(text("CREATE SCHEMA IF NOT EXISTS asx"))
+                    conn.commit()
             Base.metadata.create_all(self._engine)
 
     def ensure_db_exists(self):
         """Ensure the target database exists; if not, attempt minimal creation."""
+        url = get_root_url()
+        if "sqlite" in url:
+            return
+            
         try:
-            root_engine = create_engine(ROOT_URL, isolation_level="AUTOCOMMIT")
+            root_engine = create_engine(url, isolation_level="AUTOCOMMIT")
             with root_engine.connect() as conn:
                 # Check for DB existence
-                result = conn.execute(text(f"SELECT 1 FROM pg_database WHERE datname='{DB_NAME}'"))
+                db_name = os.getenv("DB_NAME", "postgres")
+                result = conn.execute(text(f"SELECT 1 FROM pg_database WHERE datname='{db_name}'"))
                 if not result.fetchone():
                     logger.warning(f"Database {DB_NAME} not found. Creating...")
                     conn.execute(text(f"CREATE DATABASE {DB_NAME}"))
