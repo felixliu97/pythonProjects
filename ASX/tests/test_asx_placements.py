@@ -27,6 +27,22 @@ def test_price_diff_logic(scanner):
     assert scanner.calculate_diff(0.8, 1.0) == -20.0
     assert scanner.calculate_diff(0, 1.2) == 0.0
 
+def test_process_raw_matches_raise_to_fund_headline(scanner):
+    """Raise-to-fund financing headlines should not be missed even without the literal word placement."""
+    items = [{
+        "symbol": "OMA",
+        "date": "2026-04-23T10:13:00+1000",
+        "headline": "OMA Raise A$60m to Fund Upgraded 26/27 Taroom Trough Program",
+        "documentKey": "3A000001",
+        "companyInfo": [{"displayName": "Omega Oil & Gas Limited", "issueType": "CS"}]
+    }]
+
+    processed = scanner.process_raw(items)
+
+    assert len(processed) == 1
+    assert processed[0]["symbol"] == "OMA"
+    assert processed[0]["headline"] == "oma raise a$60m to fund upgraded 26/27 taroom trough program"
+
 # --- 2. Live Refresh Tests ---
 
 def test_refresh_all_prices_logic(scanner):

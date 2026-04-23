@@ -310,7 +310,14 @@ pytest tests/ -v
 | `test_db_manager.py` | `db_manager.py` | 数据库连接、解耦架构及数据完整性 |
 | `test_utils.py` | `utils.py` | 通用工具函数、日期格式化、Sparkline 生成、**Sydney 时区转换** |
 | `test_run.py` | `run.py` | 主运行逻辑、Dashboard 渲染、**YAML 直读催化剂排序/默认值**、催化剂字段有效性、Rating Schema 默认值/排序逻辑 |
-| `test_dashboard_fields.py` | `asx_dashboard.html` | 跨 Tab 字段命名一致性、标准化字段验证 |
+| `test_dashboard_fields.py` | `asx_dashboard.html` | 跨 Tab 字段命名一致性、标准化字段验证、**Dashboard 模板渲染 smoke test**、Catalyst Rating 排序 key 校验 |
+
+当前测试目录按职责划分为：
+
+- **采集层**：`test_asx_announcements.py`, `test_asx_placements.py`
+- **分析/运行层**：`test_asx_analyzer.py`, `test_run.py`, `test_utils.py`
+- **存储与完整性**：`test_db_manager.py`, `test_system_integrity.py`
+- **Dashboard/UI**：`test_dashboard_fields.py`
 
 **警告**: 任何对 `db_models.py` 的修改必须运行 `reseed` 校验，并确保 `scripts/db_schemas.py` 同步更新。
 
@@ -336,11 +343,13 @@ pytest tests/ -v
 
 ### 7.2 字段一致性测试
 
-`tests/test_dashboard_fields.py` 包含以下测试：
+`tests/test_dashboard_fields.py` 现已集中承载 Dashboard 相关测试，包括：
 - `test_ticker_field_consistency`: 验证 `Ticker` 字段名一致性
 - `test_company_field_consistency`: 验证公司名字段一致性
 - `test_price_field_consistency`: 验证价格字段一致性
 - `test_pdf_field_consistency`: 验证 PDF 字段命名
 - `test_no_duplicate_field_names`: 验证无重复字段名
+- `test_dashboard_renders_with_none_values`: 验证模板在 `None` 值输入下仍可渲染
+- `test_catalyst_rating_uses_hidden_sort_key`: 验证 Catalyst `Rating` 列排序 key 存在
 
 运行测试：`python -m pytest tests/test_dashboard_fields.py -v`

@@ -41,6 +41,13 @@ PLACEMENT_KEYWORDS = (
     "equity raising", "entitlement offer", "rights issue"
 )
 
+PLACEMENT_REGEX_PATTERNS = (
+    r"\braise(?:s|d)?\s+a\$\s*\d",
+    r"\bto\s+fund\b",
+    r"\bfirm\s+commitments\b",
+    r"\bcommitments\s+received\b",
+)
+
 _CACHE_DIR = get_root_dir() / ".pdf_cache"
 _CACHE_DIR.mkdir(exist_ok=True)
 
@@ -174,7 +181,9 @@ class PlacementScanner:
         processed = []
         for item in items:
             hl = item.get("headline", "").lower()
-            if any(kw in hl for kw in PLACEMENT_KEYWORDS):
+            is_keyword_match = any(kw in hl for kw in PLACEMENT_KEYWORDS)
+            is_pattern_match = any(re.search(pattern, hl) for pattern in PLACEMENT_REGEX_PATTERNS)
+            if is_keyword_match or is_pattern_match:
                 processed.append({
                     "symbol": ticker_clean(item.get("symbol", "")),
                     "date": normalize_date(item.get("date", "")),

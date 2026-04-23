@@ -4,8 +4,10 @@ Ensures the same field has the same name in different tables.
 """
 
 import pytest
+from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
 import re
+from run import trim_zeros
 
 
 class TestDashboardFieldConsistency:
@@ -18,6 +20,16 @@ class TestDashboardFieldConsistency:
         if not template_path.exists():
             pytest.skip("Dashboard template not found")
         return template_path.read_text(encoding="utf-8")
+
+    @pytest.fixture
+    def template(self):
+        template_dir = Path(__file__).parent.parent / "templates"
+        if not template_dir.exists():
+            pytest.skip("Templates directory not found")
+
+        env = Environment(loader=FileSystemLoader(str(template_dir)))
+        env.filters["trim_zeros"] = trim_zeros
+        return env.get_template("asx_dashboard.html")
 
     @pytest.fixture
     def table_headers(self, template_content):
@@ -176,6 +188,102 @@ class TestDashboardFieldConsistency:
         """Catalyst Rating column should include a hidden numeric sort key for stable table sorting."""
         assert '{% set r_sort =' in template_content
         assert '<span style="display:none">{{ r_sort }}</span>' in template_content
+
+    def test_dashboard_renders_with_none_values(self, template):
+        mock_data = {
+            "analyzer": {
+                "growth_stocks": [{
+                    "symbol": "WAU",
+                    "name": "WAU Corp",
+                    "industry": "Mining",
+                    "current_price": 0.0,
+                    "marketCap": 0,
+                    "pe": None,
+                    "yield": 0.0,
+                    "score": 0.0,
+                    "price_change_1d": 0.0,
+                    "price_diff_1d": 0.0,
+                    "price_change_5d": 0.0,
+                    "price_diff_5d": 0.0,
+                    "momentum": 0.0,
+                    "volatility": 0.0,
+                    "volume_change": 0.0,
+                    "rsi": 0.0,
+                    "sparkline": "dummy.png"
+                }],
+                "foundation_stocks": [],
+                "etfs": [{
+                    "symbol": "ETF",
+                    "name": "ETF Fund",
+                    "marketCap": 0,
+                    "current_price": 0.0,
+                    "yield": 0.0,
+                    "score": 0.0,
+                    "price_change_1d": 0.0,
+                    "price_diff_1d": 0.0,
+                    "price_change_5d": 0.0,
+                    "price_diff_5d": 0.0,
+                    "momentum": 0.0,
+                    "volatility": 0.0,
+                    "volume_change": 0.0,
+                    "rsi": 0.0,
+                    "sparkline": "dummy.png"
+                }],
+                "global_timeline": []
+            },
+            "catalysts": {
+                "catalysts": [{
+                    "Ticker": "WAU",
+                    "Stage": "阶段1-无人关注期",
+                    "Sector": "Mining",
+                    "Timeline": [],
+                    "Catalysts": [],
+                    "Risks": [],
+                    "Rating": "观望",
+                    "CR_Risk": "高",
+                    "Breakout_Probability": "中",
+                    "Core_Notes": ""
+                }]
+            },
+            "announcements": {
+                "announcements": [{
+                    "Date": "2026-04-22",
+                    "ASX_Code": "WAU",
+                    "Company": "WAU Corp",
+                    "Headline": "Test Announcement",
+                    "Summary": "Summary",
+                    "Current_Price": None,
+                    "Price_Change_1d": 0.0,
+                    "Price_Diff_1d": 0.0,
+                    "Rating": 0,
+                    "RSI": None,
+                    "PDF_Link": "#"
+                }]
+            },
+            "placements": {
+                "placements": [{
+                    "Date": "2026-04-22",
+                    "ASX_Code": "WAU",
+                    "Company": "WAU Corp",
+                    "Headline": "Test Placement",
+                    "CR_Price": None,
+                    "Current_Price": None,
+                    "Price_Diff_%": 0.0,
+                    "PDF_Link": "#"
+                }]
+            },
+            "timestamp": "2026-04-22 10:00:00"
+        }
+
+        try:
+            rendered_html = template.render(**mock_data)
+        except TypeError as e:
+            pytest.fail(f"Template rendering failed with TypeError: {e}")
+        except Exception as e:
+            pytest.fail(f"Template rendering failed with Exception: {e}")
+
+        assert "WAU Corp" in rendered_html
+        assert "Test Announcement" in rendered_html
 
     def test_indicator_field_consistency(self, table_headers):
         """Test that technical indicators (Score, RSI, Vol Surge) exist in relevant tables."""
