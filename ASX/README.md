@@ -127,20 +127,6 @@ graph TD
 
 ---
 
-## 💡 3. LLM 协作工作流详解 (`llm_workflow.py`)
-
-系统并非简单的文件覆盖，而是实现了 **Segment-Level Sync (分节同步)**：
-
-- **Export**: 根据 `symbol` 将 `CatalystMaster`（静态属性，含 Rating）与 `CatalystItem`（动态条目）聚合为一个 Pydantic 模型，输出 YAML。
-- **Import**:
-    - **Master 更新**: 直接更新 `rating`, `cr_risk`, `probability` 及其 `reason` 字段。
-    - **Item 智能识别**: 
-        - 读取 YAML 中的 `Catalysts`, `Risks`, `Timeline` 数组。
-        - 将其与数据库中的内容进行布隆过滤器式的比对。
-        - **新条目**: 插入。
-        - **消失的条目**: 软删除（退役）。
-        - **存在的条目**: 维持现状。
-
 ### 3.1 YAML 数据规范 (`config/asx_catalysts.yaml`)
 
 YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML；DB 通过 `sync-catalysts` 保持同步。
@@ -247,10 +233,13 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
 
 | 脚本 | 用途 | 类型 |
 |------|------|------|
-| `add_stock.py` | 手动添加新股票到 DB 并初始化 CatalystMaster | CLI 工具 |
-| `reseed_asx.py` | 从 YAML 完整重建整个 `asx` schema（DROP → CREATE → SEED） | 恢复工具 |
-| `sync_asx_catalysts.py` | 增量同步 YAML → DB（SCD2 逻辑，不 DROP 表） | 数据同步 |
-| `llm_workflow.py` | LLM 协作导出/导入 (export/import) | 数据同步 |
+| `asx_announcements.py` | 抓取公告、执行评分与 PDF 缓存 | 采集脚本 |
+| `asx_placements.py` | 抓取融资/增发、提取 CR Price、同步 DB | 采集脚本 |
+| `asx_analyzer.py` | 计算技术指标与综合评分 | 分析脚本 |
+| `reseed_asx.py` | 从现存 YAML 重建 `asx` schema（stocks / catalysts / legacy placements） | 恢复工具 |
+| `sync_asx_catalysts.py` | 增量同步 `config/asx_catalysts.yaml` → DB（SCD2 逻辑，不 DROP 表） | 数据同步 |
+| `pdf_cache.py` | 统一 PDF 缓存目录、下载、原子写入与异常处理 | 公共模块 |
+| `utils.py` | 通用配置、日志、日期、HTTP Session 等基础工具 | 公共模块 |
 
 ---
 
@@ -302,8 +291,6 @@ pytest tests/
 | `run.py dashboard` | 仅重建 Dashboard HTML（catalysts 直接读 YAML） |
 | `run.py reseed` | 从 YAML 完整重建 `asx` schema (DROP → SEED) |
 | `run.py sync-catalysts` | 增量同步 YAML → DB（不 DROP 表） |
-| `run.py llm-export --ticker <T>` | 导出指定 ticker 至 YAML 供 LLM 审阅 |
-| `run.py llm-import` | 从临时 YAML 导入 LLM 更新至 DB |
 
 ### 6.4 版本一致性规范
 系统强制执行三位一体版本号 (vX.X) 对齐。版本号必须在以下位置保持一致，否则 Integrity Test 将报错：

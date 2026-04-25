@@ -366,8 +366,7 @@ def should_skip_data_pull():
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Research Hub Control Center")
-    parser.add_argument("command", choices=["all", "scrape", "analyze", "dashboard", "reseed", "sync-catalysts", "llm-export", "llm-import"], help="Pipeline command to run")
-    parser.add_argument("--ticker", help="Specific ticker for LLM operations")
+    parser.add_argument("command", choices=["all", "scrape", "analyze", "dashboard", "reseed", "sync-catalysts"], help="Pipeline command to run")
     parser.add_argument("--force", action="store_true", help="Force a full refresh (ignore incremental sync)")
     # pycache/pytest_cache cleanup runs automatically after every command
     args = parser.parse_args()
@@ -435,18 +434,6 @@ def main():
                 build_dashboard()
             except Exception as e:
                 logger.error(f"Dashboard build failed: {e}")
-                exit_code = 1
-        elif args.command == "llm-export":
-            if not args.ticker:
-                logger.error("LLM Export requires --ticker <SYMBOL>")
-                exit_code = 1
-            else:
-                ok = run_script("scripts/llm_workflow.py", ["export", args.ticker.upper()])
-                if not ok:
-                    exit_code = 1
-        elif args.command == "llm-import":
-            ok = run_script("scripts/llm_workflow.py", ["import"])
-            if not ok:
                 exit_code = 1
     finally:
         prune_pdf_cache(root_dir)
