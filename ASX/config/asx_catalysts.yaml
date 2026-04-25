@@ -29,6 +29,36 @@
     - Date: '2026-03-27'
       Event: 发布 2025 全年度年报 (Annual Report for FY25)
 
+- Ticker: AGR
+  Stage: 阶段2-验证突破期
+  Company: Aguia Resources Limited
+  Sector: Gold & Phosphate - 哥伦比亚 Santa Barbara 高品位金矿 + 巴西 Pampafos 有机磷肥商业化
+  Catalysts:
+    - 2026年Q2/Q3 Santa Barbara 金矿恢复稳定出金与现金流验证；关注季度产量、品位及销售回款节奏
+    - 2026年Q2 Pampafos 产品正式注册后，首批商业销售/分销订单与渠道扩张进展披露
+    - 2026年H2 巴西有机磷肥项目潜在产能爬坡、更多农业客户验证及 Mato Grande / Três Estradas 资源扩张更新
+    - 2026年内 哥伦比亚 El Dovio 铜金勘探或巴西铜项目的阶段性钻探/地质更新，为多金属估值提供额外期权
+  Risks:
+    - Santa Barbara 地下金矿虽已进入生产恢复阶段，但小规模矿山的产量稳定性及运营执行仍有波动风险
+    - Pampafos 虽已完成关键注册，但商业化初期订单放量、渠道建设及客户复购仍需时间验证
+    - 公司横跨哥伦比亚与巴西，面临多司法辖区运营、许可、物流及汇率风险
+    - 小市值多项目推进下，若现金流兑现慢于预期，未来仍存在融资或稀释风险
+  CR_Risk: 中
+  CR_Risk_Reason: Santa Barbara 若持续产金可提供经营现金流支持，但 Pampafos 商业放量与多项目推进仍可能消耗资金，财务安全性取决于执行兑现速度
+  Breakout_Probability: 中高
+  Breakout_Probability_Reason: 公司已从单纯资源叙事切入实际商业化兑现阶段；哥伦比亚金矿现金流与巴西肥料注册/销售双主线并行，若季度数据验证顺利，估值有望从“题材”转向“收入+成长”重估
+  Core_Notes: AGR（Aguia Resources）是一家南美多资产小盘资源公司，当前最重要的两条主线分别是：哥伦比亚 Santa Barbara 高品位地下金矿恢复出金并贡献现金流，以及巴西 Pampafos 有机磷肥产品完成官方注册后推进商业化销售。官网披露公司拥有位于哥伦比亚与巴西的四个100%控股先进项目，包括 Santa Barbara 金矿、巴西有机磷肥项目、El Dovio 铜金勘探项目及巴西铜勘探项目。相较传统单一勘探股，AGR 当前更接近“早期现金流验证 + 新产品放量”的复合叙事，但由于体量较小，市场对实际出货、销售与现金回笼的验证要求会很高。
+  Rating: 观望
+  Timeline:
+    - Date: '2025-11-28'
+      Event: 正式启动 Pampafos 有机磷肥产品商业化推广
+    - Date: '2026-01-23'
+      Event: 收到非核心资产出售尾款，补强公司资金
+    - Date: '2026-02-27'
+      Event: Aguia Fertilisers 获得正式产品注册，为 Pampafos 商业销售打开关键通道
+    - Date: '2026-04-24'
+      Event: 发布最新投资者演示材料，继续强调 Santa Barbara 金矿现金流恢复与巴西肥料商业化双主线
+
 - Ticker: ARL
   Stage: 阶段2-验证突破期
   Company: Ardea Resources Limited
@@ -69,7 +99,7 @@
   Company: Brazilian Critical Minerals Limited
   Sector: Rare Earths - Ema Ionic Adsorption Clay Project (Brazil)
   Catalysts:
-    - 2026年Q2 极高催化：发布 Ema 稀土项目 Bankable Feasibility Study (BFS)
+    - 2026年Q2 极高催化：发布 Ema 稀土项目 Bankable Feasibility Study (BFS)（公司确认目标Q2 2026完成）
     - 2026年 推进试验采矿许可 (Trial Mining License) 及环境审批
     - 2026年 与 Southern Alliance Mining (SAM) 推进商业包销/合资条款谈判（从非约束性合作升级为正式协议）
   Risks:
@@ -80,14 +110,14 @@
   CR_Risk: 中
   CR_Risk_Reason: 随着规模化 BFS 的发布，推进后续试验采矿及工程设计可能需要新一轮资本注入
   Breakout_Probability: 高
-  Breakout_Probability_Reason: 2026年4月22日完成10.7亿吨级大体量MRE升级（Indicated部分增长58%），引入具备ISR实际运营经验的战略合作伙伴SAM（运营全球已知最大ISR稀土矿，已产出约20,280吨混合稀土碳酸盐），BFS将是全年最重要估值重塑节点。
-  Core_Notes: BCM 在巴西拥有具有巨大潜力的 Ema 离子型稀土项目。2026年4月22日，公司将矿产资源量(MRE)升级至 10.7亿吨 @ 732ppm TREO（Indicated部分增长58%），规模惊人。同月（4月20日），公司与SGX上市矿企 Southern Alliance Mining (SAM) 签署非约束性战略合作协议，SAM持有马来西亚Gerik矿40%权益（全球最大ISR稀土运营之一，已产约20,280吨混稀土碳酸盐）。4月20日公告后股价单日涨7.4%（+A$0.002至A$0.029），成交量442万股。目前正在冲刺Q2的银行级可行性研究(BFS)，ISR技术验证是核心叙事。
+  Breakout_Probability_Reason: Ema MRE总量为943Mt @ 716ppm TREO（Indicated+Inferred），Indicated部分增长58%。4月20日SAM非约束性战略合作协议已签署（SAM拥有全球最大ISR稀土运营之一的40%权益，已产约20,280吨混合稀土碳酸盐），BFS将是全年最重要估值重塑节点。
+  Core_Notes: BCM 在巴西拥有具有巨大潜力的 Ema 离子型稀土项目。现有MRE为943Mt @ 716ppm TREO（Indicated+Inferred），高品位部分约221Mt @ 977ppm TREO，其中Indicated部分较上次更新增长约58%。4月20日与SGX上市矿企Southern Alliance Mining（SAM）签署非约束性战略合作协议，SAM持有马来西亚Gerik矿40%权益（全球最大ISR稀土运营之一，已产约20,280吨混稀土碳酸盐）；公告后股价单日涨7.4%（+A$0.002至A$0.029），成交量442万股。目前正在冲刺Q2的银行级可行性研究（BFS），ISR技术验证是核心叙事。
   Rating: 买入
   Timeline:
     - Date: '2026-04-20'
-      Event: 与 SGX 上市矿企 Southern Alliance Mining (SAM) 达成非约束性战略合作，共同推进 Ema 稀土项目 ISR 开采评估及潜在包销；股价当日涨7.4%
+      Event: 与 SGX 上市矿企 Southern Alliance Mining (SAM) 达成非约束性战略合作，共同推进 Ema 稀土项目 ISR 开采评估及潜在包销；股价当日涨7.4%至A$0.029
     - Date: '2026-04-22'
-      Event: 重磅催化：宣布 Ema 稀土项目 MRE 大幅升级至 1.07 Billion tonnes @ 732ppm TREO，Indicated部分增长58%
+      Event: 重磅催化：宣布 Ema 稀土项目 MRE 升级（Indicated部分增长58%），总量943Mt @ 716ppm TREO（含高品位221Mt @ 977ppm TREO）
 
 - Ticker: BOE
   Stage: 阶段3-现金流确认期
@@ -240,20 +270,20 @@
   Company: Clarity Pharmaceuticals Limited
   Sector: Radiopharmaceuticals - 靶向铜诊疗一体化 (SAR-bisPSMA)
   Catalysts:
-    - 2026年H1 SECuRE Phase I/II 扩展队列持续读出；第5例 PSA 不可检测患者已于2026年2月披露
-    - 2026年H2 AMPLIFY (Phase III 诊断试验) 顶线数据发布（已完成入组，进入数据锁定期）
+    - 2026年H1 SECuRE Phase I/II 扩展队列持续读出；5名患者已实现PSA不可检测（截至最新披露）
+    - 2026年H2 AMPLIFY (Phase III 诊断试验) 顶线数据发布（已超额完成入组，进入数据锁定期）
     - 2026年H2 向 FDA 递交治疗管线 (SAR-bisPSMA) 的 Phase III IND 申请
-    - 2026年8月21日 发布 FY26 全年报（TradingView 数据）
+    - 2026年8月26日 发布 FY26 全年报（TradingView 数据）
   Risks:
     - 临床风险：大规模 Phase III 样本的统计学波动
-    - 资金需求：启动治疗类 Phase III 将显著增加现金消耗
+    - 资金需求：启动治疗类 Phase III 将显著增加现金消耗；H1 FY26净亏损-A$5,553万，超分析师预期
     - 竞争压力：Novartis 与 Telix 在同类靶点的市场抢占
-    - 4月初 Executive Director Colin Biggin 辞任董事会，治理层变化需关注
+    - 4月8日 Executive Director Colin Biggin 辞任董事会（保留COO职位），治理层调整
   CR_Risk: 中
-  CR_Risk_Reason: 虽有 A$100M+ 现金储备，但进入治疗类 Phase III 后支出将激增，通常在重大利好后择机融资
+  CR_Risk_Reason: 虽有 A$100M+ 现金储备，但进入治疗类 Phase III 后支出将激增；H1 FY26净亏损超预期，需关注现金消耗加速风险
   Breakout_Probability: 极高
-  Breakout_Probability_Reason: AMPLIFY 已于2026年3月9日完成超计划入组（超额认购强劲参与需求），进入数据锁定期；Cu-64 检出率代差优势已获临床证实（Co-PSMA 数据：78% vs Ga-68 36%，EAU 2026 年会口头报告）；SECuRE 第5例 PSA 不可检测持续确认疗效；Nucleus RadioPharma 商业制造协议确保美国50,000剂/年产能；论文已被 European Urology Journal 接受发表
-  Core_Notes: CU6 关键进展集中在2026年Q1。AMPLIFY Phase III：2026年3月9日宣布完成超额入组（"consented in excess of planned number"），市场需求强劲；研究招募已停止，进入数据锁定期。SECuRE：2026年2月22日披露第5例 PSA 不可检测患者（含骨转移者4周期后持续 PSA 不可检测），成为迄今最强临床信号之一。Co-PSMA：EAU 2026 年会口头报告，Cu-64 检出率78% vs Ga-68 36%，论文被 European Urology Journal 接受。Nucleus RadioPharma：4月14日签署商业制造协议，确立美国本土50,000剂/年产能。董事会变化：Executive Director Colin Biggin 于4月初辞任，短期治理层调整。
+  Breakout_Probability_Reason: AMPLIFY 已于3月9日完成超额入组，进入数据锁定期；Cu-64 检出率代差优势已获临床证实（Co-PSMA：78% vs Ga-68 36%，EAU 2026口头报告，3月31日正式发表于European Urology Journal）；SECuRE已有5名患者达PSA不可检测；制造网络持续扩大：3月24日与Theragenics签署大规模Cu-64供应协议（亚特兰大，14台回旋加速器，100Ci/天产能），4月14日与Nucleus RadioPharma签署Cu-64 SAR-bisPSMA商业制造协议（Rochester 50,000剂/年 + 2028年Pennsylvania 600,000剂/年）；当前股价约A$3.02，较历史高点A$8.98大幅折价
+  Core_Notes: CU6 关键进展在2026年Q1-Q2密集落地。AMPLIFY Phase III：3月9日宣布超额完成入组（"consented in excess of planned number"），招募已关闭，进入数据锁定期。SECuRE：累计5名患者实现PSA不可检测，含骨转移患者持续缓解。Co-PSMA：EAU 2026口头报告，Cu-64检出率78% vs Ga-68 36%，3月31日正式发表于European Urology Journal（同行评审确认）。制造网络关键扩张：(1) 3月24日与Theragenics签署Cu-64大规模制造供应协议（Atlanta，14台回旋加速器，100Ci/天/台，2,000剂/天/台）；(2) 4月14日与Nucleus RadioPharma签署Cu-64 SAR-bisPSMA商业制造协议（Rochester 50,000剂/年，2028年Pennsylvania扩展至600,000剂/年）。总计已有SpectronRx、Nusano、Theragenics、Nucleus RadioPharma四家Cu-64制造伙伴，商业化供应链基本成型。治理变化：4月8日Colin Biggin辞任执行董事（保留COO），管理层结构精简。当前股价约A$3.02（较历史高点A$8.98折价67%，过去12个月仍涨62%）。下一财报：8月26日FY26全年报。
   Rating: 买入
   Timeline:
     - Date: '2025-09-18'
@@ -270,10 +300,14 @@
       Event: AMPLIFY Phase III 宣布完成超额入组（超过计划232人），需求强劲；招募关闭，进入数据锁定期
     - Date: '2026-03-16'
       Event: Co-PSMA 数据 EAU 2026 年会口头报告：Cu-64 检出率 78% vs Ga-68 36%；论文被 European Urology Journal 接受
-    - Date: '2026-04-01'
-      Event: 宣布 AMPLIFY 完成全部 232 名患者入组（注：实际于3月9日已超额完成，4月1日为正式补充公告）
+    - Date: '2026-03-24'
+      Event: 与 Theragenics 签署大规模 Cu-64 制造供应协议（Atlanta，14台回旋加速器，100Ci/天/台产能）；第三家Cu-64供应商锁定
+    - Date: '2026-03-31'
+      Event: Co-PSMA 数据正式发表于 European Urology Journal（同行评审确认，统计学显著优势）
+    - Date: '2026-04-08'
+      Event: Executive Director Colin Biggin 辞任董事会（保留COO职位）；治理层调整符合ASX公司治理规范
     - Date: '2026-04-14'
-      Event: 与 Nucleus RadioPharma 签署商业制造协议，确立美国本土 50,000 剂/年产能供应
+      Event: 与 Nucleus RadioPharma 签署 Cu-64 SAR-bisPSMA 商业制造协议（Rochester 50,000剂/年，2028年Pennsylvania扩展至600,000剂/年）；第四家供应商锁定，商业化供应链基本成型
 
 - Ticker: CYM
   Stage: 阶段2-验证突破期

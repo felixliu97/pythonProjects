@@ -32,8 +32,7 @@ FullStack/commodity_dashboard/backend/commodities_cache.json
 FullStack/commodity_dashboard/frontend/src/api-client/
 
 # Trading & Bots
-Trading/
-forex_arbitrage/
+Trading/*.csv
 
 # Other
 playground/Test/

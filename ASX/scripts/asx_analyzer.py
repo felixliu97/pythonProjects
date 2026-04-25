@@ -125,6 +125,8 @@ class MomentumAnalyzer:
             industry = self.standardize_text(funds.get("industryGroup"))
             comp_name = funds.get("displayName")
             live_px = funds.get("priceLast")
+            live_chg_1d = funds.get("priceChange")
+            live_diff_1d = funds.get("priceChangePercent")
 
             # 2. Technicals via yfinance (Fetch 6 months for indicator convergence)
             asx_sym = f"{symbol}.AX"
@@ -137,9 +139,13 @@ class MomentumAnalyzer:
             curr_px = live_px if live_px is not None else close.iloc[-1]
             prev_px = close.iloc[-2] if len(close) > 1 else curr_px
             px_5d = close.iloc[-5] if len(close) > 5 else close.iloc[0]
-            
-            price_change_1d = round(curr_px - prev_px, 4)
-            price_diff_1d = round((price_change_1d / prev_px) * 100, 2) if prev_px else 0
+
+            if live_chg_1d is not None and live_diff_1d is not None:
+                price_change_1d = round(live_chg_1d, 4)
+                price_diff_1d = round(live_diff_1d, 2)
+            else:
+                price_change_1d = round(curr_px - prev_px, 4)
+                price_diff_1d = round((price_change_1d / prev_px) * 100, 2) if prev_px else 0
             price_change_5d = round(curr_px - px_5d, 4)
             price_diff_5d = round((price_change_5d / px_5d) * 100, 2) if px_5d else 0
             

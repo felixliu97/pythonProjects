@@ -50,4 +50,4 @@
 ---
 
 > [!TIP]
-> 在执行 `python run.py all` 时，各个数据引擎会根据这些板块逻辑对 `config/*.yaml` 中的股票进行归类。
+> 本文档提供的是 **研究分层与赛道理解的人工参考框架**，用于辅助维护 `config/asx_catalysts.yaml` 中的 `Sector` / `Stage` / 叙事判断；当前 `python run.py all` 并不会依据本文件自动对 `config/*.yaml` 进行板块归类。

@@ -1,5 +1,6 @@
 import pytest
 import requests
+import pandas as pd
 from scripts.asx_analyzer import MomentumAnalyzer
 
 @pytest.fixture
@@ -57,7 +58,6 @@ def test_score_clamped_to_boundaries(analyzer):
 
 def test_calculate_rsi(analyzer):
     """Test RSI calculation with Wilder's smoothing."""
-    import pandas as pd
     # Standard 14-day sequence: 14 ups, then constant
     prices = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
     series = pd.Series(prices)
@@ -71,3 +71,39 @@ def test_calculate_rsi(analyzer):
     rsi_drop = analyzer.calculate_rsi(series_drop, period=14)
     # Should be much lower after a massive drop
     assert rsi_drop < 50
+
+def test_analyze_ticker_prefers_live_daily_change_fields(analyzer, monkeypatch):
+    """If ASX returns explicit daily change fields, they should override a misleading yfinance-derived 1D move."""
+    hist = pd.DataFrame(
+        {
+            "Close": [0.0125] * 20,
+            "Volume": [0] * 20,
+        },
+        index=pd.date_range("2026-04-01", periods=20, freq="B"),
+    )
+
+    analyzer.fetch_fundamentals = lambda symbol: {
+        "marketCap": -1,
+        "pe": -99999.99,
+        "yield_val": 0,
+        "industryGroup": "Materials",
+        "displayName": "WA KAOLIN LIMITED",
+        "priceLast": 0.025,
+        "priceChange": 0,
+        "priceChangePercent": 0,
+    }
+
+    class MockTicker:
+        def history(self, period):
+            return hist
+
+    monkeypatch.setattr("scripts.asx_analyzer.yf.Ticker", lambda symbol: MockTicker())
+
+    result = analyzer.analyze_ticker("WAK", "announcement")
+
+    assert result is not None
+    trend, meta = result
+    assert meta == ("Materials", "WA KAOLIN LIMITED")
+    assert trend.current_price == 0.025
+    assert trend.price_change_1d == 0
+    assert trend.price_diff_1d == 0

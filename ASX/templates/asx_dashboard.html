@@ -897,12 +897,18 @@
         const tables = {};
 
         function initDataTables() {
-            const tableIds = ['growthStockTable', 'foundationStockTable', 'etfTable', 'catalystTable', 'annTable', 'placTable'];
+            const tableIds = ['growthStockTable', 'foundationStockTable', 'etfTable', 'annTable', 'placTable'];
+            const baseConfig = {
+                searchable: true,
+                fixedHeight: false,
+                perPage: 25
+            };
 
             // Wire up Global Search
             document.getElementById('globalSearch').addEventListener('input', function (e) {
                 const term = e.target.value;
                 Object.values(tables).forEach(table => {
+
                     if (table && table.search) {
                         try {
                             table.search(term);
@@ -914,26 +920,28 @@
             tableIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
-                    const config = {
-                        searchable: true,
-                        fixedHeight: false,
-                        perPage: 25
-                    };
-                    tables[id] = new DataTable(el, config);
+                    tables[id] = new DataTable(el, baseConfig);
 
                     // Force initial sort to DESC for date-based tables
                     if (id === 'annTable' || id === 'placTable') {
                         setTimeout(() => {
                             tables[id].columns.sort(0, "desc");
+
                         }, 10);
                     }
                 }
+            });
+
+            document.querySelectorAll('.catalyst-table').forEach((el, index) => {
+                const key = `catalystTable-${index}`;
+                tables[key] = new DataTable(el, baseConfig);
             });
         }
 
         function showTab(tabId) {
             document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
             document.getElementById('tab-' + tabId).style.display = 'block';
+
 
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');

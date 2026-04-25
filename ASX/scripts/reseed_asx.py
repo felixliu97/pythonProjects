@@ -9,22 +9,22 @@ Updated to use Pydantic V2 and SQLAlchemy 2.0.
 import yaml
 from datetime import datetime
 from sqlalchemy import text
-from typing import Dict, Set, List, Any, Type
+from typing import Set, Type
 
 try:
     from db_manager import db
     from db_models import (
-        Stock, CatalystMaster, CatalystItem, Announcement, Placement, Base
+        Stock, CatalystMaster, CatalystItem, Placement
     )
-    from db_schemas import StockSchema, CatalystSchema, AnnouncementSchema, PlacementSchema
-    from utils import logger, ticker_clean
+    from db_schemas import StockSchema, CatalystSchema, PlacementSchema
+    from utils import logger
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import (
-        Stock, CatalystMaster, CatalystItem, Announcement, Placement, Base
+        Stock, CatalystMaster, CatalystItem, Placement
     )
-    from scripts.db_schemas import StockSchema, CatalystSchema, AnnouncementSchema, PlacementSchema
-    from scripts.utils import logger, ticker_clean
+    from scripts.db_schemas import StockSchema, CatalystSchema, PlacementSchema
+    from scripts.utils import logger
 
 def reseed():
     """Wipe and re-seed the 'asx' schema from YAML files."""
@@ -127,7 +127,6 @@ def reseed():
         except FileNotFoundError:
             logger.error("config/asx_catalysts.yaml not found.")
 
-        # 5. Announcements & Placements (Legacy Sync)
         def seed_scraped(file_path: str, schema_cls: Type, model_cls: Type, name: str):
             logger.info(f"Seeding {name}...")
             try:
@@ -136,7 +135,7 @@ def reseed():
                 for item in data:
                     try:
                         v = schema_cls(**item)
-                        sym = v.ASX_Code if hasattr(v, 'ASX_Code') else v.symbol
+                        sym = v.ASX_Code
                         
                         if sym not in registered_symbols:
                             stock = Stock(symbol=sym, name=v.Company, stock_type='announcement')
@@ -144,29 +143,16 @@ def reseed():
                             sess.flush()
                             registered_symbols.add(sym)
 
-                        params = v.model_dump()
-                        if name == "Announcements":
-                            final_params = {
-                                "symbol": sym,
-                                "company": v.Company,
-                                "headline": v.Headline,
-                                "event_date": v.Date,
-                                "summary": getattr(v, "Summary", ""),
-                                "pdf_link": getattr(v, "PDF_Link", ""),
-                                "rating": getattr(v, "Rating", 2),
-                                "unique_key": f"{sym}_{v.Date}_{v.Headline[:100]}"
-                            }
-                        else:
-                            final_params = {
-                                "symbol": sym,
-                                "company": v.Company,
-                                "headline": v.Headline,
-                                "event_date": v.Date,
-                                "cr_price": getattr(v, "CR_Price", None),
-                                "current_price": getattr(v, "Current_Price", None),
-                                "price_diff_percent": getattr(v, "Price_Diff_Percent", None),
-                                "pdf_link": getattr(v, "PDF_Link", "")
-                            }
+                        final_params = {
+                            "symbol": sym,
+                            "company": v.Company,
+                            "headline": v.Headline,
+                            "event_date": v.Date,
+                            "cr_price": getattr(v, "CR_Price", None),
+                            "current_price": getattr(v, "Current_Price", None),
+                            "price_diff_percent": getattr(v, "Price_Diff_Percent", None),
+                            "pdf_link": getattr(v, "PDF_Link", "")
+                        }
                         
                         sess.add(model_cls(**final_params))
                     except Exception:
@@ -174,7 +160,6 @@ def reseed():
             except FileNotFoundError:
                 logger.warning(f"{file_path} not found.")
 
-        seed_scraped('config/asx_announcements.yaml', AnnouncementSchema, Announcement, "Announcements")
         seed_scraped('config/asx_placements.yaml', PlacementSchema, Placement, "Placements")
 
     logger.info("Reseed operation completed successfully.")

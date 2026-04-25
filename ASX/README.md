@@ -47,6 +47,7 @@ graph TD
     1. 查询数据库中最新的 `event_date`。
     2. 若存在且未开启 `--full-refresh`，则将抓取起始日设为该日期（Resumption）。
     3. 若不存在，则回退至命令行指定的 `--months`（默认 1 个月）。
+- **规则配置化**: 关键词、噪音过滤、强短语、分值参数现统一从 `config/settings.yaml -> announcement_rating` 读取。
 - **启发式评分引擎 (Rating Engine 1-5)**:
     - **Base**: 默认 1 分（常规行政/公告）。
     - **+1 分 (API Signal)**: 匹配 API 端的 `isPriceSensitive` 标志。
@@ -75,6 +76,7 @@ graph TD
     2. **Phase 2 - 批量获取市场数据**: 使用 `ThreadPoolExecutor(max_workers=20)` 并行获取合格股票的价格/市值。
     3. **Phase 3 - 流动性门控**: 市值低于 **$15,000,000 AUD** (`DEFAULT_MCAP_FILTER`) 的股票被过滤。
     4. **Phase 4 - CR价格提取**: 仅对通过门控的股票执行标题正则解析→PDF下载→内容提取。
+- **规则配置化**: headline 关键词、补充正则、分页大小现统一从 `config/settings.yaml -> placements / scanners` 读取。
 - **正则价格提取 (`extract_cr_price`)**:
     - `pattern_1`: `@ \$?(\d+\.\d+)`
     - `pattern_2`: `at \$?(\d+\.\d+)`
@@ -105,6 +107,7 @@ graph TD
 - **数据源**: `config/asx_catalysts.yaml`（唯一源头，人工维护 + Git 版本控制）。
 - **Dashboard 读取**: `build_dashboard()` 通过 `load_catalysts_from_yaml()` 直接从 YAML 加载，不经 DB。
 - **DB 同步**: `run.py all` 或 `run.py sync-catalysts` 将 YAML 同步到 DB（支持 SCD2 历史追踪）。
+- **Global Search 行为**: 顶部 `globalSearch` 会对所有已注册的 `DataTable` 执行搜索；Catalyst Radar 因存在“全部 + 分阶段”多张表，统一通过 `.catalyst-table` class 批量初始化，确保输入 `BCM/AGR` 等 ticker 时 Catalyst 表也会被过滤。
 - **五级评级**: `强力买入` > `买入` > `观望` > `卖出` > `强力卖出`。
 - **自动评级矩阵 (BP × CR)**:
     | Rating | 条件 |
@@ -171,18 +174,11 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
 
 #### 3.1.3 Timeline 规则
 
-- **Timeline 规则**:
     - Timeline 条目 = 已发生的公告，必须有精确 `YYYY-MM-DD` 日期。
     - 模糊日期（如 `2026-03/04`、`2026-04`）不允许，需搜索确认实际公告日期或删除。
     - 未来预期事件属于 `Catalysts`，不放 `Timeline`。
-- **Rating 规则**:
+ - **Rating 规则**:
     - 默认由 `Breakout_Probability (BP)` 与 `CR_Risk (CR)` 自动推导，若 YAML 显式填写 `Rating`，则以手填值优先。
-    - 有效值: `强力买入`, `买入`, `观望`, `卖出`, `强力卖出`。
-    - 评分映射：
-        - `BP`: `低=0`, `中低=1`, `中=2`, `中高=3`, `高=4`, `极高=5`
-        - `CR`: `极低=0`, `低=1`, `中低=2`, `中=3`, `中高=4`, `高=5`
-        - `delta = BP_score - CR_score`
-    - 默认评级矩阵：
         - `delta >= 4` → `强力买入`
         - `delta >= 2` 且 `< 4` → `买入`
         - `delta >= -1` 且 `< 2` → `观望`
@@ -192,6 +188,37 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
         - `BP=高`, `CR=低` → `delta=3` → `买入`
         - `BP=中`, `CR=中` → `delta=-1` → `观望`
         - `BP=低`, `CR=高` → `delta=-5` → `强力卖出`
+
+### 3.2 `config/` 目录用途审查（当前状态）
+
+当前 `ASX/config` 下文件可分为 4 类：
+
+| 文件 | 当前状态 | 用途 |
+|------|---------|------|
+| `settings.yaml` | **运行时主配置** | API、并发、HTTP、`announcement_rating`、`placements` 等规则配置 |
+| `asx_catalysts.yaml` | **主数据源 / Source of Truth** | Catalyst Radar 的唯一事实来源；Dashboard 直接读取；`sync-catalysts` 同步到 DB |
+| `placement_overrides.yaml` | **运行时辅助配置** | `asx_placements.py` 的手工覆盖 / 排除规则 |
+| `asx_analyzer.yaml` | **仍有用，但主要供 reseed 使用** | `reseed_asx.py` 用其初始化 `stocks` 基础名单 |
+| `asx_placements.yaml` | **历史 / 恢复输入** | 当前主流程不依赖；`reseed_asx.py` 仍可用其恢复 legacy placements 数据 |
+
+#### 3.2.1 当前未发现主流程直接使用的配置文件
+
+- `run.py all`
+- `scripts/asx_announcements.py`
+- `scripts/asx_placements.py`
+- `scripts/asx_analyzer.py`
+
+当前主流程 **不会直接读取** `asx_analyzer.yaml` 或 `asx_placements.yaml`。
+
+#### 3.2.2 `reseed_asx.py` 当前恢复输入
+
+当前 `reseed_asx.py` 会读取以下真实存在的输入：
+
+- `config/asx_analyzer.yaml`：恢复 `stocks` 基础名单
+- `config/asx_catalysts.yaml`：恢复 catalyst 主表与子项
+- `config/asx_placements.yaml`：恢复 legacy placements 数据
+
+当前已**不再引用**不存在的 `config/asx_announcements.yaml`。
 
 #### 3.1.4 示例 (Example)
 
@@ -291,6 +318,32 @@ pytest tests/
 - **股票唯一性**: `Placement` 表中的 Ticker 必须在 `Stock` 表中存在，且代码长度不得超过 4 位。
 - **自动拦截机制**: 任何非 `CS`, `CD`, `ET`, `UI` 类型的证券在发现阶段即被物理拦截，不得进入数据库任何表。
 
+### 6.6 `scripts/` 与 `tests/` Best Practice 审查结论
+
+基于当前 `ASX/scripts` 与 `ASX/tests` 的实现，阶段性审查结论如下：
+
+- **当前无需删除的部分**
+  - 现有测试文件按职责拆分清晰：采集、分析、DB、Dashboard、完整性校验的边界明确。
+  - `test_dashboard_fields.py` 与 `test_system_integrity.py` 已形成“模板 + README + 运行逻辑”三方约束，对防止文档漂移很有价值。
+  - `run.py` 作为统一 orchestration 入口仍然合理，适合继续作为唯一 CLI 控制中心。
+
+- **主要提升点（建议优先级从高到低）**
+  - **PDF 缓存公共模块已收敛**：当前 `asx_announcements.py` 与 `asx_placements.py` 已统一复用 `scripts/pdf_cache.py`，共用缓存目录解析、已缓存短路、异常处理与原子写入策略；后续新增 PDF 消费方应继续复用该模块，而不是重复实现下载逻辑。
+  - **减少测试对实现细节字符串的强耦合**：部分测试通过断言模板/脚本中的具体字符串来验证行为，回归保护强，但重构时较脆。后续可逐步增加更偏行为层的测试（例如渲染结果或函数输出），降低无意义破坏。
+  - **补充 runtime invariants 文档**：当前系统的关键运行约束包括 `.pdf_cache` 仅保留最新交易日、Catalyst Dashboard 直接读 YAML、globalSearch 会遍历所有注册的 `DataTable`。这些约束应持续保存在 README 中，避免后续维护时被误改。
+  - **继续压缩“脚本内实现 + 脚本内配置”的耦合**：例如关键字列表、过滤规则、下载策略目前仍主要内嵌在脚本中。对于变动频率高的策略参数，后续可继续外提到 `settings.yaml`。
+
+- **测试层最佳实践建议**
+  - 新增功能优先补到现有职责对应测试文件，不新增“杂项测试大集合”。
+  - 对 DB / YAML / Template 的规则类变更，至少覆盖以下之一：
+    - schema 校验
+    - run.py 集成逻辑
+    - dashboard 渲染或字段一致性
+
+- **当前审查结论**
+  - **没有发现明显可以直接删除的测试文件或脚本模块。**
+  - 当前更适合做的是：**收敛重复逻辑、强化行为测试、保持 README 与实现同步**，而不是激进删文件。
+
 ---
 
 ## 🧪 7. 测试与验证规范
@@ -310,7 +363,7 @@ pytest tests/ -v
 | `test_db_manager.py` | `db_manager.py` | 数据库连接、解耦架构及数据完整性 |
 | `test_utils.py` | `utils.py` | 通用工具函数、日期格式化、Sparkline 生成、**Sydney 时区转换** |
 | `test_run.py` | `run.py` | 主运行逻辑、Dashboard 渲染、**YAML 直读催化剂排序/默认值**、催化剂字段有效性、Rating Schema 默认值/排序逻辑 |
-| `test_dashboard_fields.py` | `asx_dashboard.html` | 跨 Tab 字段命名一致性、标准化字段验证、**Dashboard 模板渲染 smoke test**、Catalyst Rating 排序 key 校验 |
+| `test_dashboard_fields.py` | `asx_dashboard.html` | 跨 Tab 字段命名一致性、标准化字段验证、**Dashboard 模板渲染 smoke test**、Catalyst Rating 排序 key 校验、**globalSearch 对所有 `.catalyst-table` 的注册与过滤覆盖** |
 
 当前测试目录按职责划分为：
 
@@ -331,25 +384,50 @@ pytest tests/ -v
 
 | 标准字段名 | 适用 Tab | 数据字段 | 说明 |
 |-----------|---------|---------|------|
-| `Ticker` | 全部 | `symbol`, `ASX_Code`, `Ticker` | 股票代码，统一用 `Ticker` |
+| `Ticker` | Analyzer, News, Placements | `symbol`, `ASX_Code`, `Ticker` | 股票代码，统一用 `Ticker` |
+| `Ticker Name` | Catalysts | `Ticker` + `Sector` | Catalyst 表使用复合列展示 ticker 与赛道信息 |
 | `Company` | News, Placements | `name`, `Company` | 公司名称 |
 | `Date` | News, Placements | `Date`, `event_date` | 公告/融资日期 |
-| `Price` | 全部 | `current_price`, `Current_Price` | 当前股价 |
+| `Price` | Analyzer, News, Placements | `current_price`, `Current_Price` | 当前股价 |
 | `1D %` | Analyzer, News | `price_diff_1d`, `Price_Diff_1d` | 1日涨跌幅 |
 | `5D %` | Analyzer | `price_diff_5d` | 5日涨跌幅 |
-| `Rating` | News, Catalysts | `Rating` | 评级 1-5 |
+| `Rating` | News, Catalysts | `Rating` | News 使用 1-5 数值评分；Catalysts 使用 `强力买入/买入/观望/卖出/强力卖出` 五级文本评级 |
 | `PDF` | News, Placements | `PDF_Link` | PDF 链接 |
 | `Diff %` | Placements | `Price_Diff_%` | 相对 CR 价格涨跌幅 |
 
 ### 7.2 字段一致性测试
 
-`tests/test_dashboard_fields.py` 现已集中承载 Dashboard 相关测试，包括：
-- `test_ticker_field_consistency`: 验证 `Ticker` 字段名一致性
-- `test_company_field_consistency`: 验证公司名字段一致性
-- `test_price_field_consistency`: 验证价格字段一致性
-- `test_pdf_field_consistency`: 验证 PDF 字段命名
-- `test_no_duplicate_field_names`: 验证无重复字段名
-- `test_dashboard_renders_with_none_values`: 验证模板在 `None` 值输入下仍可渲染
-- `test_catalyst_rating_uses_hidden_sort_key`: 验证 Catalyst `Rating` 列排序 key 存在
+`tests/test_dashboard_fields.py` 现已集中承载 Dashboard/UI 模板相关测试，当前覆盖包括：
+
+- **字段命名一致性**
+  - `test_ticker_field_consistency`: 验证 `Ticker` 字段名一致性
+  - `test_company_field_consistency`: 验证公司名/名称字段一致性
+  - `test_date_field_consistency`: 验证 `Date` 字段存在
+  - `test_price_field_consistency`: 验证 `Price` 字段一致性
+  - `test_pdf_field_consistency`: 验证 `PDF` 字段命名
+  - `test_one_d_percent_consistency`: 验证 `1D %` 字段存在
+  - `test_five_d_percent_consistency`: 验证 `5D %` 字段存在
+  - `test_indicator_field_consistency`: 验证 `Score` / `RSI` / `Vol Surge` 等指标字段
+  - `test_fundamental_field_consistency`: 验证 `Cap` / `P/E` / `Industry` / `Total Assets` / `Yield` 等基本面字段
+
+- **Catalyst 表专项校验**
+  - `test_catalyst_table_has_required_fields`: 验证 Catalyst 表必需列存在
+  - `test_catalyst_rating_uses_hidden_sort_key`: 验证 Catalyst `Rating` 列隐藏排序 key 存在
+
+- **Global Search / DataTable 行为**
+  - `test_global_search_input_exists`: 验证全局搜索框存在
+  - `test_all_catalyst_tables_are_initialized_for_search`: 验证所有 `.catalyst-table` 都会被注册为 `DataTable`
+  - `test_global_search_iterates_over_all_registered_tables`: 验证全局搜索会遍历所有已注册表并执行搜索
+
+- **模板渲染与结构完整性**
+  - `test_dashboard_renders_with_none_values`: 验证模板在 `None` 值输入下仍可渲染
+  - `test_placement_specific_fields`: 验证 Placements 表特有字段存在
+  - `test_announcement_specific_fields`: 验证 News Feed 表特有字段存在
+  - `test_no_duplicate_field_names`: 验证各表无重复字段名
+  - `test_standardized_field_reference`: 验证标准字段引用覆盖预期 tab
+
+- **数据映射校验（`run.py`）**
+  - `test_announcement_data_fields`: 验证公告数据结构字段映射
+  - `test_placement_data_fields`: 验证融资数据结构字段映射
 
 运行测试：`python -m pytest tests/test_dashboard_fields.py -v`

@@ -12,18 +12,19 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple, Set
 from pathlib import Path
-import tempfile
 
 try:
     from db_manager import db
     from db_models import Announcement, Stock
     from db_schemas import AnnouncementSchema
-    from utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time, get_http_session, get_root_dir, get_pdf_filename
+    from utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time, get_http_session, get_pdf_filename
+    from pdf_cache import get_cache_dir, download_pdf
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Announcement, Stock
     from scripts.db_schemas import AnnouncementSchema
-    from scripts.utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time, get_http_session, get_root_dir, get_pdf_filename
+    from scripts.utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time, get_http_session, get_pdf_filename
+    from scripts.pdf_cache import get_cache_dir, download_pdf
 
 # --- Configuration ---
 _CFG = load_config()
@@ -36,32 +37,29 @@ _PDF_CONNECT_TIMEOUT = float(_HTTP_CFG.get("pdf_connect_timeout_seconds", 10))
 _PDF_READ_TIMEOUT = float(_HTTP_CFG.get("pdf_read_timeout_seconds", 20))
 _PDF_CHUNK_SIZE = int(_HTTP_CFG.get("pdf_chunk_size_bytes", 65536))
 
-_CACHE_DIR = get_root_dir() / ".pdf_cache"
-_CACHE_DIR.mkdir(exist_ok=True)
+_CACHE_DIR = get_cache_dir()
+_ANNOUNCEMENT_RATING_CFG = _CFG.get("announcement_rating", {})
 
 
-NOISE_KEYWORDS = [
-    "appendix 4g", "appendix 3y", "change of director", 
+NOISE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get("noise_keywords", [
+    "appendix 4g", "appendix 3y", "change of director",
     "becoming a substantial holder", "ceasing to be",
     "notice of meeting", "proxy form", "disclosure notice",
     "shareholder letter", "investor presentation"
-]
+])
 
-HIGH_VALUE_KEYWORDS = [
-    # Exploration & Mining
+HIGH_VALUE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get("high_value_keywords", [
     "assay", "drilling", "high-grade", "discovery",
     "maiden", "resource", "phase 3", "fda", "approval",
     "exceptional", "breakthrough",
-    # Corporate Actions & M&A
     "acquisition", "merger", "takeover", "binding", "offtake",
     "definitive", "feasibility study", "term sheet",
-    "sale and purchase", "monetis",  # SPA, monetise/monetize
-    # Business Catalysts
+    "sale and purchase", "monetis",
     "partnership", "commerciali", "fast-track", "fast track",
     "commissioning", "first production",
-]
+])
 
-STRONG_CATALYST_PHRASES = [
+STRONG_CATALYST_PHRASES = _ANNOUNCEMENT_RATING_CFG.get("strong_catalyst_phrases", [
     "high-grade assay results",
     "maiden resource estimate",
     "maiden mre",
@@ -78,17 +76,16 @@ STRONG_CATALYST_PHRASES = [
     "exceptional intercepts",
     "high-grade discovery",
     "conditional spa",
-]
+])
 
-MID_VALUE_KEYWORDS = [
+MID_VALUE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get("mid_value_keywords", [
     "trading halt", "placement", "capital rais", "share purchase plan",
     "quarterly", "half year", "annual report", "guidance",
     "production", "revenue", "contract", "agreement", "joint venture",
     "feasibility", "scoping", "update", "progress", "operational",
-    # Corporate & Financial
     "upgrade", "milestone", "collaboration", "divest", "invest",
     "strategic", "joint venture", "restructur",
-]
+])
 
 class AnnouncementScanner:
     """Encapsulates the announcement scraping and processing logic."""
@@ -97,36 +94,15 @@ class AnnouncementScanner:
         self.session = session
 
     def _download_pdf(self, url: str, filename: str) -> Optional[Path]:
-        """Download PDF to cache if not already present. Returns local path."""
-        if not url: return None
-        local_path = _CACHE_DIR / filename
-        if local_path.exists(): return local_path
-        try:
-            logger.info(f"Downloading PDF: {filename}...")
-            with self.session.get(
-                url,
-                timeout=(_PDF_CONNECT_TIMEOUT, _PDF_READ_TIMEOUT),
-                stream=True,
-            ) as r:
-                r.raise_for_status()
-                with tempfile.NamedTemporaryFile(delete=False, dir=_CACHE_DIR, suffix=".part") as tmp_file:
-                    tmp_path = Path(tmp_file.name)
-                    for chunk in r.iter_content(chunk_size=_PDF_CHUNK_SIZE):
-                        if chunk:
-                            tmp_file.write(chunk)
-                tmp_path.replace(local_path)
-            return local_path
-        except Exception as e:
-            try:
-                if 'tmp_path' in locals() and tmp_path.exists():
-                    tmp_path.unlink()
-            except OSError:
-                pass
-            if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
-                logger.warning(f"PDF not available (404): {filename}")
-            else:
-                logger.error(f"Failed to download PDF {filename}: {e}")
-            return None
+        return download_pdf(
+            self.session,
+            url,
+            filename,
+            cache_dir=_CACHE_DIR,
+            timeout=(_PDF_CONNECT_TIMEOUT, _PDF_READ_TIMEOUT),
+            chunk_size=_PDF_CHUNK_SIZE,
+            logger=logger,
+        )
 
     def _download_pdfs_batch(self, downloads: List[Tuple[str, str]]) -> None:
         """Download PDFs concurrently with de-duplication."""

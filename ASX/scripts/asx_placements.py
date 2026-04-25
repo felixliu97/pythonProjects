@@ -21,35 +21,37 @@ try:
     from db_models import Stock, Placement
     from db_schemas import PlacementSchema
     from utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url, get_sydney_time, get_http_session
+    from pdf_cache import get_cache_dir, download_pdf
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Stock, Placement
     from scripts.db_schemas import PlacementSchema
     from scripts.utils import logger, load_config, normalize_date, get_root_dir, ticker_clean, DEFAULT_TIMEOUT, DEFAULT_MCAP_FILTER, get_asx_pdf_url, get_sydney_time, get_http_session
+    from scripts.pdf_cache import get_cache_dir, download_pdf
 
 # --- Configuration ---
 _CFG = load_config()
 _API = _CFG.get("api", {})
 API_BASE = _API.get("announcements_base", "https://asx.api.markitdigital.com/asx-research/1.0/markets/announcements")
 PRICE_API = _API.get("company_header", "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header")
-ITEMS_PER_PAGE = _CFG.get("ITEMS_PER_PAGE", 1000)
+ITEMS_PER_PAGE = _CFG.get("scanners", {}).get("items_per_page", 1000)
 
 _WORKERS = int(_CFG.get("concurrency", {}).get("placements_workers", 20))
+_PLACEMENTS_CFG = _CFG.get("placements", {})
 
-PLACEMENT_KEYWORDS = (
+PLACEMENT_KEYWORDS = tuple(_PLACEMENTS_CFG.get("keywords", [
     "placement", "capital rais", "capital raise", "share purchase plan", "spp",
     "equity raising", "entitlement offer", "rights issue"
-)
+]))
 
-PLACEMENT_REGEX_PATTERNS = (
+PLACEMENT_REGEX_PATTERNS = tuple(_PLACEMENTS_CFG.get("headline_patterns", [
     r"\braise(?:s|d)?\s+a\$\s*\d",
     r"\bto\s+fund\b",
     r"\bfirm\s+commitments\b",
     r"\bcommitments\s+received\b",
-)
+]))
 
-_CACHE_DIR = get_root_dir() / ".pdf_cache"
-_CACHE_DIR.mkdir(exist_ok=True)
+_CACHE_DIR = get_cache_dir()
 
 class PlacementScanner:
     """Encapsulates the capital raising extraction and sync logic."""
@@ -59,24 +61,14 @@ class PlacementScanner:
         self.overrides = self._load_overrides()
 
     def _download_pdf(self, url: str, filename: str) -> Optional[Path]:
-        """Download PDF from URL and save to cache. Returns local path."""
-        if not url: return None
-        local_path = _CACHE_DIR / filename
-        if local_path.exists(): return local_path
-        
-        try:
-            logger.info(f"Downloading PDF: {filename}...")
-            r = self.session.get(url, timeout=DEFAULT_TIMEOUT)
-            r.raise_for_status()
-            with open(local_path, "wb") as f:
-                f.write(r.content)
-            return local_path
-        except Exception as e:
-            if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
-                logger.warning(f"PDF not available (404): {filename}")
-            else:
-                logger.error(f"Failed to download PDF {filename}: {e}")
-            return None
+        return download_pdf(
+            self.session,
+            url,
+            filename,
+            cache_dir=_CACHE_DIR,
+            timeout=DEFAULT_TIMEOUT,
+            logger=logger,
+        )
 
     def _extract_text_from_pdf(self, local_path: Path) -> str:
         """Extract text from the first 2 pages of a PDF."""

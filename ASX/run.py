@@ -12,6 +12,7 @@ import subprocess
 import json
 import shutil
 import yaml
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
@@ -97,6 +98,52 @@ def clean_pycache(root_dir: Path) -> None:
                 f.unlink()
             except OSError:
                 pass
+
+def prune_pdf_cache(root_dir: Path) -> None:
+    """Keep only announcement PDFs for the latest available trading day in .pdf_cache."""
+    cache_dir = root_dir / ".pdf_cache"
+    if not cache_dir.exists() or not cache_dir.is_dir():
+        return
+
+    try:
+        from sqlalchemy import func
+        with db.session_scope() as sess:
+            latest_date = sess.query(func.max(Announcement.event_date)).scalar()
+    except Exception as e:
+        logger.error(f"Failed to determine latest announcement date for PDF cache pruning: {e}")
+        return
+
+    if not latest_date:
+        return
+
+    keep_date = latest_date.strftime("%Y-%m-%d") if hasattr(latest_date, "strftime") else str(latest_date)
+    removed = 0
+
+    for file_path in cache_dir.iterdir():
+        if not file_path.is_file():
+            continue
+        if file_path.suffix.lower() != ".pdf":
+            continue
+
+        match = re.match(r"^(\d{4}-\d{2}-\d{2})_", file_path.name)
+        if not match:
+            try:
+                file_path.unlink()
+                removed += 1
+            except OSError as e:
+                logger.warning(f"Failed to remove unrecognized cached PDF {file_path.name}: {e}")
+            continue
+
+        file_date = match.group(1)
+        if file_date != keep_date:
+            try:
+                file_path.unlink()
+                removed += 1
+            except OSError as e:
+                logger.warning(f"Failed to remove cached PDF {file_path.name}: {e}")
+
+    if removed:
+        logger.info(f"Pruned .pdf_cache to latest trading day {keep_date}; removed {removed} stale PDFs.")
 
 def load_catalysts_from_yaml() -> list:
     """Load catalyst data directly from YAML (single source of truth)."""
@@ -402,6 +449,7 @@ def main():
             if not ok:
                 exit_code = 1
     finally:
+        prune_pdf_cache(root_dir)
         clean_pycache(root_dir)
 
     raise SystemExit(exit_code)

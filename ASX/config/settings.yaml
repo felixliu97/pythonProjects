@@ -25,6 +25,114 @@ http:
   pdf_read_timeout_seconds: 20
   pdf_chunk_size_bytes: 65536
 
+announcement_rating:
+  price_sensitive_bonus: 1
+  strong_phrase_bonus: 3
+  high_keyword_bonus: 2
+  mid_keyword_bonus: 1
+  progress_cap: 4
+  all_caps_force_5: true
+  all_caps_min_alpha: 10
+  noise_keywords:
+    - "appendix 4g"
+    - "appendix 3y"
+    - "change of director"
+    - "becoming a substantial holder"
+    - "ceasing to be"
+    - "notice of meeting"
+    - "proxy form"
+    - "disclosure notice"
+    - "shareholder letter"
+    - "investor presentation"
+  strong_catalyst_phrases:
+    - "high-grade assay results"
+    - "maiden resource estimate"
+    - "maiden mre"
+    - "resource estimate"
+    - "definitive feasibility study"
+    - "dfs results"
+    - "binding agreement"
+    - "binding offtake"
+    - "fda approval"
+    - "trial results"
+    - "phase 3 results"
+    - "massive sulphides"
+    - "significant discovery"
+    - "exceptional intercepts"
+    - "high-grade discovery"
+    - "conditional spa"
+  high_value_keywords:
+    - "assay"
+    - "drilling"
+    - "high-grade"
+    - "discovery"
+    - "maiden"
+    - "resource"
+    - "phase 3"
+    - "fda"
+    - "approval"
+    - "exceptional"
+    - "breakthrough"
+    - "acquisition"
+    - "merger"
+    - "takeover"
+    - "binding"
+    - "offtake"
+    - "definitive"
+    - "feasibility study"
+    - "term sheet"
+    - "sale and purchase"
+    - "monetis"
+    - "partnership"
+    - "commerciali"
+    - "fast-track"
+    - "fast track"
+    - "commissioning"
+    - "first production"
+  mid_value_keywords:
+    - "trading halt"
+    - "placement"
+    - "capital rais"
+    - "share purchase plan"
+    - "quarterly"
+    - "half year"
+    - "annual report"
+    - "guidance"
+    - "production"
+    - "revenue"
+    - "contract"
+    - "agreement"
+    - "joint venture"
+    - "feasibility"
+    - "scoping"
+    - "update"
+    - "progress"
+    - "operational"
+    - "upgrade"
+    - "milestone"
+    - "collaboration"
+    - "divest"
+    - "invest"
+    - "strategic"
+    - "joint venture"
+    - "restructur"
+
+placements:
+  keywords:
+    - "placement"
+    - "capital rais"
+    - "capital raise"
+    - "share purchase plan"
+    - "spp"
+    - "equity raising"
+    - "entitlement offer"
+    - "rights issue"
+  headline_patterns:
+    - "\\braise(?:s|d)?\\s+a\\$\\s*\\d"
+    - "\\bto\\s+fund\\b"
+    - "\\bfirm\\s+commitments\\b"
+    - "\\bcommitments\\s+received\\b"
+
 analyzer:
   cache_ttl_minutes: 10
   cache_file: "output/asx_analyzer.json"

@@ -189,6 +189,22 @@ class TestDashboardFieldConsistency:
         assert '{% set r_sort =' in template_content
         assert '<span style="display:none">{{ r_sort }}</span>' in template_content
 
+    def test_global_search_input_exists(self, template_content):
+        """Dashboard should expose a single global search input."""
+        assert 'id="globalSearch"' in template_content
+
+    def test_all_catalyst_tables_are_initialized_for_search(self, template_content):
+        """All catalyst tables should be initialized as DataTables so global search can filter tickers like BCM."""
+        assert "document.querySelectorAll('.catalyst-table').forEach((el, index) => {" in template_content
+        assert 'const key = `catalystTable-${index}`;' in template_content
+        assert 'tables[key] = new DataTable(el, baseConfig);' in template_content
+
+    def test_global_search_iterates_over_all_registered_tables(self, template_content):
+        """Global search should apply the entered term to every registered table instance."""
+        assert "document.getElementById('globalSearch').addEventListener('input'" in template_content
+        assert 'Object.values(tables).forEach(table => {' in template_content
+        assert 'table.search(term);' in template_content
+
     def test_dashboard_renders_with_none_values(self, template):
         mock_data = {
             "analyzer": {

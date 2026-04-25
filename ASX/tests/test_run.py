@@ -1,8 +1,10 @@
 import pytest
 import base64
 from jinja2 import Environment
+from datetime import date
+from unittest.mock import MagicMock, patch
 from scripts.utils import generate_sparkline
-from run import trim_zeros
+from run import trim_zeros, prune_pdf_cache
 
 # --- 0. trim_zeros Filter ---
 
@@ -137,6 +139,50 @@ def test_catalysts_from_yaml_defaults():
         assert c["Timeline"] == []
         assert c["Catalysts"] == []
         assert c["Risks"] == []
+
+
+def test_prune_pdf_cache_keeps_only_latest_trading_day(tmp_path):
+    """Only PDFs for the latest announcement trading day should remain in .pdf_cache."""
+    cache_dir = tmp_path / ".pdf_cache"
+    cache_dir.mkdir()
+    keep_file = cache_dir / "2026-04-24_[ABC]_latest.pdf"
+    old_file = cache_dir / "2026-04-23_[XYZ]_older.pdf"
+    keep_file.write_bytes(b"latest")
+    old_file.write_bytes(b"older")
+
+    mock_sess = MagicMock()
+    mock_query = MagicMock()
+    mock_query.scalar.return_value = date(2026, 4, 24)
+    mock_sess.query.return_value = mock_query
+
+    with patch("run.db.session_scope") as mock_scope:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        prune_pdf_cache(tmp_path)
+
+    assert keep_file.exists()
+    assert not old_file.exists()
+
+
+def test_prune_pdf_cache_removes_unrecognized_pdf_names(tmp_path):
+    """Malformed cached PDF names should be removed during pruning."""
+    cache_dir = tmp_path / ".pdf_cache"
+    cache_dir.mkdir()
+    keep_file = cache_dir / "2026-04-24_[ABC]_latest.pdf"
+    bad_file = cache_dir / "misc_file.pdf"
+    keep_file.write_bytes(b"latest")
+    bad_file.write_bytes(b"bad")
+
+    mock_sess = MagicMock()
+    mock_query = MagicMock()
+    mock_query.scalar.return_value = date(2026, 4, 24)
+    mock_sess.query.return_value = mock_query
+
+    with patch("run.db.session_scope") as mock_scope:
+        mock_scope.return_value.__enter__.return_value = mock_sess
+        prune_pdf_cache(tmp_path)
+
+    assert keep_file.exists()
+    assert not bad_file.exists()
 
 
 def test_catalyst_schema_rejects_invalid_rating():
