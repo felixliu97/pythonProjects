@@ -1,31 +1,32 @@
-import pytest
-from sqlalchemy import text
-from scripts.db_manager import db
-from scripts.db_models import Stock, MarketTrend
-
 from datetime import datetime
 
+import pytest
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text, create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
+from scripts.db_manager import db
+from scripts.db_models import MarketTrend, Stock
+
 # --- 1. Database Decoupling & Integrity ---
+
 
 def test_flat_table_independence():
     """Verify that tables are standalone with no foreign key cascades."""
     symbol = "DECOUPLING_TEST"
-    
+
     with db.session_scope() as sess:
         # Cleanup
         sess.query(Stock).filter_by(symbol=symbol).delete()
         sess.query(MarketTrend).filter_by(symbol=symbol).delete()
         sess.flush()
-        
+
         from datetime import date
+
         # Inserts
         sess.add(Stock(symbol=symbol, name="Independent", stock_type="growth"))
         sess.add(MarketTrend(symbol=symbol, market_date=date(2026, 4, 13), score=99.9))
         sess.commit()
-        
+
     with db.session_scope() as sess:
         stock = sess.query(Stock).filter_by(symbol=symbol).first()
         # Verify no relationships
@@ -33,7 +34,7 @@ def test_flat_table_independence():
         # Delete stock
         sess.delete(stock)
         sess.commit()
-    
+
     with db.session_scope() as sess:
         # Verify MarketTrend SURVIVES (no cascade)
         trend = sess.query(MarketTrend).filter_by(symbol=symbol).first()

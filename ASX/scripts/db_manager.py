@@ -6,33 +6,33 @@ Implements standardized SCD Type 2 logic for child tables.
 """
 
 import os
-import logging
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Type
+from typing import Any
 
-from sqlalchemy import create_engine, text, Engine
-from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from dotenv import load_dotenv
+from sqlalchemy import Engine, create_engine, text
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 # Robust Environment Loading: Find .env relative to this file's directory (scripts/)
 BASE_DIR = Path(__file__).resolve().parent.parent
-env_path = BASE_DIR / '.env'
+env_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path=env_path)
 
 try:
     from db_models import Base
-    from utils import logger, get_sydney_time
+    from utils import get_sydney_time, logger
 except ImportError:
     from scripts.db_models import Base
-    from scripts.utils import logger, get_sydney_time
+    from scripts.utils import get_sydney_time, logger
+
 
 def get_db_url() -> str:
     """Returns the database URL based on the current environment."""
     if os.getenv("TESTING") == "true":
         return "sqlite:///:memory:"
-    
+
     user = os.getenv("DB_USER", "postgres")
     pw = os.getenv("DB_PASS", "postgres")
     host = os.getenv("DB_HOST", "localhost")
@@ -40,46 +40,48 @@ def get_db_url() -> str:
     db_name = os.getenv("DB_NAME", "postgres")
     return f"postgresql://{user}:{pw}@{host}:{port}/{db_name}"
 
+
 def get_root_url() -> str:
     """Returns the root database URL for existence checks."""
     if os.getenv("TESTING") == "true":
         return "sqlite:///:memory:"
-    
+
     user = os.getenv("DB_USER", "postgres")
     pw = os.getenv("DB_PASS", "postgres")
     host = os.getenv("DB_HOST", "localhost")
     port = os.getenv("DB_PORT", "5432")
     return f"postgresql://{user}:{pw}@{host}:{port}/postgres"
 
+
 class DBManager:
     """Manages database connections and session lifecycle."""
-    
+
     def __init__(self):
-        self._engine: Optional[Engine] = None
-        self._SessionFactory: Optional[sessionmaker] = None
-        self._scoped_session: Optional[scoped_session] = None
+        self._engine: Engine | None = None
+        self._SessionFactory: sessionmaker | None = None
+        self._scoped_session: scoped_session | None = None
 
     def init_db(self, create_tables: bool = True):
         """Initialize the database connection and optionally create tables."""
         self.ensure_db_exists()
         url = get_db_url()
-        
+
         # SQLite doesn't support schemas, so we strip them from metadata
         if "sqlite" in url:
             for table in Base.metadata.tables.values():
                 table.schema = None
             if os.getenv("TESTING") == "true":
                 logger.info("🛠️  Testing mode active: Using in-memory SQLite database.")
-        
+
         # pool_pre_ping=True ensures stale connections are recycled
         if "sqlite" in url:
             self._engine = create_engine(url)
         else:
             self._engine = create_engine(url, pool_pre_ping=True, pool_size=10, max_overflow=20)
-            
+
         self._SessionFactory = sessionmaker(bind=self._engine)
         self._scoped_session = scoped_session(self._SessionFactory)
-        
+
         if create_tables:
             if "sqlite" not in url:
                 with self._engine.connect() as conn:
@@ -92,7 +94,7 @@ class DBManager:
         url = get_root_url()
         if "sqlite" in url:
             return
-            
+
         try:
             root_engine = create_engine(url, isolation_level="AUTOCOMMIT")
             with root_engine.connect() as conn:
@@ -100,8 +102,8 @@ class DBManager:
                 db_name = os.getenv("DB_NAME", "postgres")
                 result = conn.execute(text(f"SELECT 1 FROM pg_database WHERE datname='{db_name}'"))
                 if not result.fetchone():
-                    logger.warning(f"Database {DB_NAME} not found. Creating...")
-                    conn.execute(text(f"CREATE DATABASE {DB_NAME}"))
+                    logger.warning(f"Database {db_name} not found. Creating...")
+                    conn.execute(text(f"CREATE DATABASE {db_name}"))
             root_engine.dispose()
         except Exception as e:
             logger.debug(f"DB Existence check failed (likely no superuser): {e}")
@@ -115,13 +117,13 @@ class DBManager:
     def sync_list_data(
         self,
         sess: Session,
-        model_cls: Type,
+        model_cls: type,
         key_field: str,
         key_val: Any,
-        new_list: List[Any],
+        new_list: list[Any],
         *,
         item_type: str,
-        now: Optional[datetime] = None,
+        now: datetime | None = None,
     ) -> None:
         """SCD Type 2 sync for list-like child data.
 
@@ -142,7 +144,7 @@ class DBManager:
         )
         active_rows = q.all()
 
-        def norm_child(v: Any) -> tuple[Optional[str], str]:
+        def norm_child(v: Any) -> tuple[str | None, str]:
             if item_type == "milestone":
                 if not isinstance(v, dict):
                     return (None, str(v).strip())
@@ -153,7 +155,7 @@ class DBManager:
             return (None, str(v).strip())
 
         desired = []
-        seen: set[tuple[Optional[str], str]] = set()
+        seen: set[tuple[str | None, str]] = set()
         for v in new_list:
             k = norm_child(v)
             if not k[1]:
@@ -200,6 +202,8 @@ class DBManager:
             raise
         finally:
             session.close()
-    
+
     # Global DB Singleton
+
+
 db = DBManager()

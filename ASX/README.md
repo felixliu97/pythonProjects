@@ -51,9 +51,12 @@ graph TD
 - **启发式评分引擎 (Rating Engine 1-5)**:
     - **Base**: 默认 1 分（常规行政/公告）。
     - **+1 分 (API Signal)**: 匹配 API 端的 `isPriceSensitive` 标志。
+    - **+1 分 (Data Impact)**: 正则匹配数据型关键指标，如 `150g/t`、`2.5%` 等品位/百分比数据。
+    - **+1 分 (Dollar Amount)**: 正则匹配金额描述，如 `$15m`、`$100 million`、`A$50m` 等融资/交易规模。
     - **+3 分 (Strong Phrases)**: 标题/摘要匹配 "high-grade assay results", "maiden resource", "dfs results", "fda approval", "binding agreement" 等核心利好短语。
     - **+2 分 (High Value Keywords)**: 匹配 "assay", "drilling", "high-grade", "discovery", "resource", "acquisition", "merger", "takeover" 等核心关键词。
     - **+1 分 (Mid Value Keywords)**: 匹配 "trading halt", "placement", "quarterly", "guidance", "revenue", "contract", "operational" 等运营词。
+    - **注意**: Strong / High / Mid 三类为互斥 (`elif`)，仅取命中的最高档。Data Impact 和 Dollar Amount 为独立加分项，可与短语/关键词叠加。
     - **特殊逻辑**:
         - **全大写锁定**: 若标题为全大写（且含字母数 > 10），系统视为极其重大突发，强制判定为 **5 分**（如 `NEW BANKING FACILITY`）。
         - **进展封顶 (Progress Cap)**: 标题含 "progress report" 或 "exploration update" 且未触发 Strong Phrases 时，最高封顶 **4 分**。
@@ -72,15 +75,16 @@ graph TD
 
 ### 2.3 融资增发监测 (`asx_placements.py`)
 - **Filter-First Pipeline（先过滤，后提取）**: 
-    1. **Phase 1 - 监控列表门控**: 排除不在 `stocks` 表中的股票。
+    1. **Phase 1 - Override 门控**: 应用 `placement_overrides.yaml` 中的 `delete` / `exclude` 规则，匹配到的 symbol 直接从 DB 删除并跳过。
     2. **Phase 2 - 批量获取市场数据**: 使用 `ThreadPoolExecutor(max_workers=20)` 并行获取合格股票的价格/市值。
-    3. **Phase 3 - 流动性门控**: 市值低于 **$15,000,000 AUD** (`DEFAULT_MCAP_FILTER`) 的股票被过滤。
+    3. **Phase 3 - 流动性 & 证券类型门控**: 市值低于 **$15,000,000 AUD** (`DEFAULT_MCAP_FILTER`) 的股票被过滤；同时执行 issueType 白名单 (`CS/CD/ET/UI`)、Ticker 长度 (≤4) 校验；未知 symbol 若有 displayName 则自动注册。
     4. **Phase 4 - CR价格提取**: 仅对通过门控的股票执行标题正则解析→PDF下载→内容提取。
 - **规则配置化**: headline 关键词、补充正则、分页大小现统一从 `config/settings.yaml -> placements / scanners` 读取。
-- **正则价格提取 (`extract_cr_price`)**:
-    - `pattern_1`: `@ \$?(\d+\.\d+)`
-    - `pattern_2`: `at \$?(\d+\.\d+)`
-    - `pattern_3`: `\$?(\d+\.\d+) per share`
+- **正则价格提取 (`extract_cr_price`) — 3-Tier Cascade**:
+    - **Tier 1 — Cents Patterns** (优先): 匹配 `15c`, `15 cents`, `15.5cps` 等，自动 `/100` 转为 dollar。
+    - **Tier 2 — Dollar Patterns**: 匹配 `at $0.15`, `priced at $1.50 per share`, `issue price: $0.045` 等。
+    - **Tier 3 — Fallback**: 宽松 `$X.XX` 匹配，带 negative lookahead 排除 `$5m` / `$100 million` 等总金额。
+    - 共 **8 条正则**，每条自带 sanity check（cents < 1000, dollar < 500）。
     - **精度**: 支持最多 4 位小数 (如 $0.7625)。
 - **并发刷新与名录回填**: 
     - **自动补全**: 若融资记录缺少 `company` 字段，会在刷新市价时自动从 Markit API 增量提取并回填名称。
@@ -126,6 +130,8 @@ graph TD
 3. **新增**: 插入新记录，`is_active=True`, `valid_from=Now`。
 
 ---
+
+## 📋 3. 数据规范与配置审查
 
 ### 3.1 YAML 数据规范 (`config/asx_catalysts.yaml`)
 
@@ -265,11 +271,45 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
 # 1. 复制环境
 cp .env.example .env
 
-# 2. 数据库重建 (幂等)
+# 2. 安装依赖（包含 pytest / ruff / pre-commit）
+pip install -r requirements.txt
+
+# 3. 数据库重建 (幂等)
 python run.py reseed
 
-# 3. 运行完整性自检 (run.py 会在执行前自动调用)
+# 4. 运行完整性自检 (run.py 会在执行前自动调用)
 pytest tests/
+```
+
+### 6.1.1 Lint 与格式化约定
+
+- **主工具**: 项目现使用 `ruff` 统一执行 lint 与 import 排序检查，配置位于根目录 `pyproject.toml`。
+- **规则范围**: 当前启用 `E / F / I / UP / B` 规则集，覆盖基础语法错误、未使用变量、import 排序、Python 语法升级建议及常见 bug 风险。
+- **自动提交检查**: 根目录 `.pre-commit-config.yaml` 已配置 `ruff` 与 `ruff-format`，适合在提交前自动执行。
+
+常用命令：
+
+```bash
+# 检查整个项目核心 Python 代码
+python -m ruff check scripts tests run.py
+
+# 自动修复可安全修复的问题
+python -m ruff check scripts tests run.py --fix
+
+# 统一格式化
+python -m ruff format scripts tests run.py
+
+# 启用提交前自动检查
+pre-commit install
+
+# 手动运行一次 pre-commit
+pre-commit run --all-files
+```
+
+如果你只想检查单个脚本，可执行：
+
+```bash
+python -m ruff check scripts/asx_announcements.py
 ```
 
 ### 6.2 核心运行逻辑与编排
@@ -280,7 +320,11 @@ pytest tests/
    - 自动检测悉尼时间是否为周末。
    - 检查 DB 最新记录是否已达到周五（最新交易日）。
    - 满足条件时跳过抓取与技术分析，仅执行同步与渲染，极大节省计算资源。
-3. **🌈 彩色化编排**: 使用 ANSI 颜色方案输出日志，区分各模块状态（Cyan 为路径，Green 为成功，Yellow 为警告，Red 为错误）。
+3. **🧹 自动缓存清理 (Automatic Cache Hygiene)**:
+   - 每次 `run.py` 命令结束后，自动清理开发缓存目录：`__pycache__`, `.pytest_cache`, `.ruff_cache`, `.mypy_cache`, `.hypothesis`。
+   - 同时删除遗留的 `*.pyc` / `*.pyo` 文件。
+   - `.pdf_cache` 不会被整目录删除；系统会保留**最新交易日**需要的公告 PDF，并清掉旧 PDF 与无法识别命名的缓存文件。
+4. **🌈 彩色化编排**: 使用 ANSI 颜色方案输出日志，区分各模块状态（Cyan 为路径，Green 为成功，Yellow 为警告，Red 为错误）。
 
 ### 6.3 运行命令映射
 | 命令 | 用途 |
@@ -318,7 +362,7 @@ pytest tests/
   - **PDF 缓存公共模块已收敛**：当前 `asx_announcements.py` 与 `asx_placements.py` 已统一复用 `scripts/pdf_cache.py`，共用缓存目录解析、已缓存短路、异常处理与原子写入策略；后续新增 PDF 消费方应继续复用该模块，而不是重复实现下载逻辑。
   - **减少测试对实现细节字符串的强耦合**：部分测试通过断言模板/脚本中的具体字符串来验证行为，回归保护强，但重构时较脆。后续可逐步增加更偏行为层的测试（例如渲染结果或函数输出），降低无意义破坏。
   - **补充 runtime invariants 文档**：当前系统的关键运行约束包括 `.pdf_cache` 仅保留最新交易日、Catalyst Dashboard 直接读 YAML、globalSearch 会遍历所有注册的 `DataTable`。这些约束应持续保存在 README 中，避免后续维护时被误改。
-  - **继续压缩“脚本内实现 + 脚本内配置”的耦合**：例如关键字列表、过滤规则、下载策略目前仍主要内嵌在脚本中。对于变动频率高的策略参数，后续可继续外提到 `settings.yaml`。
+  - **脚本内配置已大幅外提** ✅：announcement rating 关键词/分值参数、placement headline 关键词/正则均已迁移到 `config/settings.yaml`。后续若有新策略参数，应继续遵循此模式。
 
 - **测试层最佳实践建议**
   - 新增功能优先补到现有职责对应测试文件，不新增“杂项测试大集合”。
@@ -338,6 +382,7 @@ pytest tests/
 修改后必须运行以下测试以确保逻辑闭环 (遵循 **"一脚本一测试"** 原则)：
 
 ```bash
+python -m ruff check scripts tests run.py
 pytest tests/ -v
 ```
 
@@ -363,11 +408,11 @@ pytest tests/ -v
 
 ---
 
-## 📊 7. Dashboard 字段命名规范 (Field Naming Standards)
+## 📊 8. Dashboard 字段命名规范 (Field Naming Standards)
 
 为确保跨 Tab 数据展示的一致性，所有表格字段遵循以下命名规范：
 
-### 7.1 标准化字段名
+### 8.1 标准化字段名
 
 | 标准字段名 | 适用 Tab | 数据字段 | 说明 |
 |-----------|---------|---------|------|
@@ -382,7 +427,7 @@ pytest tests/ -v
 | `PDF` | News, Placements | `PDF_Link` | PDF 链接 |
 | `Diff %` | Placements | `Price_Diff_%` | 相对 CR 价格涨跌幅 |
 
-### 7.2 字段一致性测试
+### 8.2 字段一致性测试
 
 `tests/test_dashboard_fields.py` 现已集中承载 Dashboard/UI 模板相关测试，当前覆盖包括：
 

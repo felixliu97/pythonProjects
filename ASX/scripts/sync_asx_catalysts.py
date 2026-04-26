@@ -8,26 +8,24 @@ Source of truth: config/asx_catalysts.yaml
 
 from __future__ import annotations
 
-from datetime import datetime
-
 import yaml
 
 try:
     from db_manager import db
-    from db_models import Stock, CatalystMaster, CatalystItem
+    from db_models import CatalystItem, CatalystMaster, Stock
     from db_schemas import validate_catalyst_records
-    from utils import logger, get_sydney_time
+    from utils import get_sydney_time, logger
 except ImportError:
     from scripts.db_manager import db
-    from scripts.db_models import Stock, CatalystMaster, CatalystItem
+    from scripts.db_models import CatalystItem, CatalystMaster, Stock
     from scripts.db_schemas import validate_catalyst_records
-    from scripts.utils import logger, get_sydney_time
+    from scripts.utils import get_sydney_time, logger
 
 
 def sync_from_yaml(yaml_path: str = "config/asx_catalysts.yaml") -> None:
     db.init_db(create_tables=True)
 
-    with open(yaml_path, "r", encoding="utf-8") as f:
+    with open(yaml_path, encoding="utf-8") as f:
         data = yaml.safe_load(f) or []
 
     validated_records = validate_catalyst_records(data)
@@ -38,14 +36,18 @@ def sync_from_yaml(yaml_path: str = "config/asx_catalysts.yaml") -> None:
     deleted = 0
 
     with db.session_scope() as sess:
-        existing_symbols = {
-            symbol for (symbol,) in sess.query(CatalystMaster.symbol).all()
-        }
+        existing_symbols = {symbol for (symbol,) in sess.query(CatalystMaster.symbol).all()}
         symbols_to_delete = existing_symbols - yaml_symbols
 
         if symbols_to_delete:
-            deleted = sess.query(CatalystItem).filter(CatalystItem.symbol.in_(symbols_to_delete)).delete(synchronize_session=False)
-            sess.query(CatalystMaster).filter(CatalystMaster.symbol.in_(symbols_to_delete)).delete(synchronize_session=False)
+            deleted = (
+                sess.query(CatalystItem)
+                .filter(CatalystItem.symbol.in_(symbols_to_delete))
+                .delete(synchronize_session=False)
+            )
+            sess.query(CatalystMaster).filter(CatalystMaster.symbol.in_(symbols_to_delete)).delete(
+                synchronize_session=False
+            )
 
         for v_c in validated_records:
             sym = v_c.Ticker
@@ -77,7 +79,11 @@ def sync_from_yaml(yaml_path: str = "config/asx_catalysts.yaml") -> None:
 
             synced += 1
 
-    logger.info(f"Synced {synced} catalyst masters from {yaml_path}; removed {len(symbols_to_delete)} masters and {deleted} child rows not present in YAML.")
+    logger.info(
+        f"Synced {synced} catalyst masters from {yaml_path}; "
+        f"removed {len(symbols_to_delete)} masters and {deleted} "
+        "child rows not present in YAML."
+    )
 
 
 if __name__ == "__main__":

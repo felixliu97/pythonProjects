@@ -5,20 +5,18 @@ NOTE: Using traditional Column definitions to avoid any Mapper ambiguity
 caused by the absence of physical foreign keys. Each table is 100% independent.
 """
 
-from datetime import datetime, date
-from sqlalchemy import (
-    Column, String, Integer, Float, Date, DateTime, 
-    Text, BigInteger, Boolean, text, CheckConstraint
-)
+from sqlalchemy import BigInteger, Boolean, CheckConstraint, Column, Date, DateTime, Float, Integer, String, Text, text
 from sqlalchemy.orm import DeclarativeBase
+
 
 class Base(DeclarativeBase):
     pass
 
+
 class Stock(Base):
-    __tablename__ = 'stocks'
-    __table_args__ = {'schema': 'asx'}
-    
+    __tablename__ = "stocks"
+    __table_args__ = {"schema": "asx"}
+
     symbol = Column(String(20), primary_key=True, index=True)
     name = Column(String(255), nullable=False)
     industry = Column(String(255))
@@ -27,13 +25,14 @@ class Stock(Base):
     def __repr__(self) -> str:
         return f"<Stock(symbol='{self.symbol}', name='{self.name}')>"
 
+
 class MarketTrend(Base):
-    __tablename__ = 'market_trends'
-    __table_args__ = {'schema': 'asx'}
-    
+    __tablename__ = "market_trends"
+    __table_args__ = {"schema": "asx"}
+
     id = Column(Integer, primary_key=True, autoincrement=True)
-    symbol = Column(String(20), index=True) # Flat storage
-    
+    symbol = Column(String(20), index=True)  # Flat storage
+
     current_price = Column(Float)
     market_cap = Column(BigInteger)
     pe = Column(Float)
@@ -49,20 +48,25 @@ class MarketTrend(Base):
     volume = Column(BigInteger, default=0)
     volume_change = Column(Float, default=0.0)
     rsi = Column(Float, default=50.0)
-    
+
     market_date = Column(Date, index=True)
     valid_from = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), index=True)
     valid_to = Column(DateTime, index=True)
     is_active = Column(Boolean, default=True, index=True)
 
+
 class CatalystMaster(Base):
-    __tablename__ = 'catalyst_masters'
+    __tablename__ = "catalyst_masters"
+    _STAGE_CHECK = (
+        "stage IN ('阶段1-无人关注期', '阶段2-验证突破期', '阶段3-现金流确认期', "
+        "'阶段4-行业统治期', '阶段5-估值溢价期', '未分类')"
+    )
     __table_args__ = (
         CheckConstraint(
-            "stage IN ('阶段1-无人关注期', '阶段2-验证突破期', '阶段3-现金流确认期', '阶段4-行业统治期', '阶段5-估值溢价期', '未分类')",
-            name='chk_stage'
+            _STAGE_CHECK,
+            name="chk_stage",
         ),
-        {'schema': 'asx'}
+        {"schema": "asx"},
     )
 
     symbol = Column(String(20), primary_key=True)
@@ -76,30 +80,29 @@ class CatalystMaster(Base):
     core_notes = Column(Text)
     rating = Column(String(50), default="观望")
 
+
 class CatalystItem(Base):
-    __tablename__ = 'catalyst_items'
+    __tablename__ = "catalyst_items"
     __table_args__ = (
-        CheckConstraint(
-            "item_type IN ('catalyst', 'risk', 'milestone')",
-            name='chk_item_type'
-        ),
-        {'schema': 'asx'}
+        CheckConstraint("item_type IN ('catalyst', 'risk', 'milestone')", name="chk_item_type"),
+        {"schema": "asx"},
     )
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     symbol = Column(String(20), index=True)
     item_type = Column(String(50), index=True)
     content = Column(Text, nullable=False)
-    label = Column(String(200)) 
-    
+    label = Column(String(200))
+
     valid_from = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), index=True)
     valid_to = Column(DateTime, index=True)
     is_active = Column(Boolean, default=True, index=True)
 
+
 class Announcement(Base):
-    __tablename__ = 'announcements'
-    __table_args__ = {'schema': 'asx'}
-    
+    __tablename__ = "announcements"
+    __table_args__ = {"schema": "asx"}
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     symbol = Column(String(20), index=True)
     company = Column(String(255))
@@ -111,10 +114,11 @@ class Announcement(Base):
     unique_key = Column(String(500), unique=True, index=True)
     created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
 
+
 class Placement(Base):
-    __tablename__ = 'placements'
-    __table_args__ = {'schema': 'asx'}
-    
+    __tablename__ = "placements"
+    __table_args__ = {"schema": "asx"}
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     symbol = Column(String(20), index=True)
     company = Column(String(255))

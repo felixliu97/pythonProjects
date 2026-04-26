@@ -1,9 +1,11 @@
-import pytest
-from pathlib import Path
 import re
-import ast
-from scripts.db_models import MarketTrend, CatalystMaster, Announcement, Placement
-from scripts.db_schemas import MarketTrendSchema, CatalystSchema, AnnouncementSchema, PlacementSchema
+from pathlib import Path
+
+import pytest
+
+from scripts.db_models import MarketTrend
+from scripts.db_schemas import MarketTrendSchema
+
 
 class TestSystemIntegrity:
     """
@@ -23,10 +25,10 @@ class TestSystemIntegrity:
         """Verify that every field in db_models.MarketTrend exists in db_schemas.MarketTrendSchema."""
         model_fields = [c.name for c in MarketTrend.__table__.columns]
         schema_fields = MarketTrendSchema.model_fields.keys()
-        
+
         # Core fields that must be in both
-        mandatory_fields = ['rsi', 'score', 'volume', 'momentum', 'volatility', 'market_cap']
-        
+        mandatory_fields = ["rsi", "score", "volume", "momentum", "volatility", "market_cap"]
+
         for field in mandatory_fields:
             assert field in model_fields, f"Field '{field}' missing in db_models.MarketTrend"
             assert field in schema_fields, f"Field '{field}' missing in db_schemas.MarketTrendSchema"
@@ -35,23 +37,25 @@ class TestSystemIntegrity:
         """Check if README.md is updated when new technical indicators are added."""
         readme = self.get_readme_content()
         # Indicators we expect to be documented
-        indicators = ['RSI', 'Wilder', 'Score', 'Momentum', 'Volatility', 'Volume']
-        
+        indicators = ["RSI", "Wilder", "Score", "Momentum", "Volatility", "Volume"]
+
         for ind in indicators:
-            assert ind.lower() in readme.lower(), f"Indicator '{ind}' is NOT documented in README.md! Please update documentation."
+            assert ind.lower() in readme.lower(), (
+                f"Indicator '{ind}' is NOT documented in README.md! Please update documentation."
+            )
 
     def test_ui_model_sync(self):
         """Verify that fields calculated in analyzer are actually referenced in the HTML template."""
         html = self.get_html_template_content()
-        
+
         # If these are in the model, they should probably be in the UI
         ui_keywords = {
-            'rsi': ['RSI', 'rsi'],
-            'score': ['Score', 'score'],
-            'volume': ['Vol Surge', 'volume_change'],
-            'market_cap': ['Cap', 'marketCap']
+            "rsi": ["RSI", "rsi"],
+            "score": ["Score", "score"],
+            "volume": ["Vol Surge", "volume_change"],
+            "market_cap": ["Cap", "marketCap"],
         }
-        
+
         for logic_name, ui_patterns in ui_keywords.items():
             found = any(pattern in html for pattern in ui_patterns)
             assert found, f"Field logic '{logic_name}' exists but no reference found in asx_dashboard.html"
@@ -59,11 +63,7 @@ class TestSystemIntegrity:
     def test_announcement_rating_logic_sync(self):
         """Verify that the rating rules in README match the actual code keywords."""
         readme = self.get_readme_content()
-        
-        # Read keywords from asx_announcements.py
-        ann_script_path = Path(__file__).parent.parent / "scripts" / "asx_announcements.py"
-        script_content = ann_script_path.read_text(encoding="utf-8")
-        
+
         # Check if 'Strong Phrases' in README mention at least one key phrase from script
         if "Strong Phrases" in readme:
             # Look for common high-value phrases in script
@@ -75,24 +75,27 @@ class TestSystemIntegrity:
         """Ensure README.md and HTML Dashboard share the same version number (vX.X)."""
         readme = self.get_readme_content()
         html = self.get_html_template_content()
-        
+
         # 1. Extract from README (first occurrence of vX.X)
         readme_match = re.search(r"v\d+\.\d+", readme)
         assert readme_match, "No version (vX.X) found in README.md header"
         readme_ver = readme_match.group(0)
-        
+
         # 2. Extract from HTML Title
         title_match = re.search(r"<title>.*?v(\d+\.\d+)</title>", html)
         assert title_match, "No version found in HTML <title>"
         html_title_ver = "v" + title_match.group(1)
-        
+
         # 3. Extract from HTML Header Pill
         header_match = re.search(r"v(\d+\.\d+)</span>\s*</h1>", html)
         assert header_match, "No version badge found in HTML header"
         html_header_ver = "v" + header_match.group(1)
-        
+
         assert readme_ver == html_title_ver, f"Version mismatch: README({readme_ver}) vs HTML Title({html_title_ver})"
-        assert readme_ver == html_header_ver, f"Version mismatch: README({readme_ver}) vs HTML Header({html_header_ver})"
+        assert readme_ver == html_header_ver, (
+            f"Version mismatch: README({readme_ver}) vs HTML Header({html_header_ver})"
+        )
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

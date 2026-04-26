@@ -1,6 +1,5 @@
-from pathlib import Path
 import tempfile
-from typing import Optional
+from pathlib import Path
 
 try:
     from utils import get_root_dir
@@ -15,7 +14,16 @@ def get_cache_dir() -> Path:
     return _CACHE_DIR
 
 
-def download_pdf(session, url: str, filename: str, *, cache_dir: Optional[Path] = None, timeout=(10, 20), chunk_size: int = 65536, logger=None) -> Optional[Path]:
+def download_pdf(
+    session,
+    url: str,
+    filename: str,
+    *,
+    cache_dir: Path | None = None,
+    timeout=(10, 20),
+    chunk_size: int = 65536,
+    logger=None,
+) -> Path | None:
     if not url:
         return None
 

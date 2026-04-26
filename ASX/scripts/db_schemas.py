@@ -1,7 +1,6 @@
-from pydantic import BaseModel, Field, field_validator, HttpUrl, ConfigDict, model_validator
-from typing import List, Optional, Dict, Union
 from datetime import date, datetime
 
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 CATALYST_STAGE_VALUES = {
     "阶段1-无人关注期",
@@ -20,14 +19,14 @@ CATALYST_CR_RISK_SCORES = {"极低": 0, "低": 1, "中低": 2, "中": 3, "中高
 CATALYST_BREAKOUT_SCORES = {"低": 0, "中低": 1, "中": 2, "中高": 3, "高": 4, "极高": 5}
 
 
-def _require_non_empty_text(value: Optional[str], field_name: str) -> str:
+def _require_non_empty_text(value: str | None, field_name: str) -> str:
     text = (value or "").strip()
     if not text:
         raise ValueError(f"{field_name} must be a non-empty string")
     return text
 
 
-def validate_catalyst_records(raw_records) -> List["CatalystSchema"]:
+def validate_catalyst_records(raw_records) -> list["CatalystSchema"]:
     if raw_records is None:
         return []
     if isinstance(raw_records, dict):
@@ -37,7 +36,7 @@ def validate_catalyst_records(raw_records) -> List["CatalystSchema"]:
     return [CatalystSchema(**item) for item in raw_records]
 
 
-def derive_catalyst_rating(cr_risk: Optional[str], breakout_probability: Optional[str]) -> str:
+def derive_catalyst_rating(cr_risk: str | None, breakout_probability: str | None) -> str:
     cr = (cr_risk or "").strip()
     bp = (breakout_probability or "").strip()
 
@@ -56,25 +55,28 @@ def derive_catalyst_rating(cr_risk: Optional[str], breakout_probability: Optiona
         return "卖出"
     return "强力卖出"
 
+
 class StockSchema(BaseModel):
     symbol: str = Field(..., description="ASX Ticker without .AX")
     name: str
-    industry: Optional[str] = None
+    industry: str | None = None
     stock_type: str = Field(..., pattern="^(growth|foundation|etf|announcement)$")
 
-    @field_validator('symbol')
+    @field_validator("symbol")
     @classmethod
     def clean_symbol(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()
 
+
 class MilestoneSchema(BaseModel):
     """Note: These keys match the original YAML keys for compatibility"""
+
     model_config = ConfigDict(populate_by_name=True)
 
     Date: str = Field(..., alias="time_label")
     Event: str = Field(..., alias="event_desc")
 
-    @field_validator('Date')
+    @field_validator("Date")
     @classmethod
     def validate_date(cls, v: str) -> str:
         text = _require_non_empty_text(v, "Timeline.Date")
@@ -84,32 +86,34 @@ class MilestoneSchema(BaseModel):
             raise ValueError("Timeline.Date must use exact YYYY-MM-DD format") from exc
         return text
 
-    @field_validator('Event')
+    @field_validator("Event")
     @classmethod
     def validate_event(cls, v: str) -> str:
         return _require_non_empty_text(v, "Timeline.Event")
+
 
 class CatalystSchema(BaseModel):
     """
     Interface model that maps relational children to lists for LLM/Dashboard compatibility.
     """
+
     Ticker: str
-    Stage: Optional[str] = "未分类"
+    Stage: str | None = "未分类"
     Company: str
-    Sector: Optional[str] = None
-    Catalysts: List[str] = []
-    Risks: List[str] = []
+    Sector: str | None = None
+    Catalysts: list[str] = []
+    Risks: list[str] = []
     CR_Risk: str
-    CR_Risk_Reason: Optional[str] = ""
-    Breakout_Probability: Optional[str] = Field(None, alias="Probability")
-    Breakout_Probability_Reason: Optional[str] = ""
+    CR_Risk_Reason: str | None = ""
+    Breakout_Probability: str | None = Field(None, alias="Probability")
+    Breakout_Probability_Reason: str | None = ""
     Core_Notes: str
     Rating: str = "观望"
-    Timeline: List[Dict[str, str]] = [] # [{"Date": "...", "Event": "..."}]
+    Timeline: list[dict[str, str]] = []  # [{"Date": "...", "Event": "..."}]
 
     model_config = ConfigDict(populate_by_name=True)
 
-    @model_validator(mode='before')
+    @model_validator(mode="before")
     @classmethod
     def apply_default_rating(cls, data):
         if not isinstance(data, dict):
@@ -126,32 +130,32 @@ class CatalystSchema(BaseModel):
         )
         return normalized
 
-    @field_validator('Ticker')
+    @field_validator("Ticker")
     @classmethod
     def clean_ticker(cls, v: str) -> str:
         return _require_non_empty_text(v, "Ticker").upper().replace(".AX", "").strip()
 
-    @field_validator('Stage')
+    @field_validator("Stage")
     @classmethod
-    def validate_stage(cls, v: Optional[str]) -> str:
+    def validate_stage(cls, v: str | None) -> str:
         value = (v or "未分类").strip()
         if value not in CATALYST_STAGE_VALUES:
             raise ValueError(f"Stage must be one of: {sorted(CATALYST_STAGE_VALUES)}")
         return value
 
-    @field_validator('Company')
+    @field_validator("Company")
     @classmethod
     def validate_company(cls, v: str) -> str:
         return _require_non_empty_text(v, "Company")
 
-    @field_validator('Sector')
+    @field_validator("Sector")
     @classmethod
-    def validate_sector(cls, v: Optional[str]) -> Optional[str]:
+    def validate_sector(cls, v: str | None) -> str | None:
         if v is None:
             return v
         return _require_non_empty_text(v, "Sector")
 
-    @field_validator('CR_Risk')
+    @field_validator("CR_Risk")
     @classmethod
     def validate_cr_risk(cls, v: str) -> str:
         value = _require_non_empty_text(v, "CR_Risk")
@@ -159,20 +163,20 @@ class CatalystSchema(BaseModel):
             raise ValueError(f"CR_Risk must be one of: {sorted(CATALYST_CR_RISK_VALUES)}")
         return value
 
-    @field_validator('Breakout_Probability')
+    @field_validator("Breakout_Probability")
     @classmethod
-    def validate_breakout_probability(cls, v: Optional[str]) -> str:
+    def validate_breakout_probability(cls, v: str | None) -> str:
         value = _require_non_empty_text(v, "Breakout_Probability")
         if value not in CATALYST_BREAKOUT_VALUES:
             raise ValueError(f"Breakout_Probability must be one of: {sorted(CATALYST_BREAKOUT_VALUES)}")
         return value
 
-    @field_validator('Core_Notes')
+    @field_validator("Core_Notes")
     @classmethod
     def validate_core_notes(cls, v: str) -> str:
         return _require_non_empty_text(v, "Core_Notes")
 
-    @field_validator('Rating')
+    @field_validator("Rating")
     @classmethod
     def validate_rating(cls, v: str) -> str:
         value = (v or "观望").strip()
@@ -180,14 +184,14 @@ class CatalystSchema(BaseModel):
             raise ValueError(f"Rating must be one of: {sorted(CATALYST_RATING_VALUES)}")
         return value
 
-    @field_validator('CR_Risk_Reason', 'Breakout_Probability_Reason', mode='before')
+    @field_validator("CR_Risk_Reason", "Breakout_Probability_Reason", mode="before")
     @classmethod
     def normalize_optional_reason(cls, v):
         if v is None:
             return ""
         return str(v).strip()
 
-    @field_validator('Catalysts', 'Risks', mode='before')
+    @field_validator("Catalysts", "Risks", mode="before")
     @classmethod
     def handle_dict_items(cls, v):
         """Convert any dict-style list items (key: value) to plain strings."""
@@ -202,9 +206,9 @@ class CatalystSchema(BaseModel):
                 processed.append(str(item))
         return processed
 
-    @field_validator('Catalysts', 'Risks')
+    @field_validator("Catalysts", "Risks")
     @classmethod
-    def validate_string_lists(cls, v: List[str], info) -> List[str]:
+    def validate_string_lists(cls, v: list[str], info) -> list[str]:
         cleaned = []
         for idx, item in enumerate(v):
             text = str(item).strip()
@@ -213,7 +217,7 @@ class CatalystSchema(BaseModel):
             cleaned.append(text)
         return cleaned
 
-    @field_validator('Timeline', mode='before')
+    @field_validator("Timeline", mode="before")
     @classmethod
     def validate_timeline(cls, v):
         if v is None:
@@ -222,12 +226,13 @@ class CatalystSchema(BaseModel):
             raise ValueError("Timeline must be a list of {Date, Event} objects")
         return [MilestoneSchema(**item).model_dump(by_alias=False) for item in v]
 
+
 class MarketTrendSchema(BaseModel):
     symbol: str
-    current_price: Optional[float] = None
-    market_cap: Optional[int] = None
-    pe: Optional[float] = None
-    yield_val: Optional[float] = None
+    current_price: float | None = None
+    market_cap: int | None = None
+    pe: float | None = None
+    yield_val: float | None = None
     score: float = 0.0
     price_change_1d: float = 0.0
     price_diff_1d: float = 0.0
@@ -235,30 +240,32 @@ class MarketTrendSchema(BaseModel):
     price_diff_5d: float = 0.0
     momentum: float = 0.0
     volatility: float = 0.0
-    volume: Optional[int] = 0
+    volume: int | None = 0
     volume_change: float = 0.0
     rsi: float = 50.0
-    price_history: Optional[str] = None
-    market_date: Optional[date] = None
-    
-    @field_validator('symbol')
+    price_history: str | None = None
+    market_date: date | None = None
+
+    @field_validator("symbol")
     @classmethod
     def clean_symbol(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()
+
 
 class AnnouncementSchema(BaseModel):
     ASX_Code: str
     Company: str
     Headline: str
     Date: date
-    Summary: Optional[str] = ""
-    PDF_Link: Optional[str] = ""
+    Summary: str | None = ""
+    PDF_Link: str | None = ""
     Rating: int = Field(2, ge=1, le=5)
 
-    @field_validator('ASX_Code')
+    @field_validator("ASX_Code")
     @classmethod
     def clean_asx_code(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()
+
 
 class PlacementSchema(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
@@ -267,12 +274,12 @@ class PlacementSchema(BaseModel):
     Company: str
     Headline: str
     Date: date
-    CR_Price: Optional[float] = None
-    Current_Price: Optional[float] = None
-    Price_Diff_Percent: Optional[float] = Field(None, alias="Price_Diff_%")
-    PDF_Link: Optional[str] = ""
+    CR_Price: float | None = None
+    Current_Price: float | None = None
+    Price_Diff_Percent: float | None = Field(None, alias="Price_Diff_%")
+    PDF_Link: str | None = ""
 
-    @field_validator('ASX_Code')
+    @field_validator("ASX_Code")
     @classmethod
     def clean_asx_code(cls, v: str) -> str:
         return v.upper().replace(".AX", "").strip()

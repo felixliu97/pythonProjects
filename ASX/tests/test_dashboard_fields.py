@@ -3,10 +3,12 @@ Unit tests for dashboard field name consistency across all tabs.
 Ensures the same field has the same name in different tables.
 """
 
+import re
+from pathlib import Path
+
 import pytest
 from jinja2 import Environment, FileSystemLoader
-from pathlib import Path
-import re
+
 from run import trim_zeros
 
 
@@ -35,18 +37,11 @@ class TestDashboardFieldConsistency:
     def table_headers(self, template_content):
         """Extract all table headers from the template."""
         # Pattern to find <th>...</th> content within <thead> sections
-        thead_pattern = r'<thead>(.*?)</thead>'
-        th_pattern = r'<th[^>]*>(.*?)</th>'
+        thead_pattern = r"<thead>(.*?)</thead>"
+        th_pattern = r"<th[^>]*>(.*?)</th>"
 
         tables = {}
-        table_ids = [
-            'growthStockTable',
-            'foundationStockTable',
-            'etfTable',
-            'catalystTable',
-            'annTable',
-            'placTable'
-        ]
+        table_ids = ["growthStockTable", "foundationStockTable", "etfTable", "catalystTable", "annTable", "placTable"]
 
         for table_id in table_ids:
             # Find table with this id
@@ -60,14 +55,14 @@ class TestDashboardFieldConsistency:
                     headers = []
                     for th in th_matches:
                         # Remove HTML tags, normalize whitespace
-                        clean = re.sub(r'<[^>]+>', '', th).strip()
-                        clean = re.sub(r'\s+', ' ', clean)
+                        clean = re.sub(r"<[^>]+>", "", th).strip()
+                        clean = re.sub(r"\s+", " ", clean)
                         if clean:
                             headers.append(clean)
                     tables[table_id] = headers
 
         # Catalyst table uses class="catalyst-table" (no id)
-        if 'catalystTable' not in tables:
+        if "catalystTable" not in tables:
             catalyst_pattern = r'<table[^>]*class="[^"]*catalyst-table[^"]*"[^>]*>(.*?)</table>'
             catalyst_match = re.search(catalyst_pattern, template_content, re.DOTALL)
             if catalyst_match:
@@ -76,117 +71,110 @@ class TestDashboardFieldConsistency:
                     th_matches = re.findall(th_pattern, thead_match.group(1))
                     headers = []
                     for th in th_matches:
-                        clean = re.sub(r'<[^>]+>', '', th).strip()
-                        clean = re.sub(r'\s+', ' ', clean)
+                        clean = re.sub(r"<[^>]+>", "", th).strip()
+                        clean = re.sub(r"\s+", " ", clean)
                         if clean:
                             headers.append(clean)
-                    tables['catalystTable'] = headers
+                    tables["catalystTable"] = headers
 
         return tables
 
     def test_ticker_field_consistency(self, table_headers):
         """Test that the ticker/code field is consistently named 'Ticker' across tabs."""
         ticker_tabs = {
-            'growthStockTable': 'Ticker',
-            'foundationStockTable': 'Ticker',
-            'etfTable': 'Ticker',
-            'annTable': 'Ticker',  # Should be 'Ticker', not 'Code'
-            'placTable': 'Ticker',  # Should be 'Ticker', not 'Code'
+            "growthStockTable": "Ticker",
+            "foundationStockTable": "Ticker",
+            "etfTable": "Ticker",
+            "annTable": "Ticker",  # Should be 'Ticker', not 'Code'
+            "placTable": "Ticker",  # Should be 'Ticker', not 'Code'
         }
 
         for table_id, expected in ticker_tabs.items():
             if table_id in table_headers:
                 headers = table_headers[table_id]
-                assert expected in headers, \
-                    f"{table_id}: Expected '{expected}' in headers, got {headers}"
+                assert expected in headers, f"{table_id}: Expected '{expected}' in headers, got {headers}"
 
     def test_company_field_consistency(self, table_headers):
         """Test that the company name field is consistently named 'Company' across tabs."""
         company_tabs = {
-            'growthStockTable': 'Name',  # Special case: uses 'Name' not 'Company'
-            'foundationStockTable': 'Name',
-            'etfTable': 'Fund Name',  # Special case: ETFs use 'Fund Name'
-            'annTable': 'Company',
-            'placTable': 'Company',
+            "growthStockTable": "Name",  # Special case: uses 'Name' not 'Company'
+            "foundationStockTable": "Name",
+            "etfTable": "Fund Name",  # Special case: ETFs use 'Fund Name'
+            "annTable": "Company",
+            "placTable": "Company",
         }
 
         for table_id, expected in company_tabs.items():
             if table_id in table_headers:
                 headers = table_headers[table_id]
                 # For ETFs, check that it contains 'Name'
-                if expected == 'Fund Name':
-                    assert any('Name' in h for h in headers), \
+                if expected == "Fund Name":
+                    assert any("Name" in h for h in headers), (
                         f"{table_id}: Expected header containing 'Name', got {headers}"
+                    )
                 else:
-                    assert expected in headers, \
-                        f"{table_id}: Expected '{expected}' in headers, got {headers}"
+                    assert expected in headers, f"{table_id}: Expected '{expected}' in headers, got {headers}"
 
     def test_date_field_consistency(self, table_headers):
         """Test that date fields are consistently named."""
-        date_tabs = ['annTable', 'placTable']
+        date_tabs = ["annTable", "placTable"]
         for table_id in date_tabs:
             if table_id in table_headers:
-                assert 'Date' in table_headers[table_id], \
-                    f"{table_id}: Expected 'Date' in headers"
+                assert "Date" in table_headers[table_id], f"{table_id}: Expected 'Date' in headers"
 
     def test_price_field_consistency(self, table_headers):
         """Test that price fields are consistently named."""
         price_tabs = {
-            'growthStockTable': 'Price',
-            'foundationStockTable': 'Price',
-            'etfTable': 'Price',
-            'annTable': 'Price',
-            'placTable': 'Price',  # Should be 'Price', not 'Live'
+            "growthStockTable": "Price",
+            "foundationStockTable": "Price",
+            "etfTable": "Price",
+            "annTable": "Price",
+            "placTable": "Price",  # Should be 'Price', not 'Live'
         }
 
         for table_id, expected in price_tabs.items():
             if table_id in table_headers:
                 headers = table_headers[table_id]
-                assert expected in headers, \
-                    f"{table_id}: Expected '{expected}' in headers, got {headers}"
+                assert expected in headers, f"{table_id}: Expected '{expected}' in headers, got {headers}"
 
     def test_pdf_field_consistency(self, table_headers):
         """Test that PDF/link fields are consistently named 'PDF'."""
-        pdf_tabs = ['annTable', 'placTable']
+        pdf_tabs = ["annTable", "placTable"]
         for table_id in pdf_tabs:
             if table_id in table_headers:
                 headers = table_headers[table_id]
-                assert 'PDF' in headers, \
-                    f"{table_id}: Expected 'PDF' in headers, got {headers}"
+                assert "PDF" in headers, f"{table_id}: Expected 'PDF' in headers, got {headers}"
 
     def test_one_d_percent_consistency(self, table_headers):
         """Test that 1D % field exists in relevant tables."""
-        one_d_tabs = ['growthStockTable', 'foundationStockTable', 'etfTable', 'annTable']
+        one_d_tabs = ["growthStockTable", "foundationStockTable", "etfTable", "annTable"]
         for table_id in one_d_tabs:
             if table_id in table_headers:
                 headers = table_headers[table_id]
-                assert '1D %' in headers, \
-                    f"{table_id}: Expected '1D %' in headers, got {headers}"
+                assert "1D %" in headers, f"{table_id}: Expected '1D %' in headers, got {headers}"
 
     def test_five_d_percent_consistency(self, table_headers):
         """Test that 5D % field exists in relevant tables."""
-        five_d_tabs = ['growthStockTable', 'foundationStockTable', 'etfTable']
+        five_d_tabs = ["growthStockTable", "foundationStockTable", "etfTable"]
         for table_id in five_d_tabs:
             if table_id in table_headers:
                 headers = table_headers[table_id]
-                assert '5D %' in headers, \
-                    f"{table_id}: Expected '5D %' in headers, got {headers}"
+                assert "5D %" in headers, f"{table_id}: Expected '5D %' in headers, got {headers}"
 
     def test_catalyst_table_has_required_fields(self, table_headers):
         """Test that catalyst table has all required fields."""
-        if 'catalystTable' not in table_headers:
+        if "catalystTable" not in table_headers:
             pytest.skip("catalystTable not found in template")
 
-        headers = table_headers['catalystTable']
-        required_fields = ['Stage', 'Ticker Name', 'Rating', 'CR Risk']
+        headers = table_headers["catalystTable"]
+        required_fields = ["Stage", "Ticker Name", "Rating", "CR Risk"]
 
         for field in required_fields:
-            assert field in headers, \
-                f"catalystTable: Expected '{field}' in headers, got {headers}"
+            assert field in headers, f"catalystTable: Expected '{field}' in headers, got {headers}"
 
     def test_catalyst_rating_uses_hidden_sort_key(self, template_content):
         """Catalyst Rating column should include a hidden numeric sort key for stable table sorting."""
-        assert '{% set r_sort =' in template_content
+        assert "{% set r_sort =" in template_content
         assert '<span style="display:none">{{ r_sort }}</span>' in template_content
 
     def test_global_search_input_exists(self, template_content):
@@ -196,99 +184,109 @@ class TestDashboardFieldConsistency:
     def test_all_catalyst_tables_are_initialized_for_search(self, template_content):
         """All catalyst tables should be initialized as DataTables so global search can filter tickers like BCM."""
         assert "document.querySelectorAll('.catalyst-table').forEach((el, index) => {" in template_content
-        assert 'const key = `catalystTable-${index}`;' in template_content
-        assert 'tables[key] = new DataTable(el, baseConfig);' in template_content
+        assert "const key = `catalystTable-${index}`;" in template_content
+        assert "tables[key] = new DataTable(el, baseConfig);" in template_content
 
     def test_global_search_iterates_over_all_registered_tables(self, template_content):
         """Global search should apply the entered term to every registered table instance."""
         assert "document.getElementById('globalSearch').addEventListener('input'" in template_content
-        assert 'Object.values(tables).forEach(table => {' in template_content
-        assert 'table.search(term);' in template_content
+        assert "Object.values(tables).forEach(table => {" in template_content
+        assert "table.search(term);" in template_content
 
     def test_dashboard_renders_with_none_values(self, template):
         mock_data = {
             "analyzer": {
-                "growth_stocks": [{
-                    "symbol": "WAU",
-                    "name": "WAU Corp",
-                    "industry": "Mining",
-                    "current_price": 0.0,
-                    "marketCap": 0,
-                    "pe": None,
-                    "yield": 0.0,
-                    "score": 0.0,
-                    "price_change_1d": 0.0,
-                    "price_diff_1d": 0.0,
-                    "price_change_5d": 0.0,
-                    "price_diff_5d": 0.0,
-                    "momentum": 0.0,
-                    "volatility": 0.0,
-                    "volume_change": 0.0,
-                    "rsi": 0.0,
-                    "sparkline": "dummy.png"
-                }],
+                "growth_stocks": [
+                    {
+                        "symbol": "WAU",
+                        "name": "WAU Corp",
+                        "industry": "Mining",
+                        "current_price": 0.0,
+                        "marketCap": 0,
+                        "pe": None,
+                        "yield": 0.0,
+                        "score": 0.0,
+                        "price_change_1d": 0.0,
+                        "price_diff_1d": 0.0,
+                        "price_change_5d": 0.0,
+                        "price_diff_5d": 0.0,
+                        "momentum": 0.0,
+                        "volatility": 0.0,
+                        "volume_change": 0.0,
+                        "rsi": 0.0,
+                        "sparkline": "dummy.png",
+                    }
+                ],
                 "foundation_stocks": [],
-                "etfs": [{
-                    "symbol": "ETF",
-                    "name": "ETF Fund",
-                    "marketCap": 0,
-                    "current_price": 0.0,
-                    "yield": 0.0,
-                    "score": 0.0,
-                    "price_change_1d": 0.0,
-                    "price_diff_1d": 0.0,
-                    "price_change_5d": 0.0,
-                    "price_diff_5d": 0.0,
-                    "momentum": 0.0,
-                    "volatility": 0.0,
-                    "volume_change": 0.0,
-                    "rsi": 0.0,
-                    "sparkline": "dummy.png"
-                }],
-                "global_timeline": []
+                "etfs": [
+                    {
+                        "symbol": "ETF",
+                        "name": "ETF Fund",
+                        "marketCap": 0,
+                        "current_price": 0.0,
+                        "yield": 0.0,
+                        "score": 0.0,
+                        "price_change_1d": 0.0,
+                        "price_diff_1d": 0.0,
+                        "price_change_5d": 0.0,
+                        "price_diff_5d": 0.0,
+                        "momentum": 0.0,
+                        "volatility": 0.0,
+                        "volume_change": 0.0,
+                        "rsi": 0.0,
+                        "sparkline": "dummy.png",
+                    }
+                ],
+                "global_timeline": [],
             },
             "catalysts": {
-                "catalysts": [{
-                    "Ticker": "WAU",
-                    "Stage": "阶段1-无人关注期",
-                    "Sector": "Mining",
-                    "Timeline": [],
-                    "Catalysts": [],
-                    "Risks": [],
-                    "Rating": "观望",
-                    "CR_Risk": "高",
-                    "Breakout_Probability": "中",
-                    "Core_Notes": ""
-                }]
+                "catalysts": [
+                    {
+                        "Ticker": "WAU",
+                        "Stage": "阶段1-无人关注期",
+                        "Sector": "Mining",
+                        "Timeline": [],
+                        "Catalysts": [],
+                        "Risks": [],
+                        "Rating": "观望",
+                        "CR_Risk": "高",
+                        "Breakout_Probability": "中",
+                        "Core_Notes": "",
+                    }
+                ]
             },
             "announcements": {
-                "announcements": [{
-                    "Date": "2026-04-22",
-                    "ASX_Code": "WAU",
-                    "Company": "WAU Corp",
-                    "Headline": "Test Announcement",
-                    "Summary": "Summary",
-                    "Current_Price": None,
-                    "Price_Change_1d": 0.0,
-                    "Price_Diff_1d": 0.0,
-                    "Rating": 0,
-                    "RSI": None,
-                    "PDF_Link": "#"
-                }]
+                "announcements": [
+                    {
+                        "Date": "2026-04-22",
+                        "ASX_Code": "WAU",
+                        "Company": "WAU Corp",
+                        "Headline": "Test Announcement",
+                        "Summary": "Summary",
+                        "Current_Price": None,
+                        "Price_Change_1d": 0.0,
+                        "Price_Diff_1d": 0.0,
+                        "Rating": 0,
+                        "RSI": None,
+                        "PDF_Link": "#",
+                    }
+                ]
             },
             "placements": {
-                "placements": [{
-                    "Date": "2026-04-22",
-                    "ASX_Code": "WAU",
-                    "Company": "WAU Corp",
-                    "Headline": "Test Placement",
-                    "CR_Price": None,
-                    "Current_Price": None,
-                    "Price_Diff_%": 0.0,
-                    "PDF_Link": "#"
-                }]
+                "placements": [
+                    {
+                        "Date": "2026-04-22",
+                        "ASX_Code": "WAU",
+                        "Company": "WAU Corp",
+                        "Headline": "Test Placement",
+                        "CR_Price": None,
+                        "Current_Price": None,
+                        "Price_Diff_%": 0.0,
+                        "PDF_Link": "#",
+                    }
+                ]
             },
-            "timestamp": "2026-04-22 10:00:00"
+            "timestamp": "2026-04-22 10:00:00",
         }
 
         try:
@@ -304,82 +302,76 @@ class TestDashboardFieldConsistency:
     def test_indicator_field_consistency(self, table_headers):
         """Test that technical indicators (Score, RSI, Vol Surge) exist in relevant tables."""
         indicator_tabs = {
-            'growthStockTable': ['Score', 'RSI', 'Vol Surge'],
-            'foundationStockTable': ['Score', 'RSI', 'Vol Surge'],
-            'etfTable': ['Score', 'RSI', 'Vol Surge'],
-            'annTable': ['RSI'],
+            "growthStockTable": ["Score", "RSI", "Vol Surge"],
+            "foundationStockTable": ["Score", "RSI", "Vol Surge"],
+            "etfTable": ["Score", "RSI", "Vol Surge"],
+            "annTable": ["RSI"],
         }
 
         for table_id, expected_fields in indicator_tabs.items():
             if table_id in table_headers:
                 headers = table_headers[table_id]
                 for field in expected_fields:
-                    assert field in headers, \
-                        f"{table_id}: Expected indicator '{field}' in headers, got {headers}"
+                    assert field in headers, f"{table_id}: Expected indicator '{field}' in headers, got {headers}"
 
     def test_fundamental_field_consistency(self, table_headers):
         """Test that fundamental fields (Cap/Assets, P/E/Yield, Industry) exist in relevant tables."""
         fundamental_tabs = {
-            'growthStockTable': ['Cap', 'P/E', 'Industry'],
-            'foundationStockTable': ['Cap', 'P/E', 'Industry'],
+            "growthStockTable": ["Cap", "P/E", "Industry"],
+            "foundationStockTable": ["Cap", "P/E", "Industry"],
         }
 
         for table_id, expected_fields in fundamental_tabs.items():
             if table_id in table_headers:
                 headers = table_headers[table_id]
                 for field in expected_fields:
-                    assert field in headers, \
-                        f"{table_id}: Expected fundamental '{field}' in headers, got {headers}"
-        
+                    assert field in headers, f"{table_id}: Expected fundamental '{field}' in headers, got {headers}"
+
         # Special check for ETF table
-        if 'etfTable' in table_headers:
-            headers = table_headers['etfTable']
-            assert 'Total Assets' in headers, f"etfTable: Expected 'Total Assets' in headers, got {headers}"
-            assert 'Yield' in headers, f"etfTable: Expected 'Yield' in headers, got {headers}"
-            assert 'Fund Name' in headers, f"etfTable: Expected 'Fund Name' in headers, got {headers}"
+        if "etfTable" in table_headers:
+            headers = table_headers["etfTable"]
+            assert "Total Assets" in headers, f"etfTable: Expected 'Total Assets' in headers, got {headers}"
+            assert "Yield" in headers, f"etfTable: Expected 'Yield' in headers, got {headers}"
+            assert "Fund Name" in headers, f"etfTable: Expected 'Fund Name' in headers, got {headers}"
 
     def test_placement_specific_fields(self, table_headers):
         """Test that placement-specific fields exist in the placement table."""
-        if 'placTable' in table_headers:
-            headers = table_headers['placTable']
-            expected = ['CR Price', 'Diff %', 'Placement Event Detail']
+        if "placTable" in table_headers:
+            headers = table_headers["placTable"]
+            expected = ["CR Price", "Diff %", "Placement Event Detail"]
             for field in expected:
-                assert field in headers, \
-                    f"placTable: Expected '{field}' in headers, got {headers}"
+                assert field in headers, f"placTable: Expected '{field}' in headers, got {headers}"
 
     def test_announcement_specific_fields(self, table_headers):
         """Test that announcement-specific fields exist in the news feed table."""
-        if 'annTable' in table_headers:
-            headers = table_headers['annTable']
-            assert 'Headline & Summary' in headers, \
-                f"annTable: Expected 'Headline & Summary' in headers, got {headers}"
+        if "annTable" in table_headers:
+            headers = table_headers["annTable"]
+            assert "Headline & Summary" in headers, f"annTable: Expected 'Headline & Summary' in headers, got {headers}"
 
     def test_no_duplicate_field_names(self, table_headers):
         """Test that no table has duplicate field names."""
         for table_id, headers in table_headers.items():
             duplicates = [h for h in set(headers) if headers.count(h) > 1]
-            assert not duplicates, \
-                f"{table_id}: Duplicate field names found: {duplicates}"
+            assert not duplicates, f"{table_id}: Duplicate field names found: {duplicates}"
 
     def test_standardized_field_reference(self, table_headers):
         """Documentation test: verify standardized field names are documented."""
         # This test serves as documentation of the standard field names
         standard_fields = {
-            'Ticker': ['growthStockTable', 'foundationStockTable', 'etfTable', 'annTable', 'placTable'],
-            'Date': ['annTable', 'placTable'],
-            'Price': ['growthStockTable', 'foundationStockTable', 'etfTable', 'annTable', 'placTable'],
-            '1D %': ['growthStockTable', 'foundationStockTable', 'etfTable', 'annTable'],
-            'Rating': ['annTable', 'catalystTable'],
-            'PDF': ['annTable', 'placTable'],
-            'RSI': ['growthStockTable', 'foundationStockTable', 'etfTable', 'annTable'],
-            'Score': ['growthStockTable', 'foundationStockTable', 'etfTable'],
+            "Ticker": ["growthStockTable", "foundationStockTable", "etfTable", "annTable", "placTable"],
+            "Date": ["annTable", "placTable"],
+            "Price": ["growthStockTable", "foundationStockTable", "etfTable", "annTable", "placTable"],
+            "1D %": ["growthStockTable", "foundationStockTable", "etfTable", "annTable"],
+            "Rating": ["annTable", "catalystTable"],
+            "PDF": ["annTable", "placTable"],
+            "RSI": ["growthStockTable", "foundationStockTable", "etfTable", "annTable"],
+            "Score": ["growthStockTable", "foundationStockTable", "etfTable"],
         }
 
         for field, expected_tabs in standard_fields.items():
             for table_id in expected_tabs:
                 if table_id in table_headers:
-                    assert field in table_headers[table_id], \
-                        f"Standard field '{field}' missing from {table_id}"
+                    assert field in table_headers[table_id], f"Standard field '{field}' missing from {table_id}"
 
 
 class TestDataFieldMapping:
@@ -396,16 +388,16 @@ class TestDataFieldMapping:
     def test_announcement_data_fields(self, run_py_content):
         """Test that announcement data structure has consistent field names."""
         # Check for Price_Diff_1d field
-        assert 'Price_Diff_1d' in run_py_content, \
-            "Announcement data should include 'Price_Diff_1d' field"
-        assert 'Current_Price' in run_py_content, \
-            "Announcement data should include 'Current_Price' field"
+        assert "Price_Diff_1d" in run_py_content, "Announcement data should include 'Price_Diff_1d' field"
+        assert "Current_Price" in run_py_content, "Announcement data should include 'Current_Price' field"
 
     def test_placement_data_fields(self, run_py_content):
         """Test that placement data structure has consistent field names."""
         # Check for consistent naming
-        assert 'Price_Diff_%' in run_py_content or "'Price_Diff_%'" in run_py_content, \
+        assert "Price_Diff_%" in run_py_content or "'Price_Diff_%'" in run_py_content, (
             "Placement data should include 'Price_Diff_%' field"
+        )
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

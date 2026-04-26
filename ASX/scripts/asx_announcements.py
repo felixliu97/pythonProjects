@@ -1,30 +1,49 @@
 """
 ASX Announcements Scraper (Best Practice Refactor)
 
-Fetches general corporate announcements from the ASX/Markit API, 
+Fetches general corporate announcements from the ASX/Markit API,
 performs heuristic rating/summarization, and syncs to PostgreSQL.
 """
 
-import sys
 import argparse
+import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional, Tuple, Set
 from pathlib import Path
 
 try:
     from db_manager import db
     from db_models import Announcement, Stock
     from db_schemas import AnnouncementSchema
-    from utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time, get_http_session, get_pdf_filename
-    from pdf_cache import get_cache_dir, download_pdf
+    from pdf_cache import download_pdf, get_cache_dir
+    from utils import (
+        get_asx_pdf_url,
+        get_http_session,
+        get_pdf_filename,
+        get_sydney_time,
+        load_config,
+        logger,
+        normalize_date,
+        print_progress,
+        ticker_clean,
+    )
 except ImportError:
     from scripts.db_manager import db
     from scripts.db_models import Announcement, Stock
     from scripts.db_schemas import AnnouncementSchema
-    from scripts.utils import logger, load_config, normalize_date, ticker_clean, get_asx_pdf_url, get_sydney_time, get_http_session, get_pdf_filename
-    from scripts.pdf_cache import get_cache_dir, download_pdf
+    from scripts.pdf_cache import download_pdf, get_cache_dir
+    from scripts.utils import (
+        get_asx_pdf_url,
+        get_http_session,
+        get_pdf_filename,
+        get_sydney_time,
+        load_config,
+        logger,
+        normalize_date,
+        print_progress,
+        ticker_clean,
+    )
 
 # --- Configuration ---
 _CFG = load_config()
@@ -41,59 +60,117 @@ _CACHE_DIR = get_cache_dir()
 _ANNOUNCEMENT_RATING_CFG = _CFG.get("announcement_rating", {})
 
 
-NOISE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get("noise_keywords", [
-    "appendix 4g", "appendix 3y", "change of director",
-    "becoming a substantial holder", "ceasing to be",
-    "notice of meeting", "proxy form", "disclosure notice",
-    "shareholder letter", "investor presentation"
-])
+NOISE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get(
+    "noise_keywords",
+    [
+        "appendix 4g",
+        "appendix 3y",
+        "change of director",
+        "becoming a substantial holder",
+        "ceasing to be",
+        "notice of meeting",
+        "proxy form",
+        "disclosure notice",
+        "shareholder letter",
+        "investor presentation",
+    ],
+)
 
-HIGH_VALUE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get("high_value_keywords", [
-    "assay", "drilling", "high-grade", "discovery",
-    "maiden", "resource", "phase 3", "fda", "approval",
-    "exceptional", "breakthrough",
-    "acquisition", "merger", "takeover", "binding", "offtake",
-    "definitive", "feasibility study", "term sheet",
-    "sale and purchase", "monetis",
-    "partnership", "commerciali", "fast-track", "fast track",
-    "commissioning", "first production",
-])
+HIGH_VALUE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get(
+    "high_value_keywords",
+    [
+        "assay",
+        "drilling",
+        "high-grade",
+        "discovery",
+        "maiden",
+        "resource",
+        "phase 3",
+        "fda",
+        "approval",
+        "exceptional",
+        "breakthrough",
+        "acquisition",
+        "merger",
+        "takeover",
+        "binding",
+        "offtake",
+        "definitive",
+        "feasibility study",
+        "term sheet",
+        "sale and purchase",
+        "monetis",
+        "partnership",
+        "commerciali",
+        "fast-track",
+        "fast track",
+        "commissioning",
+        "first production",
+    ],
+)
 
-STRONG_CATALYST_PHRASES = _ANNOUNCEMENT_RATING_CFG.get("strong_catalyst_phrases", [
-    "high-grade assay results",
-    "maiden resource estimate",
-    "maiden mre",
-    "resource estimate",
-    "definitive feasibility study",
-    "dfs results",
-    "binding agreement",
-    "binding offtake",
-    "fda approval",
-    "trial results",
-    "phase 3 results",
-    "massive sulphides",
-    "significant discovery",
-    "exceptional intercepts",
-    "high-grade discovery",
-    "conditional spa",
-])
+STRONG_CATALYST_PHRASES = _ANNOUNCEMENT_RATING_CFG.get(
+    "strong_catalyst_phrases",
+    [
+        "high-grade assay results",
+        "maiden resource estimate",
+        "maiden mre",
+        "resource estimate",
+        "definitive feasibility study",
+        "dfs results",
+        "binding agreement",
+        "binding offtake",
+        "fda approval",
+        "trial results",
+        "phase 3 results",
+        "massive sulphides",
+        "significant discovery",
+        "exceptional intercepts",
+        "high-grade discovery",
+        "conditional spa",
+    ],
+)
 
-MID_VALUE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get("mid_value_keywords", [
-    "trading halt", "placement", "capital rais", "share purchase plan",
-    "quarterly", "half year", "annual report", "guidance",
-    "production", "revenue", "contract", "agreement", "joint venture",
-    "feasibility", "scoping", "update", "progress", "operational",
-    "upgrade", "milestone", "collaboration", "divest", "invest",
-    "strategic", "joint venture", "restructur",
-])
+MID_VALUE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get(
+    "mid_value_keywords",
+    [
+        "trading halt",
+        "placement",
+        "capital rais",
+        "share purchase plan",
+        "quarterly",
+        "half year",
+        "annual report",
+        "guidance",
+        "production",
+        "revenue",
+        "contract",
+        "agreement",
+        "joint venture",
+        "feasibility",
+        "scoping",
+        "update",
+        "progress",
+        "operational",
+        "upgrade",
+        "milestone",
+        "collaboration",
+        "divest",
+        "invest",
+        "strategic",
+        "joint venture",
+        "restructur",
+    ],
+)
+
 
 class AnnouncementScanner:
     """Encapsulates the announcement scraping and processing logic."""
-    
+
     def __init__(self, session):
         self.session = session
 
-    def _download_pdf(self, url: str, filename: str) -> Optional[Path]:
+    def _download_pdf(self, url: str, filename: str) -> Path | None:
         return download_pdf(
             self.session,
             url,
@@ -104,10 +181,10 @@ class AnnouncementScanner:
             logger=logger,
         )
 
-    def _download_pdfs_batch(self, downloads: List[Tuple[str, str]]) -> None:
+    def _download_pdfs_batch(self, downloads: list[tuple[str, str]]) -> None:
         """Download PDFs concurrently with de-duplication."""
-        unique_downloads: List[Tuple[str, str]] = []
-        seen: Set[Tuple[str, str]] = set()
+        unique_downloads: list[tuple[str, str]] = []
+        seen: set[tuple[str, str]] = set()
         skipped_cached = 0
 
         for url, filename in downloads:
@@ -134,7 +211,10 @@ class AnnouncementScanner:
             return
 
         if skipped_cached:
-            logger.info(f"Skipping {skipped_cached} cached PDFs. Downloading {len(unique_downloads)} PDFs with {workers} workers...")
+            logger.info(
+                f"Skipping {skipped_cached} cached PDFs. "
+                f"Downloading {len(unique_downloads)} PDFs with {workers} workers..."
+            )
         else:
             logger.info(f"Downloading {len(unique_downloads)} PDFs with {workers} workers...")
         with ThreadPoolExecutor(max_workers=workers) as executor:
@@ -147,55 +227,56 @@ class AnnouncementScanner:
                 if result:
                     succeeded += 1
                 if completed == len(unique_downloads) or completed % max(1, min(10, workers)) == 0:
-                    from utils import print_progress
                     print_progress(
-                        f"PDF download progress: {completed}/{len(unique_downloads)} completed ({succeeded} succeeded, {completed - succeeded} failed)"
+                        "PDF download progress: "
+                        f"{completed}/{len(unique_downloads)} completed "
+                        f"({succeeded} succeeded, {completed - succeeded} failed)"
                     )
-            print() # Newline after progress complete
+            print()  # Newline after progress complete
 
-    def fetch_raw(self, start_date: datetime, *, price_sensitive_only: bool = True) -> List[Dict]:
+    def fetch_raw(self, start_date: datetime, *, price_sensitive_only: bool = True) -> list[dict]:
         """Fetch raw announcement JSON from ASX API."""
         end_date = get_sydney_time() + timedelta(days=1)
-        
+
         params = {
             "dateStart": start_date.strftime("%Y-%m-%d"),
             "dateEnd": end_date.strftime("%Y-%m-%d"),
             "itemsPerPage": ITEMS_PER_PAGE,
-            "page": 0
+            "page": 0,
         }
-        
+
         all_items = []
         logger.info(f"Fetching announcements (from {start_date.strftime('%Y-%m-%d')})...")
-        
+
         while True:
             try:
                 r = self.session.get(API_BASE, params=params, timeout=30)
                 r.raise_for_status()
                 data = r.json()
                 items = data.get("data", {}).get("items", [])
-                if not items: break
+                if not items:
+                    break
 
                 if price_sensitive_only:
                     items = [
-                        it
-                        for it in items
-                        if bool(it.get("isPriceSensitive") or it.get("priceSensitive") or False)
+                        it for it in items if bool(it.get("isPriceSensitive") or it.get("priceSensitive") or False)
                     ]
-                
+
                 all_items.extend(items)
                 count = data.get("data", {}).get("count", 0)
-                if len(all_items) >= count: break
-                
+                if len(all_items) >= count:
+                    break
+
                 params["page"] += 1
-                time.sleep(0.3) # Rate limit respect
+                time.sleep(0.3)  # Rate limit respect
             except Exception as e:
                 logger.error(f"API fetch failed on page {params['page']}: {e}")
                 break
-        
+
         return all_items
 
     @staticmethod
-    def _load_rating_cfg() -> Dict:
+    def _load_rating_cfg() -> dict:
         cfg = _CFG.get("announcement_rating", {})
         return {
             "price_sensitive_bonus": int(cfg.get("price_sensitive_bonus", 1)),
@@ -233,11 +314,10 @@ class AnnouncementScanner:
         is_price_sensitive: bool = False,
     ) -> tuple[int, str]:
         cfg = AnnouncementScanner._load_rating_cfg()
-        import re
 
         text = (headline + " " + summary).lower()
         rating = 1
-        reasons: List[str] = []
+        reasons: list[str] = []
 
         # 1. Price Sensitive Bonus
         if is_price_sensitive:
@@ -285,23 +365,24 @@ class AnnouncementScanner:
         rating = min(max(int(rating), 1), 5)
         return rating, ";".join(reasons)
 
-    def process_and_sync(self, raw_items: List[Dict], existing_keys: Set[str]):
+    def process_and_sync(self, raw_items: list[dict], existing_keys: set[str]):
         """Filter, validate, and save announcements to the database."""
         added = 0
         skipped = 0
-        pending_downloads: List[Tuple[str, str]] = []
-        
+        pending_downloads: list[tuple[str, str]] = []
+
         with db.session_scope() as sess:
             # Pre-fetch known stocks for name lookup and auto-registration tracking
             known_stocks = {s.symbol: s.name for s in sess.query(Stock).all()}
-            
+
             for item in raw_items:
                 sym = ticker_clean(item.get("symbol", ""))
-                hl = item.get("headline", "").strip() # Strip whitespace
-                
+                hl = item.get("headline", "").strip()  # Strip whitespace
+
                 # Filters
-                if not sym: continue
-                    
+                if not sym:
+                    continue
+
                 # Strict Security Type Filter: Only allow Ordinary Stocks & ETFs
                 ci = item.get("companyInfo")
                 if ci and len(ci) > 0:
@@ -310,20 +391,20 @@ class AnnouncementScanner:
                     if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
                         skipped += 1
                         continue
-                    
+
                     # Filter out derivatives/bonds with long tickers (e.g., SPPHA, CBAHB)
                     real_sym = ci[0].get("symbol", "")
-                    if real_sym and len(real_sym.replace('.AX', '')) > 4:
+                    if real_sym and len(real_sym.replace(".AX", "")) > 4:
                         skipped += 1
                         continue
-                        
+
                 if any(nk in hl.lower() for nk in NOISE_KEYWORDS):
                     skipped += 1
                     continue
-                
+
                 dt = normalize_date(item.get("date", ""))
                 unique_key = f"{sym}_{dt}_{hl[:100]}"
-                
+
                 # Double check against DB (Case of overlap or near-miss)
                 existing_record = sess.query(Announcement).filter_by(unique_key=unique_key).first()
                 if existing_record:
@@ -341,31 +422,31 @@ class AnnouncementScanner:
                 # Pre-filtered check for known in-memory duplicates that are not in DB
                 if unique_key in existing_keys:
                     continue
-                
+
                 try:
                     # Build summary from announcementTypes list
                     ann_types = item.get("announcementTypes", [])
                     summary_text = ", ".join(ann_types) if ann_types else hl
-                    
+
                     is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
 
                     rating, rating_reason = self.calculate_rating_with_reason(hl, summary_text, is_ps)
                     rating_reason = rating_reason or ""
-                    
+
                     # 3-tier company name: API companyInfo > stocks table > symbol
                     ci = item.get("companyInfo")
                     if ci and len(ci) > 0 and ci[0].get("displayName"):
                         company_name = ci[0]["displayName"]
                     else:
                         company_name = known_stocks.get(sym, sym)
-                    
+
                     # Auto-register unknown stocks
                     if sym not in known_stocks:
-                        new_stock = Stock(symbol=sym, name=company_name, stock_type='announcement')
+                        new_stock = Stock(symbol=sym, name=company_name, stock_type="announcement")
                         sess.add(new_stock)
                         sess.flush()
                         known_stocks[sym] = company_name
-                    
+
                     # Validate with Schema
                     v = AnnouncementSchema(
                         ASX_Code=sym,
@@ -376,7 +457,7 @@ class AnnouncementScanner:
                         PDF_Link=get_asx_pdf_url(item.get("documentKey", ""), dt),
                         Rating=rating,
                     )
-                    
+
                     ann = Announcement(
                         symbol=v.ASX_Code,
                         company=v.Company,
@@ -385,26 +466,26 @@ class AnnouncementScanner:
                         event_date=v.Date,
                         pdf_link=v.PDF_Link,
                         rating=v.Rating,
-                        unique_key=unique_key
+                        unique_key=unique_key,
                     )
                     sess.add(ann)
                     added += 1
-                    
+
                     # Download PDF for all price-sensitive announcements
                     if is_ps and v.PDF_Link:
                         pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
                         pending_downloads.append((v.PDF_Link, get_pdf_filename(pdf_ev)))
                 except Exception as e:
                     logger.debug(f"Validation failed for announcement {unique_key}: {e}")
-                    
+
         logger.info(f"Sync Complete: Added {added} new announcements (Filtered {skipped} noise items).")
         self._download_pdfs_batch(pending_downloads)
 
-    def recalc_and_update(self, raw_items: List[Dict]) -> None:
+    def recalc_and_update(self, raw_items: list[dict]) -> None:
         """Recompute rating/rating_reason for announcements and update DB rows if they exist."""
         updated = 0
         skipped = 0
-        pending_downloads: List[Tuple[str, str]] = []
+        pending_downloads: list[tuple[str, str]] = []
         with db.session_scope() as sess:
             for item in raw_items:
                 sym = ticker_clean(item.get("symbol", ""))
@@ -442,41 +523,52 @@ class AnnouncementScanner:
         logger.info(f"Recalc Complete: Updated {updated} announcements (Filtered {skipped} noise items).")
         self._download_pdfs_batch(pending_downloads)
 
+
 def main():
     parser = argparse.ArgumentParser(description="ASX Announcement Scanner")
     parser.add_argument("--months", type=int, default=0)
     parser.add_argument("--full-refresh", action="store_true")
-    parser.add_argument("--recalc-days", type=int, default=0, help="Recalculate rating/rating_reason for the last N days of announcements fetched")
-    parser.add_argument("--all-announcements", action="store_true", help="Fetch all announcements (otherwise only price-sensitive)")
+    parser.add_argument(
+        "--recalc-days",
+        type=int,
+        default=0,
+        help="Recalculate rating/rating_reason for the last N days of announcements fetched",
+    )
+    parser.add_argument(
+        "--all-announcements", action="store_true", help="Fetch all announcements (otherwise only price-sensitive)"
+    )
     args = parser.parse_args()
 
     session = get_http_session()
-    
+
     scanner = AnnouncementScanner(session)
     existing_keys = set()
-    
+
     # Calculate start_date (Priority: DB Resumption > months argument)
     start_date = get_sydney_time() - timedelta(days=args.months * 30)
     if args.recalc_days and args.recalc_days > 0:
         start_date = get_sydney_time() - timedelta(days=args.recalc_days)
-    
+
     if not args.full_refresh and not (args.recalc_days and args.recalc_days > 0):
         with db.session_scope() as sess:
             max_date_row = sess.query(Announcement.event_date).order_by(Announcement.event_date.desc()).first()
             if max_date_row:
                 start_date = max_date_row[0]
                 logger.info(f"DB check: Resuming from latest date {start_date.strftime('%Y-%m-%d')}")
-                
+
                 # Fetch existing keys from the last few days to prevent duplicates during overlap
-                recent = sess.query(Announcement.unique_key).filter(
-                    Announcement.event_date >= (start_date - timedelta(days=2))
-                ).all()
+                recent = (
+                    sess.query(Announcement.unique_key)
+                    .filter(Announcement.event_date >= (start_date - timedelta(days=2)))
+                    .all()
+                )
                 existing_keys = {r[0] for r in recent}
 
     raw = scanner.fetch_raw(start_date, price_sensitive_only=not args.all_announcements)
     if args.recalc_days and args.recalc_days > 0:
         scanner.recalc_and_update(raw)
     scanner.process_and_sync(raw, existing_keys)
+
 
 if __name__ == "__main__":
     main()
