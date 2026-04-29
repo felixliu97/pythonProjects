@@ -24,6 +24,8 @@ http:
   pdf_connect_timeout_seconds: 10
   pdf_read_timeout_seconds: 20
   pdf_chunk_size_bytes: 65536
+  pdf_max_elapsed_seconds: 15
+  pdf_disable_retries: true
 
 announcement_rating:
   price_sensitive_bonus: 1

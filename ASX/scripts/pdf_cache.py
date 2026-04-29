@@ -1,5 +1,7 @@
 import tempfile
 from pathlib import Path
+import time
+import requests
 
 try:
     from utils import get_root_dir
@@ -14,6 +16,15 @@ def get_cache_dir() -> Path:
     return _CACHE_DIR
 
 
+def _build_download_session(base_session) -> requests.Session:
+    download_session = requests.Session()
+    download_session.headers.update(getattr(base_session, "headers", {}))
+    adapter = requests.adapters.HTTPAdapter(max_retries=0)
+    download_session.mount("http://", adapter)
+    download_session.mount("https://", adapter)
+    return download_session
+
+
 def download_pdf(
     session,
     url: str,
@@ -23,6 +34,8 @@ def download_pdf(
     timeout=(10, 20),
     chunk_size: int = 65536,
     logger=None,
+    max_elapsed_seconds: float | None = None,
+    disable_retries: bool = False,
 ) -> Path | None:
     if not url:
         return None
@@ -34,14 +47,18 @@ def download_pdf(
         return local_path
 
     tmp_path = None
+    request_session = _build_download_session(session) if disable_retries and isinstance(session, requests.Session) else session
+    start_time = time.monotonic()
     try:
         if logger:
             logger.info(f"Downloading PDF: {filename}...")
-        with session.get(url, timeout=timeout, stream=True) as response:
+        with request_session.get(url, timeout=timeout, stream=True) as response:
             response.raise_for_status()
             with tempfile.NamedTemporaryFile(delete=False, dir=resolved_cache_dir, suffix=".part") as tmp_file:
                 tmp_path = Path(tmp_file.name)
                 for chunk in response.iter_content(chunk_size=chunk_size):
+                    if max_elapsed_seconds is not None and (time.monotonic() - start_time) > max_elapsed_seconds:
+                        raise TimeoutError(f"download exceeded {max_elapsed_seconds:.1f}s")
                     if chunk:
                         tmp_file.write(chunk)
         tmp_path.replace(local_path)
@@ -55,6 +72,11 @@ def download_pdf(
         if logger:
             if hasattr(e, "response") and e.response is not None and e.response.status_code == 404:
                 logger.warning(f"PDF not available (404): {filename}")
+            elif isinstance(e, TimeoutError):
+                logger.error(f"PDF download timed out fast for {filename}: {e}")
             else:
                 logger.error(f"Failed to download PDF {filename}: {e}")
         return None
+    finally:
+        if disable_retries and request_session is not session:
+            request_session.close()

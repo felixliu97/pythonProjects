@@ -55,6 +55,8 @@ _HTTP_CFG = _CFG.get("http", {})
 _PDF_CONNECT_TIMEOUT = float(_HTTP_CFG.get("pdf_connect_timeout_seconds", 10))
 _PDF_READ_TIMEOUT = float(_HTTP_CFG.get("pdf_read_timeout_seconds", 20))
 _PDF_CHUNK_SIZE = int(_HTTP_CFG.get("pdf_chunk_size_bytes", 65536))
+_PDF_MAX_ELAPSED_SECONDS = float(_HTTP_CFG.get("pdf_max_elapsed_seconds", 25))
+_PDF_DISABLE_RETRIES = bool(_HTTP_CFG.get("pdf_disable_retries", True))
 
 _CACHE_DIR = get_cache_dir()
 _ANNOUNCEMENT_RATING_CFG = _CFG.get("announcement_rating", {})
@@ -179,6 +181,8 @@ class AnnouncementScanner:
             timeout=(_PDF_CONNECT_TIMEOUT, _PDF_READ_TIMEOUT),
             chunk_size=_PDF_CHUNK_SIZE,
             logger=logger,
+            max_elapsed_seconds=_PDF_MAX_ELAPSED_SECONDS,
+            disable_retries=_PDF_DISABLE_RETRIES,
         )
 
     def _download_pdfs_batch(self, downloads: list[tuple[str, str]]) -> None:
