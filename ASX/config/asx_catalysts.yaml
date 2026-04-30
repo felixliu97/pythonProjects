@@ -75,6 +75,8 @@
       Event: SPP 完成，额外募集 A$340K；新股挂牌
     - Date: '2026-04-09'
       Event: KNP 获得联邦政府 Investor Front Door (IFD) 认定；DFS 由Sumitomo/Mitsubishi资助已达A$98.5M
+    - Date: '2026-04-29'
+      Event: 发布3月季报：季末现金A$19.75M，零负债；联合体权益已升至35%；DFS剩余资助额度A$15.9M；DFS维持H1 2026目标
 
 - Ticker: BCM
   Stage: 阶段2-验证突破期
@@ -167,6 +169,8 @@
       Event: Aquirian旗下Drillforce与BTR签署Lord Byron露天矿钻爆服务协议（3年期，约A$48M，2026年9月起）；同时签署Goldfields Hub战略框架协议（SFA，5年+延展）
     - Date: '2026-04-20'
       Event: Record processing campaign交付约7,900oz黄金产量，验证现有产金能力与运营兑现节奏
+    - Date: '2026-04-29'
+      Event: 发布季报：Second Fortune地下矿Q3产出3,709oz；Laverton投产前矿石堆存启动；Fish矿转维护；GR Engineering EPC早期工程推进中
 
 - Ticker: CNB
   Stage: 阶段2-验证突破期
@@ -247,20 +251,20 @@
   Company: Cyprium Metals Limited
   Sector: Copper - 铜矿开发与生产 (Nifty 铜项目复产)
   Catalysts:
-    - 2026年Q2 发布 Q3 FY26 季报；关注复产四大工作流进度及现金消耗状态
-    - 2026年年中 核心里程碑：Nifty 铜项目首批阴极铜 (Copper Cathode) 投产（mid-2026目标）
-    - 2026年Q3 推进 Paterson Province 区域勘探及 Nifty 扩产/硫化物矿石处理研究
+    - 2026年9月季度 核心里程碑（已更新）：Nifty 铜项目首批阴极铜投产目标已从mid-2026调整至September quarter 2026
+    - 2026年Q3 SXEW工厂建设完成及试运行；堆浸预调试持续推进
+    - 2026年Q3-Q4 推进 Paterson Province 区域勘探及 Nifty 扩产/硫化物矿石处理研究
     - 2026年H2 Nifty 产能爬坡至稳态；启动区域性扩产及高品位硫化物勘探
   Risks:
-    - Nifty 复产进度的技术与工期风险；任何工期延误都将直接打击股价
-    - Canaccord 分析师目标价 A$1.00 但最新评级实为"Sell"，显示分析师对估值存在分歧
+    - 首批阴极铜目标已从mid-2026推迟至September quarter 2026，工期延误风险需持续关注
+    - SXEW工厂建设约完成50%，剩余施工与调试仍面临技术风险
     - 铜价波动对高杠杆复产项目的净现值影响
     - 2026年1月 A$41M 增长融资后的筹码消化压力
   CR_Risk: 极低
-  CR_Risk_Reason: 2025年底完成 A$80M 融资；2026年1月追加 A$41M 增长融资；2026年3月完成 A$5M 供股；现金储备 A$75M+（截至2025年12月季报）；近期无融资压力
+  CR_Risk_Reason: 4月30日季报显示季末现金A$96.5M；资金极其充足，复产前无融资压力
   Breakout_Probability: 高
-  Breakout_Probability_Reason: 融资到位且 Nifty 基础设施完整；所有关键监管审批已获批；Glencore binding offtake 已锁定（100% 阴极铜）；管理层明确目标 mid-2026 首产；MST 及其他分析师验证 A$30-50M 年度自由现金流潜力
-  Core_Notes: CYM 的核心叙事是 Nifty 铜矿在2026年中的复产。复产四大工作流：堆浸基础设施重建、堆体浸出恢复、SXEW工厂翻新、全场运营系统准备。2025年11月董事会正式批准 Phase 1 阴极复产，授权关键支出。2025年12月季末现金 A$75M，DFS完成且分析师估算稳态年度 FCF A$30-50M。Glencore 已签署阴极铜100% offtake 协议（Port Hedland 交割）。项目预计产能 4,000-6,000 吨/年阴极铜，AISC US$2.18/lb。注意：上一版 YAML 中"Canaccord 目标价 A$1.00"实为较早评级，最新 Canaccord 目标价显示为 "Sell @ A$0.48"，建议核实并更新。纳入 All Ordinaries（2026/03/23）提升流动性与机构配置需求。
+  Breakout_Probability_Reason: 现金A$96.5M极其充裕；Glencore binding offtake已锁定（100%阴极铜）；SXEW约50%完成，堆浸预调试推进中；Richard Holmes（前Sandfire）加入担任CDO强化执行团队；纳入All Ordinaries提升机构配置需求
+  Core_Notes: CYM 4月30日发布季报确认：首批阴极铜投产目标已从mid-2026推迟至September quarter 2026。季末现金高达A$96.5M，资金弹药充足。SXEW工厂建设约完成50%，堆浸预调试及现场基础设施升级持续推进。管理层任命Richard Holmes（前Sandfire Resources）为CDO，强化项目执行团队。Glencore已签署100%阴极铜offtake协议（Port Hedland交割）。项目预计产能4,000-6,000吨/年阴极铜，AISC US$2.18/lb。纳入All Ordinaries（2026/03/23）提升流动性。
   Rating: 买入
   Timeline:
     - Date: '2026-01-23'
@@ -269,6 +273,8 @@
       Event: 完成 A$5M 供股（全额认购）；A$41M 增长融资全额落地
     - Date: '2026-03-23'
       Event: 正式纳入 S&P/ASX All Ordinaries 指数
+    - Date: '2026-04-30'
+      Event: 发布季报：首批阴极铜目标调整至September quarter 2026；SXEW约50%完成；季末现金A$96.5M；任命Richard Holmes（前Sandfire）为CDO
 
 - Ticker: DEL
   Stage: 阶段2-验证突破期
@@ -301,15 +307,16 @@
       Event: 宣布 NSW1 Horsley Park FID 达成，锁定 A$30.5M 政府补助（含NSW政府$20M及ARENA $10.5M）；需在6个月内锁定剩余$31.6M融资以达财务结算
     - Date: '2026-04-29'
       Event: ⚠️ 截至今日，SA1首气公告尚未发布；官网完工日期为"Q2 2026"；首气注入Adelaide网络是当前最高优先级催化事件
+    - Date: '2026-04-30'
+      Event: 宣布A$2.2M SPP（@A$0.09/股，截止5月25日）+ A$2.2M战略配售予LMS Energy（24.4M股@A$0.09）；资金用于加强资产负债表及支持生物能源项目管线
 
 - Ticker: FHE
   Stage: 阶段2-验证突破期
   Company: Frontier Energy Limited
   Sector: Renewable Energy - 西澳可再生能源及绿氢 (Waroona 项目)
   Catalysts:
-    - 2026年4月下旬 发布 Q3 季报：披露债务融资信用审批细节、银行 shortlist 与 major supply contracts 进展
-    - 2026年6月 核心里程碑：Waroona Stage 1 (120MW 太阳能 + 80MW/160MWh 电池) 约 A$2.2亿 senior debt 融资推进至 credit-approved terms / financial close
-    - 2026年Q3 现场全面动工及主要 EPC 合同正式动员
+    - 2026年Q2-Q3 核心里程碑：Waroona Stage 1 约A$2.2亿 senior debt 融资推进至 credit-approved terms / financial close（法律/税务/风险尽调已完成）
+    - 2026年Q3 现场全面动工及主要 EPC 合同正式动员（tier-one供应商合同已实质性敲定）
     - 2026年H2 继续落实容量积分 (Capacity Credits) 现金流兑现及后续储能/扩建准备
     - 2026年内 潜在的绿氢示范项目 (Phase 2) 联邦政府资助公告
   Risks:
@@ -318,10 +325,10 @@
     - EPC 成本受劳动力和材料价格波动的超支风险
     - 若 senior debt 与 mezzanine 方案未能按计划收敛，仍可能倒逼项目重新调整融资结构
   CR_Risk: 中低
-  CR_Risk_Reason: 融资风险仍存在，但 2026年1月已获得 88.06MW 容量积分、预计带来约 A$32M 容量收入；3月12日进一步拿到 up to 70% gearing 的 senior debt indicative terms（约 A$220M）及最高 A$100M mezzanine 提案，融资路径已明显实质化，因此较此前单纯融资预期阶段更安全
+  CR_Risk_Reason: 4月30日季报融资路径持续实质化：senior debt indicative terms已获（约A$220M），mezzanine提案最高A$100M；Pick Lake出售回笼A$2.25M；88.06MW容量积分对应约A$32M收入
   Breakout_Probability: 高
-  Breakout_Probability_Reason: Waroona 已不再只是概念项目。2026年1月获得 88.06MW 峰值容量积分，对应约 A$32M 容量收入；3月12日收到 up to 70% gearing 的 senior debt indicative terms（约 A$220M）并获若干 mezzanine 提案，主要设备合同也在敲定，说明项目正在从“可研/故事”过渡到“融资验证/建设准备”阶段。当前最大的剩余不确定性已集中在 financial close 与执行节奏。
-  Core_Notes: Frontier Energy 正在将 Waroona 打造为西澳的重要可再生能源枢纽。Stage 1 聚焦于 120MW 光伏 + 81.5MW/163MWh 储能，核心商业逻辑是利用西澳容量积分机制叠加电力销售形成较稳定现金流。相比此前“只有项目逻辑”的阶段，FHE 目前已获得 88.06MW 容量积分分配，并在 3月12日 收到 senior debt indicative terms 与 mezzanine 融资方案，项目已进入更典型的“融资与建设验证期”。因此将阶段从“阶段1-无人关注期”上调至“阶段2-验证突破期”更合适；真正决定进一步重估的，是 2026 年内 financial close 与 EPC 动员能否如期兑现。
+  Breakout_Probability_Reason: 4月30日季报确认Jamie Cullen（前Pacific Energy CEO）出任执行主席强化领导力；tier-one EPC及设备合同实质性敲定；法律/税务/风险尽调完成；Pick Lake出售聚焦Waroona
+  Core_Notes: FHE 4月30日发布季报：(1) Jamie Cullen（前Pacific Energy CEO）3月出任执行主席；(2) Pick Lake Zinc出售予Total Metals Corp回笼A$2.25M，战略聚焦Waroona；(3) tier-one EPC及设备合同实质性敲定；(4) 债务融资法律/税务/风险尽调完成，目标下季度credit-approved terms。项目核心：120MW光伏+81.5MW/163MWh储能，88.06MW容量积分对应约A$32M收入。
   Rating: 观望
   Timeline:
     - Date: '2026-01-30'
@@ -330,6 +337,8 @@
       Event: 完成项目预可行性研究 (PFS) 升级；确认 Waroona Stage 1 的经济性与技术路径
     - Date: '2026-03-12'
       Event: 收到 senior debt indicative terms（up to 70% gearing，约 A$220M）并获最高 A$100M mezzanine 提案；preferred banks shortlist 与最终尽调同步推进
+    - Date: '2026-04-30'
+      Event: 发布Q3季报：Jamie Cullen出任执行主席；Pick Lake出售完成（A$2.25M）；tier-one EPC及设备合同实质性敲定；债务融资尽调完成
 
 - Ticker: KSN
   Stage: 阶段3-现金流确认期
@@ -369,8 +378,8 @@
   Company: Lotus Resources Limited
   Sector: Uranium - 非洲聚焦铀生产商 (马拉维 Kayelekera 复产 + 博茨瓦纳 Letlhakane 开发)
   Catalysts:
-    - 2026年4月下旬 ✅ 关键更新：处理厂火灾后已于约2周内（4月中旬）完成临时修复并恢复生产，确认目标Q2稳态生产
-    - 2026年5月-6月 首批铀精矿装船发货至北美核电站（约mid-2026，火灾后略有推迟但目标维持）
+    - 2026年Q2 ✅ 稳态生产目标维持；4月30日季报确认火灾后已恢复，ROM库存超20万吨
+    - 2026年H2 首批铀精矿装船发货（4月30日季报确认时间推至H2 2026，许可及物流规划推进中）
     - 2026年Q4 马拉维国家电网接入完成，年节省电力成本 A$12-14M
     - 2026年9月 Letlhakane PFS 正式发布
   Risks:
@@ -379,7 +388,7 @@
     - 股价在火灾消息后承压，近1个月跌幅约12-13%（报约A$1.44）
     - 2026年2月 A$76M 配售稀释后股价已从高位显著回落
   CR_Risk: 极低
-  CR_Risk_Reason: 2026年2月完成 A$76M 配售 + A$5M SPP，Pro-forma 现金约 A$145M；无近期股权融资需求
+  CR_Risk_Reason: 4月30日季报确认季末现金A$85M；2月完成A$76M配售+A$5M SPP；无近期股权融资需求
   Breakout_Probability: 高
   Breakout_Probability_Reason: ✅ 火灾已得到控制并在约2周内恢复生产（管理层确认"combined expertise and critical spares on-site"迅速响应）；采矿全程未受影响；Orano CE已正式确认接受转化；公司明确维持Q2稳态生产目标；唯一剩余不确定性为首发货具体时间点
   Core_Notes: LOT 的核心逻辑正在从"复产期权"过渡至"现金流生产商"。Kayelekera 具备 10年矿山寿命、23Mlb 矿石储量，AISC 约 US$45/lb。关键更新：2026年4月6日干燥包装车间控制面板火灾后，公司在约2周内（4月中旬）安装临时工程面板并恢复生产，速度超出市场预期。管理层确认："new panels expected to be delivered and installed in the coming weeks"，且 "Kayelekera remains on track to reach steady-state production in Q2 2026"。采矿全程继续运行不受影响。Orano CE 已于4月1日正式确认接受转化，商业物流链已打通。电网接入（Q4 CY26）完成后预计每年额外节省 A$12-14M。
@@ -397,6 +406,8 @@
       Event: ⚠️ 干燥车间控制面板火灾；处理厂暂停约3周维修；采矿继续
     - Date: '2026-04-17'
       Event: ✅ 完成临时工程面板安装并正式恢复生产（约2周内复产，速度超预期）；管理层确认Q2稳态生产目标维持；永久面板交付中
+    - Date: '2026-04-30'
+      Event: 发布季报：季末现金A$85M；ROM库存超20万吨；首批发货调至H2 2026；处理性能受更高投入成本及技术调校影响
 
 - Ticker: MEI
   Stage: 阶段2-验证突破期
@@ -438,7 +449,7 @@
   Company: Resolution Minerals Limited
   Sector: Gold, Antimony & Tungsten - 美国关键矿产一体化开发商 (爱达荷州 Horse Heaven 项目)
   Catalysts:
-    - 2026年5月 Golden Gate Phase 2钻探（13,700m，约45孔）正式启动；目标定义金矿化并支持Q1 2027首份资源量
+    - 2026年4月30日 ✅ Golden Gate Phase 2钻探正式动员：两台MP1500钻机已mobilize，首台数日内到场；13,700m约45孔
     - 2026年H1 Nasdaq挂牌（管理层表述"imminent"/"about to list"，仍需SEC/Nasdaq最终审批）
     - 2026年Q2-Q3 Antimony Ridge冶金优化持续：99.38% Sb2O3中间品（4月14日）+ 钨精矿52.3% WO3（4月28日）双验证延续
     - 2026年Q2 Antimony Ridge 250孔大规模定义钻探启动（Plan of Operations审批后）
@@ -471,8 +482,8 @@
       Event: 完成A$20M机构配售（@A$0.07，溢价6.3%）；Tribeca与L1 Capital领投；Tranche 1（A$9.2M）4月29日结算；Tranche 2（A$10.8M）待股东批准约60天后结算
     - Date: '2026-04-28'
       Event: 宣布从Golden Gate历史钨矿堆料中通过重选测试制得52.3% WO3钨精矿，最高回收率75.5%；钨加工可行性进一步获验证
-    - Date: '2026-05-01'
-      Event: Golden Gate Phase 2钻探（13,700m，约45孔）预计启动；目标定义金矿化规模，支持Q1 2027 MRE
+    - Date: '2026-04-30'
+      Event: Phase 2钻探正式动员：两台MP1500钻机mobilize至Golden Gate；首台数日内开钻，第二台5月中到场；目标Q1 2027 MRE
 
 - Ticker: SKK
   Stage: 阶段3-现金流确认期
