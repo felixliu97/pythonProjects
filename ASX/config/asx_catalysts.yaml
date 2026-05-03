@@ -315,21 +315,21 @@
   Company: Frontier Energy Limited
   Sector: Renewable Energy - 西澳可再生能源及绿氢 (Waroona 项目)
   Catalysts:
-    - 2026年Q2-Q3 核心里程碑：Waroona Stage 1 约A$2.2亿 senior debt 融资推进至 credit-approved terms / financial close（法律/税务/风险尽调已完成）
+    - 2026年5月5日 ⚡ 复牌后市场定价CIS中标利好；股价或显著跳升（trading halt中，5月5日恢复交易）
+    - 2026年Q2-Q3 核心里程碑：Waroona Stage 1 约A$2.2亿 senior debt 融资推进至 credit-approved / financial close（CIS中标大幅强化银行信用审批基础）
     - 2026年Q3 现场全面动工及主要 EPC 合同正式动员（tier-one供应商合同已实质性敲定）
-    - 2026年H2 继续落实容量积分 (Capacity Credits) 现金流兑现及后续储能/扩建准备
-    - 2026年内 潜在的绿氢示范项目 (Phase 2) 联邦政府资助公告
+    - 2026年H2 容量积分（WA州A$32M/年）+ CIS合同（联邦）双重收入锁定后的长期现金流可见性
   Risks:
     - 债务融资信用审批延迟带来的动工期推迟
     - 西澳容量定价 (Reserve Capacity Price) 波动对长期收益率的影响
     - EPC 成本受劳动力和材料价格波动的超支风险
     - 若 senior debt 与 mezzanine 方案未能按计划收敛，仍可能倒逼项目重新调整融资结构
-  CR_Risk: 中低
-  CR_Risk_Reason: 4月30日季报融资路径持续实质化：senior debt indicative terms已获（约A$220M），mezzanine提案最高A$100M；Pick Lake出售回笼A$2.25M；88.06MW容量积分对应约A$32M收入
-  Breakout_Probability: 高
-  Breakout_Probability_Reason: 4月30日季报确认Jamie Cullen（前Pacific Energy CEO）出任执行主席强化领导力；tier-one EPC及设备合同实质性敲定；法律/税务/风险尽调完成；Pick Lake出售聚焦Waroona
-  Core_Notes: FHE 4月30日发布季报：(1) Jamie Cullen（前Pacific Energy CEO）3月出任执行主席；(2) Pick Lake Zinc出售予Total Metals Corp回笼A$2.25M，战略聚焦Waroona；(3) tier-one EPC及设备合同实质性敲定；(4) 债务融资法律/税务/风险尽调完成，目标下季度credit-approved terms。项目核心：120MW光伏+81.5MW/163MWh储能，88.06MW容量积分对应约A$32M收入。
-  Rating: 观望
+  CR_Risk: 低
+  CR_Risk_Reason: 5月2日CIS中标为联邦级收入合同背书，叠加WA州88.06MW容量积分（约A$32M/年），双重政府级收入锁定大幅强化银行融资信用基础；senior debt indicative terms已获（约A$220M）；季末现金A$2.7M较低但AEMO保证金A$7.9M另计，CIS中标后融资闭环概率显著提升
+  Breakout_Probability: 极高
+  Breakout_Probability_Reason: 5月2日CIS Tender 6中标是决定性催化！Waroona现已同时锁定WA州容量积分（A$32M/年）+ 联邦CIS合同双重政府级收入保障，项目从"融资验证期"跃升至"政府双重背书+融资闭环冲刺"阶段；Jamie Cullen执行主席+tier-one EPC合同敲定+法律尽调完成=执行团队与基础设施齐备；分析师目标价A$0.50（当前A$0.265，上行空间约89%）
+  Core_Notes: FHE迎来决定性催化：5月2日联邦政府宣布Waroona Stage 1（82MW/565MWh dispatchable capacity）成功中标Capacity Investment Scheme (CIS) Tender 6。这意味着项目同时拥有WA州容量积分（88.06MW，约A$32M/年至2032年）和联邦CIS合同的双重政府级收入锁定，显著降低了银行融资的信用审批风险。公司5月1日申请trading halt，预计5月5日恢复交易。此前4月30日季报已确认：Jamie Cullen出任执行主席；Pick Lake出售聚焦Waroona；tier-one EPC合同实质敲定；法律/税务/风险尽调完成。季末现金A$2.7M（另有AEMO保证金A$7.9M）。当前股价A$0.265，市值约A$150M，分析师目标价A$0.50。
+  Rating: 买入
   Timeline:
     - Date: '2026-01-30'
       Event: Waroona Stage 1 获分配 88.06MW 峰值容量积分；对应 2027/28 容量年度预计约 A$32M 容量收入，显著强化项目经济性
@@ -339,6 +339,10 @@
       Event: 收到 senior debt indicative terms（up to 70% gearing，约 A$220M）并获最高 A$100M mezzanine 提案；preferred banks shortlist 与最终尽调同步推进
     - Date: '2026-04-30'
       Event: 发布Q3季报：Jamie Cullen出任执行主席；Pick Lake出售完成（A$2.25M）；tier-one EPC及设备合同实质性敲定；债务融资尽调完成
+    - Date: '2026-05-01'
+      Event: 申请ASX trading halt，等待CIS投标结果重大公告；halt预计持续至5月5日开盘
+    - Date: '2026-05-02'
+      Event: ⚡ 联邦政府宣布Waroona Stage 1（82MW/565MWh）成功中标Capacity Investment Scheme (CIS) Tender 6；项目获得WA州容量积分+联邦CIS合同双重政府级收入锁定
 
 - Ticker: KSN
   Stage: 阶段3-现金流确认期
@@ -595,7 +599,7 @@
   Catalysts:
     - 2026年Q2 Linka 核心爆发窗口：首轮钻探 (Maiden Drill) 正式启动；测试重力异常确定的侵入体靶点，并配合 3D 地质模型与 NOI 申报推进
     - 2026年4月-5月 正在进行的历史堆存 (Stockpile) 与尾矿 (Tailings) 评估结果，寻找低成本快速投产路径；4月27日已完成概念工艺流程图，正式进入机械工程与财务建模前置阶段
-    - 2026年4月末-5月 即将展开的 comminution testwork（磨矿/破碎测试），用于确定电力、用水及 OPEX 建模参数
+    - 2026年5月 comminution testwork（磨矿/破碎测试）已启动进行中，用于确定电力、用水及 OPEX 建模参数
     - 2026年Q3 初步钻探岩心视觉识别及首批 Assay 化验数据公布
     - 2026年H2 启动 JORC 合规资源量评估，将历史数据转化为现代合规资源
   Risks:
@@ -604,7 +608,7 @@
     - 执行风险：4月27日概念流程图仅代表工程前置验证迈进一步，距离实际建设、设备选型与商业化仍有显著执行距离
     - 资本需求：虽推行轻资产模式并研究 Purchase vs Hire 以压低前期 CAPEX，但随 3D 建模、comminution 测试及大规模钻探启动，中期仍有融资窗口
   CR_Risk: 中
-  CR_Risk_Reason: 4月16日 15.8M 股解锁已发生；公司已完成小额股份发行及 OTC 上市（VKALF，4月14日），融资渠道顺畅；4月27日公告强调以模块化流程和 Purchase vs Hire 控制前期 CAPEX，但公司规模仍小，随着工程和钻探并行推进，中期融资需求仍存在
+  CR_Risk_Reason: 4月24日季报确认季末现金A$4.68M；15.8M股解锁已消化；OTC上市（VKALF）拓宽北美融资渠道；模块化流程+Purchase vs Hire压低前期CAPEX，但公司规模仍小（市值约A$14-33M），随着June quarter首钻+comminution测试并行推进，中期融资需求仍存在
   Breakout_Probability: 中高
   Breakout_Probability_Reason: 4月9日重力测量精准锁定被火山盖层遮掩的深部靶点，去风险化明显；4月13日历史堆存和尾矿评估启动，可能在正式开矿前提供更廉价的早期现金流；4月27日概念工艺流程图完成，意味着项目从实验室冶金验证进一步迈向工程与财务建模阶段；全球钨价处于历史高位、美国本土关键矿物叙事增强；4月16日解锁风险已实际发生，最坏情景已过
   Core_Notes: VKA 当前是"三线并进"：30,000米钻探博取大规模发现 + 评估历史遗留63.6% WO3高品位精矿堆存寻找"快速变现"机会 + 以 Rapid-Start 策略推进概念流程图、设备初步 sizing 与 OPEX/CAPEX 建模。4月27日公告表明项目已从单纯资源故事，向工程可实施性验证再推进一步；但公司仍处首钻前夜，尚未形成钻探/化验/JORC 资源量的验证闭环，因此当前更适合继续定义为“阶段1-无人关注期”，而不是“阶段2-验证突破期”。真正升档信号应来自 June quarter 首钻启动、初步可见矿化与后续 assay/资源量验证。
@@ -622,5 +626,7 @@
       Event: 确认在美 OTC 市场 (VKALF) 开始交易，扩大北美机构投资者准入
     - Date: '2026-04-16'
       Event: ✅ 15,805,798 股自愿托管普通股正式解锁并在 ASX 流通（风险事件已发生）
+    - Date: '2026-04-24'
+      Event: 发布3月季报：季末现金A$4.68M；确认首钻目标June quarter；NOI许可、钻探承包商对接、3D地质建模同步推进
     - Date: '2026-04-27'
-      Event: 宣布 Linka 项目概念工艺流程图完成；进入机械工程与财务建模前置阶段，初始处理速率采用 43 吨/小时；本月将启动 comminution testwork，并继续推进 NOI、3D 模型、历史尾矿/堆存评估与 June quarter 首钻
+      Event: 宣布 Linka 项目概念工艺流程图完成；进入机械工程与财务建模前置阶段，初始处理速率采用 43 吨/小时；comminution testwork已启动；继续推进 NOI、3D 模型、历史尾矿/堆存评估与 June quarter 首钻
