@@ -144,12 +144,13 @@ class DBManager:
         )
         active_rows = q.all()
 
+        import json
         def norm_child(v: Any) -> tuple[str | None, str]:
             if item_type == "milestone":
                 if not isinstance(v, dict):
                     return (None, str(v).strip())
-                label = (v.get("Time") or "").strip() or None
-                content = (v.get("Event") or "").strip()
+                label = (v.get("Date") or "").strip() or None
+                content = json.dumps(v, ensure_ascii=False)
                 return (label, content)
 
             return (None, str(v).strip())

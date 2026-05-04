@@ -1,7 +1,9 @@
 # Manual overrides for ASX Placements
 # Key by symbol and date (optional) to specify exact values
 overrides:
-  # - symbol: "NGI"
-  #   cr_price: 2.4
-  # - symbol: "FLO"
+  # - symbol: "MLX"
+  #   cr_price: 0.033
+  # - symbol: "SHN"
+  #   cr_price: 0.027
+  # - symbol: "MLX"
   #   delete: true

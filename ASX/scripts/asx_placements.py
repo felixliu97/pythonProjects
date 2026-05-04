@@ -226,7 +226,8 @@ class PlacementScanner:
         processed = []
         for item in items:
             hl = item.get("headline", "").lower()
-            is_keyword_match = any(kw in hl for kw in PLACEMENT_KEYWORDS)
+            # Use \b at the start of the keyword to ensure we match "placement" but not "replacement"
+            is_keyword_match = any(re.search(rf"\b{re.escape(kw)}", hl) for kw in PLACEMENT_KEYWORDS)
             is_pattern_match = any(re.search(pattern, hl) for pattern in PLACEMENT_REGEX_PATTERNS)
             if is_keyword_match or is_pattern_match:
                 processed.append(

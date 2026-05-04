@@ -54,12 +54,13 @@ graph TD
     - **+1 分 (Data Impact)**: 正则匹配数据型关键指标，如 `150g/t`、`2.5%` 等品位/百分比数据。
     - **+1 分 (Dollar Amount)**: 正则匹配金额描述，如 `$15m`、`$100 million`、`A$50m` 等融资/交易规模。
     - **+3 分 (Strong Phrases)**: 标题/摘要匹配 "high-grade assay results", "maiden resource", "dfs results", "fda approval", "binding agreement" 等核心利好短语。
+    - **+3 分 (Major Deals)**: 正则匹配 "[Global/Major/Transformational/Landmark] ... [Deal/Contract/Agreement/Partnership]" 等重磅商业合作，强行突破进度报告封顶。
     - **+2 分 (High Value Keywords)**: 匹配 "assay", "drilling", "high-grade", "discovery", "resource", "acquisition", "merger", "takeover" 等核心关键词。
     - **+1 分 (Mid Value Keywords)**: 匹配 "trading halt", "placement", "quarterly", "guidance", "revenue", "contract", "operational" 等运营词。
     - **注意**: Strong / High / Mid 三类为互斥 (`elif`)，仅取命中的最高档。Data Impact 和 Dollar Amount 为独立加分项，可与短语/关键词叠加。
     - **特殊逻辑**:
         - **全大写锁定**: 若标题为全大写（且含字母数 > 10），系统视为极其重大突发，强制判定为 **5 分**（如 `NEW BANKING FACILITY`）。
-        - **进展封顶 (Progress Cap)**: 标题含 "progress report" 或 "exploration update" 且未触发 Strong Phrases 时，最高封顶 **4 分**。
+        - **进展封顶 (Progress Cap)**: 标题含 "progress report" 或 "exploration update" 且未触发 Strong Phrases / Major Deals 时，最高封顶 **4 分**。
     - **Summary 逻辑**: 自动从 `announcementTypes` 列表聚合而成（如 "Trading Halt, Market Sensitive"）。
 - **公司名解析 (3-Tier Fallback)**:
     1. 优先使用 API 的 `companyInfo.displayName`。
@@ -80,10 +81,10 @@ graph TD
     3. **Phase 3 - 流动性 & 证券类型门控**: 市值低于 **$15,000,000 AUD** (`DEFAULT_MCAP_FILTER`) 的股票被过滤；同时执行 issueType 白名单 (`CS/CD/ET/UI`)、Ticker 长度 (≤4) 校验；未知 symbol 若有 displayName 则自动注册。
     4. **Phase 4 - CR价格提取**: 仅对通过门控的股票执行标题正则解析→PDF下载→内容提取。
 - **规则配置化**: headline 关键词、补充正则、分页大小现统一从 `config/settings.yaml -> placements / scanners` 读取。
-- **正则价格提取 (`extract_cr_price`) — 3-Tier Cascade**:
+- **正则价格提取 (`extract_cr_price`) — 3-Tier Cascade & Content Flag**:
     - **Tier 1 — Cents Patterns** (优先): 匹配 `15c`, `15 cents`, `15.5cps` 等，自动 `/100` 转为 dollar。
     - **Tier 2 — Dollar Patterns**: 匹配 `at $0.15`, `priced at $1.50 per share`, `issue price: $0.045` 等。
-    - **Tier 3 — Fallback**: 宽松 `$X.XX` 匹配，带 negative lookahead 排除 `$5m` / `$100 million` 等总金额。
+    - **Tier 3 — Fallback**: 宽松 `$X.XX` 匹配，带 negative lookahead 排除 `$5m` / `$100 million` 等总金额。此 Tier **仅在 `is_content=False` (即处理标题/短摘要时)** 生效，防止在长篇 PDF 扫描时提取到无关的大额资金或股价回放。
     - 共 **8 条正则**，每条自带 sanity check（cents < 1000, dollar < 500）。
     - **精度**: 支持最多 4 位小数 (如 $0.7625)。
 - **并发刷新与名录回填**: 
@@ -159,7 +160,7 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
 | `Core_Notes`* | `str` | 核心基本面叙事摘要 |
 | `Stage` | `str` | 生命周期阶段：`阶段1-无人关注期/阶段2-验证突破期/阶段3-现金流确认期/阶段4-行业统治期/阶段5-估值溢价期/未分类` |
 | `Rating` | `str` | 评级：`强力买入/买入/观望/卖出/强力卖出`（默认 `观望`） |
-| `Timeline` | `list[{Date:str, Event:str}]` | 已发生事件（过去公告/确认事件），用于复盘与时间线对齐 |
+| `Timeline` | `list[{Date:str, Event:str, Share_price:str}]` | 已发生事件（过去公告/确认事件），用于复盘与时间线对齐，`Share_price` 为选填 |
 
 字段顺序遵循：
 `Ticker` → `Stage` → `Company` → `Sector` → `Catalysts` → `Risks` → `CR_Risk` → `CR_Risk_Reason` → `Breakout_Probability` → `Breakout_Probability_Reason` → `Core_Notes` → `Rating` → `Timeline`。
@@ -231,6 +232,7 @@ YAML 是催化剂数据的 **唯一事实来源**。Dashboard 直接读取 YAML�
   Timeline:
   - Date: '2026-03-18'
     Event: Phase 4 正式启动：5台钻机进场
+    Share_price: '$0.15'
 ```
 
 ---

@@ -343,7 +343,15 @@ class AnnouncementScanner:
         high_keywords = cfg["high_value_keywords"] or []
         mid_keywords = cfg["mid_value_keywords"] or []
 
+        # Check for literal strong phrases
         strong_hit = any(ph in text for ph in strong_phrases)
+        
+        # Check for major deal patterns (e.g., "Global MotoGP Deal", "Major Supply Contract")
+        if not strong_hit:
+            deal_pattern = r"\b(global|major|transformational|exclusive|landmark)\b.*?\b(deal|contract|agreement|partnership|alliance)\b"
+            if re.search(deal_pattern, text):
+                strong_hit = True
+
         if strong_hit:
             rating += cfg["strong_phrase_bonus"]
             reasons.append("strong_phrase")
