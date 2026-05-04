@@ -644,8 +644,12 @@
                                 <div style="display: flex; flex-direction: column; gap: 2px;">
                                     {% for tl in c.Timeline %}
                                     <div
-                                        style="font-size: 0.68rem; border-left: 2px solid var(--primary); padding-left: 4px; line-height: 1.1;">
-                                        <span class="bold">{{ tl.Date }}:</span> {{ tl.Event }}
+                                        style="font-size: 0.68rem; border-left: 2px solid var(--primary); padding-left: 4px; line-height: 1.1; margin-bottom: 3px;">
+                                        <span class="bold">{{ tl.Date }}</span>
+                                        {% if tl.Share_price %}
+                                        <span style="color: var(--primary); font-weight: 600; border: 1px solid var(--border); padding: 0 4px; border-radius: 4px; font-size: 0.6rem; margin: 0 4px; background: rgba(59, 130, 246, 0.1);">{{ tl.Share_price }}</span>
+                                        {% endif %}
+                                        <div style="margin-top: 2px;">{{ tl.Event }}</div>
                                     </div>
                                     {% endfor %}
                                 </div>

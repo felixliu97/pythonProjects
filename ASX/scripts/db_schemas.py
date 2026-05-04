@@ -75,6 +75,7 @@ class MilestoneSchema(BaseModel):
 
     Date: str = Field(..., alias="time_label")
     Event: str = Field(..., alias="event_desc")
+    Share_price: str | None = None
 
     @field_validator("Date")
     @classmethod
@@ -109,7 +110,7 @@ class CatalystSchema(BaseModel):
     Breakout_Probability_Reason: str | None = ""
     Core_Notes: str
     Rating: str = "观望"
-    Timeline: list[dict[str, str]] = []  # [{"Date": "...", "Event": "..."}]
+    Timeline: list[dict[str, str | None]] = []  # [{"Date": "...", "Event": "...", "Share_price": "..."}]
 
     model_config = ConfigDict(populate_by_name=True)
 

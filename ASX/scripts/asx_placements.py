@@ -125,19 +125,22 @@ class PlacementScanner:
             logger.error(f"Failed to extract text from {local_path}: {e}")
         return text
 
-    def extract_cr_price(self, text: str) -> float:
+    def extract_cr_price(self, text: str, is_content: bool = False) -> float:
         """Heuristic to extract CR price from text (headline or content).
         Avoids picking up total amounts (e.g. $5m) as per-share price.
         """
         if not text:
             return 0.0
         txt = text.lower()
+        
+        # Currency prefix (e.g. $, A$, US$, AUD$)
+        dsym = r"(?:[a-z]{1,3})?\$"
 
         # 1. Cents Pattern: 15c, 15 cents, 15.5c, 15.5cps
         cent_patterns = [
             r"\b(\d+\.?\d*)\s*(?:c|cents?|cps)\b(?!\s*(?:m|million|b|billion))",
             r"(?:at|@|of)\s*(\d+\.?\d*)\s*(?:c|cents?|cps)",
-            r"(?:price|issue|offer)\s*[:]?\s*(?:of|at)?\s*[:]?\s*(\d+\.?\d*)\s*(?:c|cents?|cps)",
+            r"(?:price|issue|offer|conversion)\s*[:]?\s*(?:of|at)?\s*[:]?\s*(\d+\.?\d*)\s*(?:c|cents?|cps)",
         ]
         for p in cent_patterns:
             match = re.search(p, txt)
@@ -151,18 +154,17 @@ class PlacementScanner:
                     continue
 
         # 2. Dollar Patterns (issue price, at $0.15 etc)
-        # Use \d+\.?\d* to handle both $1 and $1.50
         dollar_patterns = [
-            r"(?:at|@|priced)\s*(?:at)?\s*[:]?\s*\$?\s*(\d+\.\d+)\s*(?:per\s*share|each|a\s+share|\b)",
-            r"(?:price|issue|offer)\s*[:]?\s*(?:of|at)?\s*[:]?\s*\$?\s*(\d+\.?\d+)",
-            r"\$(\d+\.\d+)\s*per\s*share",
+            rf"(?:at|@|priced)\s*(?:at)?\s*[:]?\s*{dsym}?\s*(\d+\.\d+)\s*(?:per\s*share|each|a\s+share|(?!\s*(?:m|mln|million|b|bln|billion))\b)",
+            rf"(?:price|issue|offer|conversion)\s*[:]?\s*(?:of|at)?\s*[:]?\s*{dsym}?\s*(\d+\.?\d+)",
+            rf"{dsym}(\d+\.\d+)\s*per\s*share",
+            rf"at\s+a\s+price\s+of\s+{dsym}?(\d+\.\d+)",
         ]
         for p in dollar_patterns:
             match = re.search(p, txt)
             if match:
                 try:
                     val = float(match.group(1))
-                    # Sanity check: prices per share are rarely > $500 on ASX
                     if val > 500:
                         continue
                     return val
@@ -170,19 +172,21 @@ class PlacementScanner:
                     continue
 
         # 3. Fallback: Simple dollar match with broad negative lookahead
-        fallback_patterns = [
-            r"\$(\d+\.\d+)\b(?!\s*(?:m|mln|million|b|bln|billion))",
-            r"(?:at|@)\s*[:]?\s*(\d+\.\d+)\b(?!\s*(?:c|cent|m|mln|million|b|bln|billion))",
-        ]
-        for p in fallback_patterns:
-            match = re.search(p, txt)
-            if match:
-                try:
-                    val = float(match.group(1))
-                    if 0.0001 < val < 500:
-                        return val
-                except ValueError:
-                    continue
+        # ONLY apply to headlines to avoid false positives in noisy PDF content
+        if not is_content:
+            fallback_patterns = [
+                rf"{dsym}(\d+\.\d+)\b(?!\s*(?:m|mln|million|b|bln|billion))",
+                rf"(?:at|@)\s*[:]?\s*(\d+\.\d+)\b(?!\s*(?:c|cent|m|mln|million|b|bln|billion))",
+            ]
+            for p in fallback_patterns:
+                match = re.search(p, txt)
+                if match:
+                    try:
+                        val = float(match.group(1))
+                        if 0.0001 < val < 500:
+                            return val
+                    except ValueError:
+                        continue
 
         return 0.0
 
@@ -385,7 +389,7 @@ class PlacementScanner:
                         if local_pdf:
                             content = self._extract_text_from_pdf(local_pdf)
                             if content:
-                                cr_price = self.extract_cr_price(content)
+                                cr_price = self.extract_cr_price(content, is_content=True)
                                 if cr_price > 0:
                                     logger.info(f"Extracted CR Price {cr_price} from content for {sym}")
                 elif already_processed:
