@@ -261,6 +261,7 @@ class AnnouncementSchema(BaseModel):
     Summary: str | None = ""
     PDF_Link: str | None = ""
     Rating: int = Field(2, ge=1, le=5)
+    Current_Price: float | None = None
 
     @field_validator("ASX_Code")
     @classmethod

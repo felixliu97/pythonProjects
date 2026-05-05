@@ -266,3 +266,59 @@ def generate_sparkline(prices_str: str | None) -> str:
         return f"data:image/svg+xml;base64,{base64.b64encode(svg.encode()).decode()}"
     except Exception:
         return ""
+
+
+def load_yaml_data(filename: str) -> list[dict]:
+    """Load list of dicts from config/filename."""
+    path = get_root_dir() / "config" / filename
+    if not path.exists():
+        return []
+    try:
+        with open(path, encoding="utf-8") as f:
+            return yaml.safe_load(f) or []
+    except Exception as e:
+        logger.error(f"Failed to load {filename}: {e}")
+        return []
+
+
+def save_yaml_data(filename: str, data: list[dict]):
+    """Save list of dicts to config/filename."""
+    path = get_root_dir() / "config" / filename
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.dump(data, f, allow_unicode=True, sort_keys=False, default_flow_style=False)
+    except Exception as e:
+        logger.error(f"Failed to save {filename}: {e}")
+
+
+def get_all_known_stocks() -> set[str]:
+    """Retrieve all known stock symbols from YAML configurations."""
+    symbols = set()
+
+    # Analyzer stocks
+    analyzer_data = load_config().get("analyzer", {})
+    if isinstance(analyzer_data, dict):
+        for key in ["growth_stocks", "foundation_stocks", "etfs"]:
+            for item in analyzer_data.get(key) or []:
+                if isinstance(item, dict) and item.get("symbol"):
+                    symbols.add(ticker_clean(item["symbol"]))
+
+    # Catalyst stocks
+    catalysts = load_yaml_data("asx_catalysts.yaml")
+    for cat in catalysts:
+        if isinstance(cat, dict) and cat.get("Ticker"):
+            symbols.add(ticker_clean(cat["Ticker"]))
+
+    # Placements
+    placements = load_yaml_data("asx_placements.yaml")
+    for plac in placements:
+        if isinstance(plac, dict) and plac.get("ASX_Code"):
+            symbols.add(ticker_clean(plac["ASX_Code"]))
+
+    # Announcements
+    ann = load_yaml_data("asx_announcements.yaml")
+    for a in ann:
+        if isinstance(a, dict) and a.get("ASX_Code"):
+            symbols.add(ticker_clean(a["ASX_Code"]))
+
+    return symbols

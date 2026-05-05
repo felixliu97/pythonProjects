@@ -3,13 +3,10 @@ from pathlib import Path
 
 import pytest
 
-from scripts.db_models import MarketTrend
-from scripts.db_schemas import MarketTrendSchema
-
 
 class TestSystemIntegrity:
     """
-    Ensures that DDL (Models), Schemas (Pydantic), and Documentation (README)
+    Ensures that Documentation (README) and UI (Dashboard)
     stay in sync to prevent regression bugs.
     """
 
@@ -20,18 +17,6 @@ class TestSystemIntegrity:
     def get_html_template_content(self):
         template_path = Path(__file__).parent.parent / "templates" / "asx_dashboard.html"
         return template_path.read_text(encoding="utf-8")
-
-    def test_market_trend_consistency(self):
-        """Verify that every field in db_models.MarketTrend exists in db_schemas.MarketTrendSchema."""
-        model_fields = [c.name for c in MarketTrend.__table__.columns]
-        schema_fields = MarketTrendSchema.model_fields.keys()
-
-        # Core fields that must be in both
-        mandatory_fields = ["rsi", "score", "volume", "momentum", "volatility", "market_cap"]
-
-        for field in mandatory_fields:
-            assert field in model_fields, f"Field '{field}' missing in db_models.MarketTrend"
-            assert field in schema_fields, f"Field '{field}' missing in db_schemas.MarketTrendSchema"
 
     def test_readme_mentions_all_indicators(self):
         """Check if README.md is updated when new technical indicators are added."""

@@ -1,6 +1,7 @@
 import tempfile
-from pathlib import Path
 import time
+from pathlib import Path
+
 import requests
 
 try:
@@ -47,7 +48,9 @@ def download_pdf(
         return local_path
 
     tmp_path = None
-    request_session = _build_download_session(session) if disable_retries and isinstance(session, requests.Session) else session
+    request_session = (
+        _build_download_session(session) if disable_retries and isinstance(session, requests.Session) else session
+    )
     start_time = time.monotonic()
     try:
         if logger:

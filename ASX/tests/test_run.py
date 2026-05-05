@@ -1,11 +1,10 @@
 import base64
-from datetime import date
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from jinja2 import Environment
 
-from run import prune_pdf_cache, trim_zeros
+from run import trim_zeros
 from scripts.utils import generate_sparkline
 
 # --- 0. trim_zeros Filter ---
@@ -93,7 +92,6 @@ def test_announcement_link_logic():
 
 def test_timeline_sorting():
     """Verify that timeline items loaded from YAML are sorted by the 'Date' field."""
-    from unittest.mock import patch
 
     import yaml
 
@@ -132,7 +130,6 @@ def test_timeline_sorting():
 
 def test_catalysts_from_yaml_defaults():
     """Verify that schema-backed defaults are applied to optional YAML fields."""
-    from unittest.mock import patch
 
     import yaml
 
@@ -166,55 +163,11 @@ def test_catalysts_from_yaml_defaults():
         assert c["Risks"] == []
 
 
-def test_prune_pdf_cache_keeps_only_latest_trading_day(tmp_path):
-    """Only PDFs for the latest announcement trading day should remain in .pdf_cache."""
-    cache_dir = tmp_path / ".pdf_cache"
-    cache_dir.mkdir()
-    keep_file = cache_dir / "2026-04-24_[ABC]_latest.pdf"
-    old_file = cache_dir / "2026-04-23_[XYZ]_older.pdf"
-    keep_file.write_bytes(b"latest")
-    old_file.write_bytes(b"older")
-
-    mock_sess = MagicMock()
-    mock_query = MagicMock()
-    mock_query.scalar.return_value = date(2026, 4, 24)
-    mock_sess.query.return_value = mock_query
-
-    with patch("run.db.session_scope") as mock_scope:
-        mock_scope.return_value.__enter__.return_value = mock_sess
-        prune_pdf_cache(tmp_path)
-
-    assert keep_file.exists()
-    assert not old_file.exists()
-
-
-def test_prune_pdf_cache_removes_unrecognized_pdf_names(tmp_path):
-    """Malformed cached PDF names should be removed during pruning."""
-    cache_dir = tmp_path / ".pdf_cache"
-    cache_dir.mkdir()
-    keep_file = cache_dir / "2026-04-24_[ABC]_latest.pdf"
-    bad_file = cache_dir / "misc_file.pdf"
-    keep_file.write_bytes(b"latest")
-    bad_file.write_bytes(b"bad")
-
-    mock_sess = MagicMock()
-    mock_query = MagicMock()
-    mock_query.scalar.return_value = date(2026, 4, 24)
-    mock_sess.query.return_value = mock_query
-
-    with patch("run.db.session_scope") as mock_scope:
-        mock_scope.return_value.__enter__.return_value = mock_sess
-        prune_pdf_cache(tmp_path)
-
-    assert keep_file.exists()
-    assert not bad_file.exists()
-
-
 def test_catalyst_schema_rejects_invalid_rating():
     """Invalid YAML enum values should fail schema validation."""
     from pydantic import ValidationError
 
-    from scripts.db_schemas import CatalystSchema
+    from scripts.schemas import CatalystSchema
 
     with pytest.raises(ValidationError):
         CatalystSchema(
@@ -226,7 +179,7 @@ def test_catalyst_schema_rejects_invalid_timeline_date():
     """Timeline requires exact YYYY-MM-DD dates."""
     from pydantic import ValidationError
 
-    from scripts.db_schemas import CatalystSchema
+    from scripts.schemas import CatalystSchema
 
     with pytest.raises(ValidationError):
         CatalystSchema(
@@ -242,36 +195,9 @@ def test_catalyst_schema_rejects_invalid_timeline_date():
 # --- 5. Catalyst Schema & DB Field Validation ---
 
 
-def test_catalyst_field_validity():
-    """Verify that all live DB catalyst records have valid, separated fields."""
-    from scripts.db_manager import db
-    from scripts.db_models import CatalystMaster
-
-    valid_levels = ["极低", "低", "中低", "中", "中高", "高", "极高", "Unknown", "N/A"]
-
-    with db.session_scope() as sess:
-        masters = sess.query(CatalystMaster).all()
-        for m in masters:
-            assert "(" not in (m.cr_risk or ""), f"Ticker {m.symbol} has un-migrated CR Risk: {m.cr_risk}"
-            assert "(" not in (m.breakout_probability or ""), (
-                f"Ticker {m.symbol} has un-migrated Probability: {m.breakout_probability}"
-            )
-
-            cr_lvl = m.cr_risk.strip() if m.cr_risk else "Unknown"
-            prob_lvl = m.breakout_probability.strip() if m.breakout_probability else "N/A"
-
-            assert cr_lvl in valid_levels, f"Ticker {m.symbol} has invalid CR Risk level: {cr_lvl}"
-            assert prob_lvl in valid_levels, f"Ticker {m.symbol} has invalid Probability level: {prob_lvl}"
-
-            if cr_lvl not in ["Unknown", "N/A"]:
-                assert len(cr_lvl) <= 4, f"Ticker {m.symbol} CR Risk level seems too long: {cr_lvl}"
-            if prob_lvl not in ["Unknown", "N/A"]:
-                assert len(prob_lvl) <= 4, f"Ticker {m.symbol} Probability level seems too long: {prob_lvl}"
-
-
 def test_catalyst_schema_rating_default():
     """Verify that CatalystSchema derives Rating from Breakout_Probability x CR_Risk."""
-    from scripts.db_schemas import CatalystSchema
+    from scripts.schemas import CatalystSchema
 
     v = CatalystSchema(Ticker="MSB", Company="Mesoblast", CR_Risk="低", Breakout_Probability="高", Core_Notes="Testing")
     assert v.Rating == "买入"
@@ -279,7 +205,7 @@ def test_catalyst_schema_rating_default():
 
 def test_catalyst_schema_rating_explicit():
     """Verify that explicit YAML Rating overrides the derived matrix rating."""
-    from scripts.db_schemas import CatalystSchema
+    from scripts.schemas import CatalystSchema
 
     v = CatalystSchema(
         Ticker="MSB",
@@ -294,7 +220,7 @@ def test_catalyst_schema_rating_explicit():
 
 def test_catalyst_rating_matrix_extremes():
     """Verify matrix-derived ratings at both optimistic and pessimistic extremes."""
-    from scripts.db_schemas import derive_catalyst_rating
+    from scripts.schemas import derive_catalyst_rating
 
     assert derive_catalyst_rating("极低", "极高") == "强力买入"
     assert derive_catalyst_rating("高", "低") == "强力卖出"

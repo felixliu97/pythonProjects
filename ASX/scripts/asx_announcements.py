@@ -2,7 +2,7 @@
 ASX Announcements Scraper (Best Practice Refactor)
 
 Fetches general corporate announcements from the ASX/Markit API,
-performs heuristic rating/summarization, and syncs to PostgreSQL.
+performs heuristic rating/summarization, and saves to YAML.
 """
 
 import argparse
@@ -13,35 +13,35 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 try:
-    from db_manager import db
-    from db_models import Announcement, Stock
-    from db_schemas import AnnouncementSchema
     from pdf_cache import download_pdf, get_cache_dir
+    from schemas import AnnouncementSchema
     from utils import (
         get_asx_pdf_url,
         get_http_session,
         get_pdf_filename,
         get_sydney_time,
         load_config,
+        load_yaml_data,
         logger,
         normalize_date,
         print_progress,
+        save_yaml_data,
         ticker_clean,
     )
 except ImportError:
-    from scripts.db_manager import db
-    from scripts.db_models import Announcement, Stock
-    from scripts.db_schemas import AnnouncementSchema
     from scripts.pdf_cache import download_pdf, get_cache_dir
+    from scripts.schemas import AnnouncementSchema
     from scripts.utils import (
         get_asx_pdf_url,
         get_http_session,
         get_pdf_filename,
         get_sydney_time,
         load_config,
+        load_yaml_data,
         logger,
         normalize_date,
         print_progress,
+        save_yaml_data,
         ticker_clean,
     )
 
@@ -60,6 +60,7 @@ _PDF_DISABLE_RETRIES = bool(_HTTP_CFG.get("pdf_disable_retries", True))
 
 _CACHE_DIR = get_cache_dir()
 _ANNOUNCEMENT_RATING_CFG = _CFG.get("announcement_rating", {})
+COMPANY_HEADER_API = _API.get("company_header", "https://asx.api.markitdigital.com/asx-research/1.0/companies/{}/header")
 
 
 NOISE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get(
@@ -345,10 +346,13 @@ class AnnouncementScanner:
 
         # Check for literal strong phrases
         strong_hit = any(ph in text for ph in strong_phrases)
-        
+
         # Check for major deal patterns (e.g., "Global MotoGP Deal", "Major Supply Contract")
         if not strong_hit:
-            deal_pattern = r"\b(global|major|transformational|exclusive|landmark)\b.*?\b(deal|contract|agreement|partnership|alliance)\b"
+            deal_pattern = (
+                r"\b(global|major|transformational|exclusive|landmark)\b.*?\b"
+                r"(deal|contract|agreement|partnership|alliance)\b"
+            )
             if re.search(deal_pattern, text):
                 strong_hit = True
 
@@ -377,160 +381,174 @@ class AnnouncementScanner:
         rating = min(max(int(rating), 1), 5)
         return rating, ";".join(reasons)
 
-    def process_and_sync(self, raw_items: list[dict], existing_keys: set[str]):
-        """Filter, validate, and save announcements to the database."""
+    def fetch_prices(self, tickers: set[str]) -> dict[str, float]:
+        """Fetch current prices for a set of tickers in parallel."""
+        prices = {}
+        if not tickers:
+            return prices
+
+        def fetch_one(ticker):
+            try:
+                url = COMPANY_HEADER_API.format(ticker.upper())
+                resp = self.session.get(url, timeout=10)
+                if resp.status_code == 200:
+                    data = resp.json().get("data", {})
+                    return ticker, data.get("priceLast")
+            except Exception:
+                pass
+            return ticker, None
+
+        with ThreadPoolExecutor(max_workers=min(len(tickers), 20)) as executor:
+            future_to_ticker = {executor.submit(fetch_one, t): t for t in tickers}
+            for future in as_completed(future_to_ticker):
+                ticker, price = future.result()
+                if price is not None:
+                    prices[ticker] = price
+        return prices
+
+    def process_and_sync(self, raw_items: list[dict]):
+        """Filter, validate, and save announcements to YAML (Latest Day Only)."""
+        if not raw_items:
+            logger.info("No raw items to process.")
+            return
+
+        # 1. Identify the latest date in the batch
+        dates = [normalize_date(item.get("date", "")) for item in raw_items]
+        max_date = max(dates) if dates else normalize_date(None)
+        logger.info(f"Syncing announcements for the latest date: {max_date}")
+
+        # 2. Filter raw items for the latest date only
+        latest_raw = [item for item in raw_items if normalize_date(item.get("date", "")) == max_date]
+
+        # 3. Gather tickers to fetch prices
+        tickers_to_fetch = {ticker_clean(item.get("symbol", "")) for item in latest_raw if item.get("symbol")}
+        price_map = self.fetch_prices(tickers_to_fetch)
+
+        # 4. Load existing for today (to avoid duplicates if run multiple times today)
+        existing_ann = load_yaml_data("asx_announcements.yaml")
+        # Keep items from other days if we want? No, user said "只保留最新一天"
+        # So we only keep existing items if they are from max_date
+        today_ann = [a for a in existing_ann if a.get("Date") == max_date]
+        existing_keys = {f"{a['ASX_Code']}_{a['Date']}_{a['Headline'][:100]}" for a in today_ann if "ASX_Code" in a}
+
         added = 0
         skipped = 0
         pending_downloads: list[tuple[str, str]] = []
+        new_items = []
 
-        with db.session_scope() as sess:
-            # Pre-fetch known stocks for name lookup and auto-registration tracking
-            known_stocks = {s.symbol: s.name for s in sess.query(Stock).all()}
+        for item in latest_raw:
+            sym = ticker_clean(item.get("symbol", ""))
+            hl = item.get("headline", "").strip()
 
-            for item in raw_items:
-                sym = ticker_clean(item.get("symbol", ""))
-                hl = item.get("headline", "").strip()  # Strip whitespace
+            if not sym:
+                continue
 
-                # Filters
-                if not sym:
+            ci = item.get("companyInfo")
+            if ci and len(ci) > 0:
+                issue_type = ci[0].get("issueType", "")
+                if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
+                    skipped += 1
                     continue
-
-                # Strict Security Type Filter: Only allow Ordinary Stocks & ETFs
-                ci = item.get("companyInfo")
-                if ci and len(ci) > 0:
-                    issue_type = ci[0].get("issueType", "")
-                    # CS=Common Stock, CD=CDI, ET=ETF, UI=Units
-                    if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
-                        skipped += 1
-                        continue
-
-                    # Filter out derivatives/bonds with long tickers (e.g., SPPHA, CBAHB)
-                    real_sym = ci[0].get("symbol", "")
-                    if real_sym and len(real_sym.replace(".AX", "")) > 4:
-                        skipped += 1
-                        continue
-
-                if any(nk in hl.lower() for nk in NOISE_KEYWORDS):
+                real_sym = ci[0].get("symbol", "")
+                if real_sym and len(real_sym.replace(".AX", "")) > 4:
                     skipped += 1
                     continue
 
-                dt = normalize_date(item.get("date", ""))
-                unique_key = f"{sym}_{dt}_{hl[:100]}"
+            if any(nk in hl.lower() for nk in NOISE_KEYWORDS):
+                skipped += 1
+                continue
 
-                # Double check against DB (Case of overlap or near-miss)
-                existing_record = sess.query(Announcement).filter_by(unique_key=unique_key).first()
-                if existing_record:
-                    existing_keys.add(unique_key)
-                    # Force update if link is broken (contains asxpdf) or empty
-                    if not existing_record.pdf_link or "asxpdf" in existing_record.pdf_link:
-                        existing_record.pdf_link = get_asx_pdf_url(item.get("documentKey", ""), dt)
-                    # Download PDF for all existing price-sensitive announcements
-                    is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
-                    if is_ps and existing_record.pdf_link:
-                        pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
-                        pending_downloads.append((existing_record.pdf_link, get_pdf_filename(pdf_ev)))
-                    continue
+            dt = max_date
+            unique_key = f"{sym}_{dt}_{hl[:100]}"
 
-                # Pre-filtered check for known in-memory duplicates that are not in DB
-                if unique_key in existing_keys:
-                    continue
+            if unique_key in existing_keys:
+                continue
 
-                try:
-                    # Build summary from announcementTypes list
-                    ann_types = item.get("announcementTypes", [])
-                    summary_text = ", ".join(ann_types) if ann_types else hl
+            try:
+                ann_types = item.get("announcementTypes", [])
+                summary_text = ", ".join(ann_types) if ann_types else hl
+                is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
+                rating, rating_reason = self.calculate_rating_with_reason(hl, summary_text, is_ps)
 
-                    is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
+                if ci and len(ci) > 0 and ci[0].get("displayName"):
+                    company_name = ci[0]["displayName"]
+                else:
+                    company_name = sym
 
-                    rating, rating_reason = self.calculate_rating_with_reason(hl, summary_text, is_ps)
-                    rating_reason = rating_reason or ""
+                v = AnnouncementSchema(
+                    ASX_Code=sym,
+                    Company=company_name,
+                    Headline=hl,
+                    Summary=summary_text,
+                    Date=dt,
+                    PDF_Link=get_asx_pdf_url(item.get("documentKey", ""), dt),
+                    Rating=rating,
+                    Current_Price=price_map.get(sym),
+                )
 
-                    # 3-tier company name: API companyInfo > stocks table > symbol
-                    ci = item.get("companyInfo")
-                    if ci and len(ci) > 0 and ci[0].get("displayName"):
-                        company_name = ci[0]["displayName"]
-                    else:
-                        company_name = known_stocks.get(sym, sym)
+                new_items.append(v.model_dump())
+                added += 1
+                existing_keys.add(unique_key)
 
-                    # Auto-register unknown stocks
-                    if sym not in known_stocks:
-                        new_stock = Stock(symbol=sym, name=company_name, stock_type="announcement")
-                        sess.add(new_stock)
-                        sess.flush()
-                        known_stocks[sym] = company_name
+                if is_ps and v.PDF_Link:
+                    pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
+                    pending_downloads.append((v.PDF_Link, get_pdf_filename(pdf_ev)))
+            except Exception as e:
+                logger.debug(f"Validation failed for announcement {unique_key}: {e}")
 
-                    # Validate with Schema
-                    v = AnnouncementSchema(
-                        ASX_Code=sym,
-                        Company=company_name,
-                        Headline=hl,
-                        Summary=summary_text,
-                        Date=dt,
-                        PDF_Link=get_asx_pdf_url(item.get("documentKey", ""), dt),
-                        Rating=rating,
-                    )
+        # Final list = Existing today + New today
+        final_list = today_ann + new_items
+        # Sort by Rating desc, then Date desc (though all are same date here)
+        final_list.sort(key=lambda x: (x.get("Rating", 0), str(x.get("Date", ""))), reverse=True)
 
-                    ann = Announcement(
-                        symbol=v.ASX_Code,
-                        company=v.Company,
-                        headline=v.Headline,
-                        summary=v.Summary,
-                        event_date=v.Date,
-                        pdf_link=v.PDF_Link,
-                        rating=v.Rating,
-                        unique_key=unique_key,
-                    )
-                    sess.add(ann)
-                    added += 1
+        save_yaml_data("asx_announcements.yaml", final_list)
 
-                    # Download PDF for all price-sensitive announcements
-                    if is_ps and v.PDF_Link:
-                        pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
-                        pending_downloads.append((v.PDF_Link, get_pdf_filename(pdf_ev)))
-                except Exception as e:
-                    logger.debug(f"Validation failed for announcement {unique_key}: {e}")
-
-        logger.info(f"Sync Complete: Added {added} new announcements (Filtered {skipped} noise items).")
+        logger.info(f"Sync Complete: Saved {len(final_list)} announcements for {max_date} (Added {added} new).")
         self._download_pdfs_batch(pending_downloads)
 
     def recalc_and_update(self, raw_items: list[dict]) -> None:
-        """Recompute rating/rating_reason for announcements and update DB rows if they exist."""
+        """Recompute rating/rating_reason for announcements and update YAML rows if they exist."""
         updated = 0
         skipped = 0
         pending_downloads: list[tuple[str, str]] = []
-        with db.session_scope() as sess:
-            for item in raw_items:
-                sym = ticker_clean(item.get("symbol", ""))
-                hl = item.get("headline", "").strip()
 
-                if not sym or not hl:
-                    continue
-                if any(nk in hl.lower() for nk in NOISE_KEYWORDS):
-                    skipped += 1
-                    continue
+        announcements = load_yaml_data("asx_announcements.yaml")
+        ann_map = {f"{a['ASX_Code']}_{a['Date']}_{a['Headline'][:100]}": a for a in announcements if "ASX_Code" in a}
 
-                dt = normalize_date(item.get("date", ""))
-                unique_key = f"{sym}_{dt}_{hl[:100]}"
+        for item in raw_items:
+            sym = ticker_clean(item.get("symbol", ""))
+            hl = item.get("headline", "").strip()
 
-                ann = sess.query(Announcement).filter_by(unique_key=unique_key).first()
-                if not ann:
-                    continue
+            if not sym or not hl:
+                continue
+            if any(nk in hl.lower() for nk in NOISE_KEYWORDS):
+                skipped += 1
+                continue
 
-                ann_types = item.get("announcementTypes", [])
-                summary_text = ", ".join(ann_types) if ann_types else (ann.summary or hl)
-                is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
+            dt = normalize_date(item.get("date", ""))
+            unique_key = f"{sym}_{dt}_{hl[:100]}"
 
-                rating, _ = self.calculate_rating_with_reason(hl, summary_text, is_ps)
+            ann = ann_map.get(unique_key)
+            if not ann:
+                continue
 
-                ann.rating = rating
-                if not ann.pdf_link or "asxpdf" in (ann.pdf_link or ""):
-                    ann.pdf_link = get_asx_pdf_url(item.get("documentKey", ""), dt)
-                updated += 1
+            ann_types = item.get("announcementTypes", [])
+            summary_text = ", ".join(ann_types) if ann_types else (ann.get("Summary") or hl)
+            is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
 
-                # Download PDF for all price-sensitive announcements
-                if is_ps and ann.pdf_link:
-                    pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
-                    pending_downloads.append((ann.pdf_link, get_pdf_filename(pdf_ev)))
+            rating, _ = self.calculate_rating_with_reason(hl, summary_text, is_ps)
+
+            ann["Rating"] = rating
+            if not ann.get("PDF_Link") or "asxpdf" in (ann.get("PDF_Link") or ""):
+                ann["PDF_Link"] = get_asx_pdf_url(item.get("documentKey", ""), dt)
+            updated += 1
+
+            if is_ps and ann.get("PDF_Link"):
+                pdf_ev = {"date": dt, "symbol": sym, "headline": hl}
+                pending_downloads.append((ann["PDF_Link"], get_pdf_filename(pdf_ev)))
+
+        if updated > 0:
+            save_yaml_data("asx_announcements.yaml", announcements)
 
         logger.info(f"Recalc Complete: Updated {updated} announcements (Filtered {skipped} noise items).")
         self._download_pdfs_batch(pending_downloads)
@@ -554,32 +572,24 @@ def main():
     session = get_http_session()
 
     scanner = AnnouncementScanner(session)
-    existing_keys = set()
 
-    # Calculate start_date (Priority: DB Resumption > months argument)
+    # Calculate start_date (Priority: YAML Resumption > months argument)
     start_date = get_sydney_time() - timedelta(days=args.months * 30)
     if args.recalc_days and args.recalc_days > 0:
         start_date = get_sydney_time() - timedelta(days=args.recalc_days)
 
     if not args.full_refresh and not (args.recalc_days and args.recalc_days > 0):
-        with db.session_scope() as sess:
-            max_date_row = sess.query(Announcement.event_date).order_by(Announcement.event_date.desc()).first()
-            if max_date_row:
-                start_date = max_date_row[0]
-                logger.info(f"DB check: Resuming from latest date {start_date.strftime('%Y-%m-%d')}")
-
-                # Fetch existing keys from the last few days to prevent duplicates during overlap
-                recent = (
-                    sess.query(Announcement.unique_key)
-                    .filter(Announcement.event_date >= (start_date - timedelta(days=2)))
-                    .all()
-                )
-                existing_keys = {r[0] for r in recent}
+        ann = load_yaml_data("asx_announcements.yaml")
+        if ann:
+            max_dt_str = max([str(a.get("Date", "")) for a in ann])
+            if max_dt_str:
+                start_date = datetime.strptime(max_dt_str, "%Y-%m-%d")
+                logger.info(f"YAML check: Resuming from latest date {start_date.strftime('%Y-%m-%d')}")
 
     raw = scanner.fetch_raw(start_date, price_sensitive_only=not args.all_announcements)
     if args.recalc_days and args.recalc_days > 0:
         scanner.recalc_and_update(raw)
-    scanner.process_and_sync(raw, existing_keys)
+    scanner.process_and_sync(raw)
 
 
 if __name__ == "__main__":

@@ -17,39 +17,41 @@ import requests
 import yaml
 
 try:
-    from db_manager import db
-    from db_models import Placement, Stock
-    from db_schemas import PlacementSchema
     from pdf_cache import download_pdf, get_cache_dir
+    from schemas import PlacementSchema
     from utils import (
         DEFAULT_MCAP_FILTER,
         DEFAULT_TIMEOUT,
+        get_all_known_stocks,
         get_asx_pdf_url,
         get_http_session,
         get_pdf_filename,
         get_root_dir,
         get_sydney_time,
         load_config,
+        load_yaml_data,
         logger,
         normalize_date,
+        save_yaml_data,
         ticker_clean,
     )
 except ImportError:
-    from scripts.db_manager import db
-    from scripts.db_models import Placement, Stock
-    from scripts.db_schemas import PlacementSchema
     from scripts.pdf_cache import download_pdf, get_cache_dir
+    from scripts.schemas import PlacementSchema
     from scripts.utils import (
         DEFAULT_MCAP_FILTER,
         DEFAULT_TIMEOUT,
+        get_all_known_stocks,
         get_asx_pdf_url,
         get_http_session,
         get_pdf_filename,
         get_root_dir,
         get_sydney_time,
         load_config,
+        load_yaml_data,
         logger,
         normalize_date,
+        save_yaml_data,
         ticker_clean,
     )
 
@@ -132,7 +134,7 @@ class PlacementScanner:
         if not text:
             return 0.0
         txt = text.lower()
-        
+
         # Currency prefix (e.g. $, A$, US$, AUD$)
         dsym = r"(?:[a-z]{1,3})?\$"
 
@@ -176,7 +178,7 @@ class PlacementScanner:
         if not is_content:
             fallback_patterns = [
                 rf"{dsym}(\d+\.\d+)\b(?!\s*(?:m|mln|million|b|bln|billion))",
-                rf"(?:at|@)\s*[:]?\s*(\d+\.\d+)\b(?!\s*(?:c|cent|m|mln|million|b|bln|billion))",
+                r"(?:at|@)\s*[:]?\s*(\d+\.\d+)\b(?!\s*(?:c|cent|m|mln|million|b|bln|billion))",
             ]
             for p in fallback_patterns:
                 match = re.search(p, txt)
@@ -244,254 +246,218 @@ class PlacementScanner:
         return processed
 
     def refresh_all_prices(self):
-        """Global Update: Fetch current prices for ALL placements in DB."""
+        """Global Update: Fetch current prices for ALL placements in YAML."""
         logger.info("Performing Global Price Refresh for all placements...")
-        with db.session_scope() as sess:
-            all_placements = sess.query(Placement).all()
-            if not all_placements:
-                return
+        placements = load_yaml_data("asx_placements.yaml")
+        if not placements:
+            return
 
-            symbols = list(set(p.symbol for p in all_placements))
-            price_map = {}
+        symbols = list(set(p["ASX_Code"] for p in placements if "ASX_Code" in p))
+        price_map = {}
 
-            with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
-                results = ex.map(lambda s: (s, self.fetch_market_info(s)), symbols)
-                for sym, (px, _mcap, name, _itype) in results:
-                    if px is not None:
-                        price_map[sym] = {"price": px, "name": name}
+        with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
+            results = ex.map(lambda s: (s, self.fetch_market_info(s)), symbols)
+            for sym, (px, _mcap, name, _itype) in results:
+                if px is not None:
+                    price_map[sym] = {"price": px, "name": name}
 
-            updated = 0
-            for p in all_placements:
-                meta = price_map.get(p.symbol)
-                if meta:
-                    p.current_price = meta["price"]
-                    if meta["name"] and (not p.company or p.company == ""):
-                        p.company = meta["name"]
+        updated = 0
+        for p in placements:
+            sym = p.get("ASX_Code")
+            meta = price_map.get(sym)
+            if meta:
+                p["Current_Price"] = meta["price"]
+                if meta["name"] and (not p.get("Company") or p.get("Company") == ""):
+                    p["Company"] = meta["name"]
 
-                    if p.cr_price and p.cr_price > 0:
-                        p.price_diff_percent = round(((p.current_price - p.cr_price) / p.cr_price) * 100, 2)
-                    updated += 1
-            logger.info(f"Global Update: Refreshed {updated} records.")
+                if p.get("CR_Price") and p["CR_Price"] > 0:
+                    p["Price_Diff_%"] = round(((p["Current_Price"] - p["CR_Price"]) / p["CR_Price"]) * 100, 2)
+                updated += 1
 
-    def sync_to_db(self, events: list[dict]):
-        """Standard sync with overrides and validation.
+        save_yaml_data("asx_placements.yaml", placements)
+        logger.info(f"Global Update: Refreshed {updated} records.")
 
-        Pipeline Order (filter-first, extract-later):
-        1. Check delete/exclude overrides
-        2. Batch-fetch market info for all symbols
-        3. Filter by market cap (liquidity gate)
-        4. Auto-register unknown stocks with stock_type='announcement'
-        5. Only THEN extract CR price (headline -> PDF fallback)
-        6. Sync to DB
-        """
+    def sync_to_yaml(self, events: list[dict]):
+        """Standard sync with overrides and validation."""
         added = 0
         updated = 0
         skipped_low_mcap = 0
 
-        with db.session_scope() as sess:
-            known_stocks = {s.symbol for s in sess.query(Stock).all()}
+        placements = load_yaml_data("asx_placements.yaml")
+        existing_map = {p["ASX_Code"]: p for p in placements if "ASX_Code" in p}
+        known_stocks = get_all_known_stocks()
 
-            # --- Phase 1: Apply delete/exclude overrides ---
-            eligible_events = []
-            for ev in events:
-                sym = ev["symbol"]
-                ov = self.overrides.get(sym, {})
-                if ov.get("delete") or ov.get("exclude"):
-                    sess.query(Placement).filter_by(symbol=sym).delete()
-                    continue
-                eligible_events.append(ev)
+        # --- Phase 1: Apply delete/exclude overrides ---
+        eligible_events = []
+        for ev in events:
+            sym = ev["symbol"]
+            ov = self.overrides.get(sym, {})
+            if ov.get("delete") or ov.get("exclude"):
+                if sym in existing_map:
+                    del existing_map[sym]
+                continue
+            eligible_events.append(ev)
 
-            # --- Phase 2: Batch-fetch market info for all symbols ---
-            unique_symbols = list(set(ev["symbol"] for ev in eligible_events))
-            market_cache = {}
+        # --- Phase 2: Batch-fetch market info for all symbols ---
+        unique_symbols = list(set(ev["symbol"] for ev in eligible_events))
+        market_cache = {}
 
-            with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
-                results = ex.map(lambda s: (s, self.fetch_market_info(s)), unique_symbols)
-                for sym, (px, mcap, name, itype) in results:
-                    market_cache[sym] = {"price": px, "mcap": mcap, "name": name, "issueType": itype}
+        with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
+            results = ex.map(lambda s: (s, self.fetch_market_info(s)), unique_symbols)
+            for sym, (px, mcap, name, itype) in results:
+                market_cache[sym] = {"price": px, "mcap": mcap, "name": name, "issueType": itype}
 
-            # --- Phase 3: Filter by market cap (liquidity gate) ---
-            liquid_events = []
-            for ev in eligible_events:
-                sym = ev["symbol"]
-                info = market_cache.get(sym, {})
-                mcap = info.get("mcap")
+        # --- Phase 3: Filter by market cap (liquidity gate) ---
+        liquid_events = []
+        for ev in eligible_events:
+            sym = ev["symbol"]
+            info = market_cache.get(sym, {})
+            mcap = info.get("mcap")
 
-                if mcap and mcap < DEFAULT_MCAP_FILTER:
-                    skipped_low_mcap += 1
-                    continue
+            if mcap and mcap < DEFAULT_MCAP_FILTER:
+                skipped_low_mcap += 1
+                continue
 
-                # Strict Security Type Filter: Only allow Ordinary Stocks & ETFs
-                issue_type = info.get("issueType")
-                if not issue_type:
-                    # If we can't find the issueType (API error or missing),
-                    # check if the ticker is already in our whitelist (known_stocks).
-                    # If not, we REJECT it to prevent junk like 'SPP' from being added.
-                    if sym not in known_stocks:
-                        continue
-                    # If it's already known, we proceed (to update prices) but keep a low profile
-
-                if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
-                    continue
-
-                # Filter out derivatives/bonds with long tickers
-                if len(sym.replace(".AX", "")) > 4:
-                    continue
-
-                # Auto-register unknown stocks - ONLY IF WE HAVE VALID INFO
+            issue_type = info.get("issueType")
+            if not issue_type:
                 if sym not in known_stocks:
-                    live_name = info.get("name") or ev.get("company")
-                    if not live_name or live_name == sym:
-                        # If we don't even have a proper display name, it's likely junk
-                        continue
+                    continue
 
-                    new_stock = Stock(symbol=sym, name=live_name, stock_type="announcement")
-                    sess.add(new_stock)
-                    sess.flush()
-                    known_stocks.add(sym)
-                    logger.info(f"Auto-registered new stock: {sym} ({live_name})")
+            if issue_type and issue_type not in ["CS", "CD", "ET", "UI"]:
+                continue
 
-                liquid_events.append(ev)
+            if len(sym.replace(".AX", "")) > 4:
+                continue
 
-            if skipped_low_mcap > 0:
-                logger.info(f"Liquidity gate: Skipped {skipped_low_mcap} events (mcap < ${DEFAULT_MCAP_FILTER:,}).")
+            liquid_events.append(ev)
 
-            # --- Phase 4: Extract CR price and sync (only for valid, liquid stocks) ---
-            for ev in liquid_events:
-                sym = ev["symbol"]
-                ov = self.overrides.get(sym, {})
-                info = market_cache.get(sym, {})
-                cur_px = info.get("price")
-                live_name = info.get("name")
+        if skipped_low_mcap > 0:
+            logger.info(f"Liquidity gate: Skipped {skipped_low_mcap} events (mcap < ${DEFAULT_MCAP_FILTER:,}).")
 
-                # Find any existing record for this symbol (Deduplication: One stock, one record)
-                existing = sess.query(Placement).filter_by(symbol=sym).first()
+        # --- Phase 4: Extract CR price and sync (only for valid, liquid stocks) ---
+        for ev in liquid_events:
+            sym = ev["symbol"]
+            ov = self.overrides.get(sym, {})
+            info = market_cache.get(sym, {})
+            cur_px = info.get("price")
+            live_name = info.get("name")
 
-                new_date = datetime.strptime(ev["date"], "%Y-%m-%d").date()
+            existing = existing_map.get(sym)
+            new_date = datetime.strptime(ev["date"], "%Y-%m-%d").date()
 
-                # Priority: Override > Heuristic
-                cr_price = ov.get("cr_price")
+            cr_price = ov.get("cr_price")
+            existing_event_date = (
+                datetime.strptime(existing["Date"], "%Y-%m-%d").date()
+                if existing and existing.get("Date")
+                else datetime.min.date()
+            )
 
-                # If we already have a valid price and the new event is NOT older,
-                # any extracted price would be discarded anyway, so skip extraction to save time.
-                already_processed = (
-                    existing and existing.cr_price and existing.cr_price > 0 and new_date >= existing.event_date
-                )
+            already_processed = (
+                existing and existing.get("CR_Price") and existing["CR_Price"] > 0 and new_date >= existing_event_date
+            )
 
-                # If no override and not already processed, try extraction (Content > Headline)
-                if not cr_price and not already_processed:
-                    # 1. Try Headline first (fast)
-                    cr_price = self.extract_cr_price(ev["headline"])
+            if not cr_price and not already_processed:
+                cr_price = self.extract_cr_price(ev["headline"])
+                if not cr_price or cr_price == 0.0:
+                    fname = get_pdf_filename(ev)
+                    local_pdf = self._download_pdf(ev["pdf_link"], fname)
+                    if local_pdf:
+                        content = self._extract_text_from_pdf(local_pdf)
+                        if content:
+                            cr_price = self.extract_cr_price(content, is_content=True)
+                            if cr_price > 0:
+                                logger.info(f"Extracted CR Price {cr_price} from content for {sym}")
+            elif already_processed:
+                cr_price = existing["CR_Price"]
 
-                    # 2. If headline failed or looks suspicious, try PDF content
-                    if not cr_price or cr_price == 0.0:
-                        fname = get_pdf_filename(ev)
-                        local_pdf = self._download_pdf(ev["pdf_link"], fname)
-                        if local_pdf:
-                            content = self._extract_text_from_pdf(local_pdf)
-                            if content:
-                                cr_price = self.extract_cr_price(content, is_content=True)
-                                if cr_price > 0:
-                                    logger.info(f"Extracted CR Price {cr_price} from content for {sym}")
-                elif already_processed:
-                    # Keep the existing price so downstream logic doesn't think we failed
-                    cr_price = existing.cr_price
+            if existing:
+                if ov.get("cr_price") is not None:
+                    existing["CR_Price"] = ov["cr_price"]
+                    existing["Current_Price"] = cur_px or existing.get("Current_Price", 0.0)
+                    existing["Price_Diff_%"] = self.calculate_diff(existing["Current_Price"], existing["CR_Price"])
+                    updated += 1
+                else:
+                    has_new_price = cr_price and cr_price > 0
+                    has_old_price = existing.get("CR_Price") and existing["CR_Price"] > 0
 
-                if existing:
-                    # Priority 1: Manual Overrides always win and update existing
-                    if ov.get("cr_price") is not None:
-                        existing.cr_price = ov["cr_price"]
-                        existing.current_price = cur_px or existing.current_price
-                        existing.price_diff_percent = self.calculate_diff(existing.current_price, existing.cr_price)
-                        updated += 1
-                    else:
-                        # Priority 2: Logic for new vs old extraction
-                        has_new_price = cr_price and cr_price > 0
-                        has_old_price = existing.cr_price and existing.cr_price > 0
-
-                        should_replace = False
-                        if has_new_price and not has_old_price:
+                    should_replace = False
+                    if has_new_price and not has_old_price:
+                        should_replace = True
+                    elif has_new_price == has_old_price:
+                        if new_date < existing_event_date:
                             should_replace = True
-                        elif has_new_price == has_old_price:  # Both have or both don't
-                            if new_date < existing.event_date:
+
+                    if has_old_price and not has_new_price:
+                        hl_low = existing.get("Headline", "").lower()
+                        if any(x in hl_low for x in ["m", "million", "b", "billion"]):
+                            pattern = rf"{re.escape(str(existing['CR_Price']))}\s*[mb]"
+                            if re.search(pattern, hl_low):
+                                existing["CR_Price"] = 0.0
                                 should_replace = True
 
-                        # Special Case: If existing price looks like it matched a Total Amount in the headline
-                        if has_old_price and not has_new_price:
-                            hl_low = existing.headline.lower()
-                            if any(x in hl_low for x in ["m", "million", "b", "billion"]):
-                                pattern = rf"{re.escape(str(existing.cr_price))}\s*[mb]"
-                                if re.search(pattern, hl_low):
-                                    existing.cr_price = 0.0
-                                    should_replace = True
+                    if should_replace:
+                        existing["Date"] = ev["date"]
+                        existing["Headline"] = ev["headline"]
+                        existing["CR_Price"] = cr_price
+                        existing["PDF_Link"] = ev["pdf_link"]
+                        existing["Current_Price"] = cur_px or existing.get("Current_Price", 0.0)
+                        existing["Price_Diff_%"] = self.calculate_diff(existing["Current_Price"], existing["CR_Price"])
+                        updated += 1
+                    else:
+                        existing["Current_Price"] = cur_px or existing.get("Current_Price", 0.0)
+                        if existing.get("CR_Price") and existing["CR_Price"] > 0:
+                            existing["Price_Diff_%"] = self.calculate_diff(
+                                existing["Current_Price"], existing["CR_Price"]
+                            )
+            else:
+                try:
+                    diff = self.calculate_diff(cur_px, cr_price)
+                    p_data = {
+                        "ASX_Code": sym,
+                        "Company": ev["company"] or live_name or sym,
+                        "Headline": ev["headline"],
+                        "Date": ev["date"],
+                        "CR_Price": cr_price,
+                        "Current_Price": cur_px or 0.0,
+                        "Price_Diff_%": diff,
+                        "PDF_Link": ev["pdf_link"],
+                    }
+                    v = PlacementSchema(**p_data)
+                    existing_map[sym] = v.model_dump()
+                    added += 1
+                except Exception as e:
+                    logger.error(f"Placement validation failed for {sym}: {e}")
 
-                        if should_replace:
-                            existing.event_date = new_date
-                            existing.headline = ev["headline"]
-                            existing.cr_price = cr_price
-                            existing.pdf_link = ev["pdf_link"]
-                            existing.current_price = cur_px or existing.current_price
-                            existing.price_diff_percent = self.calculate_diff(existing.current_price, existing.cr_price)
-                            updated += 1
-                        else:
-                            existing.current_price = cur_px or existing.current_price
-                            if existing.cr_price and existing.cr_price > 0:
-                                existing.price_diff_percent = self.calculate_diff(
-                                    existing.current_price, existing.cr_price
-                                )
-                else:
-                    try:
-                        diff = self.calculate_diff(cur_px, cr_price)
-                        p_data = {
-                            "ASX_Code": sym,
-                            "Company": ev["company"] or live_name or sym,
-                            "Headline": ev["headline"],
-                            "Date": ev["date"],
-                            "CR_Price": cr_price,
-                            "Current_Price": cur_px or 0.0,
-                            "Price_Diff_%": diff,
-                            "PDF_Link": ev["pdf_link"],
-                        }
-                        v = PlacementSchema(**p_data)
+        # Keep only the last 3000 placements
+        placements_list = list(existing_map.values())
+        placements_list.sort(key=lambda x: str(x.get("Date", "")), reverse=True)
+        placements_list = placements_list[:3000]
 
-                        p = Placement(
-                            symbol=v.ASX_Code,
-                            company=v.Company,
-                            headline=v.Headline,
-                            event_date=v.Date,
-                            cr_price=v.CR_Price,
-                            current_price=v.Current_Price,
-                            price_diff_percent=v.Price_Diff_Percent,
-                            pdf_link=v.PDF_Link,
-                        )
-                        sess.add(p)
-                        added += 1
-                    except Exception as e:
-                        logger.error(f"Placement validation failed for {sym}: {e}")
-            logger.info(f"Sync Complete: Added {added}, Updated {updated}.")
+        save_yaml_data("asx_placements.yaml", placements_list)
+        logger.info(f"Sync Complete: Added {added}, Updated {updated}.")
 
     def apply_forced_overrides(self):
-        """Handle manual overrides (price updates and deletions) globally for all matched symbols.
-        This ensures that symbols not in the current news scrape are also updated or removed.
-        """
+        """Handle manual overrides (price updates and deletions) globally for all matched symbols."""
         logger.info("Applying global forced overrides...")
-        with db.session_scope() as sess:
-            for sym, ov in self.overrides.items():
-                # 1. Handle Deletions
-                if ov.get("delete") or ov.get("exclude"):
-                    count = sess.query(Placement).filter_by(symbol=sym).delete()
-                    if count > 0:
-                        logger.info(f"Globally excluded/deleted: {sym}")
-                    continue
+        placements = load_yaml_data("asx_placements.yaml")
+        existing_map = {p["ASX_Code"]: p for p in placements if "ASX_Code" in p}
 
-                # 2. Handle Price Overrides
-                if ov.get("cr_price"):
-                    older = sess.query(Placement).filter_by(symbol=sym).first()
-                    if older and older.cr_price != ov["cr_price"]:
-                        older.cr_price = ov["cr_price"]
-                        if older.current_price and older.cr_price > 0:
-                            older.price_diff_percent = self.calculate_diff(older.current_price, older.cr_price)
-                        logger.info(f"Forced manual price override: {sym} -> {ov['cr_price']}")
+        for sym, ov in self.overrides.items():
+            if ov.get("delete") or ov.get("exclude"):
+                if sym in existing_map:
+                    del existing_map[sym]
+                    logger.info(f"Globally excluded/deleted: {sym}")
+                continue
+
+            if ov.get("cr_price"):
+                older = existing_map.get(sym)
+                if older and older.get("CR_Price") != ov["cr_price"]:
+                    older["CR_Price"] = ov["cr_price"]
+                    if older.get("Current_Price") and older["CR_Price"] > 0:
+                        older["Price_Diff_%"] = self.calculate_diff(older["Current_Price"], older["CR_Price"])
+                    logger.info(f"Forced manual price override: {sym} -> {ov['cr_price']}")
+
+        save_yaml_data("asx_placements.yaml", list(existing_map.values()))
 
 
 def main():
@@ -508,14 +474,13 @@ def main():
     start_date = get_sydney_time() - timedelta(days=args.months * 30)
 
     if not args.full_refresh:
-        with db.session_scope() as sess:
-            max_dt = sess.query(Placement.event_date).order_by(Placement.event_date.desc()).first()
-            if max_dt:
-                db_date = datetime.combine(max_dt[0], datetime.min.time())
-                # Use the more recent of DB date and (today - 2 days)
-                # to avoid re-processing old data when no new placements were found
+        placements = load_yaml_data("asx_placements.yaml")
+        if placements:
+            max_dt_str = max([str(p.get("Date", "")) for p in placements])
+            if max_dt_str:
+                latest_date = datetime.strptime(max_dt_str, "%Y-%m-%d")
                 recent_cutoff = get_sydney_time() - timedelta(days=2)
-                start_date = max(db_date, recent_cutoff.replace(tzinfo=None))
+                start_date = max(latest_date, recent_cutoff.replace(tzinfo=None))
                 logger.info(f"Resuming placements from {start_date:%Y-%m-%d}...")
 
     params = {
@@ -541,10 +506,9 @@ def main():
 
     # 2. Extract & Sync
     events = scanner.process_raw(raw_announcements)
-    scanner.sync_to_db(events)
+    scanner.sync_to_yaml(events)
 
-    # 3. Global Forced Overrides (Sync database with YAML state)
-    scanner.apply_forced_overrides()
+    # 3. Global Forced Overrides (Sync YAML state)
 
     # 4. Global Refresh (Fetch latest market prices)
     scanner.refresh_all_prices()

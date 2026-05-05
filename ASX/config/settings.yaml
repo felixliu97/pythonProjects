@@ -136,8 +136,7 @@ placements:
     - "\\bcommitments\\s+received\\b"
 
 analyzer:
-  cache_ttl_minutes: 10
-  cache_file: "output/asx_analyzer.json"
+  cache_ttl_minutes: 15
   weights:
     price_1d: 0.3
     price_5d: 0.25
@@ -149,6 +148,97 @@ analyzer:
     rsi_lower: 30
     price_change_alert: 5.0
     volume_change_alert: 50.0
+  growth_stocks:
+    - {symbol: VKA.AX, name: Viking Mines Limited, industry: "Critical Minerals - Tungsten"}
+    - {symbol: ARL.AX, name: Ardea Resources Limited, industry: "Nickel - 镍钴开发 (Goongarrie)"}
+    - {symbol: BOE.AX, name: Boss Energy Limited, industry: "Uranium - 铀矿生产与开发"}
+    - {symbol: BOT.AX, name: Botanix Pharmaceuticals, industry: "Dermatology - 皮肤科制药"}
+    - {symbol: BTR.AX, name: Brightstar Resources, industry: "Gold - 黄金生产商"}
+    - {symbol: CLA.AX, name: Celsius Resources, industry: "Copper & Gold - 菲律宾开发商"}
+    - {symbol: CNB.AX, name: Carnaby Resources, industry: "Copper & Gold - 昆士兰开发商"}
+    - {symbol: CYM.AX, name: Cyprium Metals, industry: "Copper - 铜矿开发"}
+    - {symbol: DEL.AX, name: Delorean Corporation, industry: "Bioenergy / Renewable Gas"}
+    - {symbol: DXB.AX, name: Dimerix Limited, industry: "Biotechnology - 肾脏病制药"}
+    - {symbol: EMH.AX, name: European Metals, industry: "Lithium - 捷克锂资源"}
+    - {symbol: IMU.AX, name: Imugene Limited, industry: "Biotechnology - 肿瘤免疫"}
+    - {symbol: EML.AX, name: EML Payments Limited, industry: "Fintech - 支付基础设施 (EML 2.0 转型)"}
+    - {symbol: KSN.AX, name: Kingston Resources, industry: "Gold & Copper - 生产商"}
+    - {symbol: LOT.AX, name: Lotus Resources, industry: "Uranium - 非洲铀生产商"}
+    - {symbol: MEU.AX, name: Marmota Limited, industry: "Gold & Uranium - 勘探商"}
+    - {symbol: NGY.AX, name: New Gas & Energy, industry: "Energy - 印尼煤层气"}
+    - {symbol: RML.AX, name: Resolution Minerals, industry: "Critical Minerals - 锑/金/钨"}
+    - {symbol: SKK.AX, name: Stakk Limited, industry: "Information Technology - AI SaaS"}
+    - {symbol: TM1.AX, name: Terra Metals, industry: "PGM - Cu - Ni (多金属)"}
+  foundation_stocks:
+    - {symbol: SGM.AX, name: Sims Limited}
+    - {symbol: NXT.AX, name: Nextdc Limited}
+    - {symbol: NSR.AX, name: National Storage REIT}
+    - {symbol: NHC.AX, name: New Hope Corporation}
+    - {symbol: SGP.AX, name: Stockland}
+    - {symbol: LLC.AX, name: Lendlease Group}
+    - {symbol: ALX.AX, name: Atlas Arteria}
+    - {symbol: WDS.AX, name: Woodside Energy Group}
+    - {symbol: VEA.AX, name: Viva Energy Group}
+    - {symbol: QUB.AX, name: Qube Holdings}
+    - {symbol: MQG.AX, name: Macquarie Group}
+    - {symbol: STO.AX, name: Santos Limited}
+    - {symbol: BPT.AX, name: Beach Energy}
+    - {symbol: RGN.AX, name: Region Group}
+    - {symbol: SUN.AX, name: Suncorp Group}
+    - {symbol: VNT.AX, name: Ventia Services Group}
+    - {symbol: SOL.AX, name: Washington H. Soul Pattinson}
+    - {symbol: APA.AX, name: APA Group}
+    - {symbol: CNU.AX, name: Chorus Limited}
+    - {symbol: SHL.AX, name: Sonic Healthcare}
+    - {symbol: WHC.AX, name: Whitehaven Coal}
+    - {symbol: COH.AX, name: Cochlear Limited}
+    - {symbol: CSL.AX, name: CSL Limited}
+    - {symbol: CAR.AX, name: CAR Group Limited}
+    - {symbol: NAB.AX, name: National Australia Bank}
+    - {symbol: MGR.AX, name: Mirvac Group}
+    - {symbol: TCL.AX, name: Transurban Group}
+    - {symbol: WOR.AX, name: Worley Limited}
+    - {symbol: QBE.AX, name: QBE Insurance}
+    - {symbol: NST.AX, name: Northern Star Resources}
+    - {symbol: ORG.AX, name: Origin Energy}
+    - {symbol: CBA.AX, name: Commonwealth Bank}
+    - {symbol: QAN.AX, name: Qantas Airways}
+    - {symbol: CHC.AX, name: Charter Hall Group}
+    - {symbol: SPK.AX, name: Spark New Zealand}
+    - {symbol: DOW.AX, name: Downer EDI}
+    - {symbol: ASX.AX, name: ASX Limited}
+    - {symbol: MPL.AX, name: Medibank Private}
+    - {symbol: SDF.AX, name: Steadfast Group}
+    - {symbol: GMG.AX, name: Goodman Group}
+  etfs:
+    - {symbol: AAA.AX, name: BetaShares High Interest Cash}
+    - {symbol: HACK.AX, name: Global Cybersecurity}
+    - {symbol: IOZ.AX, name: iShares Core S&P/ASX 200}
+    - {symbol: STW.AX, name: SPDR S&P/ASX 200}
+    - {symbol: BILL.AX, name: iShares Core Cash ETF}
+    - {symbol: VHY.AX, name: Vanguard Australian Shares High Yield}
+    - {symbol: BGBL.AX, name: BetaShares Global Shares}
+    - {symbol: QUAL.AX, name: VanEck MSCI Intl Quality}
+    - {symbol: A200.AX, name: BetaShares Australia 200}
+    - {symbol: NDQ.AX, name: BetaShares Nasdaq 100}
+    - {symbol: DHHF.AX, name: BetaShares Diversified High Growth}
+    - {symbol: SYI.AX, name: SPDR MSCI Australia High Div}
+    - {symbol: IXJ.AX, name: iShares Global Healthcare}
+    - {symbol: SEMI.AX, name: Global X Semiconductor}
+    - {symbol: MVW.AX, name: VanEck Australian Equal Weight}
+    - {symbol: IOO.AX, name: iShares Global 100}
+    - {symbol: ASIA.AX, name: BetaShares Asia Technology Tigers}
+    - {symbol: VEU.AX, name: Vanguard All-World ex-US}
+    - {symbol: VDHG.AX, name: Vanguard Diversified High Growth}
+    - {symbol: FANG.AX, name: Global X FANG+ ETF}
+    - {symbol: IVV.AX, name: iShares S&P 500}
+    - {symbol: ACDC.AX, name: Battery Tech & Lithium}
+    - {symbol: VGS.AX, name: Vanguard MSCI Intl Index}
+    - {symbol: VAS.AX, name: Vanguard Australian Shares Index}
+    - {symbol: MOAT.AX, name: VanEck Morningstar Wide Moat}
+    - {symbol: VTS.AX, name: Vanguard US Total Market}
+    - {symbol: GOLD.AX, name: Global X Physical Gold}
+    - {symbol: ETHI.AX, name: BetaShares Global Sustainability}
 
 styles:
   theme: "dark"

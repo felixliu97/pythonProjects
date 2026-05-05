@@ -1,8 +1,8 @@
 """
 ASX Research Pipeline - Main Orchestrator (Refactored)
 
-Central entry point for the ASX research database pipeline.
-Handles scraping, analysis, database management, and UI generation.
+Central entry point for the ASX research pipeline.
+Handles scraping, analysis, and UI generation.
 """
 
 import argparse
@@ -11,7 +11,7 @@ import re
 import shutil
 import subprocess
 import sys
-from datetime import timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import yaml
@@ -25,16 +25,12 @@ if sys.stdout.encoding != "utf-8":
 
 # Local Imports
 try:
-    from scripts.db_manager import db
-    from scripts.db_models import Announcement, MarketTrend, Placement, Stock
-    from scripts.db_schemas import validate_catalyst_records
-    from scripts.utils import generate_sparkline, get_root_dir, get_sydney_time, logger
+    from scripts.schemas import validate_catalyst_records
+    from scripts.utils import generate_sparkline, get_root_dir, get_sydney_time, load_yaml_data, logger
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "scripts"))
-    from db_manager import db
-    from db_models import Announcement, MarketTrend, Placement, Stock
-    from db_schemas import validate_catalyst_records
-    from utils import generate_sparkline, get_root_dir, get_sydney_time, logger
+    from schemas import validate_catalyst_records
+    from utils import generate_sparkline, get_root_dir, get_sydney_time, load_yaml_data, logger
 
 
 def trim_zeros(value):
@@ -119,18 +115,18 @@ def prune_pdf_cache(root_dir: Path) -> None:
         return
 
     try:
-        from sqlalchemy import func
+        ann = load_yaml_data("asx_announcements.yaml")
+        if not ann:
+            return
 
-        with db.session_scope() as sess:
-            latest_date = sess.query(func.max(Announcement.event_date)).scalar()
+        latest_date_str = max([str(a.get("Date", "")) for a in ann])
+        if not latest_date_str:
+            return
     except Exception as e:
         logger.error(f"Failed to determine latest announcement date for PDF cache pruning: {e}")
         return
 
-    if not latest_date:
-        return
-
-    keep_date = latest_date.strftime("%Y-%m-%d") if hasattr(latest_date, "strftime") else str(latest_date)
+    keep_date = latest_date_str
     removed = 0
 
     for file_path in cache_dir.iterdir():
@@ -190,128 +186,116 @@ def load_catalysts_from_yaml() -> list:
     return catalysts_list
 
 
-def load_db_data() -> dict:
-    """Fetch consolidated data: catalysts from YAML, dynamic data from DB."""
-    with db.session_scope() as session:
-        # 1. Catalyst Data (from YAML directly)
-        catalysts_list = load_catalysts_from_yaml()
+def load_data() -> dict:
+    """Fetch consolidated data: catalysts, announcements, placements, market trends from YAML."""
+    # 1. Catalyst Data (from YAML directly)
+    catalysts_list = load_catalysts_from_yaml()
 
-        # Sort catalysts by rating/breakout/cr_risk
-        def breakout_key(s):
-            rating = s.get("Rating", "观望")
-            r_scores = {"强力买入": -10, "买入": -5, "观望": 0, "卖出": 5, "强力卖出": 10}
-            r_val = r_scores.get(rating, 0)
+    # Sort catalysts by rating/breakout/cr_risk
+    def breakout_key(s):
+        rating = s.get("Rating", "观望")
+        r_scores = {"强力买入": -10, "买入": -5, "观望": 0, "卖出": 5, "强力卖出": 10}
+        r_val = r_scores.get(rating, 0)
 
-            p = (s.get("Breakout_Probability") or "").strip()
-            p_scores = {"极高": -6, "高": -5, "中高": -4, "中": -3, "中低": -2, "低": -1}
-            p_val = next((v for k, v in p_scores.items() if p.startswith(k)), 0)
+        p = (s.get("Breakout_Probability") or "").strip()
+        p_scores = {"极高": -6, "高": -5, "中高": -4, "中": -3, "中低": -2, "低": -1}
+        p_val = next((v for k, v in p_scores.items() if p.startswith(k)), 0)
 
-            cr = (s.get("CR_Risk") or "").strip()
-            cr_scores = {"极低": 1, "低": 2, "中低": 3, "中": 4, "中高": 5, "高": 6}
-            cr_val = next((v for k, v in cr_scores.items() if cr.startswith(k)), 10)
+        cr = (s.get("CR_Risk") or "").strip()
+        cr_scores = {"极低": 1, "低": 2, "中低": 3, "中": 4, "中高": 5, "高": 6}
+        cr_val = next((v for k, v in cr_scores.items() if cr.startswith(k)), 10)
 
-            return (r_val, p_val, cr_val, (s.get("Ticker") or ""))
+        return (r_val, p_val, cr_val, (s.get("Ticker") or ""))
 
-        catalysts_list.sort(key=breakout_key)
+    catalysts_list.sort(key=breakout_key)
 
-        # 2. Announcements
-        from sqlalchemy import func
+    # 4. Market Trends (Categorized for Template)
+    trends = load_yaml_data("asx_market_trends.yaml")
+    analyzer_data = {"growth_stocks": [], "foundation_stocks": [], "etfs": [], "global_timeline": []}
 
-        latest_date = session.query(func.max(Announcement.event_date)).scalar()
+    trend_lookup = {t["symbol"]: t for t in trends if "symbol" in t}
 
-        ann_res = (
-            session.query(Announcement)
-            .filter(
-                Announcement.event_date == latest_date,
-            )
-            .order_by(Announcement.rating.desc())
-            .all()
-        )
-        # Build price lookup from MarketTrend for price & 1D% display
-        trend_lookup = {t.symbol: t for t in session.query(MarketTrend).filter_by(is_active=True).all()}
-
-        ann_list = []
-        for a in ann_res:
-            trend = trend_lookup.get(a.symbol)
-            ann_list.append(
-                {
-                    "ASX_Code": a.symbol,
-                    "Company": a.company,
-                    "Headline": a.headline,
-                    "Date": a.event_date.strftime("%Y-%m-%d") if a.event_date else "",
-                    "Summary": a.summary,
-                    "PDF_Link": a.pdf_link,
-                    "Rating": a.rating or 0,
-                    "Current_Price": trend.current_price if trend else None,
-                    "Price_Change_1d": trend.price_change_1d or 0.0 if trend else 0.0,
-                    "Price_Diff_1d": trend.price_diff_1d or 0.0 if trend else 0.0,
-                    "RSI": trend.rsi if trend else 50.0,
-                }
-            )
-
-        # 3. Placements
-        plac_res = session.query(Placement).order_by(Placement.event_date.desc()).limit(150).all()
-        plac_list = [
-            {
-                "ASX_Code": p.symbol,
-                "Company": p.company,
-                "Headline": p.headline,
-                "Date": p.event_date.strftime("%Y-%m-%d") if p.event_date else "",
-                "CR_Price": p.cr_price,
-                "Current_Price": p.current_price,
-                "Price_Diff_%": p.price_diff_percent or 0.0,
-                "PDF_Link": p.pdf_link,
-            }
-            for p in plac_res
-        ]
-
-        # 4. Market Trends (Categorized for Template)
-        trends = session.query(MarketTrend).filter_by(is_active=True).all()
-
-        # Build a stock lookup cache to avoid N+1 queries during categorization
-        stocks = session.query(Stock).all()
-        stock_map = {s.symbol: s for s in stocks}
-
-        analyzer_data = {"growth_stocks": [], "foundation_stocks": [], "etfs": [], "global_timeline": []}
-
-        for t in trends:
-            stock = stock_map.get(t.symbol)
-            if not stock:
-                continue
-
-            s_obj = {
-                "symbol": t.symbol,
-                "name": stock.name,
-                "industry": stock.industry,
-                "current_price": t.current_price or 0.0,
-                "marketCap": t.market_cap or 0,
-                "pe": t.pe,
-                "yield": t.yield_val or 0.0,
-                "score": t.score or 0.0,
-                "price_change_1d": t.price_change_1d or 0.0,
-                "price_diff_1d": t.price_diff_1d or 0.0,
-                "price_change_5d": t.price_change_5d or 0.0,
-                "price_diff_5d": t.price_diff_5d or 0.0,
-                "momentum": t.momentum or 0.0,
-                "volatility": t.volatility or 0.0,
-                "volume_change": t.volume_change or 0.0,
-                "rsi": t.rsi or 50.0,
-                "sparkline": generate_sparkline(t.price_history),
-            }
-            if stock.stock_type == "growth":
-                analyzer_data["growth_stocks"].append(s_obj)
-            elif stock.stock_type == "foundation":
-                analyzer_data["foundation_stocks"].append(s_obj)
-            elif stock.stock_type == "etf":
-                analyzer_data["etfs"].append(s_obj)
-
-        return {
-            "analyzer": analyzer_data,
-            "catalysts": {"catalysts": catalysts_list},
-            "announcements": {"announcements": ann_list},
-            "placements": {"placements": plac_list},
-            "timestamp": get_sydney_time().strftime("%Y-%m-%d %H:%M:%S"),
+    for t in trends:
+        s_obj = {
+            "symbol": t.get("symbol"),
+            "name": t.get("name"),
+            "industry": t.get("industry"),
+            "current_price": t.get("current_price") or 0.0,
+            "marketCap": t.get("market_cap") or 0,
+            "pe": t.get("pe"),
+            "yield": t.get("yield_val") or 0.0,
+            "score": t.get("score") or 0.0,
+            "price_change_1d": t.get("price_change_1d") or 0.0,
+            "price_diff_1d": t.get("price_diff_1d") or 0.0,
+            "price_change_5d": t.get("price_change_5d") or 0.0,
+            "price_diff_5d": t.get("price_diff_5d") or 0.0,
+            "momentum": t.get("momentum") or 0.0,
+            "volatility": t.get("volatility") or 0.0,
+            "volume_change": t.get("volume_change") or 0.0,
+            "rsi": t.get("rsi") or 50.0,
+            "sparkline": generate_sparkline(t.get("price_history")),
         }
+        stype = t.get("stock_type", "growth")
+        if stype == "growth":
+            analyzer_data["growth_stocks"].append(s_obj)
+        elif stype == "foundation":
+            analyzer_data["foundation_stocks"].append(s_obj)
+        elif stype == "etf":
+            analyzer_data["etfs"].append(s_obj)
+
+    # 2. Announcements
+    ann = load_yaml_data("asx_announcements.yaml")
+    latest_date_str = max([str(a.get("Date", "")) for a in ann]) if ann else ""
+
+    ann_res = [a for a in ann if str(a.get("Date", "")) == latest_date_str]
+    ann_res.sort(key=lambda x: x.get("Rating", 0), reverse=True)
+
+    ann_list = []
+    for a in ann_res:
+        sym = a.get("ASX_Code")
+        trend = trend_lookup.get(sym)
+        ann_list.append(
+            {
+                "ASX_Code": sym,
+                "Company": a.get("Company"),
+                "Headline": a.get("Headline"),
+                "Date": a.get("Date", ""),
+                "Summary": a.get("Summary"),
+                "PDF_Link": a.get("PDF_Link"),
+                "Rating": a.get("Rating") or 0,
+                "Current_Price": trend.get("current_price") if trend else None,
+                "Price_Change_1d": trend.get("price_change_1d") or 0.0 if trend else 0.0,
+                "Price_Diff_1d": trend.get("price_diff_1d") or 0.0 if trend else 0.0,
+                "RSI": trend.get("rsi") if trend else 50.0,
+            }
+        )
+
+    # 3. Placements
+    plac_res = load_yaml_data("asx_placements.yaml")
+    plac_res.sort(key=lambda x: x.get("Date", ""), reverse=True)
+    plac_res = plac_res[:150]
+
+    plac_list = [
+        {
+            "ASX_Code": p.get("ASX_Code"),
+            "Company": p.get("Company"),
+            "Headline": p.get("Headline"),
+            "Date": p.get("Date", ""),
+            "CR_Price": p.get("CR_Price"),
+            "Current_Price": p.get("Current_Price"),
+            "Price_Diff_%": p.get("Price_Diff_%") or 0.0,
+            "PDF_Link": p.get("PDF_Link"),
+        }
+        for p in plac_res
+    ]
+
+    return {
+        "analyzer": analyzer_data,
+        "catalysts": {"catalysts": catalysts_list},
+        "announcements": {"announcements": ann_list},
+        "placements": {"placements": plac_list},
+        "timestamp": get_sydney_time().strftime("%Y-%m-%d %H:%M:%S"),
+    }
 
 
 def build_dashboard():
@@ -324,7 +308,7 @@ def build_dashboard():
     # Ensure output directory exists
     output_path.parent.mkdir(exist_ok=True)
 
-    data = load_db_data()
+    data = load_data()
 
     env = Environment(loader=FileSystemLoader(str(template_dir)))
     env.filters["trim_zeros"] = trim_zeros
@@ -350,8 +334,6 @@ def run_integrity_check():
     """Run pytest prerequisites before allowing data operations."""
     print(f"{Color.YELLOW}{Color.BOLD}🛡️  Running pytest pre-requisite checks...{Color.RESET}")
 
-    # Run in a completely isolated subprocess to prevent test configurations
-    # (like in-memory DB and stripped schemas) from polluting the main process.
     env = os.environ.copy()
     env["TESTING"] = "true"
 
@@ -372,31 +354,34 @@ def run_integrity_check():
 
 
 def should_skip_data_pull():
-    """Returns True if it's weekend and DB already has latest Friday data."""
+    """Returns True if it's weekend and YAML already has latest Friday data."""
     now = get_sydney_time()
     # 5 is Saturday, 6 is Sunday
     if now.weekday() not in [5, 6]:
         return False
 
     try:
-        from sqlalchemy import func
+        ann = load_yaml_data("asx_announcements.yaml")
+        if not ann:
+            return False
 
-        with db.session_scope() as sess:
-            latest_date = sess.query(func.max(Announcement.event_date)).scalar()
-            if not latest_date:
-                return False
+        latest_date_str = max([str(a.get("Date", "")) for a in ann])
+        if not latest_date_str:
+            return False
 
-            # Target is the most recent Friday
-            days_since_friday = 1 if now.weekday() == 5 else 2
-            friday_date = (now - timedelta(days=days_since_friday)).date()
+        latest_date = datetime.strptime(latest_date_str, "%Y-%m-%d").date()
 
-            if latest_date >= friday_date:
-                print(
-                    f"{Color.YELLOW}{Color.BOLD}🛌 Weekend mode active. "
-                    f"Database is already up-to-date (Latest: {latest_date}). "
-                    f"Skipping pull/analyze...{Color.RESET}"
-                )
-                return True
+        # Target is the most recent Friday
+        days_since_friday = 1 if now.weekday() == 5 else 2
+        friday_date = (now - timedelta(days=days_since_friday)).date()
+
+        if latest_date >= friday_date:
+            print(
+                f"{Color.YELLOW}{Color.BOLD}🛌 Weekend mode active. "
+                f"Data is already up-to-date (Latest: {latest_date}). "
+                f"Skipping pull/analyze...{Color.RESET}"
+            )
+            return True
     except Exception as e:
         logger.error(f"Error checking weekend skip logic: {e}")
     return False
@@ -406,7 +391,7 @@ def main():
     parser = argparse.ArgumentParser(description="ASX Research Hub Control Center")
     parser.add_argument(
         "command",
-        choices=["all", "scrape", "analyze", "dashboard", "reseed", "sync-catalysts"],
+        choices=["all", "scrape", "analyze", "dashboard"],
         help="Pipeline command to run",
     )
     parser.add_argument("--force", action="store_true", help="Force a full refresh (ignore incremental sync)")
@@ -419,15 +404,7 @@ def main():
     root_dir = get_root_dir()
     exit_code = 0
     try:
-        if args.command == "reseed":
-            ok = run_script("scripts/reseed_asx.py")
-            if not ok:
-                exit_code = 1
-        elif args.command == "sync-catalysts":
-            ok = run_script("scripts/sync_asx_catalysts.py")
-            if not ok:
-                exit_code = 1
-        elif args.command == "scrape":
+        if args.command == "scrape":
             ok1 = run_script("scripts/asx_announcements.py", scrape_args)
             ok2 = run_script("scripts/asx_placements.py", scrape_args)
             if not (ok1 and ok2):
@@ -457,26 +434,23 @@ def main():
                 # Analyze symbols from the latest available announcement date
                 ann_syms = []
                 try:
-                    from sqlalchemy import func
-
-                    with db.session_scope() as sess:
-                        latest_date = sess.query(func.max(Announcement.event_date)).scalar()
-                        if latest_date:
-                            rows = (
-                                sess.query(Announcement.symbol)
-                                .filter(Announcement.event_date == latest_date)
-                                .distinct()
-                                .all()
-                            )
-                            ann_syms = [r[0] for r in rows]
+                    ann = load_yaml_data("asx_announcements.yaml")
+                    if ann:
+                        latest_date_str = max([str(a.get("Date", "")) for a in ann])
+                        ann_syms = list(
+                            {
+                                a.get("ASX_Code")
+                                for a in ann
+                                if str(a.get("Date", "")) == latest_date_str and a.get("ASX_Code")
+                            }
+                        )
                 except Exception as e:
                     logger.error(f"Failed to fetch latest announcement symbols: {e}")
                     pass
                 analyzer_args = ["--extra-symbols", ",".join(ann_syms)] if ann_syms else []
                 ok3 = run_script("scripts/asx_analyzer.py", analyzer_args)
 
-            ok4 = run_script("scripts/sync_asx_catalysts.py")
-            if not (ok1 and ok2 and ok3 and ok4):
+            if not (ok1 and ok2 and ok3):
                 exit_code = 1
             try:
                 build_dashboard()

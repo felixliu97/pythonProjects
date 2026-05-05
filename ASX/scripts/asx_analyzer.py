@@ -6,7 +6,9 @@ Enriches data with fundamental descriptors from the ASX Header API.
 """
 
 import argparse
+import os
 import re
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
@@ -14,26 +16,32 @@ import requests
 import yfinance as yf
 
 try:
-    from db_manager import db
-    from db_models import MarketTrend, Stock
-    from db_schemas import MarketTrendSchema
+    from schemas import MarketTrendSchema
     from utils import (
+        get_all_known_stocks,
         get_http_session,
+        get_root_dir,
         get_sydney_time,
         load_config,
+        load_yaml_data,
         logger,
         print_progress,
+        save_yaml_data,
+        ticker_clean,
     )
 except ImportError:
-    from scripts.db_manager import db
-    from scripts.db_models import MarketTrend, Stock
-    from scripts.db_schemas import MarketTrendSchema
+    from scripts.schemas import MarketTrendSchema
     from scripts.utils import (
+        get_all_known_stocks,
         get_http_session,
+        get_root_dir,
         get_sydney_time,
         load_config,
+        load_yaml_data,
         logger,
         print_progress,
+        save_yaml_data,
+        ticker_clean,
     )
 
 # --- Configuration ---
@@ -226,88 +234,102 @@ class MomentumAnalyzer:
         return min(max(round(score, 1), 0), 100)
 
     def main_sync(self, include_announcement: bool = False, extra_symbols: list = None):
-        """Analyze watched stocks and sync snapshots to DB."""
+        """Analyze watched stocks and sync snapshots to YAML."""
         logger.info("Starting Market Momentum Analysis...")
-        with db.session_scope() as sess:
-            # Selective Query: Only core types by default
-            target_types = ["growth", "foundation", "etf"]
-            if include_announcement:
-                target_types.append("announcement")
 
-            stocks = sess.query(Stock).filter(Stock.stock_type.in_(target_types)).all()
+        target_types = ["growth", "foundation", "etf"]
+        yaml_path = get_root_dir() / "config" / "asx_market_trends.yaml"
 
-            # Append extra symbols (e.g. today's announcement tickers) not already covered
-            if extra_symbols:
-                covered = {s.symbol for s in stocks}
-                extra = [
-                    s
-                    for s in sess.query(Stock).filter(Stock.symbol.in_(extra_symbols)).all()
-                    if s.symbol not in covered
-                ]
-                stocks.extend(extra)
-
-            if not stocks:
-                logger.warning("No target stocks found in DB. Check stock_types.")
+        if yaml_path.exists():
+            mtime = os.path.getmtime(yaml_path)
+            if time.time() - mtime < 15 * 60:
+                logger.info("Using cached market trends (updated <15 mins ago). Skipping live fetch.")
                 return
 
-            extra_label = f" +{len(extra_symbols or [])} extra" if extra_symbols else ""
-            logger.info(f"Processing {len(stocks)} symbols (Target Types: {target_types}{extra_label})...")
-            results = []
+        # Load stocks from config/settings.yaml
+        analyzer_cfg = _CFG.get("analyzer", {})
 
-            # Parallelize analysis
-            with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
-                futures = {ex.submit(self.analyze_ticker, s.symbol, s.stock_type): s for s in stocks}
-                completed = 0
-                succeeded = 0
-                for future in as_completed(futures):
-                    stock_obj = futures[future]
-                    result = future.result()
-                    completed += 1
-                    if result:
-                        res, meta = result
-                        if res:
-                            # UNIFIED RE-CRAWL: Always overwrite name/industry
-                            if meta[0]:
-                                stock_obj.industry = meta[0]
-                            if meta[1]:
-                                stock_obj.name = meta[1]
-                            results.append(res)
-                            succeeded += 1
-                    if completed == len(stocks) or completed % max(1, min(10, _WORKERS)) == 0:
-                        print_progress(
-                            "Market analysis progress: "
-                            f"{completed}/{len(stocks)} completed "
-                            f"({succeeded} succeeded, {completed - succeeded} failed)"
+        # We need a list of dicts: {"symbol": "ABC", "stock_type": "growth", "name": "...", "industry": "..."}
+        stocks = []
+        if isinstance(analyzer_cfg, dict):
+            for t in target_types:
+                key = t + "_stocks" if t != "etf" else "etfs"
+                for item in analyzer_cfg.get(key) or []:
+                    sym = ticker_clean(item.get("symbol", ""))
+                    if sym:
+                        stocks.append(
+                            {
+                                "symbol": sym,
+                                "stock_type": t,
+                                "name": item.get("name", ""),
+                                "industry": item.get("industry", ""),
+                            }
                         )
-                print()  # Newline after progress complete
 
-            now = get_sydney_time()
-            sync_count = 0
+        if include_announcement:
+            all_known = get_all_known_stocks()
+            covered = {s["symbol"] for s in stocks}
+            for sym in all_known:
+                if sym not in covered:
+                    stocks.append({"symbol": sym, "stock_type": "announcement", "name": sym, "industry": "Other"})
 
-            for r in results:
-                # Standard SCD Type 2 logic for snapshots
-                # Check if a snapshot for THIS market_date already exists
-                existing = sess.query(MarketTrend).filter_by(symbol=r.symbol, market_date=r.market_date).first()
+        if extra_symbols:
+            covered = {s["symbol"] for s in stocks}
+            extra = []
+            for s in extra_symbols:
+                sym = ticker_clean(s)
+                if sym and sym not in covered:
+                    extra.append({"symbol": sym, "stock_type": "announcement", "name": sym, "industry": "Other"})
+                    covered.add(sym)
+            stocks.extend(extra)
 
-                params = r.model_dump(exclude={"symbol"})
+        if not stocks:
+            logger.warning("No target stocks found. Check settings.yaml.")
+            return
 
-                if existing:
-                    # Update existing snapshot for the day
-                    for k, v in params.items():
-                        setattr(existing, k, v)
-                    existing.valid_from = now
-                else:
-                    # Retire old active record
-                    sess.query(MarketTrend).filter_by(symbol=r.symbol, is_active=True).update(
-                        {"is_active": False, "valid_to": now}
+        extra_label = f" +{len(extra_symbols or [])} extra" if extra_symbols else ""
+        logger.info(f"Processing {len(stocks)} symbols (Target Types: {target_types}{extra_label})...")
+        results = []
+
+        with ThreadPoolExecutor(max_workers=_WORKERS) as ex:
+            futures = {ex.submit(self.analyze_ticker, s["symbol"], s["stock_type"]): s for s in stocks}
+            completed = 0
+            succeeded = 0
+            for future in as_completed(futures):
+                stock_obj = futures[future]
+                result = future.result()
+                completed += 1
+                if result:
+                    res, meta = result
+                    if res:
+                        if meta[0]:
+                            stock_obj["industry"] = meta[0]
+                        if meta[1]:
+                            stock_obj["name"] = meta[1]
+
+                        dumped = res.model_dump()
+                        dumped["stock_type"] = stock_obj["stock_type"]
+                        dumped["name"] = stock_obj["name"]
+                        dumped["industry"] = stock_obj["industry"]
+
+                        results.append(dumped)
+                        succeeded += 1
+                if completed == len(stocks) or completed % max(1, min(10, _WORKERS)) == 0:
+                    print_progress(
+                        "Market analysis progress: "
+                        f"{completed}/{len(stocks)} completed "
+                        f"({succeeded} succeeded, {completed - succeeded} failed)"
                     )
-                    # Add new active record
-                    new_trend = MarketTrend(symbol=r.symbol, is_active=True, valid_from=now, **params)
-                    sess.add(new_trend)
+            print()
 
-                sync_count += 1
+        trend_map = {}
+        for r in results:
+            if "market_date" in r and r["market_date"]:
+                r["market_date"] = r["market_date"].strftime("%Y-%m-%d")
+            trend_map[r["symbol"]] = r
 
-            logger.info(f"Market Analysis Complete: Synced {sync_count} snapshots.")
+        save_yaml_data("asx_market_trends.yaml", list(trend_map.values()))
+        logger.info(f"Market Analysis Complete: Synced {len(results)} snapshots.")
 
 
 def main():
