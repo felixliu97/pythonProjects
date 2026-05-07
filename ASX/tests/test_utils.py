@@ -57,3 +57,28 @@ def test_normalize_date_empty():
     normalized = normalize_date(None)
     assert len(normalized) == 10
     assert normalized.startswith("202")
+
+# --- 3. Data Type Safety (Sort/Compare) ---
+
+def test_mixed_type_sort_safety():
+    """Verify that we can safely sort mixed date/string lists using str conversion."""
+    import datetime
+    items = [
+        {"Date": datetime.date(2026, 5, 7)},
+        {"Date": ""},
+        {"Date": datetime.date(2026, 5, 5)}
+    ]
+    # This simulates the fix in run.py
+    items.sort(key=lambda x: str(x.get("Date", "")), reverse=True)
+    
+    assert str(items[0]["Date"]) == "2026-05-07"
+    assert str(items[1]["Date"]) == "2026-05-05"
+    assert items[2]["Date"] == ""
+
+def test_mixed_type_equality():
+    """Verify that date objects and strings require explicit conversion for equality."""
+    import datetime
+    d = datetime.date(2026, 5, 7)
+    s = "2026-05-07"
+    assert d != s
+    assert str(d) == s

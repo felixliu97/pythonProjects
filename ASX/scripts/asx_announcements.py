@@ -11,6 +11,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 try:
     from pdf_cache import download_pdf, get_cache_dir
@@ -381,30 +382,29 @@ class AnnouncementScanner:
         rating = min(max(int(rating), 1), 5)
         return rating, ";".join(reasons)
 
-    def fetch_prices(self, tickers: set[str]) -> dict[str, float]:
-        """Fetch current prices for a set of tickers in parallel."""
-        prices = {}
+    def fetch_market_data(self, tickers: set[str]) -> dict[str, dict[str, Any]]:
+        """Fetch current prices and company names for a set of tickers in parallel."""
+        data_map = {}
         if not tickers:
-            return prices
+            return data_map
 
         def fetch_one(ticker):
             try:
                 url = COMPANY_HEADER_API.format(ticker.upper())
                 resp = self.session.get(url, timeout=10)
                 if resp.status_code == 200:
-                    data = resp.json().get("data", {})
-                    return ticker, data.get("priceLast")
+                    d = resp.json().get("data", {})
+                    return ticker, d.get("priceLast"), d.get("displayName")
             except Exception:
                 pass
-            return ticker, None
+            return ticker, None, None
 
         with ThreadPoolExecutor(max_workers=min(len(tickers), 20)) as executor:
             future_to_ticker = {executor.submit(fetch_one, t): t for t in tickers}
             for future in as_completed(future_to_ticker):
-                ticker, price = future.result()
-                if price is not None:
-                    prices[ticker] = price
-        return prices
+                ticker, price, name = future.result()
+                data_map[ticker] = {"price": price, "name": name}
+        return data_map
 
     def process_and_sync(self, raw_items: list[dict]):
         """Filter, validate, and save announcements to YAML (Latest Day Only)."""
@@ -420,15 +420,15 @@ class AnnouncementScanner:
         # 2. Filter raw items for the latest date only
         latest_raw = [item for item in raw_items if normalize_date(item.get("date", "")) == max_date]
 
-        # 3. Gather tickers to fetch prices
+        # 3. Gather tickers to fetch market data (prices & names)
         tickers_to_fetch = {ticker_clean(item.get("symbol", "")) for item in latest_raw if item.get("symbol")}
-        price_map = self.fetch_prices(tickers_to_fetch)
+        market_map = self.fetch_market_data(tickers_to_fetch)
 
         # 4. Load existing for today (to avoid duplicates if run multiple times today)
         existing_ann = load_yaml_data("asx_announcements.yaml")
         # Keep items from other days if we want? No, user said "只保留最新一天"
         # So we only keep existing items if they are from max_date
-        today_ann = [a for a in existing_ann if a.get("Date") == max_date]
+        today_ann = [a for a in existing_ann if str(a.get("Date")) == max_date]
         existing_keys = {f"{a['ASX_Code']}_{a['Date']}_{a['Headline'][:100]}" for a in today_ann if "ASX_Code" in a}
 
         added = 0
@@ -470,8 +470,14 @@ class AnnouncementScanner:
                 is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
                 rating, rating_reason = self.calculate_rating_with_reason(hl, summary_text, is_ps)
 
+                # 3-Tier Fallback Name Resolution:
+                # 1. API announcement info (most specific)
+                # 2. API header info (most reliable)
+                # 3. Symbol (last resort)
                 if ci and len(ci) > 0 and ci[0].get("displayName"):
                     company_name = ci[0]["displayName"]
+                elif market_map.get(sym, {}).get("name"):
+                    company_name = market_map[sym]["name"]
                 else:
                     company_name = sym
 
@@ -483,7 +489,7 @@ class AnnouncementScanner:
                     Date=dt,
                     PDF_Link=get_asx_pdf_url(item.get("documentKey", ""), dt),
                     Rating=rating,
-                    Current_Price=price_map.get(sym),
+                    Current_Price=round(market_map.get(sym, {}).get("price"), 4) if market_map.get(sym, {}).get("price") is not None else None,
                 )
 
                 new_items.append(v.model_dump())

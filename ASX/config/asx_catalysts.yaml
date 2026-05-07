@@ -1,53 +1,3 @@
-- Ticker: AGR
-  Stage: 阶段2-验证突破期
-  Company: Aguia Resources Limited
-  Sector: Gold & Phosphate - 哥伦比亚 Santa Barbara 高品位金矿 + 巴西 Três Estradas 有机磷肥商业化
-  Catalysts:
-    - 2026年5月起 Três Estradas（Pampafos）正式开始商业化销售；营业执照已于采矿特许权批准后4-6周内预期到手；生产目标2026年5月4日
-    - 2026年Q2/Q3 Santa Barbara 金矿持续出金（2月产量470克创记录，品位4g/t，批量回收率稳定超85%）；关注季度产量与现金流验证
-    - 2026年H2 Pampafos 销售放量验证（已有7份意向书覆盖巴西与乌拉圭客户）；Três Estradas 中期扩产至30万吨/年路线图
-    - 2026年内 Passo Feio 资源量估算（目标2026年中）；巴西铜项目及哥伦比亚 El Dovio 阶段性地质更新
-  Risks:
-    - Três Estradas 生产启动依赖 FEPAM 营业执照及时颁发，执照延期将推迟首批Pampafos销售
-    - Santa Barbara 地下金矿小规模运营的产量稳定性及运营执行波动风险
-    - Pampafos 商业初期订单放量、渠道建设及客户复购仍需时间验证
-    - 公司横跨哥伦比亚与巴西，面临多司法辖区运营、许可、物流及汇率风险
-    - 小市值多项目并行，若现金流兑现慢于预期仍存在融资或稀释风险
-  CR_Risk: 中
-  CR_Risk_Reason: Três Estradas 若顺利启产可提供经营性现金流，但Pampafos商业放量与多项目推进仍可能消耗资金，财务安全性取决于执行兑现速度
-  Breakout_Probability: 中高
-  Breakout_Probability_Reason: 公司已从单纯资源叙事切入实际商业化兑现阶段；ANM采矿特许权3月批准、Pampafos产品3月正式发布、Santa Barbara 2月金产量创记录，三线进展同步；若5月磷肥首批销售与金矿现金流双线验证顺利，估值有望从"题材"转向"收入+成长"重估
-  Core_Notes: AGR（Aguia Resources）是一家南美多资产小盘资源公司，当前最重要的两条主线：(1) 巴西Três Estradas磷肥项目——ANM已于2026年3月批准采矿特许权，FEPAM营业执照预计4-6周内颁发，生产目标2026年5月4日；Pampafos产品已于3月11日EXPODIRETO农博会正式上市，定价A$220/吨(12% P2O5)，已有7份意向书。(2) 哥伦比亚Santa Barbara高品位金矿——2月金产量约470克创记录，平均品位4g/t，Merrill-Crowe系统3月投入全面运营，批量回收率稳定超85%。公司正从资源叙事转向"早期现金流验证+新产品放量"的复合阶段，但体量较小，市场对实际出货与现金回笼验证要求仍高。
-  Rating: 观望
-  Timeline:
-    - Date: '2025-11-28'
-      Event: 正式启动 Pampafos 有机磷肥产品商业化推广
-      Share_price: 'A$0.018'
-    - Date: '2026-01-23'
-      Event: 收到非核心资产出售尾款，补强公司资金
-      Share_price: 'A$0.019'
-    - Date: '2026-02-05'
-      Event: Santa Barbara 改善金回收率与产量更新；批量回收率升至85%以上
-      Share_price: 'A$0.019'
-    - Date: '2026-02-27'
-      Event: Santa Barbara 2月金产量创记录约470克，平均品位4g/t；Merrill-Crowe系统3月投入全面运营
-      Share_price: 'A$0.016'
-    - Date: '2026-03-11'
-      Event: Pampafos 产品于EXPODIRETO农博会正式发布上市，定价A$220/吨
-      Share_price: 'A$0.015'
-    - Date: '2026-03-12'
-      Event: ANM（巴西国家矿业局）正式批准Três Estradas采矿特许权；FEPAM营业执照预计4-6周内颁发；生产启动目标2026年5月4日
-      Share_price: 'A$0.020'
-    - Date: '2026-03-19'
-      Event: 收到非核心资产出售最终尾款
-      Share_price: 'A$0.020'
-    - Date: '2026-04-07'
-      Event: 正式收到Pampafos产品注册，为商业销售打开关键通道
-      Share_price: 'A$0.024'
-    - Date: '2026-04-24'
-      Event: 发布最新投资者演示材料，继续强调Santa Barbara金矿现金流与巴西磷肥商业化双主线
-      Share_price: 'A$0.020'
-
 - Ticker: ARL
   Stage: 阶段2-验证突破期
   Company: Ardea Resources Limited
@@ -94,6 +44,9 @@
     - Date: '2026-04-29'
       Event: 发布3月季报：季末现金A$19.75M，零负债；联合体权益已升至35%；DFS剩余资助额度A$15.9M；DFS维持H1 2026目标
       Share_price: 'A$0.670'
+    - Date: '2026-05-04'
+      Event: KNP Goongarrie Hub 纳入澳日关于加强关键矿产供应链合作的联合声明，获国际战略地位背书
+      Share_price: 'A$0.740'
 
 - Ticker: BCM
   Stage: 阶段2-验证突破期
@@ -125,6 +78,9 @@
     - Date: '2026-04-24'
       Event: 发布 Q3 FY26 季报与 5B：BFS 目标维持 Q2 2026 完成；季末现金约 A$5.48M，另有可动用 standby facility；公司估算当前资金可覆盖约 5.73 个季度运营
       Share_price: 'A$0.034'
+    - Date: '2026-05-04'
+      Event: Ema 项目获得研发退税及海外研发资质认定 (Advance and Overseas R&D findings)，补强项目前期资金
+      Share_price: 'A$0.036'
 
 - Ticker: BOT
   Stage: 阶段3-现金流确认期
@@ -161,6 +117,9 @@
     - Date: '2026-04-29'
       Event: 发布 Q3 FY26 季报：处方量创纪录达 26,684 张（3月单月10,653张），净收入 A$6.9M（受免赔额重置影响）；备考现金 A$50.8M
       Share_price: 'A$0.030'
+    - Date: '2026-05-04'
+      Event: 任命 Paul Seaback 为首席运营官 (COO)，强化 Sofdra 商业化执行力
+      Share_price: 'A$0.026'
 
 - Ticker: BTR
   Stage: 阶段2-验证突破期
@@ -201,6 +160,9 @@
       Share_price: 'A$0.415'
     - Date: '2026-04-29'
       Event: 发布季报：Second Fortune地下矿Q3产出3,709oz；Laverton投产前矿石堆存启动；Fish矿转维护；GR Engineering EPC早期工程推进中
+      Share_price: 'A$0.390'
+    - Date: '2026-05-05'
+      Event: Sandstone 项目钻探持续获得高品位结果（含 2m @ 10.6g/t Au 等），资源量升级预期增强
       Share_price: 'A$0.390'
 
 - Ticker: CNB
@@ -325,6 +287,9 @@
     - Date: '2026-04-30'
       Event: 发布季报：首批阴极铜目标调整至September quarter 2026；SXEW约50%完成；季末现金A$96.5M；任命Richard Holmes（前Sandfire）为CDO
       Share_price: 'A$0.365'
+    - Date: '2026-05-06'
+      Event: RIU Resources Round-up 会议演示，强调 Nifty 复产进度与 2026 年 9 月季度投产目标
+      Share_price: 'A$0.402'
 
 - Ticker: DEL
   Stage: 阶段2-验证突破期
@@ -365,6 +330,9 @@
     - Date: '2026-04-30'
       Event: 宣布A$2.2M SPP（@A$0.09/股，截止5月25日）+ A$2.2M战略配售予LMS Energy（24.4M股@A$0.09）；资金用于加强资产负债表及支持生物能源项目管线
       Share_price: 'A$0.091'
+    - Date: '2026-05-04'
+      Event: 正式发布 SPP 发售文件并开启申购；LMS Energy 战略入股提供行业背书
+      Share_price: 'A$0.089'
 
 - Ticker: FHE
   Stage: 阶段2-验证突破期
@@ -405,6 +373,9 @@
     - Date: '2026-05-02'
       Event: ⚡ 联邦政府宣布Waroona Stage 1（82MW/565MWh）成功中标Capacity Investment Scheme (CIS) Tender 6；项目获得WA州容量积分+联邦CIS合同双重政府级收入锁定
       Share_price: 'A$0.265'
+    - Date: '2026-05-05'
+      Event: ⚡ 复牌交易：市场对 CIS 中标利好作出反应，政府双重收入保障显著降低项目融资门槛
+      Share_price: 'A$0.285'
 
 - Ticker: KSN
   Stage: 阶段3-现金流确认期
@@ -443,6 +414,9 @@
     - Date: '2026-04-29'
       Event: 发布Q3 FY26完整季报：净销售收入A$2,480万，营业现金流季环比+264%达A$1,100万，现金A$2,540万，零负债；Pearse South金品位2.4g/t，银75,578oz；地下基础设施完成；铜线进入试产验证阶段
       Share_price: 'A$0.094'
+    - Date: '2026-05-04'
+      Event: 发布季报更新视频采访，管理层强调 SOZ 地下矿试产成功及首批铜精矿已产出的里程碑意义
+      Share_price: 'A$0.091'
 
 - Ticker: LOT
   Stage: 阶段2-验证突破期
@@ -486,6 +460,9 @@
     - Date: '2026-04-30'
       Event: 发布季报：季末现金A$85M；ROM库存超20万吨；首批发货调至H2 2026；处理性能受更高投入成本及技术调校影响
       Share_price: 'A$0.940'
+    - Date: '2026-05-01'
+      Event: 举行投资者研讨会，确认 Kayelekera 复产火灾后的快速修复进度及 Q2 稳态生产目标维持
+      Share_price: 'A$0.835'
 
 - Ticker: MEI
   Stage: 阶段2-验证突破期
@@ -576,6 +553,9 @@
     - Date: '2026-04-30'
       Event: Phase 2钻探正式动员：两台MP1500钻机mobilize至Golden Gate；首台数日内开钻，第二台5月中到场；目标Q1 2027 MRE
       Share_price: 'A$0.064'
+    - Date: '2026-05-05'
+      Event: Antimony Ridge 项目冶金测试结果进一步确认高回收率，Idaho 本地加工中心路径去风险化
+      Share_price: 'A$0.059'
 
 - Ticker: SKK
   Stage: 阶段3-现金流确认期
@@ -660,6 +640,9 @@
     - Date: '2026-04-13'
       Event: 宣布增发获得超额认购并完成交割，确立Pilot项目全部开发资金
       Share_price: 'A$0.260'
+    - Date: '2026-05-05'
+      Event: 发布 Appendix 4A 公告，披露 CDI 与普通股之间的份额变动，反映 NYSE/ASX 双重上市后的份额流动
+      Share_price: 'A$0.245'
 
 - Ticker: TM1
   Stage: 阶段2-验证突破期
@@ -696,50 +679,6 @@
     - Date: '2026-04-29'
       Event: 采样确认 Southwest PGM-Cu-Ni 系统存在 172m 连续矿化带，进一步验证大规模硫化物体系的连续性与规模
       Share_price: 'A$0.325'
-
-- Ticker: VKA
-  Stage: 阶段1-无人关注期
-  Company: Viking Mines Limited
-  Sector: Critical Minerals - Tungsten (美国内华达州 Linka 钨矿项目)
-  Catalysts:
-    - 2026年Q2 Linka 核心爆发窗口：首轮钻探 (Maiden Drill) 正式启动；测试重力异常确定的侵入体靶点，并配合 3D 地质模型与 NOI 申报推进
-    - 2026年5月-6月 历史堆存与尾矿评估结果出炉，评估低成本快速投产路径可行性
-    - 2026年5月 comminution testwork（磨矿/破碎测试）结果出炉，为电力、用水及OPEX建模提供关键参数
-    - 2026年Q3 初步钻探岩心视觉识别及首批 Assay 化验数据公布
-    - 2026年H2 启动 JORC 合规资源量评估，将历史数据转化为现代合规资源
-  Risks:
-    - ⚠️ 2026年4月16日约 15.8M 股托管股份已正式解锁，短期流动性承压（已发生）
-    - 勘探风险：目前价值锚定在钻探预期，深部矿体的连续性尚未通过现代钻井验证
-    - 执行风险：4月27日概念流程图仅代表工程前置验证迈进一步，距离实际建设、设备选型与商业化仍有显著执行距离
-    - 资本需求：虽推行轻资产模式并研究 Purchase vs Hire 以压低前期 CAPEX，但随 3D 建模、comminution 测试及大规模钻探启动，中期仍有融资窗口
-  CR_Risk: 中
-  CR_Risk_Reason: 4月24日季报确认季末现金A$4.68M；15.8M股解锁已消化；OTC上市（VKALF）拓宽北美融资渠道；模块化流程+Purchase vs Hire压低前期CAPEX，但公司规模仍小（市值约A$14-33M），随着June quarter首钻+comminution测试并行推进，中期融资需求仍存在
-  Breakout_Probability: 中高
-  Breakout_Probability_Reason: 4月9日重力测量精准锁定被火山盖层遮掩的深部靶点，去风险化明显；4月13日历史堆存和尾矿评估启动，可能在正式开矿前提供更廉价的早期现金流；4月27日概念工艺流程图完成，意味着项目从实验室冶金验证进一步迈向工程与财务建模阶段；全球钨价处于历史高位、美国本土关键矿物叙事增强；4月16日解锁风险已实际发生，最坏情景已过
-  Core_Notes: VKA 当前是"三线并进"：30,000米钻探博取大规模发现 + 评估历史遗留63.6% WO3高品位精矿堆存寻找"快速变现"机会 + 以 Rapid-Start 策略推进概念流程图、设备初步 sizing 与 OPEX/CAPEX 建模。4月27日公告表明项目已从单纯资源故事，向工程可实施性验证再推进一步；但公司仍处首钻前夜，尚未形成钻探/化验/JORC 资源量的验证闭环，因此当前更适合继续定义为“阶段1-无人关注期”，而不是“阶段2-验证突破期”。真正升档信号应来自 June quarter 首钻启动、初步可见矿化与后续 assay/资源量验证。
-  Rating: 观望
-  Timeline:
-    - Date: '2026-03-31'
-      Event: 宣布历史性冶金测试结果：重力精选品位达 63.6% WO3，回收率 83.8%
-      Share_price: 'A$0.014'
-    - Date: '2026-04-01'
-      Event: 发布 Accelerated Workflow 加速路线图，动员现场野外作业
-      Share_price: 'A$0.015'
-    - Date: '2026-04-09'
-      Event: 披露重力测量成果，成功识别并定位深部侵入体钻探靶点
-      Share_price: 'A$0.015'
-    - Date: '2026-04-13'
-      Event: 官方宣布启动 Linka 项目历史堆存与尾矿的经济性评估
-      Share_price: 'A$0.016'
-    - Date: '2026-04-14'
-      Event: 确认在美 OTC 市场 (VKALF) 开始交易，扩大北美机构投资者准入
-      Share_price: 'A$0.016'
-    - Date: '2026-04-16'
-      Event: ✅ 15,805,798 股自愿托管普通股正式解锁并在 ASX 流通（风险事件已发生）
-      Share_price: 'A$0.015'
-    - Date: '2026-04-24'
-      Event: 发布3月季报：季末现金A$4.68M；确认首钻目标June quarter；NOI许可、钻探承包商对接、3D地质建模同步推进
-      Share_price: 'A$0.014'
-    - Date: '2026-04-27'
-      Event: 宣布 Linka 项目概念工艺流程图完成；进入机械工程与财务建模前置阶段，初始处理速率采用 43 吨/小时；comminution testwork已启动；继续推进 NOI、3D 模型、历史尾矿/堆存评估与 June quarter 首钻
-      Share_price: 'A$0.013'
+    - Date: '2026-05-07'
+      Event: 申请 3,442.8 万股普通股挂牌上市，配售筹码进一步入场；市场关注 5 月底 SW6 高品位 Assay 释放
+      Share_price: 'A$0.330'

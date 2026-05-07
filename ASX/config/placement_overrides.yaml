@@ -5,5 +5,5 @@ overrides:
   #   cr_price: 0.033
   # - symbol: "SHN"
   #   cr_price: 0.027
-  # - symbol: "MLX"
-  #   delete: true
+  # - symbol: "MCA"
+  #   cr_price: 0.15

@@ -180,7 +180,7 @@ def load_catalysts_from_yaml() -> list:
                 "Breakout_Probability": validated_entry.Breakout_Probability,
                 "Breakout_Probability_Reason": validated_entry.Breakout_Probability_Reason,
                 "Core_Notes": validated_entry.Core_Notes,
-                "Timeline": sorted(validated_entry.Timeline, key=lambda x: x.get("Date", "")),
+                "Timeline": sorted(validated_entry.Timeline, key=lambda x: str(x.get("Date", ""))),
             }
         )
     return catalysts_list
@@ -272,7 +272,7 @@ def load_data() -> dict:
 
     # 3. Placements
     plac_res = load_yaml_data("asx_placements.yaml")
-    plac_res.sort(key=lambda x: x.get("Date", ""), reverse=True)
+    plac_res.sort(key=lambda x: str(x.get("Date", "")), reverse=True)
     plac_res = plac_res[:150]
 
     plac_list = [

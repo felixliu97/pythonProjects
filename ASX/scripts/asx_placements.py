@@ -157,10 +157,10 @@ class PlacementScanner:
 
         # 2. Dollar Patterns (issue price, at $0.15 etc)
         dollar_patterns = [
-            rf"(?:at|@|priced)\s*(?:at)?\s*[:]?\s*{dsym}?\s*(\d+\.\d+)\s*(?:per\s*share|each|a\s+share|(?!\s*(?:m|mln|million|b|bln|billion))\b)",
-            rf"(?:price|issue|offer|conversion)\s*[:]?\s*(?:of|at)?\s*[:]?\s*{dsym}?\s*(\d+\.?\d+)",
+            rf"(?:at|@|priced)\s*(?:at)?\s*[:]?\s*{dsym}?\s*(\d+\.\d+)\s*(?:per\s*share|each|a\s+share|(?!\s*(?:m|mln|million|b|bln|billion|%))\b)",
+            rf"(?:price|issue|offer|conversion)\s*[:]?\s*(?:of|at)?\s*[:]?\s*{dsym}?\s*(\d+\.?\d+)(?!\s*%)",
             rf"{dsym}(\d+\.\d+)\s*per\s*share",
-            rf"at\s+a\s+price\s+of\s+{dsym}?(\d+\.\d+)",
+            rf"at\s+a\s+price\s+of\s+{dsym}?(\d+\.\d+)(?!\s*%)",
         ]
         for p in dollar_patterns:
             match = re.search(p, txt)
@@ -177,8 +177,8 @@ class PlacementScanner:
         # ONLY apply to headlines to avoid false positives in noisy PDF content
         if not is_content:
             fallback_patterns = [
-                rf"{dsym}(\d+\.\d+)\b(?!\s*(?:m|mln|million|b|bln|billion))",
-                r"(?:at|@)\s*[:]?\s*(\d+\.\d+)\b(?!\s*(?:c|cent|m|mln|million|b|bln|billion))",
+                rf"{dsym}(\d+\.\d+)\b(?!\s*(?:m|mln|million|b|bln|billion|%))",
+                r"(?:at|@)\s*[:]?\s*(\d+\.\d+)\b(?!\s*(?:c|cent|m|mln|million|b|bln|billion|%))",
             ]
             for p in fallback_patterns:
                 match = re.search(p, txt)
@@ -347,7 +347,7 @@ class PlacementScanner:
 
             cr_price = ov.get("cr_price")
             existing_event_date = (
-                datetime.strptime(existing["Date"], "%Y-%m-%d").date()
+                datetime.strptime(str(existing["Date"]), "%Y-%m-%d").date()
                 if existing and existing.get("Date")
                 else datetime.min.date()
             )
@@ -509,6 +509,7 @@ def main():
     scanner.sync_to_yaml(events)
 
     # 3. Global Forced Overrides (Sync YAML state)
+    scanner.apply_forced_overrides()
 
     # 4. Global Refresh (Fetch latest market prices)
     scanner.refresh_all_prices()
