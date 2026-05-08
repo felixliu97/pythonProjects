@@ -13,6 +13,7 @@ from typing import Any
 import pytz
 import requests
 import yaml
+import pdfplumber
 
 # --- Constants ---
 DEFAULT_TIMEOUT = 30
@@ -204,6 +205,24 @@ def get_pdf_filename(ev: dict) -> str:
     symbol = ticker_clean(ev.get("symbol") or "ASX")
     headline = clean_filename(ev.get("headline", "announcement"))
     return f"{date_val}_[{symbol}]_{headline}.pdf"
+
+
+def extract_pdf_text(pdf_path: Path, max_pages: int = 5) -> str:
+    """Extract text from the first N pages of a PDF."""
+    if not pdf_path.exists():
+        return ""
+    text = []
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for i, page in enumerate(pdf.pages):
+                if i >= max_pages:
+                    break
+                page_text = page.extract_text()
+                if page_text:
+                    text.append(page_text)
+    except Exception as e:
+        logger.error(f"Failed to extract text from {pdf_path.name}: {e}")
+    return "\n\n".join(text)
 
 
 def get_asx_pdf_url(doc_key: str, date_val: Any) -> str:

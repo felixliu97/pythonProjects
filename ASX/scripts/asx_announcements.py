@@ -28,6 +28,7 @@ try:
         print_progress,
         save_yaml_data,
         ticker_clean,
+        extract_pdf_text,
     )
 except ImportError:
     from scripts.pdf_cache import download_pdf, get_cache_dir
@@ -44,6 +45,7 @@ except ImportError:
         print_progress,
         save_yaml_data,
         ticker_clean,
+        extract_pdf_text,
     )
 
 # --- Configuration ---
@@ -559,6 +561,46 @@ class AnnouncementScanner:
         logger.info(f"Recalc Complete: Updated {updated} announcements (Filtered {skipped} noise items).")
         self._download_pdfs_batch(pending_downloads)
 
+    def sync_catalysts(self, raw_items: list[dict]):
+        """Special handling for announcements related to tickers in asx_catalysts.yaml."""
+        catalysts = load_yaml_data("asx_catalysts.yaml")
+        catalyst_tickers = {ticker_clean(c.get("Ticker", "")) for c in catalysts if c.get("Ticker")}
+
+        dates = [normalize_date(item.get("date", "")) for item in raw_items]
+        max_date = max(dates) if dates else normalize_date(None)
+
+        # Filter for catalyst stocks and price sensitive
+        relevant = []
+        for item in raw_items:
+            sym = ticker_clean(item.get("symbol", ""))
+            if sym in catalyst_tickers:
+                is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
+                if is_ps:
+                    relevant.append(item)
+
+        if not relevant:
+            return
+
+        logger.info(f"Found {len(relevant)} new catalyst announcements. Extracting text for AI summary...")
+
+        for item in relevant:
+            sym = ticker_clean(item.get("symbol", ""))
+            hl = item.get("headline", "").strip()
+            dt = normalize_date(item.get("date", ""))
+            pdf_url = get_asx_pdf_url(item.get("documentKey", ""), dt)
+            pdf_filename = get_pdf_filename({"date": dt, "symbol": sym, "headline": hl})
+
+            pdf_path = self._download_pdf(pdf_url, pdf_filename)
+            if pdf_path:
+                text = extract_pdf_text(pdf_path)
+                print("\n" + "=" * 50)
+                print(f"CATALYST ALERT: {sym} - {hl} ({dt})")
+                print("-" * 50)
+                print(text[:2000] + ("..." if len(text) > 2000 else ""))
+                print("=" * 50 + "\n")
+            else:
+                print(f"Could not download PDF for catalyst: {sym} - {hl}")
+
 
 def main():
     parser = argparse.ArgumentParser(description="ASX Announcement Scanner")
@@ -596,6 +638,7 @@ def main():
     if args.recalc_days and args.recalc_days > 0:
         scanner.recalc_and_update(raw)
     scanner.process_and_sync(raw)
+    scanner.sync_catalysts(raw)
 
 
 if __name__ == "__main__":

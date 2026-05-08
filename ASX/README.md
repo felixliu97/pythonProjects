@@ -14,9 +14,11 @@ graph TD
     A[ASX/Markit API] --> B{采集层 Scrapers}
     B -->|Announcements| C[config/asx_announcements.yaml]
     B -->|Placements| D[config/asx_placements.yaml]
+    B -->|PDF Text Extraction| X[Catalyst Alert & Analysis]
     C & D --> E{分析层 Analyzer}
     E -->|Technicals/Snapshots| F[config/asx_market_trends.yaml]
-    Y[config/asx_catalysts.yaml] -->|直接读取| I[Jinja2 Renderer]
+    Y[config/asx_catalysts.yaml] -->|监听 / 提取| B
+    Y -->|直接读取| I[Jinja2 Renderer]
     F & C & D --> I
     I --> J[asx_dashboard.html]
 ```
@@ -41,6 +43,7 @@ graph TD
 - **配置驱动**: 系统核心参数均从 `config/settings.yaml` 读取，包括 API、并发控制、评分权重等。
 - **数据验证**: 使用 Pydantic V2 模型在内存中完成保存前校验，确保 YAML 格式严谨。
 - **HTTP 优化**: 统一使用带重试机制的 `requests.Session`，并配置了针对 Markit API 的专用 Header。
+- **PDF 文本提取**: 集成 `pdfplumber` 工具，支持对本地缓存的 PDF 进行多页文本提取 (`extract_pdf_text`)，用于智能化分析。
 
 ### 2.2 公告采集与评级 (`asx_announcements.py`)
 - **最新交易日同步**: 
@@ -72,6 +75,10 @@ graph TD
     - **Issue Type 验证 (严格准入)**: 仅放行 `CS` (普通股)、`CD` (存托凭证)、`ET/UI` (ETF和信托单位)。
     - **防御性拦截**: 如果 API 无法识别 Ticker (返回 400/Symbol Not Found)，系统将拦截该 Ticker，防止错误数据混入。
     - **Ticker 长度校验**: 强制限制 Ticker 长度 ≤ 4，自动剔除带字母后缀的衍生品。
+- **催化剂联动与智能化预警 (Catalyst Alert)**:
+    1. **监听机制**: 脚本自动加载 `asx_catalysts.yaml` 中的 Ticker 观察名单。
+    2. **深度触发**: 若名单内的公司发布 **Price Sensitive** 公告，自动下载 PDF。
+    3. **文本透传**: 使用 `pdfplumber` 提取前 5 页文本并在终端显示 `CATALYST ALERT` 区块，支持人工/AI 进行即时总结。
 
 ### 2.3 融资增发监测 (`asx_placements.py`)
 - **Filter-First Pipeline（先过滤，后提取）**: 
