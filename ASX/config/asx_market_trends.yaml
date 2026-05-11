@@ -1,503 +1,443 @@
-- symbol: LOT
-  current_price: 0.78
-  market_cap: 228137300
-  pe: -99999.99
-  yield_val: 0.0
-  score: 31.1
-  price_change_1d: -0.055
-  price_diff_1d: -6.59
-  price_change_5d: -0.055
-  price_diff_5d: -6.59
-  momentum: -2.17
-  volatility: 6.55
-  volume: 5286888
-  volume_change: 75.97
-  rsi: 23.89
-  price_history: 1.465,1.470,1.425,0.940,0.900,0.835,0.810,0.820,0.835,0.780
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: LOTUS RESOURCES LIMITED
-  industry: Energy
-- symbol: CYM
-  current_price: 0.41500000000000004
-  market_cap: 237012690
-  pe: -99999.99
-  yield_val: 0.0
-  score: 71.9
-  price_change_1d: 0.005
-  price_diff_1d: 1.22
-  price_change_5d: 0.05
-  price_diff_5d: 13.7
-  momentum: -0.21
-  volatility: 5.38
-  volume: 1129420
-  volume_change: 1.83
-  rsi: 63.7
-  price_history: 0.375,0.375,0.375,0.365,0.365,0.365,0.360,0.365,0.410,0.415
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: CYPRIUM METALS LIMITED
-  industry: Materials
-- symbol: MEU
-  current_price: 0.115
-  market_cap: 148512944
-  pe: -99999.99
-  yield_val: 0.0
-  score: 63.8
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: 0.01
-  price_diff_5d: 9.52
-  momentum: -0.1
-  volatility: 9.36
-  volume: 1044993
-  volume_change: -64.19
-  rsi: 53.34
-  price_history: 0.110,0.105,0.105,0.105,0.110,0.105,0.105,0.115,0.115,0.115
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: MARMOTA LIMITED
-  industry: Energy
-- symbol: EMH
-  current_price: 0.31
-  market_cap: 72458455
-  pe: -99999.99
-  yield_val: 0.0
-  score: 63.1
-  price_change_1d: 0.005
-  price_diff_1d: 1.64
-  price_change_5d: 0.02
-  price_diff_5d: 6.9
-  momentum: -0.1
-  volatility: 7.48
-  volume: 116061
-  volume_change: -47.88
-  rsi: 56.27
-  price_history: 0.295,0.305,0.300,0.310,0.305,0.290,0.280,0.305,0.305,0.310
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: EUROPEAN METALS HOLDINGS LIMITED
-  industry: Materials
-- symbol: DEL
-  current_price: 0.089
-  market_cap: 21776356
-  pe: -99999.99
-  yield_val: 0.0
-  score: 46.2
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: 0.001
-  price_diff_5d: 1.14
-  momentum: -1.1
-  volatility: 4.88
-  volume: 24875
-  volume_change: -84.89
-  rsi: 41.36
-  price_history: 0.100,0.105,0.105,0.091,0.088,0.088,0.090,0.090,0.089,0.089
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: DELOREAN CORPORATION LIMITED
-  industry: Utilities
-- symbol: CLA
-  current_price: 0.008
-  market_cap: 29777654
-  pe: -99999.99
-  yield_val: 0.0
-  score: 25.1
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: -0.001
-  price_diff_5d: -11.11
-  momentum: -1.64
-  volatility: 8.85
-  volume: 2724188
-  volume_change: -69.76
-  rsi: 36.73
-  price_history: 0.009,0.008,0.008,0.008,0.009,0.009,0.008,0.009,0.008,0.008
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: CELSIUS RESOURCES LIMITED.
-  industry: Materials
-- symbol: BOE
-  current_price: 1.3900000000000001
-  market_cap: 601929620
-  pe: -99999.99
-  yield_val: 0.0
-  score: 31.1
-  price_change_1d: -0.06
-  price_diff_1d: -4.14
-  price_change_5d: -0.025
-  price_diff_5d: -1.77
-  momentum: -1.6
-  volatility: 5.29
-  volume: 4887450
-  volume_change: -37.34
-  rsi: 41.18
-  price_history: 1.575,1.565,1.535,1.390,1.425,1.415,1.350,1.335,1.450,1.390
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: BOSS ENERGY LTD
-  industry: Energy
-- symbol: ARL
-  current_price: 0.71
-  market_cap: 164785580
-  pe: -99999.99
-  yield_val: 0.0
-  score: 58.1
-  price_change_1d: -0.04
-  price_diff_1d: -5.33
-  price_change_5d: 0.055
-  price_diff_5d: 8.4
-  momentum: 1.24
-  volatility: 4.32
-  volume: 126879
-  volume_change: -39.57
-  rsi: 58.64
-  price_history: 0.685,0.695,0.670,0.655,0.660,0.655,0.630,0.685,0.750,0.710
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: ARDEA RESOURCES LIMITED
-  industry: Materials
-- symbol: EML
-  current_price: 0.395
-  market_cap: 159294393
-  pe: -99999.99
-  yield_val: 0.0
-  score: 28.3
-  price_change_1d: -0.015
-  price_diff_1d: -3.66
-  price_change_5d: -0.015
-  price_diff_5d: -3.66
-  momentum: -1.78
-  volatility: 4.04
-  volume: 980705
-  volume_change: -47.19
-  rsi: 33.8
-  price_history: 0.395,0.400,0.420,0.420,0.420,0.410,0.420,0.410,0.410,0.395
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: EML PAYMENTS LIMITED
-  industry: Financial Services
 - symbol: IMU
-  current_price: 0.105
-  market_cap: 47821030
+  current_price: 0.11
+  market_cap: 43662679
   pe: -99999.99
   yield_val: 0.0
-  score: 24.1
-  price_change_1d: -0.01
-  price_diff_1d: -8.7
+  score: 51.4
+  price_change_1d: 0.005
+  price_diff_1d: 4.76
   price_change_5d: 0.0
   price_diff_5d: 0.0
-  momentum: -1.71
-  volatility: 4.82
-  volume: 1471901
-  volume_change: 1.64
-  rsi: 33.03
-  price_history: 0.130,0.115,0.120,0.115,0.110,0.105,0.110,0.105,0.115,0.105
-  market_date: '2026-05-08'
+  momentum: -1.62
+  volatility: 4.84
+  volume: 2103201
+  volume_change: 44.28
+  rsi: 36.86
+  price_history: 0.115,0.120,0.115,0.110,0.105,0.110,0.105,0.115,0.105,0.110
+  market_date: '2026-05-11'
   stock_type: growth
   name: IMUGENE LIMITED
   industry: Pharmaceuticals, Biotechnology & Life Sciences
-- symbol: BOT
-  current_price: 0.027
-  market_cap: 68006570
-  pe: -99999.99
-  yield_val: 0.0
-  score: 64.6
-  price_change_1d: 0.002
-  price_diff_1d: 8.0
-  price_change_5d: 0.001
-  price_diff_5d: 3.85
-  momentum: -1.44
-  volatility: 5.48
-  volume: 13712244
-  volume_change: -3.49
-  rsi: 32.08
-  price_history: 0.032,0.030,0.030,0.028,0.027,0.026,0.024,0.025,0.025,0.027
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: BOTANIX PHARMACEUTICALS LTD
-  industry: Pharmaceuticals, Biotechnology & Life Sciences
-- symbol: CNB
-  current_price: 0.47500000000000003
-  market_cap: 131156935
-  pe: -99999.99
-  yield_val: 0.0
-  score: 58.5
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: 0.02
-  price_diff_5d: 4.4
-  momentum: 0.38
-  volatility: 5.68
-  volume: 252318
-  volume_change: -64.23
-  rsi: 51.65
-  price_history: 0.555,0.485,0.470,0.460,0.480,0.455,0.425,0.455,0.475,0.475
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: CARNABY RESOURCES LIMITED
-  industry: Materials
-- symbol: VKA
-  current_price: 0.011
-  market_cap: 29107718
-  pe: -99999.99
-  yield_val: 0.0
-  score: 20.0
-  price_change_1d: -0.001
-  price_diff_1d: -8.33
-  price_change_5d: -0.001
-  price_diff_5d: -8.33
-  momentum: -0.17
-  volatility: 10.12
-  volume: 8588237
-  volume_change: -49.85
-  rsi: 39.64
-  price_history: 0.013,0.013,0.013,0.012,0.010,0.012,0.011,0.012,0.012,0.011
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: VIKING MINES LIMITED
-  industry: Materials
-- symbol: BTR
-  current_price: 0.375
-  market_cap: 428131079
-  pe: -99999.99
-  yield_val: 0.0
-  score: 37.4
-  price_change_1d: -0.015
-  price_diff_1d: -3.85
-  price_change_5d: 0.005
-  price_diff_5d: 1.35
-  momentum: -1.38
-  volatility: 4.95
-  volume: 4443708
-  volume_change: -39.2
-  rsi: 42.8
-  price_history: 0.420,0.395,0.390,0.385,0.380,0.370,0.375,0.380,0.390,0.375
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: BRIGHTSTAR RESOURCES LIMITED
-  industry: Materials
-- symbol: DXB
-  current_price: 0.215
-  market_cap: 123081339
-  pe: -99999.99
-  yield_val: 0.0
-  score: 43.9
-  price_change_1d: 0.01
-  price_diff_1d: 4.88
-  price_change_5d: -0.015
-  price_diff_5d: -6.52
-  momentum: -2.22
-  volatility: 5.58
-  volume: 2299227
-  volume_change: 55.98
-  rsi: 33.01
-  price_history: 0.390,0.240,0.215,0.230,0.215,0.230,0.205,0.200,0.205,0.215
-  market_date: '2026-05-08'
-  stock_type: growth
-  name: DIMERIX LIMITED
-  industry: Pharmaceuticals, Biotechnology & Life Sciences
 - symbol: KSN
   current_price: 0.089
-  market_cap: 77457510
-  pe: 2.23518
+  market_cap: 74931721
+  pe: 2.16229
   yield_val: 0.0
-  score: 36.3
-  price_change_1d: -0.003
-  price_diff_1d: -3.26
-  price_change_5d: -0.0
-  price_diff_5d: -0.0
-  momentum: -1.44
+  score: 48.2
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.003
+  price_diff_5d: 3.49
+  momentum: -1.41
   volatility: 5.0
-  volume: 3046467
-  volume_change: -1.79
+  volume: 1092213
+  volume_change: -64.76
   rsi: 44.1
-  price_history: 0.093,0.096,0.094,0.092,0.090,0.089,0.086,0.090,0.092,0.089
-  market_date: '2026-05-08'
+  price_history: 0.096,0.094,0.092,0.090,0.089,0.086,0.090,0.092,0.089,0.089
+  market_date: '2026-05-11'
   stock_type: growth
   name: KINGSTON RESOURCES LIMITED
   industry: Materials
-- symbol: TM1
-  current_price: 0.33
-  market_cap: 337998232
+- symbol: BTR
+  current_price: 0.365
+  market_cap: 411664499
   pe: -99999.99
   yield_val: 0.0
-  score: 74.5
+  score: 33.2
+  price_change_1d: -0.01
+  price_diff_1d: -2.67
+  price_change_5d: -0.01
+  price_diff_5d: -2.67
+  momentum: -1.5
+  volatility: 4.96
+  volume: 5451234
+  volume_change: -25.7
+  rsi: 40.37
+  price_history: 0.395,0.390,0.385,0.380,0.370,0.375,0.380,0.390,0.375,0.365
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: BRIGHTSTAR RESOURCES LIMITED
+  industry: Materials
+- symbol: MEU
+  current_price: 0.11
+  market_cap: 148512944
+  pe: -99999.99
+  yield_val: 0.0
+  score: 47.0
   price_change_1d: -0.005
-  price_diff_1d: -1.49
-  price_change_5d: 0.045
-  price_diff_5d: 15.79
-  momentum: 0.75
-  volatility: 9.06
-  volume: 2058003
-  volume_change: -32.01
-  rsi: 52.55
-  price_history: 0.355,0.335,0.325,0.310,0.290,0.285,0.275,0.325,0.335,0.330
-  market_date: '2026-05-08'
+  price_diff_1d: -4.35
+  price_change_5d: 0.005
+  price_diff_5d: 4.76
+  momentum: -0.28
+  volatility: 9.37
+  volume: 573463
+  volume_change: -80.31
+  rsi: 47.4
+  price_history: 0.105,0.105,0.105,0.110,0.105,0.105,0.115,0.115,0.115,0.110
+  market_date: '2026-05-11'
   stock_type: growth
-  name: TERRA METALS LIMITED
-  industry: Materials
-- symbol: RML
-  current_price: 0.065
-  market_cap: 131677398
+  name: MARMOTA LIMITED
+  industry: Energy
+- symbol: CLA
+  current_price: 0.007
+  market_cap: 29777654
   pe: -99999.99
   yield_val: 0.0
-  score: 81.2
-  price_change_1d: 0.006
-  price_diff_1d: 10.17
-  price_change_5d: 0.003
-  price_diff_5d: 4.84
-  momentum: 0.73
-  volatility: 9.29
-  volume: 36178320
-  volume_change: 24.04
-  rsi: 51.85
-  price_history: 0.070,0.070,0.069,0.064,0.065,0.062,0.061,0.059,0.059,0.065
-  market_date: '2026-05-08'
+  score: 0.0
+  price_change_1d: -0.001
+  price_diff_1d: -12.5
+  price_change_5d: -0.001
+  price_diff_5d: -12.5
+  momentum: -1.86
+  volatility: 8.93
+  volume: 8325215
+  volume_change: -8.15
+  rsi: 33.65
+  price_history: 0.008,0.008,0.008,0.009,0.009,0.008,0.009,0.008,0.008,0.007
+  market_date: '2026-05-11'
   stock_type: growth
-  name: RESOLUTION MINERALS LTD
+  name: CELSIUS RESOURCES LIMITED.
   industry: Materials
+- symbol: CNB
+  current_price: 0.515
+  market_cap: 131156935
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.04
+  price_diff_1d: 8.42
+  price_change_5d: 0.09
+  price_diff_5d: 21.18
+  momentum: 1.08
+  volatility: 5.72
+  volume: 566450
+  volume_change: -19.76
+  rsi: 57.39
+  price_history: 0.485,0.470,0.460,0.480,0.455,0.425,0.455,0.475,0.475,0.515
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: CARNABY RESOURCES LIMITED
+  industry: Materials
+- symbol: DEL
+  current_price: 0.08700000000000001
+  market_cap: 21776356
+  pe: -99999.99
+  yield_val: 0.0
+  score: 34.5
+  price_change_1d: -0.002
+  price_diff_1d: -2.25
+  price_change_5d: -0.003
+  price_diff_5d: -3.33
+  momentum: -1.2
+  volatility: 4.89
+  volume: 83807
+  volume_change: -49.25
+  rsi: 39.5
+  price_history: 0.105,0.105,0.091,0.088,0.088,0.090,0.090,0.089,0.089,0.087
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: DELOREAN CORPORATION LIMITED
+  industry: Utilities
+- symbol: CYM
+  current_price: 0.44
+  market_cap: 239903089
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.025
+  price_diff_1d: 6.02
+  price_change_5d: 0.08
+  price_diff_5d: 22.22
+  momentum: 0.07
+  volatility: 5.4
+  volume: 2235885
+  volume_change: 99.6
+  rsi: 69.19
+  price_history: 0.375,0.375,0.365,0.365,0.365,0.360,0.365,0.410,0.415,0.440
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: CYPRIUM METALS LIMITED
+  industry: Materials
+- symbol: VKA
+  current_price: 0.011
+  market_cap: 26682075
+  pe: -99999.99
+  yield_val: 0.0
+  score: 49.1
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.0
+  price_diff_5d: 0.0
+  momentum: -0.18
+  volatility: 10.12
+  volume: 1789312
+  volume_change: -89.55
+  rsi: 39.64
+  price_history: 0.013,0.013,0.012,0.010,0.012,0.011,0.012,0.012,0.011,0.011
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: VIKING MINES LIMITED
+  industry: Materials
+- symbol: LOT
+  current_price: 0.855
+  market_cap: 213110292
+  pe: -99999.99
+  yield_val: 0.0
+  score: 82.7
+  price_change_1d: 0.075
+  price_diff_1d: 9.62
+  price_change_5d: 0.045
+  price_diff_5d: 5.56
+  momentum: -1.97
+  volatility: 6.61
+  volume: 4834946
+  volume_change: 59.36
+  rsi: 29.83
+  price_history: 1.470,1.425,0.940,0.900,0.835,0.810,0.820,0.835,0.780,0.855
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: LOTUS RESOURCES LIMITED
+  industry: Energy
+- symbol: EMH
+  current_price: 0.33
+  market_cap: 73646299
+  pe: -99999.99
+  yield_val: 0.0
+  score: 90.9
+  price_change_1d: 0.02
+  price_diff_1d: 6.45
+  price_change_5d: 0.05
+  price_diff_5d: 17.86
+  momentum: 0.24
+  volatility: 7.5
+  volume: 135914
+  volume_change: -39.21
+  rsi: 62.72
+  price_history: 0.305,0.300,0.310,0.305,0.290,0.280,0.305,0.305,0.310,0.330
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: EUROPEAN METALS HOLDINGS LIMITED
+  industry: Materials
+- symbol: ARL
+  current_price: 0.72
+  market_cap: 155997015
+  pe: -99999.99
+  yield_val: 0.0
+  score: 81.0
+  price_change_1d: 0.01
+  price_diff_1d: 1.41
+  price_change_5d: 0.09
+  price_diff_5d: 14.29
+  momentum: 1.35
+  volatility: 4.31
+  volume: 126100
+  volume_change: -39.86
+  rsi: 59.88
+  price_history: 0.695,0.670,0.655,0.660,0.655,0.630,0.685,0.750,0.710,0.720
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: ARDEA RESOURCES LIMITED
+  industry: Materials
+- symbol: BOT
+  current_price: 0.031
+  market_cap: 73447096
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.004
+  price_diff_1d: 14.81
+  price_change_5d: 0.007
+  price_diff_5d: 29.17
+  momentum: -1.32
+  volatility: 5.66
+  volume: 25562723
+  volume_change: 77.67
+  rsi: 43.74
+  price_history: 0.030,0.030,0.028,0.027,0.026,0.024,0.025,0.025,0.027,0.031
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: BOTANIX PHARMACEUTICALS LTD
+  industry: Pharmaceuticals, Biotechnology & Life Sciences
+- symbol: BOE
+  current_price: 1.48
+  market_cap: 577022188
+  pe: -99999.99
+  yield_val: 0.0
+  score: 72.7
+  price_change_1d: 0.09
+  price_diff_1d: 6.47
+  price_change_5d: 0.13
+  price_diff_5d: 9.63
+  momentum: -0.94
+  volatility: 5.32
+  volume: 7925653
+  volume_change: 1.55
+  rsi: 47.5
+  price_history: 1.565,1.535,1.390,1.425,1.415,1.350,1.335,1.450,1.390,1.480
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: BOSS ENERGY LTD
+  industry: Energy
+- symbol: EML
+  current_price: 0.405
+  market_cap: 153466549
+  pe: -99999.99
+  yield_val: 0.0
+  score: 41.3
+  price_change_1d: 0.01
+  price_diff_1d: 2.53
+  price_change_5d: -0.015
+  price_diff_5d: -3.57
+  momentum: -1.69
+  volatility: 4.05
+  volume: 1627577
+  volume_change: -12.71
+  rsi: 37.55
+  price_history: 0.400,0.420,0.420,0.420,0.410,0.420,0.410,0.410,0.395,0.405
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: EML PAYMENTS LIMITED
+  industry: Financial Services
+- symbol: DXB
+  current_price: 0.20500000000000002
+  market_cap: 129085307
+  pe: -99999.99
+  yield_val: 0.0
+  score: 29.4
+  price_change_1d: -0.01
+  price_diff_1d: -4.65
+  price_change_5d: 0.0
+  price_diff_5d: 0.0
+  momentum: -2.25
+  volatility: 5.58
+  volume: 2173047
+  volume_change: 46.24
+  rsi: 31.69
+  price_history: 0.240,0.215,0.230,0.215,0.230,0.205,0.200,0.205,0.215,0.205
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: DIMERIX LIMITED
+  industry: Pharmaceuticals, Biotechnology & Life Sciences
 - symbol: NGY
   current_price: 0.034
-  market_cap: 63326965
+  market_cap: 65245964
   pe: -99999.99
   yield_val: 0.0
-  score: 55.3
-  price_change_1d: 0.001
-  price_diff_1d: 3.03
-  price_change_5d: -0.0
-  price_diff_5d: -0.0
-  momentum: -0.15
+  score: 44.9
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: -0.001
+  price_diff_5d: -2.86
+  momentum: -0.16
   volatility: 13.83
-  volume: 483142
-  volume_change: -33.45
+  volume: 53854
+  volume_change: -92.58
   rsi: 45.64
-  price_history: 0.038,0.038,0.036,0.034,0.039,0.034,0.035,0.033,0.033,0.034
-  market_date: '2026-05-08'
+  price_history: 0.038,0.036,0.034,0.039,0.034,0.035,0.033,0.033,0.034,0.034
+  market_date: '2026-05-11'
   stock_type: growth
   name: NUENERGY GAS LIMITED
   industry: Energy
-- symbol: NXT
-  current_price: 14.790000000000001
-  market_cap: 10745112528
+- symbol: RML
+  current_price: 0.067
+  market_cap: 145068320
   pe: -99999.99
   yield_val: 0.0
-  score: 65.5
-  price_change_1d: -0.08
-  price_diff_1d: -0.54
-  price_change_5d: 0.71
-  price_diff_5d: 5.04
-  momentum: 1.81
-  volatility: 2.85
-  volume: 2547943
-  volume_change: 8.71
-  rsi: 62.21
-  price_history: 14.670,14.420,14.000,14.240,14.250,14.080,13.990,14.310,14.870,14.790
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: NEXTDC LIMITED
-  industry: Software & Services
+  score: 75.5
+  price_change_1d: 0.002
+  price_diff_1d: 3.08
+  price_change_5d: 0.006
+  price_diff_5d: 9.84
+  momentum: 0.91
+  volatility: 9.3
+  volume: 26039721
+  volume_change: -9.58
+  rsi: 54.06
+  price_history: 0.070,0.069,0.064,0.065,0.062,0.061,0.059,0.059,0.065,0.067
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: RESOLUTION MINERALS LTD
+  industry: Materials
 - symbol: SKK
-  current_price: 0.021
-  market_cap: 62414565
+  current_price: 0.019
+  market_cap: 65535294
   pe: -99999.99
   yield_val: 0.0
-  score: 63.5
-  price_change_1d: 0.001
-  price_diff_1d: 5.0
+  score: 34.2
+  price_change_1d: -0.002
+  price_diff_1d: -9.52
   price_change_5d: 0.001
-  price_diff_5d: 5.0
-  momentum: -0.8
-  volatility: 5.2
-  volume: 1927119
-  volume_change: -84.95
-  rsi: 54.49
-  price_history: 0.020,0.020,0.020,0.020,0.020,0.020,0.018,0.020,0.020,0.021
-  market_date: '2026-05-08'
+  price_diff_5d: 5.56
+  momentum: -1.02
+  volatility: 5.26
+  volume: 6271428
+  volume_change: -49.49
+  rsi: 45.55
+  price_history: 0.020,0.020,0.020,0.020,0.020,0.018,0.020,0.020,0.021,0.019
+  market_date: '2026-05-11'
   stock_type: growth
   name: STAKK LIMITED
   industry: Software & Services
-- symbol: NHC
-  current_price: 5.03
-  market_cap: 4294804845
-  pe: 30.06853
-  yield_val: 0.0
-  score: 37.6
-  price_change_1d: -0.06
-  price_diff_1d: -1.18
-  price_change_5d: -0.48
-  price_diff_5d: -8.71
-  momentum: 0.61
-  volatility: 2.6
-  volume: 2183950
-  volume_change: -32.6
-  rsi: 41.07
-  price_history: 5.170,5.250,5.430,5.480,5.530,5.510,5.510,5.320,5.090,5.030
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: NEW HOPE CORPORATION LIMITED
-  industry: Energy
-- symbol: SGP
-  current_price: 3.96
-  market_cap: 9945424459
-  pe: 11.33906
-  yield_val: 6.405867970660147
-  score: 33.2
-  price_change_1d: -0.13
-  price_diff_1d: -3.18
-  price_change_5d: -0.06
-  price_diff_5d: -1.49
-  momentum: -1.64
-  volatility: 1.32
-  volume: 9894371
-  volume_change: 37.56
-  rsi: 33.42
-  price_history: 4.160,4.070,4.090,4.050,4.050,4.020,4.170,4.090,4.090,3.960
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: STOCKLAND
-  industry: Equity Real Estate Investment Trusts
-- symbol: SGM
-  current_price: 21.650000000000002
-  market_cap: 4229870173
+- symbol: NXT
+  current_price: 14.84
+  market_cap: 10687304256
   pe: -99999.99
-  yield_val: 1.2334399269072636
-  score: 58.2
-  price_change_1d: -0.24
-  price_diff_1d: -1.1
-  price_change_5d: 0.53
-  price_diff_5d: 2.51
-  momentum: 1.32
+  yield_val: 0.0
+  score: 69.2
+  price_change_1d: 0.05
+  price_diff_1d: 0.34
+  price_change_5d: 0.85
+  price_diff_5d: 6.08
+  momentum: 1.88
+  volatility: 2.83
+  volume: 1468084
+  volume_change: -37.42
+  rsi: 62.71
+  price_history: 14.420,14.000,14.240,14.250,14.080,13.990,14.310,14.870,14.790,14.840
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: NEXTDC LIMITED
+  industry: Software & Services
+- symbol: TM1
+  current_price: 0.29
+  market_cap: 332953482
+  pe: -99999.99
+  yield_val: 0.0
+  score: 35.7
+  price_change_1d: -0.04
+  price_diff_1d: -12.12
+  price_change_5d: 0.015
+  price_diff_5d: 5.45
+  momentum: 0.36
+  volatility: 9.13
+  volume: 3410160
+  volume_change: 11.96
+  rsi: 44.07
+  price_history: 0.335,0.325,0.310,0.290,0.285,0.275,0.325,0.335,0.330,0.290
+  market_date: '2026-05-11'
+  stock_type: growth
+  name: TERRA METALS LIMITED
+  industry: Materials
+- symbol: SGM
+  current_price: 22.11
+  market_cap: 4183494255
+  pe: -99999.99
+  yield_val: 1.2471131639722863
+  score: 75.5
+  price_change_1d: 0.46
+  price_diff_1d: 2.12
+  price_change_5d: 1.83
+  price_diff_5d: 9.02
+  momentum: 1.54
   volatility: 2.59
-  volume: 696915
-  volume_change: -19.17
-  rsi: 59.46
-  price_history: 20.550,20.480,20.710,20.680,21.300,21.120,20.280,21.390,21.890,21.650
-  market_date: '2026-05-08'
+  volume: 942897
+  volume_change: 9.2
+  rsi: 62.56
+  price_history: 20.480,20.710,20.680,21.300,21.120,20.280,21.390,21.890,21.650,22.110
+  market_date: '2026-05-11'
   stock_type: foundation
   name: SIMS LIMITED
   industry: Materials
-- symbol: WDS
-  current_price: 30.05
-  market_cap: 57964543360
-  pe: 15.53186
-  yield_val: 5.421777632010495
-  score: 40.5
-  price_change_1d: -0.44
-  price_diff_1d: -1.44
-  price_change_5d: -2.06
-  price_diff_5d: -6.42
-  momentum: 0.6
-  volatility: 2.12
-  volume: 6034413
-  volume_change: -1.82
-  rsi: 38.01
-  price_history: 32.130,32.400,33.050,33.550,33.120,32.110,32.710,31.840,30.490,30.050
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: WOODSIDE ENERGY GROUP LTD
-  industry: Energy
 - symbol: NSR
   current_price: 2.79
   market_cap: -1
@@ -509,2172 +449,2912 @@
   price_change_5d: 0.0
   price_diff_5d: 0.0
   momentum: 0.54
-  volatility: 1.8
+  volatility: 1.81
   volume: 0
   volume_change: -100.0
-  rsi: 61.78
+  rsi: 61.79
   price_history: 2.790,2.790,2.790,2.790,2.790,2.790,2.790,2.790,2.790,2.790
-  market_date: '2026-05-08'
+  market_date: '2026-05-11'
   stock_type: foundation
   name: NATIONAL STORAGE REIT
   industry: Other
+- symbol: NHC
+  current_price: 5.04
+  market_cap: 4244178462
+  pe: 29.71408
+  yield_val: 0.0
+  score: 40.7
+  price_change_1d: 0.01
+  price_diff_1d: 0.2
+  price_change_5d: -0.47
+  price_diff_5d: -8.53
+  momentum: 0.61
+  volatility: 2.6
+  volume: 1685138
+  volume_change: -47.94
+  rsi: 41.42
+  price_history: 5.250,5.430,5.480,5.530,5.510,5.510,5.320,5.090,5.030,5.040
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: NEW HOPE CORPORATION LIMITED
+  industry: Energy
+- symbol: SGP
+  current_price: 3.89
+  market_cap: 9629310723
+  pe: 10.97865
+  yield_val: 6.616161616161616
+  score: 27.8
+  price_change_1d: -0.07
+  price_diff_1d: -1.77
+  price_change_5d: -0.28
+  price_diff_5d: -6.71
+  momentum: -1.71
+  volatility: 1.32
+  volume: 8247520
+  volume_change: 14.09
+  rsi: 30.35
+  price_history: 4.070,4.090,4.050,4.050,4.020,4.170,4.090,4.090,3.960,3.890
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: STOCKLAND
+  industry: Equity Real Estate Investment Trusts
+- symbol: LLC
+  current_price: 3.14
+  market_cap: 2169398321
+  pe: -99999.99
+  yield_val: 7.375796178343949
+  score: 38.1
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: -0.1
+  price_diff_5d: -3.09
+  momentum: -1.46
+  volatility: 1.74
+  volume: 1600134
+  volume_change: -22.66
+  rsi: 35.09
+  price_history: 3.340,3.320,3.350,3.330,3.270,3.240,3.170,3.200,3.140,3.140
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: LENDLEASE GROUP
+  industry: Real Estate Management & Development
 - symbol: RGN
-  current_price: 2.2800000000000002
-  market_cap: 2642107341
-  pe: 8.64402
-  yield_val: 6.0434782608695645
-  score: 44.3
-  price_change_1d: -0.02
-  price_diff_1d: -0.87
-  price_change_5d: -0.04
-  price_diff_5d: -1.72
-  momentum: -0.28
+  current_price: 2.25
+  market_cap: 2619132494
+  pe: 8.56885
+  yield_val: 6.0964912280701755
+  score: 38.6
+  price_change_1d: -0.03
+  price_diff_1d: -1.32
+  price_change_5d: -0.08
+  price_diff_5d: -3.43
+  momentum: -0.73
   volatility: 0.91
-  volume: 1797307
-  volume_change: -41.84
-  rsi: 48.81
-  price_history: 2.300,2.290,2.300,2.310,2.330,2.320,2.330,2.300,2.300,2.280
-  market_date: '2026-05-08'
+  volume: 3534513
+  volume_change: 13.72
+  rsi: 41.47
+  price_history: 2.290,2.300,2.310,2.330,2.320,2.330,2.300,2.300,2.280,2.250
+  market_date: '2026-05-11'
   stock_type: foundation
   name: REGION GROUP
   industry: Equity Real Estate Investment Trusts
-- symbol: APA
-  current_price: 10.32
-  market_cap: 13939102379
-  pe: 85.14595
-  yield_val: 5.460588793922128
-  score: 55.3
-  price_change_1d: -0.21
-  price_diff_1d: -1.99
-  price_change_5d: -0.1
-  price_diff_5d: -0.96
-  momentum: 2.14
-  volatility: 0.99
-  volume: 2729828
-  volume_change: -12.06
-  rsi: 60.43
-  price_history: 10.140,10.130,10.190,10.340,10.500,10.420,10.460,10.470,10.530,10.320
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: APA GROUP
-  industry: Utilities
-- symbol: SOL
-  current_price: 43.54
-  market_cap: 16317550342
-  pe: 6.70429
-  yield_val: 2.4912689173457507
-  score: 67.4
-  price_change_1d: 0.59
-  price_diff_1d: 1.37
-  price_change_5d: 0.89
-  price_diff_5d: 2.09
-  momentum: 2.3
-  volatility: 1.14
-  volume: 737865
-  volume_change: 15.62
-  rsi: 67.91
-  price_history: 41.620,41.610,41.100,42.170,42.540,42.650,42.480,42.470,42.950,43.540
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: WASHINGTON H. SOUL PATTINSON AND COMPANY LIMITED
-  industry: Financial Services
 - symbol: BPT
-  current_price: 1.075
-  market_cap: 2498060353
+  current_price: 1.06
+  market_cap: 2452433680
   pe: -99999.99
-  yield_val: 6.392694063926941
-  score: 29.2
-  price_change_1d: -0.02
-  price_diff_1d: -1.83
-  price_change_5d: -0.07
-  price_diff_5d: -6.11
-  momentum: -1.59
+  yield_val: 6.511627906976744
+  score: 25.3
+  price_change_1d: -0.015
+  price_diff_1d: -1.4
+  price_change_5d: -0.1
+  price_diff_5d: -8.62
+  momentum: -1.79
   volatility: 2.28
-  volume: 16255494
-  volume_change: 47.1
-  rsi: 32.23
-  price_history: 1.195,1.185,1.165,1.175,1.170,1.145,1.160,1.125,1.095,1.075
-  market_date: '2026-05-08'
+  volume: 8537465
+  volume_change: -22.82
+  rsi: 30.63
+  price_history: 1.185,1.165,1.175,1.170,1.145,1.160,1.125,1.095,1.075,1.060
+  market_date: '2026-05-11'
   stock_type: foundation
   name: BEACH ENERGY LIMITED
   industry: Energy
 - symbol: SUN
-  current_price: 16.65
-  market_cap: 18453767137
-  pe: 19.27907
-  yield_val: 3.8732394366197185
-  score: 42.3
-  price_change_1d: -0.39
-  price_diff_1d: -2.29
-  price_change_5d: -0.36
-  price_diff_5d: -2.12
-  momentum: 0.02
+  current_price: 16.740000000000002
+  market_cap: 18031409791
+  pe: 18.83782
+  yield_val: 3.963963963963964
+  score: 48.3
+  price_change_1d: 0.09
+  price_diff_1d: 0.54
+  price_change_5d: -0.39
+  price_diff_5d: -2.28
+  momentum: 0.12
   volatility: 1.43
-  volume: 3008513
-  volume_change: -16.96
-  rsi: 50.93
-  price_history: 16.770,16.770,16.980,17.110,17.130,17.010,17.130,17.150,17.040,16.650
-  market_date: '2026-05-08'
+  volume: 2454299
+  volume_change: -32.4
+  rsi: 52.92
+  price_history: 16.770,16.980,17.110,17.130,17.010,17.130,17.150,17.040,16.650,16.740
+  market_date: '2026-05-11'
   stock_type: foundation
   name: SUNCORP GROUP LIMITED
   industry: Insurance
-- symbol: CNU
-  current_price: 8.34
-  market_cap: 3596925667
-  pe: 198.6572
-  yield_val: 5.185765983112184
-  score: 65.6
-  price_change_1d: 0.05
-  price_diff_1d: 0.6
-  price_change_5d: 0.07
-  price_diff_5d: 0.85
-  momentum: 2.63
-  volatility: 1.18
-  volume: 450006
-  volume_change: -32.95
-  rsi: 67.73
-  price_history: 8.030,8.060,7.940,8.010,8.270,8.270,8.260,8.230,8.290,8.340
-  market_date: '2026-05-08'
+- symbol: SOL
+  current_price: 44.18
+  market_cap: 16541702954
+  pe: 6.79638
+  yield_val: 2.45751033532384
+  score: 66.3
+  price_change_1d: 0.64
+  price_diff_1d: 1.47
+  price_change_5d: 1.7
+  price_diff_5d: 4.0
+  momentum: 2.48
+  volatility: 1.15
+  volume: 630242
+  volume_change: -1.5
+  rsi: 71.62
+  price_history: 41.610,41.100,42.170,42.540,42.650,42.480,42.470,42.950,43.540,44.180
+  market_date: '2026-05-11'
   stock_type: foundation
-  name: CHORUS LIMITED
-  industry: Telecommunication Services
+  name: WASHINGTON H. SOUL PATTINSON AND COMPANY LIMITED
+  industry: Financial Services
 - symbol: WHC
-  current_price: 7.890000000000001
-  market_cap: 6688540114
-  pe: 10.23086
-  yield_val: 1.2330456226880393
-  score: 31.8
-  price_change_1d: -0.22
-  price_diff_1d: -2.71
+  current_price: 7.9
+  market_cap: 6507100062
+  pe: 9.95332
+  yield_val: 1.2674271229404308
+  score: 37.5
+  price_change_1d: 0.01
+  price_diff_1d: 0.13
   price_change_5d: -0.61
-  price_diff_5d: -7.18
+  price_diff_5d: -7.17
   momentum: -0.4
-  volatility: 2.58
-  volume: 3431958
-  volume_change: -33.77
-  rsi: 41.22
-  price_history: 7.700,8.000,8.230,8.410,8.630,8.500,8.510,8.380,8.110,7.890
-  market_date: '2026-05-08'
+  volatility: 2.57
+  volume: 2245933
+  volume_change: -56.57
+  rsi: 41.46
+  price_history: 8.000,8.230,8.410,8.630,8.500,8.510,8.380,8.110,7.890,7.900
+  market_date: '2026-05-11'
   stock_type: foundation
   name: WHITEHAVEN COAL LIMITED
   industry: Energy
-- symbol: SHL
-  current_price: 18.94
-  market_cap: 9257076860
-  pe: 16.9326
-  yield_val: 5.766150560597971
-  score: 38.6
-  price_change_1d: 0.21
-  price_diff_1d: 1.12
-  price_change_5d: -1.03
-  price_diff_5d: -5.16
-  momentum: -2.17
-  volatility: 1.62
-  volume: 2592366
-  volume_change: 61.46
-  rsi: 32.79
-  price_history: 20.200,20.180,19.930,19.770,19.960,19.970,19.280,18.930,18.730,18.940
-  market_date: '2026-05-08'
+- symbol: CNU
+  current_price: 8.45
+  market_cap: 3618620032
+  pe: 200.0395
+  yield_val: 5.154676258992805
+  score: 66.7
+  price_change_1d: 0.11
+  price_diff_1d: 1.32
+  price_change_5d: 0.19
+  price_diff_5d: 2.3
+  momentum: 3.12
+  volatility: 1.18
+  volume: 353195
+  volume_change: -47.44
+  rsi: 71.57
+  price_history: 8.060,7.940,8.010,8.270,8.270,8.260,8.230,8.290,8.340,8.450
+  market_date: '2026-05-11'
   stock_type: foundation
-  name: SONIC HEALTHCARE LIMITED
-  industry: Health Care Equipment & Services
-- symbol: VNT
-  current_price: 5.72
-  market_cap: 4762754599
-  pe: 18.12387
-  yield_val: 4.008620689655173
-  score: 53.7
-  price_change_1d: -0.08
-  price_diff_1d: -1.38
-  price_change_5d: 0.15
-  price_diff_5d: 2.69
-  momentum: 0.48
-  volatility: 1.8
-  volume: 1855190
-  volume_change: -15.24
-  rsi: 60.82
-  price_history: 5.240,5.180,5.270,5.300,5.420,5.570,5.890,5.910,5.800,5.720
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: VENTIA SERVICES GROUP LIMITED
-  industry: Capital Goods
-- symbol: MQG
-  current_price: 239.23000000000002
-  market_cap: 92185948436
-  pe: 24.49376
-  yield_val: 2.770083102493075
-  score: 64.3
-  price_change_1d: -2.64
-  price_diff_1d: -1.09
-  price_change_5d: 1.35
-  price_diff_5d: 0.57
-  momentum: 2.12
-  volatility: 1.69
-  volume: 1306815
-  volume_change: 66.0
-  rsi: 64.69
-  price_history: 232.020,231.860,233.130,235.080,238.190,237.880,236.990,240.560,241.870,239.230
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: MACQUARIE GROUP LIMITED
-  industry: Financial Services
-- symbol: VEA
-  current_price: 2.22
-  market_cap: 3695672106
-  pe: -99999.99
-  yield_val: 3.008888888888889
-  score: 37.5
-  price_change_1d: -0.03
-  price_diff_1d: -1.33
-  price_change_5d: -0.2
-  price_diff_5d: -8.26
-  momentum: 0.51
-  volatility: 3.19
-  volume: 4668839
-  volume_change: -27.24
-  rsi: 40.7
-  price_history: 2.310,2.390,2.390,2.460,2.500,2.420,2.450,2.370,2.250,2.220
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: VIVA ENERGY GROUP LIMITED
-  industry: Energy
-- symbol: QUB
-  current_price: 5.0200000000000005
-  market_cap: 8922876540
-  pe: 41.04235
-  yield_val: 2.1924603174603177
-  score: 54.6
-  price_change_1d: -0.02
-  price_diff_1d: -0.4
-  price_change_5d: 0.01
-  price_diff_5d: 0.2
-  momentum: 1.02
-  volatility: 1.96
-  volume: 5275645
-  volume_change: -9.94
-  rsi: 55.57
-  price_history: 5.040,5.020,5.020,5.040,5.020,5.010,5.000,5.020,5.040,5.020
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: QUBE HOLDINGS LIMITED
-  industry: Transportation
-- symbol: ALX
-  current_price: 4.78
-  market_cap: 6964940851
-  pe: 38.44921
-  yield_val: 8.333333333333332
-  score: 55.3
-  price_change_1d: -0.02
-  price_diff_1d: -0.42
-  price_change_5d: 0.01
-  price_diff_5d: 0.21
-  momentum: 1.16
-  volatility: 1.6
-  volume: 1652018
-  volume_change: -29.88
-  rsi: 66.67
-  price_history: 4.910,4.890,4.820,4.800,4.800,4.770,4.790,4.820,4.800,4.780
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: ATLAS ARTERIA
-  industry: Transportation
-- symbol: LLC
-  current_price: 3.14
-  market_cap: 2210851792
-  pe: -99999.99
-  yield_val: 7.2375
-  score: 32.8
-  price_change_1d: -0.06
-  price_diff_1d: -1.88
-  price_change_5d: -0.13
-  price_diff_5d: -3.98
-  momentum: -1.49
-  volatility: 1.74
-  volume: 2163123
-  volume_change: 4.81
-  rsi: 35.09
-  price_history: 3.360,3.340,3.320,3.350,3.330,3.270,3.240,3.170,3.200,3.140
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: LENDLEASE GROUP
-  industry: Real Estate Management & Development
-- symbol: STO
-  current_price: 7.5200000000000005
-  market_cap: 24780507692
-  pe: 21.95778
-  yield_val: 4.560943643512451
-  score: 44.0
-  price_change_1d: -0.11
-  price_diff_1d: -1.44
-  price_change_5d: -0.39
-  price_diff_5d: -4.93
-  momentum: 0.86
-  volatility: 1.83
-  volume: 8850354
-  volume_change: -33.6
-  rsi: 42.06
-  price_history: 7.650,7.740,7.770,8.000,8.020,7.910,7.910,7.890,7.630,7.520
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: SANTOS LIMITED
-  industry: Energy
-- symbol: CSL
-  current_price: 119.88
-  market_cap: 58427261438
-  pe: 30.75114
-  yield_val: 3.492377049180328
-  score: 46.4
-  price_change_1d: -2.12
-  price_diff_1d: -1.74
-  price_change_5d: -4.52
-  price_diff_5d: -3.63
-  momentum: -1.94
-  volatility: 1.64
-  volume: 1968636
-  volume_change: 64.13
-  rsi: 22.73
-  price_history: 131.820,128.900,125.780,124.370,124.840,124.400,124.410,124.590,122.000,119.880
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: CSL LIMITED
-  industry: Pharmaceuticals, Biotechnology & Life Sciences
+  name: CHORUS LIMITED
+  industry: Telecommunication Services
 - symbol: COH
-  current_price: 99.89
-  market_cap: 6423481628
-  pe: 18.6501
-  yield_val: 4.377927102423132
-  score: 57.9
-  price_change_1d: 1.67
-  price_diff_1d: 1.7
-  price_change_5d: -0.37
-  price_diff_5d: -0.37
-  momentum: -1.99
+  current_price: 101.06
+  market_cap: 6532697819
+  pe: 18.9672
+  yield_val: 4.3047352087296025
+  score: 55.1
+  price_change_1d: 1.17
+  price_diff_1d: 1.17
+  price_change_5d: 1.59
+  price_diff_5d: 1.6
+  momentum: -1.93
   volatility: 4.32
-  volume: 602312
-  volume_change: 92.69
-  rsi: 26.31
-  price_history: 95.250,93.000,90.000,94.000,98.770,100.260,99.470,97.080,98.220,99.890
-  market_date: '2026-05-08'
+  volume: 458029
+  volume_change: 45.17
+  rsi: 27.79
+  price_history: 93.000,90.000,94.000,98.770,100.260,99.470,97.080,98.220,99.890,101.060
+  market_date: '2026-05-11'
   stock_type: foundation
   name: COCHLEAR LIMITED
   industry: Health Care Equipment & Services
+- symbol: SHL
+  current_price: 18.95
+  market_cap: 9360866830
+  pe: 17.12245
+  yield_val: 5.70221752903907
+  score: 37.0
+  price_change_1d: 0.01
+  price_diff_1d: 0.05
+  price_change_5d: -0.33
+  price_diff_5d: -1.71
+  momentum: -2.11
+  volatility: 1.62
+  volume: 1521530
+  volume_change: -5.38
+  rsi: 33.02
+  price_history: 20.180,19.930,19.770,19.960,19.970,19.280,18.930,18.730,18.940,18.950
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: SONIC HEALTHCARE LIMITED
+  industry: Health Care Equipment & Services
+- symbol: ALX
+  current_price: 4.79
+  market_cap: 6935920264
+  pe: 38.28901
+  yield_val: 8.368200836820083
+  score: 56.5
+  price_change_1d: 0.01
+  price_diff_1d: 0.21
+  price_change_5d: 0.0
+  price_diff_5d: 0.0
+  momentum: 1.21
+  volatility: 1.59
+  volume: 1506896
+  volume_change: -36.04
+  rsi: 67.2
+  price_history: 4.890,4.820,4.800,4.800,4.770,4.790,4.820,4.800,4.780,4.790
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: ATLAS ARTERIA
+  industry: Transportation
+- symbol: VEA
+  current_price: 2.19
+  market_cap: 3646396478
+  pe: -99999.99
+  yield_val: 3.0495495495495497
+  score: 33.3
+  price_change_1d: -0.03
+  price_diff_1d: -1.35
+  price_change_5d: -0.26
+  price_diff_5d: -10.61
+  momentum: 0.39
+  volatility: 3.19
+  volume: 6535870
+  volume_change: 1.24
+  rsi: 39.24
+  price_history: 2.390,2.390,2.460,2.500,2.420,2.450,2.370,2.250,2.220,2.190
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: VIVA ENERGY GROUP LIMITED
+  industry: Energy
 - symbol: CAR
-  current_price: 26.22
-  market_cap: 9657106912
-  pe: 32.69164
-  yield_val: 3.295409964692036
-  score: 57.6
-  price_change_1d: 0.73
-  price_diff_1d: 2.86
-  price_change_5d: 0.67
-  price_diff_5d: 2.62
-  momentum: -0.4
+  current_price: 26.37
+  market_cap: 9933673724
+  pe: 33.62789
+  yield_val: 3.203661327231121
+  score: 53.5
+  price_change_1d: 0.15
+  price_diff_1d: 0.57
+  price_change_5d: 0.7
+  price_diff_5d: 2.73
+  momentum: -0.34
   volatility: 2.38
-  volume: 2102597
-  volume_change: 33.13
-  rsi: 61.7
-  price_history: 25.270,24.960,24.860,25.370,25.260,25.550,25.670,25.430,25.490,26.220
-  market_date: '2026-05-08'
+  volume: 1424217
+  volume_change: -10.12
+  rsi: 62.85
+  price_history: 24.960,24.860,25.370,25.260,25.550,25.670,25.430,25.490,26.220,26.370
+  market_date: '2026-05-11'
   stock_type: foundation
   name: CAR GROUP LIMITED
   industry: Media & Entertainment
+- symbol: WDS
+  current_price: 30.51
+  market_cap: 57128059297
+  pe: 15.25067
+  yield_val: 5.501164725457571
+  score: 46.5
+  price_change_1d: 0.46
+  price_diff_1d: 1.53
+  price_change_5d: -2.2
+  price_diff_5d: -6.73
+  momentum: 0.7
+  volatility: 2.12
+  volume: 4362321
+  volume_change: -29.04
+  rsi: 41.07
+  price_history: 32.400,33.050,33.550,33.120,32.110,32.710,31.840,30.490,30.050,30.510
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: WOODSIDE ENERGY GROUP LTD
+  industry: Energy
+- symbol: VNT
+  current_price: 5.82
+  market_cap: 4697061432
+  pe: 17.87388
+  yield_val: 4.064685314685314
+  score: 56.0
+  price_change_1d: 0.1
+  price_diff_1d: 1.75
+  price_change_5d: -0.07
+  price_diff_5d: -1.19
+  momentum: 0.85
+  volatility: 1.81
+  volume: 2699830
+  volume_change: 22.72
+  rsi: 63.81
+  price_history: 5.180,5.270,5.300,5.420,5.570,5.890,5.910,5.800,5.720,5.820
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: VENTIA SERVICES GROUP LIMITED
+  industry: Capital Goods
+- symbol: STO
+  current_price: 7.5200000000000005
+  market_cap: 24423252667
+  pe: 21.56056
+  yield_val: 4.627659574468085
+  score: 46.9
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: -0.39
+  price_diff_5d: -4.93
+  momentum: 0.85
+  volatility: 1.81
+  volume: 8730275
+  volume_change: -34.51
+  rsi: 42.06
+  price_history: 7.740,7.770,8.000,8.020,7.910,7.910,7.890,7.630,7.520,7.520
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: SANTOS LIMITED
+  industry: Energy
+- symbol: MQG
+  current_price: 239.34
+  market_cap: 91179743020
+  pe: 24.22641
+  yield_val: 2.9260544246122975
+  score: 61.9
+  price_change_1d: 0.11
+  price_diff_1d: 0.05
+  price_change_5d: 2.35
+  price_diff_5d: 0.99
+  momentum: 2.07
+  volatility: 1.69
+  volume: 974713
+  volume_change: 23.47
+  rsi: 64.81
+  price_history: 231.860,233.130,235.080,238.190,237.880,236.990,240.560,241.870,239.230,239.340
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: MACQUARIE GROUP LIMITED
+  industry: Financial Services
+- symbol: CSL
+  current_price: 100.75
+  market_cap: 57411968043
+  pe: 30.10415
+  yield_val: 3.5541374708041378
+  score: 0.0
+  price_change_1d: -19.13
+  price_diff_1d: -15.96
+  price_change_5d: -23.66
+  price_diff_5d: -19.02
+  momentum: -2.8
+  volatility: 2.17
+  volume: 4940523
+  volume_change: 300.46
+  rsi: 11.83
+  price_history: 128.900,125.780,124.370,124.840,124.400,124.410,124.590,122.000,119.880,100.750
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: CSL LIMITED
+  industry: Pharmaceuticals, Biotechnology & Life Sciences
 - symbol: NAB
-  current_price: 38.36
-  market_cap: 121200755692
-  pe: 19.67894
-  yield_val: 4.302708175145533
-  score: 41.8
-  price_change_1d: -1.15
-  price_diff_1d: -2.91
-  price_change_5d: -0.0076
-  price_diff_5d: -0.02
-  momentum: -1.48
-  volatility: 1.46
-  volume: 7359572
-  volume_change: 61.77
-  rsi: 34.78
-  price_history: 39.346,39.317,38.828,39.033,38.984,38.368,38.123,39.180,39.510,38.360
-  market_date: '2026-05-08'
+  current_price: 38.22
+  market_cap: 117673019194
+  pe: 19.10615
+  yield_val: 4.43169968717414
+  score: 42.1
+  price_change_1d: -0.14
+  price_diff_1d: -0.36
+  price_change_5d: 0.0971
+  price_diff_5d: 0.25
+  momentum: -1.51
+  volatility: 1.45
+  volume: 5438172
+  volume_change: 19.18
+  rsi: 34.09
+  price_history: 39.317,38.828,39.033,38.984,38.368,38.123,39.180,39.510,38.360,38.220
+  market_date: '2026-05-11'
   stock_type: foundation
   name: NATIONAL AUSTRALIA BANK LIMITED
   industry: Banks
+- symbol: QUB
+  current_price: 5.0200000000000005
+  market_cap: 8887468300
+  pe: 40.87948
+  yield_val: 2.201195219123506
+  score: 55.6
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.02
+  price_diff_5d: 0.4
+  momentum: 1.01
+  volatility: 1.96
+  volume: 1923066
+  volume_change: -67.18
+  rsi: 55.57
+  price_history: 5.020,5.020,5.040,5.020,5.010,5.000,5.020,5.040,5.020,5.020
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: QUBE HOLDINGS LIMITED
+  industry: Transportation
 - symbol: MGR
-  current_price: 1.7
-  market_cap: 6865796778
-  pe: 17.78777
-  yield_val: 5.28735632183908
-  score: 36.4
-  price_change_1d: -0.04
-  price_diff_1d: -2.3
-  price_change_5d: -0.01
-  price_diff_5d: -0.58
-  momentum: -1.63
-  volatility: 1.39
-  volume: 6941355
-  volume_change: -50.37
-  rsi: 39.32
-  price_history: 1.720,1.705,1.710,1.700,1.705,1.710,1.755,1.735,1.740,1.700
-  market_date: '2026-05-08'
+  current_price: 1.67
+  market_cap: 6707962369
+  pe: 17.37886
+  yield_val: 5.411764705882352
+  score: 30.2
+  price_change_1d: -0.03
+  price_diff_1d: -1.76
+  price_change_5d: -0.085
+  price_diff_5d: -4.84
+  momentum: -1.8
+  volatility: 1.38
+  volume: 10343623
+  volume_change: -26.17
+  rsi: 34.87
+  price_history: 1.705,1.710,1.700,1.705,1.710,1.755,1.735,1.740,1.700,1.670
+  market_date: '2026-05-11'
   stock_type: foundation
   name: MIRVAC GROUP
   industry: Equity Real Estate Investment Trusts
-- symbol: WOR
-  current_price: 12.15
-  market_cap: 6022378160
-  pe: 18.69486
-  yield_val: 4.068348250610252
-  score: 48.2
-  price_change_1d: -0.14
-  price_diff_1d: -1.14
-  price_change_5d: 0.06
-  price_diff_5d: 0.5
-  momentum: -0.06
-  volatility: 1.9
-  volume: 1294822
-  volume_change: -43.48
-  rsi: 59.03
-  price_history: 11.820,11.720,11.710,11.820,12.070,12.090,11.980,12.310,12.290,12.150
-  market_date: '2026-05-08'
+- symbol: APA
+  current_price: 10.36
+  market_cap: 13661114582
+  pe: 83.44789
+  yield_val: 5.571705426356589
+  score: 60.1
+  price_change_1d: 0.04
+  price_diff_1d: 0.39
+  price_change_5d: -0.1
+  price_diff_5d: -0.96
+  momentum: 2.16
+  volatility: 0.99
+  volume: 2259196
+  volume_change: -27.25
+  rsi: 61.79
+  price_history: 10.130,10.190,10.340,10.500,10.420,10.460,10.470,10.530,10.320,10.360
+  market_date: '2026-05-11'
   stock_type: foundation
-  name: WORLEY LIMITED
-  industry: Capital Goods
-- symbol: NST
-  current_price: 21.16
-  market_cap: 31026819907
-  pe: 18.59262
-  yield_val: 2.5345622119815667
-  score: 38.7
-  price_change_1d: -0.54
-  price_diff_1d: -2.49
-  price_change_5d: 0.06
-  price_diff_5d: 0.28
-  momentum: -1.35
-  volatility: 3.72
-  volume: 7903718
-  volume_change: 16.35
-  rsi: 42.18
-  price_history: 22.140,21.500,21.590,21.000,21.170,21.100,20.820,20.790,21.700,21.160
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: NORTHERN STAR RESOURCES LTD
-  industry: Materials
-- symbol: QBE
-  current_price: 22.3
-  market_cap: 33839654200
-  pe: 11.70789
-  yield_val: 4.812362030905077
-  score: 52.2
-  price_change_1d: -0.35
-  price_diff_1d: -1.55
-  price_change_5d: -0.34
-  price_diff_5d: -1.5
-  momentum: 1.51
-  volatility: 1.28
-  volume: 3228666
-  volume_change: -2.08
-  rsi: 52.71
-  price_history: 22.320,22.060,22.160,22.340,22.470,22.640,22.530,22.420,22.650,22.300
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: QBE INSURANCE GROUP LIMITED
-  industry: Insurance
+  name: APA GROUP
+  industry: Utilities
 - symbol: TCL
-  current_price: 14.42
-  market_cap: 45086655462
-  pe: 94.03879
-  yield_val: 4.6366782006920415
-  score: 56.9
-  price_change_1d: -0.03
-  price_diff_1d: -0.21
-  price_change_5d: 0.26
-  price_diff_5d: 1.84
-  momentum: 0.92
+  current_price: 14.48
+  market_cap: 44993049949
+  pe: 93.84355
+  yield_val: 4.64632454923717
+  score: 58.4
+  price_change_1d: 0.06
+  price_diff_1d: 0.42
+  price_change_5d: 0.19
+  price_diff_5d: 1.33
+  momentum: 1.11
   volatility: 0.91
-  volume: 3665087
-  volume_change: -21.51
-  rsi: 67.06
-  price_history: 13.930,13.860,13.810,14.000,14.060,14.160,14.290,14.440,14.450,14.420
-  market_date: '2026-05-08'
+  volume: 3348391
+  volume_change: -28.05
+  rsi: 68.66
+  price_history: 13.860,13.810,14.000,14.060,14.160,14.290,14.440,14.450,14.420,14.480
+  market_date: '2026-05-11'
   stock_type: foundation
   name: TRANSURBAN GROUP
   industry: Transportation
-- symbol: ORG
-  current_price: 11.38
-  market_cap: 20070010367
-  pe: 19.67141
-  yield_val: 5.150214592274678
-  score: 37.4
-  price_change_1d: -0.27
-  price_diff_1d: -2.32
-  price_change_5d: -0.46
-  price_diff_5d: -3.89
-  momentum: -0.43
-  volatility: 1.55
-  volume: 4386945
-  volume_change: 20.47
-  rsi: 36.04
-  price_history: 12.130,11.660,12.030,12.100,12.070,11.840,11.950,11.960,11.650,11.380
-  market_date: '2026-05-08'
+- symbol: WOR
+  current_price: 12.09
+  market_cap: 5953774991
+  pe: 18.4819
+  yield_val: 4.11522633744856
+  score: 49.9
+  price_change_1d: -0.06
+  price_diff_1d: -0.49
+  price_change_5d: 0.11
+  price_diff_5d: 0.92
+  momentum: -0.11
+  volatility: 1.9
+  volume: 1718578
+  volume_change: -25.09
+  rsi: 57.38
+  price_history: 11.720,11.710,11.820,12.070,12.090,11.980,12.310,12.290,12.150,12.090
+  market_date: '2026-05-11'
   stock_type: foundation
-  name: ORIGIN ENERGY LIMITED
-  industry: Utilities
-- symbol: CHC
-  current_price: 19.77
-  market_cap: 9474133896
-  pe: 22.07771
-  yield_val: 2.45681477783325
-  score: 39.8
-  price_change_1d: -0.26
-  price_diff_1d: -1.3
-  price_change_5d: -0.25
-  price_diff_5d: -1.25
-  momentum: -1.14
-  volatility: 1.82
-  volume: 810947
-  volume_change: -37.15
-  rsi: 45.0
-  price_history: 19.900,19.810,19.890,20.150,20.090,20.020,20.140,19.920,20.030,19.770
-  market_date: '2026-05-08'
+  name: WORLEY LIMITED
+  industry: Capital Goods
+- symbol: QBE
+  current_price: 22.35
+  market_cap: 33316745636
+  pe: 11.48401
+  yield_val: 4.887892376681615
+  score: 56.8
+  price_change_1d: 0.05
+  price_diff_1d: 0.22
+  price_change_5d: -0.18
+  price_diff_5d: -0.8
+  momentum: 1.51
+  volatility: 1.28
+  volume: 1911152
+  volume_change: -42.0
+  rsi: 53.8
+  price_history: 22.060,22.160,22.340,22.470,22.640,22.530,22.420,22.650,22.300,22.350
+  market_date: '2026-05-11'
   stock_type: foundation
-  name: CHARTER HALL GROUP
-  industry: Equity Real Estate Investment Trusts
-- symbol: QAN
-  current_price: 8.9
-  market_cap: 13618793511
-  pe: 8.54295
-  yield_val: 5.133333333333334
-  score: 51.6
-  price_change_1d: -0.1
-  price_diff_1d: -1.11
-  price_change_5d: 0.44
-  price_diff_5d: 5.2
-  momentum: -0.79
-  volatility: 2.07
-  volume: 4880002
-  volume_change: -25.25
-  rsi: 54.76
-  price_history: 8.440,8.370,8.380,8.410,8.480,8.460,8.390,8.560,9.000,8.900
-  market_date: '2026-05-08'
+  name: QBE INSURANCE GROUP LIMITED
+  industry: Insurance
+- symbol: NST
+  current_price: 20.75
+  market_cap: 30254723928
+  pe: 18.12994
+  yield_val: 2.5992438563327034
+  score: 38.3
+  price_change_1d: -0.41
+  price_diff_1d: -1.94
+  price_change_5d: -0.07
+  price_diff_5d: -0.34
+  momentum: -1.46
+  volatility: 3.72
+  volume: 6367354
+  volume_change: -6.6
+  rsi: 39.63
+  price_history: 21.500,21.590,21.000,21.170,21.100,20.820,20.790,21.700,21.160,20.750
+  market_date: '2026-05-11'
   stock_type: foundation
-  name: QANTAS AIRWAYS LIMITED
-  industry: Transportation
-- symbol: CBA
-  current_price: 175.91
-  market_cap: 299934658424
-  pe: 28.85738
-  yield_val: 2.7618144283881048
-  score: 54.5
-  price_change_1d: -3.32
-  price_diff_1d: -1.85
-  price_change_5d: 3.7
-  price_diff_5d: 2.15
-  momentum: 0.99
-  volatility: 1.54
-  volume: 2070497
-  volume_change: 2.99
-  rsi: 50.82
-  price_history: 173.080,174.610,172.180,173.660,173.040,172.210,172.860,177.980,179.230,175.910
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: COMMONWEALTH BANK OF AUSTRALIA.
-  industry: Banks
-- symbol: SPK
-  current_price: 1.73
-  market_cap: 3232122485
-  pe: 14.42275
-  yield_val: 9.923976608187134
-  score: 48.0
-  price_change_1d: 0.02
-  price_diff_1d: 1.17
-  price_change_5d: 0.03
-  price_diff_5d: 1.76
-  momentum: -1.39
-  volatility: 1.03
-  volume: 965218
-  volume_change: -24.62
-  rsi: 49.35
-  price_history: 1.700,1.700,1.675,1.700,1.705,1.700,1.725,1.705,1.710,1.730
-  market_date: '2026-05-08'
-  stock_type: foundation
-  name: SPARK NEW ZEALAND LIMITED
-  industry: Telecommunication Services
+  name: NORTHERN STAR RESOURCES LTD
+  industry: Materials
 - symbol: ASX
-  current_price: 58.230000000000004
-  market_cap: 11751948319
-  pe: 22.34234
-  yield_val: 3.5567010309278353
-  score: 40.6
-  price_change_1d: -1.91
-  price_diff_1d: -3.18
-  price_change_5d: -3.59
-  price_diff_5d: -5.81
-  momentum: 1.14
+  current_price: 58.160000000000004
+  market_cap: 11378715507
+  pe: 21.63277
+  yield_val: 3.6733642452344153
+  score: 50.9
+  price_change_1d: -0.07
+  price_diff_1d: -0.12
+  price_change_5d: -3.9
+  price_diff_5d: -6.28
+  momentum: 1.12
   volatility: 1.62
-  volume: 618018
-  volume_change: -12.28
-  rsi: 49.89
-  price_history: 58.850,58.100,57.850,60.800,61.580,61.820,62.060,62.790,60.140,58.230
-  market_date: '2026-05-08'
+  volume: 1272448
+  volume_change: 79.02
+  rsi: 49.59
+  price_history: 58.100,57.850,60.800,61.580,61.820,62.060,62.790,60.140,58.230,58.160
+  market_date: '2026-05-11'
   stock_type: foundation
   name: ASX LIMITED
   industry: Financial Services
+- symbol: ORG
+  current_price: 11.31
+  market_cap: 19604868496
+  pe: 19.21551
+  yield_val: 5.272407732864675
+  score: 37.9
+  price_change_1d: -0.07
+  price_diff_1d: -0.62
+  price_change_5d: -0.64
+  price_diff_5d: -5.36
+  momentum: -0.56
+  volatility: 1.54
+  volume: 3075351
+  volume_change: -15.79
+  rsi: 35.03
+  price_history: 11.660,12.030,12.100,12.070,11.840,11.950,11.960,11.650,11.380,11.310
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: ORIGIN ENERGY LIMITED
+  industry: Utilities
+- symbol: QAN
+  current_price: 8.74
+  market_cap: 13467473583
+  pe: 8.44803
+  yield_val: 5.191011235955056
+  score: 47.6
+  price_change_1d: -0.16
+  price_diff_1d: -1.8
+  price_change_5d: 0.35
+  price_diff_5d: 4.17
+  momentum: -1.01
+  volatility: 2.08
+  volume: 4542100
+  volume_change: -30.17
+  rsi: 50.46
+  price_history: 8.370,8.380,8.410,8.480,8.460,8.390,8.560,9.000,8.900,8.740
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: QANTAS AIRWAYS LIMITED
+  industry: Transportation
 - symbol: DOW
-  current_price: 7.71
-  market_cap: 5233530896
-  pe: 34.33607
-  yield_val: 3.4134007585335016
-  score: 45.3
-  price_change_1d: -0.2
-  price_diff_1d: -2.53
-  price_change_5d: 0.08
-  price_diff_5d: 1.05
-  momentum: -0.24
+  current_price: 7.75
+  market_cap: 5101203946
+  pe: 33.4679
+  yield_val: 3.501945525291829
+  score: 51.9
+  price_change_1d: 0.04
+  price_diff_1d: 0.52
+  price_change_5d: 0.06
+  price_diff_5d: 0.78
+  momentum: -0.07
   volatility: 1.59
-  volume: 805712
-  volume_change: -32.53
-  rsi: 51.62
-  price_history: 7.400,7.330,7.310,7.410,7.420,7.630,7.690,8.050,7.910,7.710
-  market_date: '2026-05-08'
+  volume: 1022863
+  volume_change: -14.31
+  rsi: 52.8
+  price_history: 7.330,7.310,7.410,7.420,7.630,7.690,8.050,7.910,7.710,7.750
+  market_date: '2026-05-11'
   stock_type: foundation
   name: DOWNER EDI LIMITED
   industry: Commercial & Professional Services
 - symbol: MPL
-  current_price: 4.59
-  market_cap: 12668414904
-  pe: 27.36792
-  yield_val: 4.021739130434782
-  score: 46.5
-  price_change_1d: -0.01
-  price_diff_1d: -0.22
-  price_change_5d: -0.14
-  price_diff_5d: -2.96
-  momentum: 0.28
+  current_price: 4.57
+  market_cap: 12640874872
+  pe: 27.30842
+  yield_val: 4.030501089324618
+  score: 47.4
+  price_change_1d: -0.02
+  price_diff_1d: -0.44
+  price_change_5d: -0.08
+  price_diff_5d: -1.72
+  momentum: 0.18
   volatility: 1.4
-  volume: 7595025
-  volume_change: 10.43
-  rsi: 50.71
-  price_history: 4.600,4.540,4.610,4.690,4.720,4.730,4.650,4.660,4.600,4.590
-  market_date: '2026-05-08'
+  volume: 4774947
+  volume_change: -30.55
+  rsi: 49.03
+  price_history: 4.540,4.610,4.690,4.720,4.730,4.650,4.660,4.600,4.590,4.570
+  market_date: '2026-05-11'
   stock_type: foundation
   name: MEDIBANK PRIVATE LIMITED
   industry: Insurance
-- symbol: SDF
-  current_price: 4.05
-  market_cap: 4559165675
-  pe: 12.74638
-  yield_val: 4.853658536585366
-  score: 35.6
-  price_change_1d: -0.05
-  price_diff_1d: -1.22
-  price_change_5d: -0.14
-  price_diff_5d: -3.34
-  momentum: -1.4
-  volatility: 1.71
-  volume: 1678765
-  volume_change: -45.51
-  rsi: 33.16
-  price_history: 4.280,4.190,4.240,4.240,4.200,4.190,4.220,4.130,4.100,4.050
-  market_date: '2026-05-08'
+- symbol: CHC
+  current_price: 19.650000000000002
+  market_cap: 9351154624
+  pe: 21.79113
+  yield_val: 2.489124936772888
+  score: 44.2
+  price_change_1d: -0.12
+  price_diff_1d: -0.61
+  price_change_5d: -0.49
+  price_diff_5d: -2.43
+  momentum: -1.19
+  volatility: 1.81
+  volume: 2197247
+  volume_change: 69.08
+  rsi: 43.21
+  price_history: 19.810,19.890,20.150,20.090,20.020,20.140,19.920,20.030,19.770,19.650
+  market_date: '2026-05-11'
   stock_type: foundation
-  name: STEADFAST GROUP LIMITED
-  industry: Insurance
+  name: CHARTER HALL GROUP
+  industry: Equity Real Estate Investment Trusts
+- symbol: CBA
+  current_price: 174.01
+  market_cap: 294378763396
+  pe: 28.32283
+  yield_val: 2.8139389460519584
+  score: 53.0
+  price_change_1d: -1.9
+  price_diff_1d: -1.08
+  price_change_5d: 1.15
+  price_diff_5d: 0.67
+  momentum: 0.83
+  volatility: 1.42
+  volume: 1836406
+  volume_change: -8.63
+  rsi: 47.18
+  price_history: 174.610,172.180,173.660,173.040,172.210,172.860,177.980,179.230,175.910,174.010
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: COMMONWEALTH BANK OF AUSTRALIA.
+  industry: Banks
 - symbol: GMG
-  current_price: 30.26
-  market_cap: 63081865161
-  pe: 37.19198
-  yield_val: 0.972447325769854
-  score: 51.0
-  price_change_1d: -0.59
-  price_diff_1d: -1.91
-  price_change_5d: 0.32
-  price_diff_5d: 1.07
-  momentum: 0.64
+  current_price: 30.88
+  market_cap: 61875437269
+  pe: 36.48069
+  yield_val: 0.991407799074686
+  score: 64.7
+  price_change_1d: 0.62
+  price_diff_1d: 2.05
+  price_change_5d: 1.11
+  price_diff_5d: 3.73
+  momentum: 1.0
   volatility: 1.99
-  volume: 2844721
-  volume_change: -21.34
-  rsi: 61.52
-  price_history: 29.420,28.900,28.940,29.580,29.960,29.940,29.770,30.640,30.850,30.260
-  market_date: '2026-05-08'
+  volume: 2795668
+  volume_change: -22.57
+  rsi: 65.62
+  price_history: 28.900,28.940,29.580,29.960,29.940,29.770,30.640,30.850,30.260,30.880
+  market_date: '2026-05-11'
   stock_type: foundation
   name: GOODMAN GROUP
   industry: Equity Real Estate Investment Trusts
+- symbol: SPK
+  current_price: 1.735
+  market_cap: 3269925087
+  pe: 14.49175
+  yield_val: 9.809248554913294
+  score: 44.9
+  price_change_1d: 0.005
+  price_diff_1d: 0.29
+  price_change_5d: 0.01
+  price_diff_5d: 0.58
+  momentum: -1.3
+  volatility: 1.03
+  volume: 1139164
+  volume_change: -11.01
+  rsi: 50.69
+  price_history: 1.700,1.675,1.700,1.705,1.700,1.725,1.705,1.710,1.730,1.735
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: SPARK NEW ZEALAND LIMITED
+  industry: Telecommunication Services
 - symbol: AAA
   current_price: 50.13
-  market_cap: 5178688355
+  market_cap: 5180755283
   pe: null
-  yield_val: 3.911993614049092
-  score: 54.1
-  price_change_1d: 0.02
-  price_diff_1d: 0.04
-  price_change_5d: 0.05
-  price_diff_5d: 0.1
-  momentum: 1.78
+  yield_val: 3.910432874526232
+  score: 53.9
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.04
+  price_diff_5d: 0.08
+  momentum: 1.75
   volatility: 0.02
-  volume: 192629
-  volume_change: -44.19
+  volume: 259420
+  volume_change: -24.91
   rsi: 89.1
-  price_history: 50.058,50.058,50.058,50.078,50.090,50.080,50.090,50.100,50.110,50.130
-  market_date: '2026-05-08'
+  price_history: 50.058,50.058,50.078,50.090,50.080,50.090,50.100,50.110,50.130,50.130
+  market_date: '2026-05-11'
   stock_type: etf
   name: BETASHARES AUSTRALIAN HIGH INTEREST CASH ETF
   industry: Other
 - symbol: IOZ
-  current_price: 35.18
-  market_cap: 8742022755
+  current_price: 35.050000000000004
+  market_cap: 8621933292
   pe: null
-  yield_val: 3.494533221194281
-  score: 50.0
-  price_change_1d: -0.49
-  price_diff_1d: -1.37
-  price_change_5d: 0.24
-  price_diff_5d: 0.69
-  momentum: 0.34
+  yield_val: 3.5432063672541214
+  score: 50.9
+  price_change_1d: -0.13
+  price_diff_1d: -0.37
+  price_change_5d: 0.19
+  price_diff_5d: 0.55
+  momentum: 0.17
   volatility: 0.86
-  volume: 347587
-  volume_change: -15.03
-  rsi: 49.22
-  price_history: 35.180,34.990,34.870,34.790,35.080,34.940,34.860,35.320,35.670,35.180
-  market_date: '2026-05-08'
+  volume: 346953
+  volume_change: -15.31
+  rsi: 47.19
+  price_history: 34.990,34.870,34.790,35.080,34.940,34.860,35.320,35.670,35.180,35.050
+  market_date: '2026-05-11'
   stock_type: etf
   name: ISHARES CORE S&P/ASX 200 ETF
   industry: Other
-- symbol: BGBL
-  current_price: 80.42
-  market_cap: 4032249328
-  pe: null
-  yield_val: 1.5916366794887704
-  score: 54.2
-  price_change_1d: -0.17
-  price_diff_1d: -0.21
-  price_change_5d: 0.92
-  price_diff_5d: 1.16
-  momentum: 0.58
-  volatility: 0.72
-  volume: 100126
-  volume_change: -20.83
-  rsi: 68.63
-  price_history: 79.160,79.040,79.010,78.800,79.600,79.500,79.730,79.570,80.590,80.420
-  market_date: '2026-05-08'
-  stock_type: etf
-  name: BETASHARES GLOBAL SHARES ETF
-  industry: Other
 - symbol: STW
-  current_price: 78.66
-  market_cap: 6458340997
+  current_price: 78.37
+  market_cap: 6369271600
   pe: null
-  yield_val: 3.487086258776329
-  score: 50.0
-  price_change_1d: -1.1
-  price_diff_1d: -1.38
-  price_change_5d: 0.56
-  price_diff_5d: 0.72
-  momentum: 0.33
+  yield_val: 3.535850495804729
+  score: 55.9
+  price_change_1d: -0.29
+  price_diff_1d: -0.37
+  price_change_5d: 0.44
+  price_diff_5d: 0.56
+  momentum: 0.16
   volatility: 0.87
-  volume: 132971
-  volume_change: 9.27
-  rsi: 49.11
-  price_history: 78.670,78.190,78.200,77.800,78.390,78.100,77.930,78.990,79.760,78.660
-  market_date: '2026-05-08'
+  volume: 235781
+  volume_change: 91.38
+  rsi: 47.11
+  price_history: 78.190,78.200,77.800,78.390,78.100,77.930,78.990,79.760,78.660,78.370
+  market_date: '2026-05-11'
   stock_type: etf
   name: STATE STREET SPDR S&P/ASX 200 ETF
   industry: Other
-- symbol: BILL
-  current_price: 100.41
-  market_cap: 1188280390
-  pe: null
-  yield_val: 3.9107480824783343
-  score: 59.0
-  price_change_1d: 0.02
-  price_diff_1d: 0.02
-  price_change_5d: 0.073
-  price_diff_5d: 0.07
-  momentum: 1.78
-  volatility: 0.02
-  volume: 119324
-  volume_change: 217.98
-  rsi: 89.49
-  price_history: 100.277,100.287,100.307,100.317,100.297,100.337,100.357,100.387,100.390,100.410
-  market_date: '2026-05-08'
-  stock_type: etf
-  name: ISHARES CORE CASH ETF
-  industry: Other
-- symbol: VHY
-  current_price: 83.48
-  market_cap: 7323322958
-  pe: null
-  yield_val: 5.408192257606251
-  score: 59.1
-  price_change_1d: -0.99
-  price_diff_1d: -1.17
-  price_change_5d: 0.43
-  price_diff_5d: 0.52
-  momentum: 1.13
-  volatility: 0.75
-  volume: 253190
-  volume_change: 61.11
-  rsi: 50.62
-  price_history: 83.100,82.870,83.000,82.880,83.450,83.050,82.990,83.970,84.470,83.480
-  market_date: '2026-05-08'
-  stock_type: etf
-  name: VANGUARD AUSTRALIAN SHARES HIGH YIELD ETF
-  industry: Other
 - symbol: HACK
-  current_price: 13.44
-  market_cap: 1225908570
+  current_price: 13.780000000000001
+  market_cap: 1274262273
   pe: null
-  yield_val: 3.361948955916473
-  score: 68.2
-  price_change_1d: 0.51
-  price_diff_1d: 3.94
-  price_change_5d: 0.82
-  price_diff_5d: 6.5
-  momentum: 0.12
-  volatility: 1.76
-  volume: 169945
-  volume_change: 12.98
-  rsi: 68.15
-  price_history: 12.380,12.400,12.430,12.530,12.390,12.620,12.980,12.910,12.930,13.440
-  market_date: '2026-05-08'
+  yield_val: 3.234375
+  score: 61.4
+  price_change_1d: 0.34
+  price_diff_1d: 2.53
+  price_change_5d: 0.8
+  price_diff_5d: 6.16
+  momentum: 0.41
+  volatility: 1.77
+  volume: 156973
+  volume_change: 4.21
+  rsi: 71.78
+  price_history: 12.400,12.430,12.530,12.390,12.620,12.980,12.910,12.930,13.440,13.780
+  market_date: '2026-05-11'
   stock_type: etf
   name: BETASHARES GLOBAL CYBERSECURITY ETF
   industry: Other
-- symbol: QUAL
-  current_price: 60.86
-  market_cap: 8220980496
+- symbol: SDF
+  current_price: 4.07
+  market_cap: 4503566093
+  pe: 12.59093
+  yield_val: 4.91358024691358
+  score: 39.0
+  price_change_1d: 0.02
+  price_diff_1d: 0.49
+  price_change_5d: -0.15
+  price_diff_5d: -3.55
+  momentum: -1.33
+  volatility: 1.71
+  volume: 1576303
+  volume_change: -48.55
+  rsi: 35.6
+  price_history: 4.190,4.240,4.240,4.200,4.190,4.220,4.130,4.100,4.050,4.070
+  market_date: '2026-05-11'
+  stock_type: foundation
+  name: STEADFAST GROUP LIMITED
+  industry: Insurance
+- symbol: BILL
+  current_price: 100.44
+  market_cap: 1188517123
   pe: null
-  yield_val: 2.0230263157894735
-  score: 53.5
-  price_change_1d: 0.06
-  price_diff_1d: 0.1
-  price_change_5d: 0.85
-  price_diff_5d: 1.42
-  momentum: 0.23
+  yield_val: 3.9220197191514794
+  score: 59.2
+  price_change_1d: 0.03
+  price_diff_1d: 0.03
+  price_change_5d: 0.083
+  price_diff_5d: 0.08
+  momentum: 1.8
+  volatility: 0.02
+  volume: 74812
+  volume_change: 97.1
+  rsi: 90.52
+  price_history: 100.287,100.307,100.317,100.297,100.337,100.357,100.387,100.390,100.410,100.440
+  market_date: '2026-05-11'
+  stock_type: etf
+  name: ISHARES CORE CASH ETF
+  industry: Other
+- symbol: QUAL
+  current_price: 60.61
+  market_cap: 8229093306
+  pe: null
+  yield_val: 2.021031876437726
+  score: 55.9
+  price_change_1d: -0.25
+  price_diff_1d: -0.41
+  price_change_5d: 0.52
+  price_diff_5d: 0.87
+  momentum: 0.08
   volatility: 0.73
-  volume: 93045
-  volume_change: -15.35
-  rsi: 65.07
-  price_history: 60.200,59.980,59.860,59.500,60.150,60.010,60.090,60.000,60.800,60.860
-  market_date: '2026-05-08'
+  volume: 210802
+  volume_change: 89.92
+  rsi: 61.23
+  price_history: 59.980,59.860,59.500,60.150,60.010,60.090,60.000,60.800,60.860,60.610
+  market_date: '2026-05-11'
   stock_type: etf
   name: VANECK MSCI INTERNATIONAL QUALITY ETF
   industry: Other
 - symbol: A200
-  current_price: 146.44
-  market_cap: 9761822943
+  current_price: 145.88
+  market_cap: 9633542367
   pe: null
-  yield_val: 3.3315587303726666
-  score: 50.7
-  price_change_1d: -1.95
-  price_diff_1d: -1.31
-  price_change_5d: 1.14
-  price_diff_5d: 0.78
-  momentum: 0.42
+  yield_val: 3.3759218792679597
+  score: 51.3
+  price_change_1d: -0.56
+  price_diff_1d: -0.38
+  price_change_5d: 0.83
+  price_diff_5d: 0.57
+  momentum: 0.24
   volatility: 0.86
-  volume: 144675
-  volume_change: 29.25
-  rsi: 49.61
-  price_history: 146.340,145.570,145.030,144.740,145.860,145.300,145.050,146.960,148.390,146.440
-  market_date: '2026-05-08'
+  volume: 158729
+  volume_change: 41.17
+  rsi: 47.47
+  price_history: 145.570,145.030,144.740,145.860,145.300,145.050,146.960,148.390,146.440,145.880
+  market_date: '2026-05-11'
   stock_type: etf
   name: BETASHARES AUSTRALIA 200 ETF
   industry: Other
-- symbol: NDQ
-  current_price: 58.54
-  market_cap: 8354430007
-  pe: null
-  yield_val: 0.8912184224093486
-  score: 59.6
-  price_change_1d: 0.35
-  price_diff_1d: 0.6
-  price_change_5d: 1.74
-  price_diff_5d: 3.06
-  momentum: 1.76
-  volatility: 1.04
-  volume: 277363
-  volume_change: 4.4
-  rsi: 84.17
-  price_history: 56.210,55.950,55.940,56.110,56.340,56.800,57.190,57.390,58.190,58.540
-  market_date: '2026-05-08'
-  stock_type: etf
-  name: BETASHARES NASDAQ 100 ETF
-  industry: Other
 - symbol: DHHF
-  current_price: 40.09
-  market_cap: 1290805763
+  current_price: 40.08
+  market_cap: 1285994111
   pe: null
-  yield_val: 2.2196819085487074
-  score: 57.3
-  price_change_1d: -0.15
-  price_diff_1d: -0.37
-  price_change_5d: 0.53
-  price_diff_5d: 1.34
-  momentum: 1.21
+  yield_val: 2.227987029184335
+  score: 57.5
+  price_change_1d: -0.01
+  price_diff_1d: -0.02
+  price_change_5d: 0.43
+  price_diff_5d: 1.08
+  momentum: 1.19
   volatility: 0.71
-  volume: 66645
-  volume_change: 14.79
-  rsi: 64.66
-  price_history: 39.500,39.460,39.370,39.200,39.570,39.560,39.650,39.760,40.240,40.090
-  market_date: '2026-05-08'
+  volume: 71053
+  volume_change: 21.99
+  rsi: 64.38
+  price_history: 39.460,39.370,39.200,39.570,39.560,39.650,39.760,40.240,40.090,40.080
+  market_date: '2026-05-11'
   stock_type: etf
   name: BETASHARES DIVERSIFIED ALL GROWTH ETF
   industry: Other
 - symbol: SYI
-  current_price: 30.41
-  market_cap: 633455346
+  current_price: 30.330000000000002
+  market_cap: 623410261
   pe: null
-  yield_val: 11.707119741100323
-  score: 53.6
-  price_change_1d: -0.49
-  price_diff_1d: -1.59
-  price_change_5d: -0.24
-  price_diff_5d: -0.78
-  momentum: 0.58
-  volatility: 0.78
-  volume: 62226
-  volume_change: 98.94
-  rsi: 41.66
-  price_history: 30.580,30.470,30.490,30.670,30.750,30.650,30.600,30.900,30.900,30.410
-  market_date: '2026-05-08'
+  yield_val: 11.895757974350543
+  score: 50.6
+  price_change_1d: -0.08
+  price_diff_1d: -0.26
+  price_change_5d: -0.27
+  price_diff_5d: -0.88
+  momentum: 0.49
+  volatility: 0.77
+  volume: 19926
+  volume_change: -36.43
+  rsi: 40.21
+  price_history: 30.470,30.490,30.670,30.750,30.650,30.600,30.900,30.900,30.410,30.330
+  market_date: '2026-05-11'
   stock_type: etf
   name: STATE STREET SPDR MSCI AUS SELECT HIGH DIVIDEND YIELD ETF
   industry: Other
-- symbol: IXJ
-  current_price: 126.44
-  market_cap: 1279064667
+- symbol: NDQ
+  current_price: 59.52
+  market_cap: 8404680059
   pe: null
-  yield_val: 1.63662859393462
-  score: 39.0
-  price_change_1d: -0.51
-  price_diff_1d: -0.4
-  price_change_5d: -0.56
-  price_diff_5d: -0.44
-  momentum: -1.9
-  volatility: 0.92
-  volume: 13351
-  volume_change: -32.4
-  rsi: 36.5
-  price_history: 127.320,126.650,126.690,125.840,127.980,127.000,127.500,126.770,126.950,126.440
-  market_date: '2026-05-08'
+  yield_val: 0.8858899897505979
+  score: 70.1
+  price_change_1d: 0.98
+  price_diff_1d: 1.67
+  price_change_5d: 2.33
+  price_diff_5d: 4.07
+  momentum: 2.14
+  volatility: 1.05
+  volume: 648759
+  volume_change: 141.35
+  rsi: 86.75
+  price_history: 55.950,55.940,56.110,56.340,56.800,57.190,57.390,58.190,58.540,59.520
+  market_date: '2026-05-11'
   stock_type: etf
-  name: ISHARES GLOBAL HEALTHCARE ETF
+  name: BETASHARES NASDAQ 100 ETF
   industry: Other
 - symbol: SEMI
-  current_price: 35.61
-  market_cap: 768559613
+  current_price: 37.480000000000004
+  market_cap: 873805444
   pe: null
-  yield_val: 3.6382147838214784
-  score: 71.2
-  price_change_1d: -0.24
-  price_diff_1d: -0.67
-  price_change_5d: 2.46
-  price_diff_5d: 7.42
-  momentum: 3.29
-  volatility: 2.28
-  volume: 161886
-  volume_change: 48.87
-  rsi: 81.78
-  price_history: 32.390,31.750,31.490,31.820,32.320,33.150,33.200,34.920,35.850,35.610
-  market_date: '2026-05-08'
+  yield_val: 3.662735186745296
+  score: 98.2
+  price_change_1d: 1.87
+  price_diff_1d: 5.25
+  price_change_5d: 4.28
+  price_diff_5d: 12.89
+  momentum: 3.67
+  volatility: 2.32
+  volume: 339385
+  volume_change: 206.17
+  rsi: 85.38
+  price_history: 31.750,31.490,31.820,32.320,33.150,33.200,34.920,35.850,35.610,37.480
+  market_date: '2026-05-11'
   stock_type: etf
   name: GLOBAL X SEMICONDUCTOR ETF
   industry: Other
-- symbol: MVW
-  current_price: 37.83
-  market_cap: 3211017868
+- symbol: IXJ
+  current_price: 125.01
+  market_cap: 1273926242
   pe: null
-  yield_val: 4.551399424535705
-  score: 46.2
-  price_change_1d: -0.4
-  price_diff_1d: -1.05
-  price_change_5d: -0.11
-  price_diff_5d: -0.29
-  momentum: -0.25
+  yield_val: 1.6432299905093324
+  score: 34.5
+  price_change_1d: -1.43
+  price_diff_1d: -1.13
+  price_change_5d: -2.49
+  price_diff_5d: -1.95
+  momentum: -2.07
+  volatility: 0.92
+  volume: 19672
+  volume_change: -0.47
+  rsi: 32.45
+  price_history: 126.650,126.690,125.840,127.980,127.000,127.500,126.770,126.950,126.440,125.010
+  market_date: '2026-05-11'
+  stock_type: etf
+  name: ISHARES GLOBAL HEALTHCARE ETF
+  industry: Other
+- symbol: MVW
+  current_price: 37.71
+  market_cap: 3177421030
+  pe: null
+  yield_val: 4.599524187153053
+  score: 46.9
+  price_change_1d: -0.12
+  price_diff_1d: -0.32
+  price_change_5d: -0.06
+  price_diff_5d: -0.16
+  momentum: -0.44
   volatility: 0.85
-  volume: 80225
-  volume_change: -22.77
-  rsi: 49.45
-  price_history: 37.870,37.610,37.620,37.590,38.090,37.940,37.770,37.800,38.230,37.830
-  market_date: '2026-05-08'
+  volume: 84924
+  volume_change: -16.81
+  rsi: 47.63
+  price_history: 37.610,37.620,37.590,38.090,37.940,37.770,37.800,38.230,37.830,37.710
+  market_date: '2026-05-11'
   stock_type: etf
   name: VANECK AUSTRALIAN EQUAL WEIGHT ETF
   industry: Other
-- symbol: IOO
-  current_price: 190.35
-  market_cap: 5541281910
-  pe: null
-  yield_val: 1.056672279520101
-  score: 54.5
-  price_change_1d: 0.31
-  price_diff_1d: 0.16
-  price_change_5d: 3.69
-  price_diff_5d: 1.98
-  momentum: 1.24
-  volatility: 0.86
-  volume: 52528
-  volume_change: 49.07
-  rsi: 80.82
-  price_history: 184.620,184.570,185.070,185.450,186.690,186.660,186.670,186.980,190.040,190.350
-  market_date: '2026-05-08'
-  stock_type: etf
-  name: ISHARES GLOBAL 100 ETF
-  industry: Other
 - symbol: ASIA
-  current_price: 20.2
-  market_cap: 1375044433
+  current_price: 20.62
+  market_cap: 1368945173
   pe: null
-  yield_val: 0.4677180877279448
-  score: 75.4
-  price_change_1d: -0.09
-  price_diff_1d: -0.44
-  price_change_5d: 1.62
-  price_diff_5d: 8.72
-  momentum: 3.65
-  volatility: 2.16
-  volume: 266743
-  volume_change: 45.07
-  rsi: 79.57
-  price_history: 17.730,17.630,17.680,17.560,17.800,18.580,18.680,19.660,20.290,20.200
-  market_date: '2026-05-08'
+  yield_val: 0.4698019801980198
+  score: 88.3
+  price_change_1d: 0.42
+  price_diff_1d: 2.08
+  price_change_5d: 1.94
+  price_diff_5d: 10.39
+  momentum: 3.71
+  volatility: 2.17
+  volume: 430018
+  volume_change: 132.52
+  rsi: 81.29
+  price_history: 17.630,17.680,17.560,17.800,18.580,18.680,19.660,20.290,20.200,20.620
+  market_date: '2026-05-11'
   stock_type: etf
   name: BETASHARES ASIA TECHNOLOGY TIGERS ETF
   industry: Other
 - symbol: VEU
-  current_price: 114.74000000000001
-  market_cap: 5718344057
+  current_price: 114.4
+  market_cap: 5669427090
   pe: null
-  yield_val: 2.413203145251879
-  score: 58.2
-  price_change_1d: -0.99
-  price_diff_1d: -0.86
-  price_change_5d: 1.74
-  price_diff_5d: 1.54
-  momentum: 1.53
+  yield_val: 2.4340247516123408
+  score: 63.1
+  price_change_1d: -0.34
+  price_diff_1d: -0.3
+  price_change_5d: 1.4
+  price_diff_5d: 1.24
+  momentum: 1.37
   volatility: 0.92
-  volume: 48665
-  volume_change: -21.16
-  rsi: 62.0
-  price_history: 112.350,111.850,111.940,110.800,112.720,113.000,113.000,113.700,115.730,114.740
-  market_date: '2026-05-08'
+  volume: 115625
+  volume_change: 86.09
+  rsi: 60.1
+  price_history: 111.850,111.940,110.800,112.720,113.000,113.000,113.700,115.730,114.740,114.400
+  market_date: '2026-05-11'
   stock_type: etf
   name: VANGUARD ALL-WORLD EX-US SHARES INDEX ETF
   industry: Other
-- symbol: VDHG
-  current_price: 74.87
-  market_cap: 3813009046
+- symbol: BGBL
+  current_price: 80.58
+  market_cap: 4023743528
   pe: null
-  yield_val: 3.291140921769159
-  score: 58.2
-  price_change_1d: -0.42
-  price_diff_1d: -0.56
-  price_change_5d: 0.87
-  price_diff_5d: 1.18
-  momentum: 1.5
+  yield_val: 1.5950012434717733
+  score: 55.3
+  price_change_1d: 0.16
+  price_diff_1d: 0.2
+  price_change_5d: 0.85
+  price_diff_5d: 1.07
+  momentum: 0.65
+  volatility: 0.71
+  volume: 84070
+  volume_change: -33.66
+  rsi: 69.63
+  price_history: 79.040,79.010,78.800,79.600,79.500,79.730,79.570,80.590,80.420,80.580
+  market_date: '2026-05-11'
+  stock_type: etf
+  name: BETASHARES GLOBAL SHARES ETF
+  industry: Other
+- symbol: VDHG
+  current_price: 74.79
+  market_cap: 3791738442
+  pe: null
+  yield_val: 3.309603312408174
+  score: 58.8
+  price_change_1d: -0.08
+  price_diff_1d: -0.11
+  price_change_5d: 0.99
+  price_diff_5d: 1.34
+  momentum: 1.41
   volatility: 0.73
-  volume: 49423
-  volume_change: -16.01
-  rsi: 62.0
-  price_history: 73.960,73.830,73.690,73.390,74.090,74.000,73.800,74.350,75.290,74.870
-  market_date: '2026-05-08'
+  volume: 82316
+  volume_change: 39.25
+  rsi: 61.04
+  price_history: 73.830,73.690,73.390,74.090,74.000,73.800,74.350,75.290,74.870,74.790
+  market_date: '2026-05-11'
   stock_type: etf
   name: VANGUARD DIVERSIFIED HIGH GROWTH INDEX ETF
   industry: Other
-- symbol: ACDC
-  current_price: 179.22
-  market_cap: 866821925
+- symbol: FANG
+  current_price: 35.09
+  market_cap: 1604141444
   pe: null
-  yield_val: 0.6996564335586833
-  score: 66.2
-  price_change_1d: -1.24
-  price_diff_1d: -0.69
-  price_change_5d: 4.42
-  price_diff_5d: 2.53
-  momentum: 2.75
-  volatility: 2.02
-  volume: 20804
-  volume_change: 118.68
-  rsi: 76.09
-  price_history: 169.740,170.500,170.420,170.230,175.560,174.800,174.220,177.550,180.460,179.220
-  market_date: '2026-05-08'
+  yield_val: 0.0
+  score: 62.9
+  price_change_1d: 0.64
+  price_diff_1d: 1.86
+  price_change_5d: 1.16
+  price_diff_5d: 3.42
+  momentum: 0.81
+  volatility: 1.44
+  volume: 255391
+  volume_change: 52.28
+  rsi: 78.27
+  price_history: 33.370,33.280,33.310,33.200,33.570,33.930,33.800,34.150,34.450,35.090
+  market_date: '2026-05-11'
   stock_type: etf
-  name: GLOBAL X BATTERY TECH & LITHIUM ETF
+  name: GLOBAL X FANG+ ETF
   industry: Other
-- symbol: VGS
-  current_price: 151.54
-  market_cap: 15738202738
+- symbol: IOO
+  current_price: 190.85
+  market_cap: 5550321046
   pe: null
-  yield_val: 1.6557193629064104
-  score: 53.9
-  price_change_1d: -0.4
-  price_diff_1d: -0.26
-  price_change_5d: 1.63
-  price_diff_5d: 1.09
-  momentum: 0.55
-  volatility: 0.73
-  volume: 103229
-  volume_change: -41.74
-  rsi: 68.81
-  price_history: 149.260,149.070,148.980,148.630,150.030,149.910,150.220,150.000,151.940,151.540
-  market_date: '2026-05-08'
+  yield_val: 1.0549514053060152
+  score: 55.4
+  price_change_1d: 0.5
+  price_diff_1d: 0.26
+  price_change_5d: 4.18
+  price_diff_5d: 2.24
+  momentum: 1.31
+  volatility: 0.86
+  volume: 43900
+  volume_change: 24.01
+  rsi: 81.57
+  price_history: 184.570,185.070,185.450,186.690,186.660,186.670,186.980,190.040,190.350,190.850
+  market_date: '2026-05-11'
   stock_type: etf
-  name: VANGUARD MSCI INDEX INTERNATIONAL SHARES ETF
+  name: ISHARES GLOBAL 100 ETF
   industry: Other
 - symbol: IVV
-  current_price: 67.82000000000001
-  market_cap: 12986618711
+  current_price: 67.98
+  market_cap: 13009637828
   pe: null
-  yield_val: 1.0081240768094535
-  score: 51.0
-  price_change_1d: 0.12
-  price_diff_1d: 0.18
-  price_change_5d: 0.96
-  price_diff_5d: 1.44
-  momentum: 0.7
+  yield_val: 1.0063403125921555
+  score: 56.0
+  price_change_1d: 0.16
+  price_diff_1d: 0.24
+  price_change_5d: 0.76
+  price_diff_5d: 1.13
+  momentum: 0.77
   volatility: 0.74
-  volume: 482011
-  volume_change: 31.31
-  rsi: 75.06
-  price_history: 66.550,66.500,66.520,66.540,66.910,66.860,67.220,66.940,67.700,67.820
-  market_date: '2026-05-08'
+  volume: 617227
+  volume_change: 67.2
+  rsi: 76.05
+  price_history: 66.500,66.520,66.540,66.910,66.860,67.220,66.940,67.700,67.820,67.980
+  market_date: '2026-05-11'
   stock_type: etf
   name: ISHARES S&P 500 ETF
   industry: Other
-- symbol: MOAT
-  current_price: 118.0
-  market_cap: 901966127
+- symbol: VHY
+  current_price: 83.38
+  market_cap: 7237492608
   pe: null
-  yield_val: 6.424201223657376
-  score: 46.2
-  price_change_1d: 0.32
-  price_diff_1d: 0.27
-  price_change_5d: 1.24
-  price_diff_5d: 1.06
-  momentum: -1.18
+  yield_val: 5.472328701485385
+  score: 55.9
+  price_change_1d: -0.1
+  price_diff_1d: -0.12
+  price_change_5d: 0.39
+  price_diff_5d: 0.47
+  momentum: 1.08
+  volatility: 0.75
+  volume: 195019
+  volume_change: 23.61
+  rsi: 49.81
+  price_history: 82.870,83.000,82.880,83.450,83.050,82.990,83.970,84.470,83.480,83.380
+  market_date: '2026-05-11'
+  stock_type: etf
+  name: VANGUARD AUSTRALIAN SHARES HIGH YIELD ETF
+  industry: Other
+- symbol: ACDC
+  current_price: 178.6
+  market_cap: 871618906
+  pe: null
+  yield_val: 0.7044972659301417
+  score: 66.1
+  price_change_1d: -0.62
+  price_diff_1d: -0.35
+  price_change_5d: 4.38
+  price_diff_5d: 2.51
+  momentum: 2.61
+  volatility: 2.01
+  volume: 14967
+  volume_change: 56.64
+  rsi: 74.3
+  price_history: 170.500,170.420,170.230,175.560,174.800,174.220,177.550,180.460,179.220,178.600
+  market_date: '2026-05-11'
+  stock_type: etf
+  name: GLOBAL X BATTERY TECH & LITHIUM ETF
+  industry: Other
+- symbol: VAS
+  current_price: 108.23
+  market_cap: 24444677314
+  pe: null
+  yield_val: 3.14554163596168
+  score: 51.0
+  price_change_1d: -0.33
+  price_diff_1d: -0.3
+  price_change_5d: 0.64
+  price_diff_5d: 0.59
+  momentum: 0.14
+  volatility: 0.87
+  volume: 325787
+  volume_change: -24.36
+  rsi: 47.69
+  price_history: 107.960,107.680,107.360,108.180,107.750,107.590,108.890,110.040,108.560,108.230
+  market_date: '2026-05-11'
+  stock_type: etf
+  name: VANGUARD AUSTRALIAN SHARES INDEX ETF
+  industry: Other
+- symbol: MOAT
+  current_price: 117.4
+  market_cap: 904418788
+  pe: null
+  yield_val: 6.406779661016949
+  score: 43.5
+  price_change_1d: -0.6
+  price_diff_1d: -0.51
+  price_change_5d: 0.69
+  price_diff_5d: 0.59
+  momentum: -1.27
   volatility: 0.82
-  volume: 7664
-  volume_change: -31.95
-  rsi: 50.01
-  price_history: 118.160,118.250,118.000,117.000,117.380,116.760,116.710,115.900,117.680,118.000
-  market_date: '2026-05-08'
+  volume: 15763
+  volume_change: 40.12
+  rsi: 46.84
+  price_history: 118.250,118.000,117.000,117.380,116.760,116.710,115.900,117.680,118.000,117.400
+  market_date: '2026-05-11'
   stock_type: etf
   name: VANECK MORNINGSTAR WIDE MOAT ETF
   industry: Other
 - symbol: VTS
-  current_price: 500.27000000000004
-  market_cap: 6453408751
+  current_price: 500.92
+  market_cap: 6454053808
   pe: null
-  yield_val: 0.9498620606932948
-  score: 50.5
-  price_change_1d: 0.05
-  price_diff_1d: 0.01
-  price_change_5d: 6.5
-  price_diff_5d: 1.32
-  momentum: 0.7
+  yield_val: 0.9497671257520938
+  score: 55.2
+  price_change_1d: 0.65
+  price_diff_1d: 0.13
+  price_change_5d: 4.27
+  price_diff_5d: 0.86
+  momentum: 0.74
   volatility: 0.76
-  volume: 12703
-  volume_change: 8.15
-  rsi: 72.99
-  price_history: 491.630,490.760,491.010,490.230,493.910,493.770,496.650,494.430,500.220,500.270
-  market_date: '2026-05-08'
+  volume: 25075
+  volume_change: 111.67
+  rsi: 73.56
+  price_history: 490.760,491.010,490.230,493.910,493.770,496.650,494.430,500.220,500.270,500.920
+  market_date: '2026-05-11'
   stock_type: etf
   name: VANGUARD US TOTAL MARKET SHARES INDEX ETF
   industry: Other
-- symbol: VAS
-  current_price: 108.56
-  market_cap: 24777931942
+- symbol: VGS
+  current_price: 151.70000000000002
+  market_cap: 15696770060
   pe: null
-  yield_val: 3.103235187204653
-  score: 49.9
-  price_change_1d: -1.48
-  price_diff_1d: -1.34
-  price_change_5d: 0.81
-  price_diff_5d: 0.75
-  momentum: 0.29
-  volatility: 0.87
-  volume: 257756
-  volume_change: -40.06
-  rsi: 49.4
-  price_history: 108.510,107.960,107.680,107.360,108.180,107.750,107.590,108.890,110.040,108.560
-  market_date: '2026-05-08'
+  yield_val: 1.6600897452817736
+  score: 54.7
+  price_change_1d: 0.16
+  price_diff_1d: 0.11
+  price_change_5d: 1.48
+  price_diff_5d: 0.99
+  momentum: 0.59
+  volatility: 0.73
+  volume: 167698
+  volume_change: -5.29
+  rsi: 69.36
+  price_history: 149.070,148.980,148.630,150.030,149.910,150.220,150.000,151.940,151.540,151.700
+  market_date: '2026-05-11'
   stock_type: etf
-  name: VANGUARD AUSTRALIAN SHARES INDEX ETF
+  name: VANGUARD MSCI INDEX INTERNATIONAL SHARES ETF
   industry: Other
-- symbol: EUR
-  current_price: 0.455
-  market_cap: 823779634
-  pe: 0.67651
-  yield_val: 0.0
-  score: 64.4
-  price_change_1d: -0.025
-  price_diff_1d: -5.21
-  price_change_5d: 0.025
-  price_diff_5d: 5.81
-  momentum: 3.22
-  volatility: 8.84
-  volume: 25729167
-  volume_change: 119.58
-  rsi: 71.25
-  price_history: 0.285,0.415,0.365,0.395,0.430,0.430,0.450,0.465,0.480,0.455
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: EUROPEAN LITHIUM LIMITED
-  industry: Materials
 - symbol: GOLD
-  current_price: 59.88
-  market_cap: 6092339268
+  current_price: 58.95
+  market_cap: 6197634431
   pe: -99999.99
   yield_val: 0.0
-  score: 52.3
-  price_change_1d: 0.41
-  price_diff_1d: 0.69
-  price_change_5d: 1.53
-  price_diff_5d: 2.62
-  momentum: -0.6
+  score: 44.4
+  price_change_1d: -0.93
+  price_diff_1d: -1.55
+  price_change_5d: 0.74
+  price_diff_5d: 1.27
+  momentum: -0.88
   volatility: 1.9
-  volume: 150234
-  volume_change: -55.8
-  rsi: 46.81
-  price_history: 60.280,59.140,58.740,58.250,58.600,58.350,58.210,58.950,59.470,59.880
-  market_date: '2026-05-08'
+  volume: 225795
+  volume_change: -33.54
+  rsi: 41.04
+  price_history: 59.140,58.740,58.250,58.600,58.350,58.210,58.950,59.470,59.880,58.950
+  market_date: '2026-05-11'
   stock_type: etf
   name: GLOBAL X PHYSICAL GOLD STRUCTURED
   industry: Other
 - symbol: ETHI
-  current_price: 15.35
-  market_cap: 3569270574
+  current_price: 15.370000000000001
+  market_cap: 3562308408
   pe: null
-  yield_val: 2.2555266579973994
-  score: 47.4
-  price_change_1d: -0.03
-  price_diff_1d: -0.2
+  yield_val: 2.2599348534201953
+  score: 48.3
+  price_change_1d: 0.02
+  price_diff_1d: 0.13
   price_change_5d: 0.03
   price_diff_5d: 0.2
-  momentum: -0.5
+  momentum: -0.46
   volatility: 0.85
-  volume: 56052
-  volume_change: -76.85
-  rsi: 55.96
-  price_history: 15.390,15.360,15.290,15.270,15.320,15.320,15.340,15.240,15.380,15.350
-  market_date: '2026-05-08'
+  volume: 95620
+  volume_change: -60.41
+  rsi: 56.82
+  price_history: 15.360,15.290,15.270,15.320,15.320,15.340,15.240,15.380,15.350,15.370
+  market_date: '2026-05-11'
   stock_type: etf
   name: BETASHARES GLOBAL SUSTAINABILITY LEADERS ETF
   industry: Other
-- symbol: FPR
-  current_price: 2.79
-  market_cap: 582139764
-  pe: 8.1475
-  yield_val: 9.444444444444445
-  score: 84.6
-  price_change_1d: 0.09
-  price_diff_1d: 3.33
-  price_change_5d: 0.4
-  price_diff_5d: 16.74
-  momentum: 0.57
-  volatility: 2.5
-  volume: 923729
-  volume_change: 285.91
-  rsi: 72.92
-  price_history: 2.380,2.350,2.340,2.340,2.360,2.390,2.370,2.560,2.700,2.790
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: FLEETPARTNERS GROUP LIMITED
-  industry: Financial Services
-- symbol: EDE
-  current_price: 0.22
-  market_cap: 132154625
+- symbol: DTR
+  current_price: 0.21
+  market_cap: 908383428
   pe: -99999.99
   yield_val: 0.0
-  score: 98.2
-  price_change_1d: -0.005
-  price_diff_1d: -2.22
-  price_change_5d: 0.045
-  price_diff_5d: 25.71
-  momentum: 1.82
-  volatility: 10.95
-  volume: 7899515
-  volume_change: 211.42
-  rsi: 63.22
-  price_history: 0.190,0.180,0.200,0.180,0.190,0.175,0.170,0.180,0.225,0.220
-  market_date: '2026-05-08'
+  score: 16.5
+  price_change_1d: -0.03
+  price_diff_1d: -12.5
+  price_change_5d: -0.01
+  price_diff_5d: -4.55
+  momentum: -1.34
+  volatility: 7.34
+  volume: 27060520
+  volume_change: 76.35
+  rsi: 30.34
+  price_history: 0.235,0.240,0.225,0.230,0.235,0.220,0.230,0.240,0.240,0.210
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: EDEN INNOVATIONS LTD
-  industry: Energy
-- symbol: ERM
-  current_price: 0.42
-  market_cap: 272853957
+  name: DATELINE RESOURCES LIMITED
+  industry: Materials
+- symbol: IND
+  current_price: 0.165
+  market_cap: 13253213
   pe: -99999.99
   yield_val: 0.0
-  score: 86.5
+  score: 98.4
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.035
+  price_diff_5d: 26.92
+  momentum: 1.6
+  volatility: 7.24
+  volume: 127483
+  volume_change: 117.74
+  rsi: 75.27
+  price_history: 0.115,0.120,0.120,0.120,0.125,0.130,0.130,0.140,0.155,0.165
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: INDUSTRIAL MINERALS LTD
+  industry: Materials
+- symbol: MHK
+  current_price: 0.08
+  market_cap: 9624620
+  pe: 13.42513
+  yield_val: 0.0
+  score: 55.7
+  price_change_1d: 0.002
+  price_diff_1d: 2.56
+  price_change_5d: 0.003
+  price_diff_5d: 3.9
+  momentum: -1.06
+  volatility: 5.15
+  volume: 60000
+  volume_change: -59.63
+  rsi: 46.36
+  price_history: 0.080,0.080,0.077,0.077,0.077,0.077,0.076,0.078,0.078,0.080
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: METAL HAWK LIMITED.
+  industry: Materials
+- symbol: NVA
+  current_price: 0.76
+  market_cap: 342085764
+  pe: -99999.99
+  yield_val: 0.0
+  score: 64.1
   price_change_1d: 0.01
-  price_diff_1d: 2.44
-  price_change_5d: 0.045
-  price_diff_5d: 12.0
-  momentum: 1.73
-  volatility: 4.13
-  volume: 4352618
-  volume_change: 160.62
-  rsi: 60.31
-  price_history: 0.395,0.380,0.385,0.375,0.380,0.375,0.375,0.375,0.410,0.420
-  market_date: '2026-05-08'
+  price_diff_1d: 1.33
+  price_change_5d: 0.07
+  price_diff_5d: 10.14
+  momentum: -0.75
+  volatility: 6.39
+  volume: 369564
+  volume_change: -70.15
+  rsi: 56.77
+  price_history: 0.655,0.655,0.625,0.655,0.660,0.690,0.700,0.770,0.750,0.760
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: EMMERSON RESOURCES LIMITED
+  name: NOVA MINERALS LIMITED
   industry: Materials
-- symbol: NWM
-  current_price: 0.013000000000000001
-  market_cap: 12978107
+- symbol: AIS
+  current_price: 0.425
+  market_cap: 496825045
+  pe: 6.72283
+  yield_val: 0.0
+  score: 78.4
+  price_change_1d: 0.01
+  price_diff_1d: 2.41
+  price_change_5d: 0.055
+  price_diff_5d: 14.86
+  momentum: -0.75
+  volatility: 4.56
+  volume: 13056503
+  volume_change: 69.45
+  rsi: 58.72
+  price_history: 0.390,0.400,0.385,0.395,0.390,0.370,0.375,0.385,0.415,0.425
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: AERIS RESOURCES LIMITED
+  industry: Materials
+- symbol: DNL
+  current_price: 3.54
+  market_cap: 5828584995
+  pe: 41.74001
+  yield_val: 3.5843373493975905
+  score: 87.4
+  price_change_1d: 0.22
+  price_diff_1d: 6.63
+  price_change_5d: 0.3
+  price_diff_5d: 9.26
+  momentum: 2.06
+  volatility: 1.93
+  volume: 6087596
+  volume_change: 27.86
+  rsi: 69.27
+  price_history: 3.190,3.230,3.270,3.340,3.320,3.240,3.230,3.330,3.320,3.540
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: DYNO NOBEL LIMITED.
+  industry: Materials
+- symbol: ASN
+  current_price: 0.055
+  market_cap: 82595691
   pe: -99999.99
   yield_val: 0.0
-  score: 82.3
-  price_change_1d: 0.001
-  price_diff_1d: 8.33
-  price_change_5d: 0.001
-  price_diff_5d: 8.33
-  momentum: -0.37
-  volatility: 8.79
-  volume: 4040769
-  volume_change: 76.59
-  rsi: 52.75
-  price_history: 0.013,0.012,0.013,0.012,0.012,0.012,0.012,0.012,0.012,0.013
-  market_date: '2026-05-08'
+  score: 88.4
+  price_change_1d: 0.004
+  price_diff_1d: 7.84
+  price_change_5d: 0.008
+  price_diff_5d: 17.02
+  momentum: -0.56
+  volatility: 4.9
+  volume: 4716210
+  volume_change: -7.92
+  rsi: 53.99
+  price_history: 0.061,0.051,0.052,0.051,0.048,0.047,0.051,0.051,0.051,0.055
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: NORWEST MINERALS LIMITED
+  name: ANSON RESOURCES LIMITED
   industry: Materials
-- symbol: TMS
-  current_price: 0.01
-  market_cap: 10658904
+- symbol: OML
+  current_price: 1.35
+  market_cap: 665546820
+  pe: 39.51082
+  yield_val: 4.96031746031746
+  score: 84.1
+  price_change_1d: 0.09
+  price_diff_1d: 7.14
+  price_change_5d: 0.1
+  price_diff_5d: 8.0
+  momentum: 1.57
+  volatility: 3.69
+  volume: 6327326
+  volume_change: 305.17
+  rsi: 78.37
+  price_history: 0.850,1.130,1.170,1.185,1.225,1.250,1.245,1.285,1.260,1.350
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: OOH!MEDIA LIMITED
+  industry: Media & Entertainment
+- symbol: OLY
+  current_price: 0.052000000000000005
+  market_cap: 9032042
+  pe: -99999.99
+  yield_val: 0.0
+  score: 48.5
+  price_change_1d: 0.001
+  price_diff_1d: 1.96
+  price_change_5d: -0.0
+  price_diff_5d: -0.0
+  momentum: -1.09
+  volatility: 7.42
+  volume: 108325
+  volume_change: -89.52
+  rsi: 36.27
+  price_history: 0.060,0.058,0.058,0.056,0.054,0.052,0.052,0.051,0.051,0.052
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: OLYMPIO METALS LIMITED
+  industry: Materials
+- symbol: LRV
+  current_price: 1.4000000000000001
+  market_cap: 691799296
+  pe: -99999.99
+  yield_val: 0.0
+  score: 81.4
+  price_change_1d: 0.065
+  price_diff_1d: 4.87
+  price_change_5d: 0.14
+  price_diff_5d: 11.11
+  momentum: 1.0
+  volatility: 4.98
+  volume: 2333135
+  volume_change: -33.27
+  rsi: 61.84
+  price_history: 1.345,1.270,1.245,1.250,1.255,1.260,1.250,1.295,1.335,1.400
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: LARVOTTO RESOURCES LIMITED
+  industry: Materials
+- symbol: ZNC
+  current_price: 0.073
+  market_cap: 45000762
+  pe: -99999.99
+  yield_val: 0.0
+  score: 69.8
+  price_change_1d: -0.002
+  price_diff_1d: -2.67
+  price_change_5d: 0.012
+  price_diff_5d: 19.67
+  momentum: -0.87
+  volatility: 5.84
+  volume: 82300
+  volume_change: -82.68
+  rsi: 54.19
+  price_history: 0.065,0.065,0.067,0.061,0.061,0.061,0.062,0.071,0.075,0.073
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ZENITH MINERALS LIMITED
+  industry: Materials
+- symbol: PNN
+  current_price: 0.125
+  market_cap: 44036398
+  pe: -99999.99
+  yield_val: 0.0
+  score: 69.4
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.01
+  price_diff_5d: 8.7
+  momentum: 1.26
+  volatility: 6.36
+  volume: 487797
+  volume_change: -78.2
+  rsi: 56.7
+  price_history: 0.120,0.115,0.110,0.110,0.110,0.115,0.120,0.125,0.125,0.125
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: POWER MINERALS LIMITED
+  industry: Materials
+- symbol: STM
+  current_price: 0.36
+  market_cap: 86213074
+  pe: -99999.99
+  yield_val: 0.0
+  score: 30.3
+  price_change_1d: -0.02
+  price_diff_1d: -5.26
+  price_change_5d: -0.01
+  price_diff_5d: -2.7
+  momentum: -1.03
+  volatility: 6.17
+  volume: 313166
+  volume_change: -32.99
+  rsi: 48.46
+  price_history: 0.410,0.380,0.360,0.380,0.365,0.370,0.380,0.400,0.380,0.360
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: SUNSTONE METALS LTD
+  industry: Materials
+- symbol: AVW
+  current_price: 0.0095
+  market_cap: 4725000
+  pe: -99999.99
+  yield_val: 0.0
+  score: 48.9
+  price_change_1d: 0.0005
+  price_diff_1d: 5.56
+  price_change_5d: -0.0005
+  price_diff_5d: -5.0
+  momentum: -0.95
+  volatility: 6.44
+  volume: 383333
+  volume_change: -71.05
+  rsi: 42.08
+  price_history: 0.010,0.011,0.010,0.010,0.010,0.010,0.010,0.010,0.009,0.009
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: AVIRA RESOURCES LTD
+  industry: Materials
+- symbol: RDN
+  current_price: 0.004
+  market_cap: 13803566
+  pe: -99999.99
+  yield_val: 0.0
+  score: 50.2
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: -0.0
+  price_diff_5d: -0.0
+  momentum: -0.97
+  volatility: 8.77
+  volume: 11738550
+  volume_change: 185.95
+  rsi: 48.68
+  price_history: 0.004,0.004,0.004,0.004,0.004,0.004,0.004,0.004,0.004,0.004
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: RAIDEN RESOURCES LIMITED
+  industry: Materials
+- symbol: NGI
+  current_price: 2.66
+  market_cap: 1326018792
+  pe: 23.26326
+  yield_val: 1.6703703703703705
+  score: 48.3
+  price_change_1d: -0.04
+  price_diff_1d: -1.48
+  price_change_5d: 0.03
+  price_diff_5d: 1.14
+  momentum: -0.09
+  volatility: 2.51
+  volume: 280096
+  volume_change: -62.17
+  rsi: 67.74
+  price_history: 2.441,2.421,2.471,2.471,2.471,2.630,2.690,2.730,2.700,2.660
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: NAVIGATOR GLOBAL INVESTMENTS LIMITED
+  industry: Financial Services
+- symbol: AEM
+  current_price: 0.425
+  market_cap: 256433911
+  pe: -99999.99
+  yield_val: 0.0
+  score: 23.8
+  price_change_1d: -0.01
+  price_diff_1d: -2.3
+  price_change_5d: -0.05
+  price_diff_5d: -10.53
+  momentum: -1.16
+  volatility: 4.29
+  volume: 134319
+  volume_change: -63.92
+  rsi: 41.75
+  price_history: 0.463,0.450,0.410,0.430,0.425,0.475,0.445,0.445,0.435,0.425
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ADVANCED ENERGY MINERALS LTD
+  industry: Materials
+- symbol: ELV
+  current_price: 13.74
+  market_cap: 2291736440
+  pe: -99999.99
+  yield_val: 0.0
+  score: 75.3
+  price_change_1d: 0.23
+  price_diff_1d: 1.7
+  price_change_5d: 1.18
+  price_diff_5d: 9.39
+  momentum: 2.57
+  volatility: 4.94
+  volume: 1162057
+  volume_change: -19.02
+  rsi: 71.95
+  price_history: 13.690,13.550,13.580,13.520,12.990,12.560,13.520,13.690,13.510,13.740
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ELEVRA LITHIUM LIMITED
+  industry: Materials
+- symbol: ADC
+  current_price: 0.059000000000000004
+  market_cap: 5245002
+  pe: -99999.99
+  yield_val: 0.0
+  score: 67.4
+  price_change_1d: 0.003
+  price_diff_1d: 5.36
+  price_change_5d: -0.0
+  price_diff_5d: -0.0
+  momentum: 0.34
+  volatility: 5.08
+  volume: 225315
+  volume_change: 109.34
+  rsi: 54.09
+  price_history: 0.059,0.059,0.065,0.058,0.056,0.059,0.059,0.059,0.056,0.059
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ACDC METALS LTD
+  industry: Materials
+- symbol: TIO
+  current_price: 0.12
+  market_cap: 12256078
+  pe: -99999.99
+  yield_val: 0.0
+  score: 64.7
+  price_change_1d: 0.005
+  price_diff_1d: 4.35
+  price_change_5d: 0.01
+  price_diff_5d: 9.09
+  momentum: -1.53
+  volatility: 6.02
+  volume: 53225
+  volume_change: -80.35
+  rsi: 42.99
+  price_history: 0.125,0.125,0.115,0.115,0.110,0.110,0.115,0.115,0.115,0.120
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: TEMAS RESOURCES CORP.
+  industry: Other
+- symbol: GDR
+  current_price: 0.17
+  market_cap: 6643947
+  pe: -99999.99
+  yield_val: 0.0
+  score: 85.8
+  price_change_1d: 0.02
+  price_diff_1d: 13.33
+  price_change_5d: 0.01
+  price_diff_5d: 6.25
+  momentum: -1.05
+  volatility: 4.58
+  volume: 742162
+  volume_change: 579.52
+  rsi: 51.58
+  price_history: 0.160,0.170,0.160,0.160,0.165,0.160,0.165,0.155,0.150,0.170
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: GOLDEN DRAGON MINING LTD
+  industry: Materials
+- symbol: LSR
+  current_price: 0.02
+  market_cap: 25641631
+  pe: -99999.99
+  yield_val: 0.0
+  score: 33.8
+  price_change_1d: -0.002
+  price_diff_1d: -9.09
+  price_change_5d: -0.001
+  price_diff_5d: -4.76
+  momentum: 0.82
+  volatility: 10.96
+  volume: 40809645
+  volume_change: 106.51
+  rsi: 48.15
+  price_history: 0.028,0.023,0.020,0.020,0.021,0.021,0.022,0.021,0.022,0.020
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: LODESTAR MINERALS LIMITED
+  industry: Materials
+- symbol: AGI
+  current_price: 1.37
+  market_cap: 437832108
   pe: -99999.99
   yield_val: 0.0
   score: 100.0
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: 0.003
-  price_diff_5d: 42.86
-  momentum: 2.62
-  volatility: 9.18
-  volume: 0
-  volume_change: -100.0
-  rsi: 74.99
-  price_history: 0.007,0.007,0.007,0.007,0.007,0.007,0.007,0.007,0.010,0.010
-  market_date: '2026-05-08'
+  price_change_1d: 0.07
+  price_diff_1d: 5.38
+  price_change_5d: 0.27
+  price_diff_5d: 24.55
+  momentum: 5.33
+  volatility: 3.0
+  volume: 282101
+  volume_change: 143.57
+  rsi: 73.67
+  price_history: 1.075,1.100,1.100,1.100,1.100,1.100,1.100,1.200,1.300,1.370
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: TENNANT MINERALS LIMITED
-  industry: Materials
-- symbol: NWS
-  current_price: 43.17
-  market_cap: 23038687410
-  pe: 34.04041
-  yield_val: 0.4925124792013311
-  score: 60.0
-  price_change_1d: 1.1
-  price_diff_1d: 2.61
-  price_change_5d: 0.77
-  price_diff_5d: 1.82
-  momentum: 0.4
-  volatility: 1.74
-  volume: 104935
-  volume_change: -43.96
-  rsi: 61.13
-  price_history: 42.160,42.500,42.250,42.450,42.700,42.400,41.990,40.780,42.070,43.170
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: NEWS CORPORATION..
-  industry: Media & Entertainment
-- symbol: NXG
-  current_price: 17.06
-  market_cap: 11688878875
-  pe: null
-  yield_val: 0.0
-  score: 44.8
-  price_change_1d: -0.6
-  price_diff_1d: -3.4
-  price_change_5d: -0.16
-  price_diff_5d: -0.93
-  momentum: 0.6
-  volatility: 3.39
-  volume: 650672
-  volume_change: -21.24
-  rsi: 50.09
-  price_history: 17.170,17.190,16.710,16.320,17.350,17.220,17.240,16.620,17.660,17.060
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: NEXGEN ENERGY (CANADA) LTD
-  industry: Other
-- symbol: CAY
-  current_price: 0.135
-  market_cap: 288696108
+  name: AINSWORTH GAME TECHNOLOGY LIMITED
+  industry: Consumer Services
+- symbol: VAR
+  current_price: 0.005
+  market_cap: 8111554
   pe: -99999.99
   yield_val: 0.0
-  score: 42.4
-  price_change_1d: -0.005
-  price_diff_1d: -3.57
+  score: 0.0
+  price_change_1d: -0.0015
+  price_diff_1d: -23.08
+  price_change_5d: -0.0015
+  price_diff_5d: -23.08
+  momentum: -1.37
+  volatility: 10.47
+  volume: 29134411
+  volume_change: 799.91
+  rsi: 35.42
+  price_history: 0.008,0.008,0.008,0.007,0.007,0.007,0.007,0.007,0.007,0.005
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: VARISCAN MINES LIMITED
+  industry: Materials
+- symbol: RC1
+  current_price: 0.155
+  market_cap: 19808178
+  pe: -99999.99
+  yield_val: 0.0
+  score: 34.8
+  price_change_1d: -0.01
+  price_diff_1d: -6.06
+  price_change_5d: -0.005
+  price_diff_5d: -3.13
+  momentum: 0.33
+  volatility: 7.05
+  volume: 318711
+  volume_change: -18.83
+  rsi: 44.95
+  price_history: 0.160,0.155,0.155,0.170,0.175,0.160,0.185,0.175,0.165,0.155
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: REDCASTLE RESOURCES LIMITED
+  industry: Materials
+- symbol: MCO
+  current_price: 0.021
+  market_cap: 6036100
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.011
+  price_diff_1d: 110.0
+  price_change_5d: 0.008
+  price_diff_5d: 61.54
+  momentum: 3.1
+  volatility: 14.16
+  volume: 14748588
+  volume_change: 4038.97
+  rsi: 72.25
+  price_history: 0.011,0.011,0.012,0.012,0.013,0.013,0.012,0.011,0.010,0.021
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: MYECO GROUP LTD
+  industry: Materials
+- symbol: DVL
+  current_price: 0.041
+  market_cap: 48401139
+  pe: -99999.99
+  yield_val: 0.0
+  score: 60.1
+  price_change_1d: 0.001
+  price_diff_1d: 2.5
+  price_change_5d: 0.001
+  price_diff_5d: 2.5
+  momentum: 1.27
+  volatility: 4.72
+  volume: 2403571
+  volume_change: 35.23
+  rsi: 74.17
+  price_history: 0.037,0.039,0.038,0.039,0.040,0.040,0.042,0.040,0.040,0.041
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: DORSAVI LTD
+  industry: Health Care Equipment & Services
+- symbol: AGR
+  current_price: 0.022
+  market_cap: 40097765
+  pe: -99999.99
+  yield_val: 0.0
+  score: 73.8
+  price_change_1d: 0.002
+  price_diff_1d: 10.0
+  price_change_5d: 0.0
+  price_diff_5d: 0.0
+  momentum: 0.75
+  volatility: 7.92
+  volume: 2075671
+  volume_change: -65.77
+  rsi: 52.45
+  price_history: 0.021,0.024,0.022,0.021,0.020,0.022,0.020,0.020,0.020,0.022
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: AGUIA RESOURCES LIMITED
+  industry: Materials
+- symbol: MNC
+  current_price: 0.15
+  market_cap: 9240821
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.025
+  price_diff_1d: 20.0
+  price_change_5d: 0.04
+  price_diff_5d: 36.36
+  momentum: 2.09
+  volatility: 6.87
+  volume: 241872
+  volume_change: 4870.6
+  rsi: 76.13
+  price_history: 0.090,0.090,0.090,0.090,0.125,0.110,0.130,0.130,0.125,0.150
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: MERINO & CO. LIMITED
+  industry: Consumer Durables & Apparel
+- symbol: DUN
+  current_price: 0.05
+  market_cap: 11281209
+  pe: -99999.99
+  yield_val: 0.0
+  score: 68.5
+  price_change_1d: 0.002
+  price_diff_1d: 4.17
+  price_change_5d: 0.002
+  price_diff_5d: 4.17
+  momentum: 0.78
+  volatility: 4.83
+  volume: 301050
+  volume_change: 0.71
+  rsi: 53.83
+  price_history: 0.051,0.050,0.048,0.048,0.048,0.048,0.048,0.048,0.048,0.050
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: DUNDAS MINERALS LIMITED
+  industry: Materials
+- symbol: IOV
+  current_price: 0.4
+  market_cap: 29322476
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.11
+  price_diff_1d: 37.93
+  price_change_5d: 0.115
+  price_diff_5d: 40.35
+  momentum: 1.9
+  volatility: 14.72
+  volume: 216262
+  volume_change: 55.4
+  rsi: 66.38
+  price_history: 0.285,0.270,0.280,0.300,0.325,0.285,0.320,0.320,0.290,0.400
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ION VIDEO LTD
+  industry: Software & Services
+- symbol: OZM
+  current_price: 0.095
+  market_cap: 27465780
+  pe: -99999.99
+  yield_val: 0.0
+  score: 59.2
+  price_change_1d: -0.001
+  price_diff_1d: -1.04
   price_change_5d: 0.005
-  price_diff_5d: 3.85
-  momentum: -1.25
-  volatility: 4.9
-  volume: 517592
-  volume_change: -39.26
-  rsi: 48.53
-  price_history: 0.138,0.135,0.135,0.130,0.132,0.130,0.125,0.125,0.140,0.135
-  market_date: '2026-05-08'
+  price_diff_5d: 5.56
+  momentum: 0.59
+  volatility: 6.91
+  volume: 240880
+  volume_change: -75.06
+  rsi: 49.04
+  price_history: 0.096,0.097,0.097,0.094,0.091,0.090,0.099,0.094,0.096,0.095
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: CANYON RESOURCES LIMITED
+  name: OZAURUM RESOURCES LIMITED
   industry: Materials
-- symbol: FANG
-  current_price: 34.45
-  market_cap: 1477477143
-  pe: null
-  yield_val: 0.0
-  score: 53.4
-  price_change_1d: 0.3
-  price_diff_1d: 0.88
-  price_change_5d: 0.88
-  price_diff_5d: 2.62
-  momentum: 0.55
-  volatility: 1.43
-  volume: 140464
-  volume_change: -15.78
-  rsi: 74.6
-  price_history: 33.310,33.370,33.280,33.310,33.200,33.570,33.930,33.800,34.150,34.450
-  market_date: '2026-05-08'
-  stock_type: etf
-  name: GLOBAL X FANG+ ETF
-  industry: Other
-- symbol: JLL
-  current_price: 0.48
-  market_cap: 57898280
+- symbol: 88E
+  current_price: 0.023
+  market_cap: 31942872
   pe: -99999.99
   yield_val: 0.0
-  score: 0.0
-  price_change_1d: -0.085
-  price_diff_1d: -15.04
-  price_change_5d: -0.08
-  price_diff_5d: -14.29
-  momentum: -0.94
-  volatility: 7.35
-  volume: 819271
-  volume_change: 271.38
-  rsi: 41.17
-  price_history: 0.565,0.550,0.640,0.605,0.575,0.560,0.565,0.555,0.565,0.480
-  market_date: '2026-05-08'
+  score: 40.9
+  price_change_1d: -0.001
+  price_diff_1d: -4.17
+  price_change_5d: -0.0
+  price_diff_5d: -0.0
+  momentum: -0.16
+  volatility: 9.7
+  volume: 3633434
+  volume_change: -14.45
+  rsi: 43.14
+  price_history: 0.024,0.024,0.024,0.024,0.023,0.023,0.024,0.023,0.024,0.023
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: JINDALEE LITHIUM LIMITED
-  industry: Materials
-- symbol: OVT
-  current_price: 0.019
-  market_cap: 20945170
+  name: 88 ENERGY LIMITED
+  industry: Energy
+- symbol: AI1
+  current_price: 0.27
+  market_cap: 311949753
   pe: -99999.99
   yield_val: 0.0
-  score: 0.0
-  price_change_1d: -0.002
-  price_diff_1d: -9.52
-  price_change_5d: -0.01
-  price_diff_5d: -34.48
-  momentum: -0.26
-  volatility: 21.53
-  volume: 3828233
-  volume_change: -43.22
-  rsi: 49.8
-  price_history: 0.025,0.030,0.032,0.029,0.030,0.029,0.027,0.021,0.021,0.019
-  market_date: '2026-05-08'
+  score: 81.6
+  price_change_1d: -0.03
+  price_diff_1d: -10.0
+  price_change_5d: 0.05
+  price_diff_5d: 22.73
+  momentum: 3.5
+  volatility: 11.14
+  volume: 27488956
+  volume_change: 324.47
+  rsi: 70.29
+  price_history: 0.185,0.190,0.215,0.210,0.195,0.220,0.275,0.285,0.300,0.270
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: OVANTI LIMITED
-  industry: Media & Entertainment
-- symbol: CLZ
-  current_price: 0.001
-  market_cap: -1
+  name: ADISYN LTD
+  industry: Software & Services
+- symbol: FRX
+  current_price: 0.022
+  market_cap: 30334360
+  pe: 20.0
+  yield_val: 0.0
+  score: 72.8
+  price_change_1d: 0.002
+  price_diff_1d: 10.0
+  price_change_5d: 0.0
+  price_diff_5d: 0.0
+  momentum: 0.56
+  volatility: 7.47
+  volume: 506118
+  volume_change: -25.88
+  rsi: 54.97
+  price_history: 0.021,0.023,0.023,0.023,0.020,0.022,0.022,0.022,0.020,0.022
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: FLEXIROAM LIMITED
+  industry: Telecommunication Services
+- symbol: NES
+  current_price: 0.004
+  market_cap: 8214783
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.001
+  price_diff_1d: 33.33
+  price_change_5d: -0.0
+  price_diff_5d: -0.0
+  momentum: -0.67
+  volatility: 10.95
+  volume: 19553029
+  volume_change: 129.96
+  rsi: 51.92
+  price_history: 0.004,0.004,0.004,0.004,0.004,0.004,0.004,0.003,0.003,0.004
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: NELSON RESOURCES LIMITED.
+  industry: Materials
+- symbol: SLS
+  current_price: 1.47
+  market_cap: 229834115
+  pe: -99999.99
+  yield_val: 0.0
+  score: 85.4
+  price_change_1d: 0.135
+  price_diff_1d: 10.11
+  price_change_5d: 0.015
+  price_diff_5d: 1.03
+  momentum: 1.73
+  volatility: 8.63
+  volume: 1009754
+  volume_change: 63.56
+  rsi: 58.97
+  price_history: 1.470,1.470,1.560,1.660,1.565,1.455,1.400,1.310,1.335,1.470
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: SOLSTICE MINERALS LIMITED
+  industry: Materials
+- symbol: STX
+  current_price: 0.115
+  market_cap: 395933670
+  pe: -99999.99
+  yield_val: 0.0
+  score: 63.0
+  price_change_1d: 0.005
+  price_diff_1d: 4.55
+  price_change_5d: -0.0
+  price_diff_5d: -0.0
+  momentum: 0.79
+  volatility: 4.0
+  volume: 7707708
+  volume_change: 7.19
+  rsi: 52.82
+  price_history: 0.115,0.110,0.110,0.120,0.120,0.115,0.115,0.110,0.110,0.115
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: STRIKE ENERGY LIMITED
+  industry: Energy
+- symbol: HWK
+  current_price: 0.029
+  market_cap: 15208454
   pe: -99999.99
   yield_val: 0.0
   score: 50.0
   price_change_1d: 0.0
   price_diff_1d: 0.0
-  price_change_5d: -0.0
-  price_diff_5d: -0.0
-  momentum: 0.0
-  volatility: 0.0
-  volume: 0
-  volume_change: 0.0
-  rsi: 50.0
-  price_history: 0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001
-  market_date: '2026-05-08'
+  price_change_5d: 0.0
+  price_diff_5d: 0.0
+  momentum: -0.99
+  volatility: 8.2
+  volume: 14208100
+  volume_change: 204.71
+  rsi: 42.48
+  price_history: 0.030,0.027,0.027,0.028,0.027,0.029,0.028,0.027,0.031,0.029
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: CLASSIC MINERALS LTD
+  name: HAWK RESOURCES LIMITED.
   industry: Materials
-- symbol: XYZ
-  current_price: 103.06
-  market_cap: 54906980063
-  pe: 33.21416
+- symbol: LGP
+  current_price: 0.098
+  market_cap: 30279735
+  pe: 5.11628
   yield_val: 0.0
-  score: 71.3
-  price_change_1d: 4.72
-  price_diff_1d: 4.8
-  price_change_5d: 3.51
-  price_diff_5d: 3.53
-  momentum: 1.29
-  volatility: 3.91
-  volume: 234288
-  volume_change: 27.14
-  rsi: 64.76
-  price_history: 99.630,99.450,97.950,97.380,97.970,99.550,100.530,98.420,98.340,103.060
-  market_date: '2026-05-08'
+  score: 39.3
+  price_change_1d: -0.001
+  price_diff_1d: -1.01
+  price_change_5d: -0.002
+  price_diff_5d: -2.0
+  momentum: -1.14
+  volatility: 4.09
+  volume: 74022
+  volume_change: -57.53
+  rsi: 50.27
+  price_history: 0.099,0.096,0.096,0.098,0.098,0.100,0.098,0.096,0.099,0.098
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: BLOCK, INC.
-  industry: Financial Services
-- symbol: SPX
-  current_price: 0.0015
-  market_cap: 8840339
+  name: LITTLE GREEN PHARMA LTD
+  industry: Pharmaceuticals, Biotechnology & Life Sciences
+- symbol: NHE
+  current_price: 0.027
+  market_cap: 19911313
   pe: -99999.99
   yield_val: 0.0
-  score: 47.3
+  score: 48.2
   price_change_1d: 0.0
   price_diff_1d: 0.0
   price_change_5d: -0.0
   price_diff_5d: -0.0
-  momentum: -1.54
-  volatility: 18.79
-  volume: 20207956
-  volume_change: 347.05
-  rsi: 39.53
-  price_history: 0.002,0.002,0.002,0.002,0.002,0.002,0.002,0.001,0.002,0.001
-  market_date: '2026-05-08'
+  momentum: -1.35
+  volatility: 6.62
+  volume: 1989443
+  volume_change: 85.17
+  rsi: 43.25
+  price_history: 0.027,0.029,0.029,0.028,0.028,0.027,0.028,0.026,0.027,0.027
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: SPENDA LIMITED
-  industry: Software & Services
-- symbol: PAT
-  current_price: 0.115
-  market_cap: 34312017
+  name: NOBLE HELIUM LIMITED
+  industry: Energy
+- symbol: STV
+  current_price: 0.01
+  market_cap: 13503888
   pe: -99999.99
   yield_val: 0.0
-  score: 40.6
-  price_change_1d: -0.01
-  price_diff_1d: -8.0
-  price_change_5d: -0.01
-  price_diff_5d: -8.0
-  momentum: 2.72
-  volatility: 8.56
-  volume: 6389299
-  volume_change: 190.05
-  rsi: 64.65
-  price_history: 0.125,0.110,0.110,0.120,0.120,0.125,0.125,0.130,0.125,0.115
-  market_date: '2026-05-08'
+  score: 39.8
+  price_change_1d: -0.002
+  price_diff_1d: -16.67
+  price_change_5d: 0.001
+  price_diff_5d: 11.11
+  momentum: 0.29
+  volatility: 8.21
+  volume: 22282442
+  volume_change: 806.84
+  rsi: 50.59
+  price_history: 0.009,0.009,0.010,0.009,0.009,0.009,0.009,0.010,0.012,0.010
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: PATRIOT RESOURCES LIMITED
+  name: SWIFT TV LTD
+  industry: Media & Entertainment
+- symbol: BXN
+  current_price: 0.07200000000000001
+  market_cap: 158941602
+  pe: 17.94872
+  yield_val: 0.0
+  score: 96.0
+  price_change_1d: 0.002
+  price_diff_1d: 2.86
+  price_change_5d: 0.012
+  price_diff_5d: 20.0
+  momentum: 2.05
+  volatility: 4.68
+  volume: 3618941
+  volume_change: 25.17
+  rsi: 62.41
+  price_history: 0.058,0.060,0.058,0.057,0.058,0.060,0.063,0.065,0.070,0.072
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: BIOXYNE LIMITED
+  industry: Pharmaceuticals, Biotechnology & Life Sciences
+- symbol: PR1
+  current_price: 0.71
+  market_cap: 37597383
+  pe: -99999.99
+  yield_val: 0.0
+  score: 98.4
+  price_change_1d: 0.06
+  price_diff_1d: 9.23
+  price_change_5d: 0.06
+  price_diff_5d: 9.23
+  momentum: 3.21
+  volatility: 5.36
+  volume: 233432
+  volume_change: 214.59
+  rsi: 81.71
+  price_history: 0.560,0.560,0.550,0.570,0.550,0.650,0.647,0.650,0.650,0.710
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: PURE RESOURCES LIMITED
   industry: Materials
-- symbol: MCA
-  current_price: 0.165
-  market_cap: 17350941
-  pe: 5.92467
+- symbol: ATC
+  current_price: 0.01
+  market_cap: 45373957
+  pe: -99999.99
+  yield_val: 0.0
+  score: 0.0
+  price_change_1d: -0.007
+  price_diff_1d: -41.18
+  price_change_5d: -0.008
+  price_diff_5d: -44.44
+  momentum: -2.93
+  volatility: 7.09
+  volume: 70926212
+  volume_change: 1265.9
+  rsi: 25.95
+  price_history: 0.018,0.017,0.017,0.017,0.017,0.018,0.017,0.018,0.017,0.010
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ALTECH BATTERIES LTD
+  industry: Capital Goods
+- symbol: GNM
+  current_price: 0.033
+  market_cap: 15731638
+  pe: -99999.99
+  yield_val: 0.0
+  score: 56.0
+  price_change_1d: 0.001
+  price_diff_1d: 3.13
+  price_change_5d: 0.001
+  price_diff_5d: 3.12
+  momentum: -0.98
+  volatility: 5.68
+  volume: 246805
+  volume_change: -70.72
+  rsi: 48.96
+  price_history: 0.037,0.035,0.034,0.033,0.033,0.032,0.033,0.035,0.032,0.033
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: GREAT NORTHERN MINERALS LIMITED
+  industry: Materials
+- symbol: NVU
+  current_price: 0.063
+  market_cap: 68068425
+  pe: -99999.99
+  yield_val: 0.0
+  score: 54.5
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.004
+  price_diff_5d: 6.78
+  momentum: -1.14
+  volatility: 4.52
+  volume: 2744584
+  volume_change: 14.43
+  rsi: 47.17
+  price_history: 0.074,0.076,0.071,0.059,0.063,0.059,0.059,0.062,0.062,0.063
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: NANOVEU LIMITED
+  industry: Technology Hardware & Equipment
+- symbol: IXR
+  current_price: 0.29
+  market_cap: 65548547
+  pe: -99999.99
+  yield_val: 0.0
+  score: 54.2
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.01
+  price_diff_5d: 3.57
+  momentum: -1.24
+  volatility: 5.32
+  volume: 916950
+  volume_change: 64.42
+  rsi: 46.58
+  price_history: 0.315,0.310,0.290,0.290,0.300,0.280,0.280,0.265,0.290,0.290
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: IONIC RARE EARTHS LIMITED
+  industry: Materials
+- symbol: ACR
+  current_price: 0.012
+  market_cap: 4516694
+  pe: -99999.99
+  yield_val: 0.0
+  score: 82.4
+  price_change_1d: 0.001
+  price_diff_1d: 9.09
+  price_change_5d: 0.001
+  price_diff_5d: 9.09
+  momentum: -0.88
+  volatility: 4.51
+  volume: 6377805
+  volume_change: 2537.85
+  rsi: 58.33
+  price_history: 0.012,0.011,0.012,0.012,0.011,0.011,0.011,0.011,0.011,0.012
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ACRUX LIMITED
+  industry: Pharmaceuticals, Biotechnology & Life Sciences
+- symbol: EMV
+  current_price: 1.8900000000000001
+  market_cap: 177280387
+  pe: -99999.99
+  yield_val: 0.0
+  score: 50.2
+  price_change_1d: -0.0175
+  price_diff_1d: -0.92
+  price_change_5d: -0.055
+  price_diff_5d: -2.83
+  momentum: 1.26
+  volatility: 2.12
+  volume: 25408
+  volume_change: -35.72
+  rsi: 62.29
+  price_history: 1.760,1.770,1.780,1.880,1.920,1.945,1.930,1.955,1.908,1.890
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: EMVISION MEDICAL DEVICES LTD
+  industry: Health Care Equipment & Services
+- symbol: ESR
+  current_price: 0.035
+  market_cap: 72947720
+  pe: -99999.99
+  yield_val: 0.0
+  score: 83.1
+  price_change_1d: 0.002
+  price_diff_1d: 6.06
+  price_change_5d: 0.002
+  price_diff_5d: 6.06
+  momentum: 1.38
+  volatility: 4.36
+  volume: 4132602
+  volume_change: 82.6
+  rsi: 64.27
+  price_history: 0.030,0.030,0.032,0.033,0.031,0.033,0.032,0.033,0.033,0.035
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ESTRELLA RESOURCES LIMITED
+  industry: Materials
+- symbol: ARN
+  current_price: 0.445
+  market_cap: 103787852
+  pe: -99999.99
+  yield_val: 0.0
+  score: 60.6
+  price_change_1d: 0.005
+  price_diff_1d: 1.14
+  price_change_5d: 0.005
+  price_diff_5d: 1.14
+  momentum: 0.33
+  volatility: 3.6
+  volume: 989842
+  volume_change: 437.06
+  rsi: 52.18
+  price_history: 0.420,0.425,0.440,0.470,0.440,0.440,0.450,0.440,0.440,0.445
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ALDORO RESOURCES LIMITED
+  industry: Materials
+- symbol: RCR
+  current_price: 0.022
+  market_cap: 7030124
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.004
+  price_diff_1d: 22.22
+  price_change_5d: 0.004
+  price_diff_5d: 22.22
+  momentum: 3.05
+  volatility: 7.61
+  volume: 2156242
+  volume_change: 65.3
+  rsi: 70.97
+  price_history: 0.016,0.016,0.017,0.018,0.018,0.018,0.018,0.018,0.018,0.022
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: RINCON RESOURCES LIMITED
+  industry: Materials
+- symbol: GG8
+  current_price: 0.425
+  market_cap: 315040818
+  pe: -99999.99
+  yield_val: 0.0
+  score: 70.1
+  price_change_1d: -0.005
+  price_diff_1d: -1.16
+  price_change_5d: 0.045
+  price_diff_5d: 11.84
+  momentum: -0.06
+  volatility: 4.5
+  volume: 2536506
+  volume_change: 88.97
+  rsi: 65.67
+  price_history: 0.350,0.345,0.335,0.360,0.385,0.380,0.400,0.420,0.430,0.425
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: GORILLA GOLD MINES LTD
+  industry: Materials
+- symbol: CCG
+  current_price: 0.069
+  market_cap: 39913627
+  pe: 67.59259
+  yield_val: 3.4246575342465753
+  score: 40.8
+  price_change_1d: -0.004
+  price_diff_1d: -5.48
+  price_change_5d: -0.001
+  price_diff_5d: -1.43
+  momentum: 0.79
+  volatility: 2.95
+  volume: 90000
+  volume_change: -71.19
+  rsi: 51.66
+  price_history: 0.067,0.067,0.066,0.070,0.070,0.070,0.070,0.073,0.073,0.069
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: COMMS GROUP LTD
+  industry: Telecommunication Services
+- symbol: GG1
+  current_price: 0.13
+  market_cap: 7914987
+  pe: -99999.99
   yield_val: 0.0
   score: 62.4
-  price_change_1d: 0.025
-  price_diff_1d: 17.86
-  price_change_5d: -0.0412
-  price_diff_5d: -19.98
-  momentum: -1.68
-  volatility: 6.21
-  volume: 2089022
-  volume_change: 973.34
-  rsi: 25.49
-  price_history: 0.216,0.208,0.204,0.206,0.206,0.206,0.150,0.145,0.140,0.165
-  market_date: '2026-05-08'
+  price_change_1d: 0.005
+  price_diff_1d: 4.0
+  price_change_5d: 0.005
+  price_diff_5d: 4.0
+  momentum: -1.32
+  volatility: 5.78
+  volume: 122689
+  volume_change: 77.9
+  rsi: 46.71
+  price_history: 0.130,0.135,0.135,0.135,0.125,0.125,0.130,0.130,0.125,0.130
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: MURRAY COD AUSTRALIA LIMITED
-  industry: Food, Beverage & Tobacco
-- symbol: SBZ
-  current_price: 0.195
-  market_cap: 108036391
-  pe: -99999.99
-  yield_val: 0.0
-  score: 36.0
-  price_change_1d: -0.005
-  price_diff_1d: -2.5
-  price_change_5d: -0.005
-  price_diff_5d: -2.5
+  name: GREEN & GOLD MINERALS LIMITED
+  industry: Materials
+- symbol: MTS
+  current_price: 2.92
+  market_cap: 3013249670
+  pe: 10.63334
+  yield_val: 6.56934306569343
+  score: 73.9
+  price_change_1d: 0.18
+  price_diff_1d: 6.57
+  price_change_5d: 0.2
+  price_diff_5d: 7.35
   momentum: -1.06
-  volatility: 2.85
-  volume: 289607
-  volume_change: 16.77
-  rsi: 46.5
-  price_history: 0.195,0.195,0.195,0.195,0.195,0.200,0.195,0.195,0.200,0.195
-  market_date: '2026-05-08'
+  volatility: 1.63
+  volume: 8179879
+  volume_change: 92.08
+  rsi: 55.81
+  price_history: 2.780,2.780,2.720,2.700,2.650,2.720,2.740,2.770,2.740,2.920
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: SCHOOLBLAZER LIMITED
-  industry: Capital Goods
-- symbol: ASP
-  current_price: 1.9000000000000001
-  market_cap: 22124903
+  name: METCASH LIMITED
+  industry: Consumer Staples Distribution & Retail
+- symbol: A11
+  current_price: 0.325
+  market_cap: 256481053
   pe: -99999.99
   yield_val: 0.0
-  score: 48.3
+  score: 90.6
+  price_change_1d: 0.005
+  price_diff_1d: 1.56
+  price_change_5d: 0.05
+  price_diff_5d: 18.18
+  momentum: 1.05
+  volatility: 8.04
+  volume: 2257802
+  volume_change: 330.15
+  rsi: 54.93
+  price_history: 0.315,0.325,0.310,0.295,0.290,0.275,0.280,0.315,0.320,0.325
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ATLANTIC LITHIUM LIMITED
+  industry: Materials
+- symbol: BDX
+  current_price: 0.081
+  market_cap: 27282564
+  pe: -99999.99
+  yield_val: 0.0
+  score: 72.6
+  price_change_1d: 0.007
+  price_diff_1d: 9.46
+  price_change_5d: 0.003
+  price_diff_5d: 3.85
+  momentum: -1.41
+  volatility: 4.61
+  volume: 364636
+  volume_change: 62.28
+  rsi: 45.63
+  price_history: 0.080,0.080,0.083,0.083,0.075,0.078,0.075,0.071,0.074,0.081
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: BCAL DIAGNOSTICS LIMITED
+  industry: Pharmaceuticals, Biotechnology & Life Sciences
+- symbol: PKY
+  current_price: 0.053
+  market_cap: 32175121
+  pe: -99999.99
+  yield_val: 0.0
+  score: 97.2
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: 0.009
+  price_diff_5d: 20.45
+  momentum: 3.31
+  volatility: 8.38
+  volume: 5027910
+  volume_change: 147.17
+  rsi: 74.73
+  price_history: 0.041,0.052,0.053,0.050,0.045,0.044,0.044,0.049,0.053,0.053
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: PATHKEY.AI LTD
+  industry: Software & Services
+- symbol: GA8
+  current_price: 0.077
+  market_cap: 44083986
+  pe: -99999.99
+  yield_val: 0.0
+  score: 55.2
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: -0.001
+  price_diff_5d: -1.28
+  momentum: 1.42
+  volatility: 5.06
+  volume: 1838717
+  volume_change: 5.81
+  rsi: 57.94
+  price_history: 0.075,0.085,0.080,0.079,0.077,0.078,0.076,0.080,0.077,0.077
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: GOLDARC RESOURCES LIMITED
+  industry: Materials
+- symbol: PNR
+  current_price: 3.41
+  market_cap: 1328857595
+  pe: 12.62946
+  yield_val: 0.0
+  score: 55.9
+  price_change_1d: 0.02
+  price_diff_1d: 0.59
+  price_change_5d: 0.25
+  price_diff_5d: 7.91
+  momentum: -1.42
+  volatility: 4.71
+  volume: 1887519
+  volume_change: -28.59
+  rsi: 44.45
+  price_history: 3.380,3.270,3.250,3.210,3.210,3.160,3.250,3.430,3.390,3.410
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: PANTORO GOLD LIMITED
+  industry: Materials
+- symbol: MKR
+  current_price: 0.096
+  market_cap: 138525746
+  pe: -99999.99
+  yield_val: 0.0
+  score: 72.4
+  price_change_1d: 0.004
+  price_diff_1d: 4.35
+  price_change_5d: 0.009
+  price_diff_5d: 10.34
+  momentum: -0.37
+  volatility: 8.11
+  volume: 12391604
+  volume_change: -5.98
+  rsi: 49.86
+  price_history: 0.092,0.091,0.089,0.089,0.088,0.087,0.090,0.088,0.092,0.096
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: MANUKA RESOURCES LTD.
+  industry: Materials
+- symbol: ADX
+  current_price: 0.029
+  market_cap: 30408116
+  pe: -99999.99
+  yield_val: 0.0
+  score: 16.8
+  price_change_1d: -0.005
+  price_diff_1d: -14.71
+  price_change_5d: -0.002
+  price_diff_5d: -6.45
+  momentum: 0.18
+  volatility: 5.31
+  volume: 10672857
+  volume_change: 356.75
+  rsi: 46.01
+  price_history: 0.030,0.031,0.032,0.030,0.029,0.031,0.031,0.032,0.034,0.029
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: ADX ENERGY LTD
+  industry: Energy
+- symbol: PEB
+  current_price: 0.145
+  market_cap: 148281579
+  pe: -99999.99
+  yield_val: 0.0
+  score: 41.5
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: -0.005
+  price_diff_5d: -3.33
+  momentum: -0.7
+  volatility: 5.58
+  volume: 191
+  volume_change: -99.31
+  rsi: 33.88
+  price_history: 0.150,0.150,0.150,0.150,0.150,0.150,0.150,0.150,0.150,0.145
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: PACIFIC EDGE LIMITED
+  industry: Pharmaceuticals, Biotechnology & Life Sciences
+- symbol: FMR
+  current_price: 0.27
+  market_cap: 10071953
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.07
+  price_diff_1d: 35.0
+  price_change_5d: 0.065
+  price_diff_5d: 31.71
+  momentum: 0.17
+  volatility: 7.32
+  volume: 1118645
+  volume_change: 638.22
+  rsi: 67.08
+  price_history: 0.230,0.225,0.220,0.220,0.220,0.205,0.200,0.200,0.200,0.270
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: FMR RESOURCES LIMITED
+  industry: Materials
+- symbol: RGL
+  current_price: 0.014
+  market_cap: 32183726
+  pe: -99999.99
+  yield_val: 0.0
+  score: 52.3
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: -0.0
+  price_diff_5d: -0.0
+  momentum: 0.46
+  volatility: 9.17
+  volume: 3831477
+  volume_change: -61.05
+  rsi: 46.84
+  price_history: 0.016,0.016,0.016,0.015,0.015,0.014,0.014,0.014,0.014,0.014
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: RIVERSGOLD LIMITED
+  industry: Materials
+- symbol: CCV
+  current_price: 0.305
+  market_cap: 220572110
+  pe: 9.36273
+  yield_val: 6.451612903225806
+  score: 48.1
+  price_change_1d: -0.005
+  price_diff_1d: -1.61
+  price_change_5d: 0.005
+  price_diff_5d: 1.67
+  momentum: -0.23
+  volatility: 2.49
+  volume: 75424
+  volume_change: -80.86
+  rsi: 49.82
+  price_history: 0.315,0.315,0.305,0.305,0.305,0.300,0.300,0.305,0.310,0.305
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: CASH CONVERTERS INTERNATIONAL
+  industry: Financial Services
+- symbol: HTM
+  current_price: 0.245
+  market_cap: 25793557
+  pe: -99999.99
+  yield_val: 0.0
+  score: 40.2
+  price_change_1d: 0.0
+  price_diff_1d: 0.0
+  price_change_5d: -0.005
+  price_diff_5d: -2.0
+  momentum: -1.36
+  volatility: 3.59
+  volume: 67551
+  volume_change: -51.91
+  rsi: 39.79
+  price_history: 0.248,0.255,0.255,0.255,0.255,0.250,0.250,0.250,0.245,0.245
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: HIGH-TECH METALS LTD
+  industry: Materials
+- symbol: PUR
+  current_price: 0.098
+  market_cap: 22008940
+  pe: -99999.99
+  yield_val: 0.0
+  score: 94.5
+  price_change_1d: 0.014
+  price_diff_1d: 16.67
+  price_change_5d: 0.006
+  price_diff_5d: 6.52
+  momentum: 0.28
+  volatility: 5.14
+  volume: 862633
+  volume_change: 28.47
+  rsi: 58.84
+  price_history: 0.098,0.097,0.096,0.094,0.094,0.092,0.087,0.087,0.084,0.098
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: PURSUIT MINERALS LTD
+  industry: Materials
+- symbol: EVO
+  current_price: 0.42
+  market_cap: 81464514
+  pe: 6.88705
+  yield_val: 3.75
+  score: 58.0
+  price_change_1d: 0.02
+  price_diff_1d: 5.0
+  price_change_5d: 0.0125
+  price_diff_5d: 3.07
+  momentum: -1.32
+  volatility: 2.21
+  volume: 126005
+  volume_change: -48.72
+  rsi: 48.68
+  price_history: 0.450,0.420,0.425,0.430,0.415,0.407,0.400,0.400,0.400,0.420
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: EMBARK EARLY EDUCATION LIMITED
+  industry: Consumer Services
+- symbol: XST
+  current_price: 0.034
+  market_cap: 14396788
+  pe: -99999.99
+  yield_val: 0.0
+  score: 100.0
+  price_change_1d: 0.004
+  price_diff_1d: 13.33
+  price_change_5d: 0.006
+  price_diff_5d: 21.43
+  momentum: 2.25
+  volatility: 5.58
+  volume: 6327092
+  volume_change: 196.1
+  rsi: 59.57
+  price_history: 0.032,0.031,0.028,0.029,0.032,0.028,0.029,0.030,0.030,0.034
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: XSTATE RESOURCES LIMITED
+  industry: Energy
+- symbol: DLI
+  current_price: 0.25
+  market_cap: 175753945
+  pe: -99999.99
+  yield_val: 0.0
+  score: 66.8
+  price_change_1d: 0.005
+  price_diff_1d: 2.04
+  price_change_5d: 0.005
+  price_diff_5d: 2.04
+  momentum: 0.94
+  volatility: 5.38
+  volume: 3646527
+  volume_change: 148.84
+  rsi: 60.98
+  price_history: 0.240,0.235,0.235,0.240,0.240,0.245,0.245,0.250,0.245,0.250
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: DELTA LITHIUM LIMITED
+  industry: Materials
+- symbol: MRT
+  current_price: 0.77
+  market_cap: 290043498
+  pe: -99999.99
+  yield_val: 0.0
+  score: 50.0
+  price_change_1d: -0.01
+  price_diff_1d: -1.28
+  price_change_5d: 0.035
+  price_diff_5d: 4.76
+  momentum: -0.91
+  volatility: 2.93
+  volume: 392912
+  volume_change: -62.58
+  rsi: 38.89
+  price_history: 0.790,0.750,0.755,0.745,0.760,0.735,0.760,0.780,0.780,0.770
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: MARITANA MINERALS LIMITED
+  industry: Materials
+- symbol: BEZ
+  current_price: 0.105
+  market_cap: 43900595
+  pe: -99999.99
+  yield_val: 0.0
+  score: 53.9
   price_change_1d: 0.0
   price_diff_1d: 0.0
   price_change_5d: 0.0
   price_diff_5d: 0.0
-  momentum: -0.34
-  volatility: 6.41
-  volume: 6
-  volume_change: -98.76
-  rsi: 43.63
-  price_history: 2.100,1.900,1.900,1.900,1.900,1.900,1.900,1.900,1.900,1.900
-  market_date: '2026-05-08'
+  momentum: 0.78
+  volatility: 11.34
+  volume: 92443
+  volume_change: -88.4
+  rsi: 47.81
+  price_history: 0.110,0.105,0.105,0.108,0.105,0.105,0.102,0.105,0.105,0.105
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: ASPERMONT LIMITED.
-  industry: Media & Entertainment
-- symbol: EGY
-  current_price: 0.025
-  market_cap: 12498814
+  name: BESRA GOLD INC.
+  industry: Materials
+- symbol: EXR
+  current_price: 0.135
+  market_cap: 252173273
   pe: -99999.99
   yield_val: 0.0
-  score: 52.2
+  score: 57.4
   price_change_1d: 0.0
   price_diff_1d: 0.0
   price_change_5d: -0.0
   price_diff_5d: -0.0
-  momentum: 1.44
-  volatility: 5.25
-  volume: 0
-  volume_change: -100.0
-  rsi: 80.3
-  price_history: 0.025,0.025,0.025,0.025,0.025,0.025,0.025,0.025,0.025,0.025
-  market_date: '2026-05-08'
+  momentum: 1.49
+  volatility: 5.62
+  volume: 2674546
+  volume_change: -57.83
+  rsi: 51.14
+  price_history: 0.155,0.150,0.150,0.145,0.140,0.135,0.135,0.130,0.135,0.135
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: ENERGY TECHNOLOGIES LIMITED
-  industry: Capital Goods
-- symbol: AM5
-  current_price: 0.008
-  market_cap: 6848823
-  pe: -99999.99
-  yield_val: 0.0
-  score: 69.3
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: 0.001
-  price_diff_5d: 14.29
-  momentum: -0.42
-  volatility: 7.79
-  volume: 1358125
-  volume_change: -6.83
-  rsi: 60.69
-  price_history: 0.007,0.007,0.008,0.007,0.007,0.007,0.007,0.008,0.008,0.008
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: ANTARES METALS LIMITED
-  industry: Materials
-- symbol: TAM
-  current_price: 0.079
-  market_cap: 108108928
-  pe: -99999.99
-  yield_val: 0.0
-  score: 0.0
-  price_change_1d: -0.013
-  price_diff_1d: -14.13
-  price_change_5d: -0.017
-  price_diff_5d: -17.71
-  momentum: -0.64
-  volatility: 5.15
-  volume: 3097395
-  volume_change: 214.61
-  rsi: 33.73
-  price_history: 0.094,0.095,0.100,0.095,0.093,0.096,0.092,0.092,0.092,0.079
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: TANAMI GOLD NL
-  industry: Materials
-- symbol: X2M
-  current_price: 0.0045000000000000005
-  market_cap: 5920515
-  pe: -99999.99
-  yield_val: 0.0
-  score: 88.4
-  price_change_1d: 0.0005
-  price_diff_1d: 12.5
-  price_change_5d: 0.0005
-  price_diff_5d: 12.5
-  momentum: -1.06
-  volatility: 11.34
-  volume: 620056
-  volume_change: -81.55
-  rsi: 47.93
-  price_history: 0.003,0.004,0.004,0.004,0.003,0.004,0.004,0.004,0.004,0.004
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: X2M CONNECT LIMITED
-  industry: Technology Hardware & Equipment
-- symbol: AAI
-  current_price: 87.26
-  market_cap: 22889807758
-  pe: 15.95322
-  yield_val: 0.4872031358081623
-  score: 51.0
-  price_change_1d: 0.52
-  price_diff_1d: 0.6
-  price_change_5d: -1.07
-  price_diff_5d: -1.21
-  momentum: 0.33
-  volatility: 3.08
-  volume: 79197
-  volume_change: -69.01
-  rsi: 40.81
-  price_history: 92.300,93.450,89.720,87.480,89.620,88.330,87.600,88.800,86.740,87.260
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: ALCOA CORPORATION
-  industry: Materials
-- symbol: CZN
-  current_price: 0.2
-  market_cap: 10298683
-  pe: -99999.99
-  yield_val: 0.0
-  score: 100.0
-  price_change_1d: 0.06
-  price_diff_1d: 42.86
-  price_change_5d: 0.045
-  price_diff_5d: 29.03
-  momentum: 2.01
-  volatility: 7.84
-  volume: 942930
-  volume_change: 419.26
-  rsi: 60.73
-  price_history: 0.175,0.150,0.165,0.165,0.150,0.155,0.155,0.155,0.140,0.200
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: CORAZON MINING LIMITED
-  industry: Materials
-- symbol: PIA
-  current_price: 1.27
-  market_cap: 322215696
-  pe: 28.14681
-  yield_val: 4.4
-  score: 57.2
-  price_change_1d: 0.02
-  price_diff_1d: 1.6
-  price_change_5d: 0.0375
-  price_diff_5d: 3.04
-  momentum: 0.89
-  volatility: 0.9
-  volume: 203884
-  volume_change: 45.47
-  rsi: 70.37
-  price_history: 1.225,1.225,1.230,1.220,1.230,1.232,1.235,1.235,1.250,1.270
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: PENGANA INTERNATIONAL EQUITIES LIMITED
-  industry: Other
-- symbol: CEL
-  current_price: 0.135
-  market_cap: 329242822
-  pe: 39.70588
-  yield_val: 0.0
-  score: 51.9
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: 0.005
-  price_diff_5d: 3.85
-  momentum: -0.77
-  volatility: 5.24
-  volume: 0
-  volume_change: -100.0
-  rsi: 43.19
-  price_history: 0.145,0.135,0.140,0.140,0.140,0.130,0.125,0.135,0.135,0.135
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: CHALLENGER GOLD LIMITED
-  industry: Materials
-- symbol: M24
+  name: ELIXIR ENERGY LIMITED
+  industry: Energy
+- symbol: OLL
   current_price: 0.023
-  market_cap: 9263109
+  market_cap: 14858123
   pe: -99999.99
   yield_val: 0.0
   score: 100.0
   price_change_1d: 0.004
   price_diff_1d: 21.05
-  price_change_5d: 0.002
-  price_diff_5d: 9.52
-  momentum: 0.27
-  volatility: 7.05
-  volume: 995228
-  volume_change: 53.4
-  rsi: 55.63
-  price_history: 0.023,0.023,0.023,0.024,0.024,0.021,0.019,0.018,0.019,0.023
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: MAMBA EXPLORATION LIMITED
-  industry: Materials
-- symbol: NMT
-  current_price: 0.04
-  market_cap: 33273478
-  pe: -99999.99
-  yield_val: 0.0
-  score: 55.7
-  price_change_1d: 0.0005
-  price_diff_1d: 1.27
-  price_change_5d: 0.002
-  price_diff_5d: 5.26
-  momentum: -1.95
-  volatility: 4.27
-  volume: 1312174
-  volume_change: 52.46
-  rsi: 37.04
-  price_history: 0.041,0.038,0.037,0.038,0.039,0.038,0.038,0.038,0.040,0.040
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: NEOMETALS LTD
-  industry: Materials
-- symbol: CYL
-  current_price: 5.45
-  market_cap: 1398665243
-  pe: 12.9952
-  yield_val: 0.0
-  score: 46.4
-  price_change_1d: 0.09
-  price_diff_1d: 1.68
-  price_change_5d: 0.05
-  price_diff_5d: 0.93
-  momentum: -1.67
-  volatility: 4.46
-  volume: 1078150
-  volume_change: -5.0
-  rsi: 40.08
-  price_history: 6.290,6.040,5.650,5.170,5.210,5.400,5.040,5.150,5.360,5.450
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: CATALYST METALS LIMITED
-  industry: Materials
-- symbol: AMA
-  current_price: 0.6
-  market_cap: 274445702
-  pe: -99999.99
-  yield_val: 0.0
-  score: 70.0
-  price_change_1d: 0.03
-  price_diff_1d: 5.26
-  price_change_5d: 0.05
-  price_diff_5d: 9.09
-  momentum: -0.83
-  volatility: 3.2
-  volume: 320337
-  volume_change: -52.82
-  rsi: 57.95
-  price_history: 0.560,0.580,0.560,0.590,0.560,0.550,0.535,0.530,0.570,0.600
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: AMA GROUP LIMITED
-  industry: Commercial & Professional Services
-- symbol: REA
-  current_price: 176.89000000000001
-  market_cap: 22969350855
-  pe: 40.24589
-  yield_val: 1.5016047684548373
-  score: 54.5
-  price_change_1d: 2.41
-  price_diff_1d: 1.38
-  price_change_5d: 1.82
-  price_diff_5d: 1.04
-  momentum: 0.04
-  volatility: 2.21
-  volume: 257391
-  volume_change: -6.89
-  rsi: 61.71
-  price_history: 169.500,166.360,167.270,169.850,170.330,175.070,175.710,174.120,174.480,176.890
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: REA GROUP LTD
-  industry: Media & Entertainment
-- symbol: T88
-  current_price: 0.06
-  market_cap: 7255211
-  pe: -99999.99
-  yield_val: 0.0
-  score: 30.2
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: -0.013
-  price_diff_5d: -17.81
-  momentum: -1.61
-  volatility: 6.97
-  volume: 128080
-  volume_change: 533.93
-  rsi: 28.26
-  price_history: 0.086,0.083,0.075,0.074,0.073,0.073,0.070,0.070,0.060,0.060
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: TAITON RESOURCES LIMITED
-  industry: Materials
-- symbol: AQN
-  current_price: 0.42
-  market_cap: 46630506
-  pe: -99999.99
-  yield_val: 0.0
-  score: 33.8
-  price_change_1d: -0.02
-  price_diff_1d: -4.55
-  price_change_5d: -0.035
-  price_diff_5d: -7.69
-  momentum: -0.11
-  volatility: 3.36
-  volume: 120000
-  volume_change: 62.47
-  rsi: 45.61
-  price_history: 0.450,0.450,0.450,0.435,0.475,0.455,0.440,0.440,0.440,0.420
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: AQUIRIAN LIMITED
-  industry: Commercial & Professional Services
-- symbol: GRE
-  current_price: 0.075
-  market_cap: 20587722
-  pe: -99999.99
-  yield_val: 0.0
-  score: 33.5
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: -0.007
-  price_diff_5d: -8.54
-  momentum: -0.74
-  volatility: 8.05
-  volume: 0
-  volume_change: -100.0
-  rsi: 41.74
-  price_history: 0.080,0.080,0.080,0.080,0.083,0.082,0.078,0.080,0.075,0.075
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: GREENTECH METALS LIMITED
-  industry: Materials
-- symbol: YOW
-  current_price: 0.014
-  market_cap: -1
-  pe: -99999.99
-  yield_val: 0.0
-  score: 50.0
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: -0.0
-  price_diff_5d: -0.0
-  momentum: 0.0
-  volatility: 0.0
-  volume: 0
-  volume_change: 0.0
-  rsi: 50.0
-  price_history: 0.014,0.014,0.014,0.014,0.014,0.014,0.014,0.014,0.014,0.014
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: YOWIE GROUP LTD
-  industry: Food, Beverage & Tobacco
-- symbol: LPM
-  current_price: 0.125
-  market_cap: 20064200
-  pe: -99999.99
-  yield_val: 0.0
-  score: 23.5
-  price_change_1d: -0.005
-  price_diff_1d: -3.85
-  price_change_5d: -0.015
-  price_diff_5d: -10.71
-  momentum: -0.55
-  volatility: 6.85
-  volume: 41014
-  volume_change: -47.14
-  rsi: 48.17
-  price_history: 0.125,0.130,0.120,0.115,0.115,0.140,0.130,0.130,0.130,0.125
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: LITHIUM PLUS MINERALS LTD.
-  industry: Materials
-- symbol: IBC
-  current_price: 0.435
-  market_cap: 43924606
-  pe: 13.65348
-  yield_val: 5.977011494252873
-  score: 54.4
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: -0.005
-  price_diff_5d: -1.14
-  momentum: 1.22
-  volatility: 0.95
-  volume: 0
-  volume_change: -100.0
-  rsi: 53.69
-  price_history: 0.435,0.435,0.435,0.435,0.440,0.440,0.440,0.440,0.435,0.435
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: IRONBARK BALANCED INCOME LIMITED
-  industry: Other
-- symbol: SVG
-  current_price: 0.011
-  market_cap: 23557347
-  pe: -99999.99
-  yield_val: 0.0
-  score: 41.3
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: 0.0
-  price_diff_5d: 0.0
-  momentum: -1.74
-  volatility: 7.31
-  volume: 0
-  volume_change: -100.0
-  rsi: 42.66
-  price_history: 0.012,0.011,0.013,0.011,0.013,0.011,0.011,0.011,0.011,0.011
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: SAVANNAH GOLDFIELDS LIMITED
-  industry: Materials
-- symbol: CZR
-  current_price: 0.255
-  market_cap: 65845338
-  pe: 1.23451
-  yield_val: 0.0
-  score: 22.7
-  price_change_1d: -0.02
-  price_diff_1d: -7.27
-  price_change_5d: -0.02
-  price_diff_5d: -7.27
-  momentum: -1.37
-  volatility: 4.22
-  volume: 862043
-  volume_change: 96.24
-  rsi: 42.35
-  price_history: 0.265,0.260,0.275,0.270,0.275,0.275,0.270,0.265,0.275,0.255
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: CZR RESOURCES LTD
-  industry: Materials
-- symbol: AS1
-  current_price: 0.15
-  market_cap: 208803118
-  pe: -99999.99
-  yield_val: 0.0
-  score: 100.0
-  price_change_1d: 0.02
-  price_diff_1d: 15.38
-  price_change_5d: 0.05
-  price_diff_5d: 50.0
-  momentum: 1.66
-  volatility: 6.77
-  volume: 8430450
-  volume_change: 243.6
-  rsi: 58.26
-  price_history: 0.130,0.125,0.130,0.135,0.135,0.100,0.130,0.130,0.130,0.150
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: ASARA RESOURCES LIMITED
-  industry: Materials
-- symbol: SKS
-  current_price: 8.040000000000001
-  market_cap: 870672108
-  pe: 50.18278
-  yield_val: 0.0
-  score: 100.0
-  price_change_1d: 0.49
-  price_diff_1d: 6.49
-  price_change_5d: 1.11
-  price_diff_5d: 16.02
-  momentum: 3.43
-  volatility: 4.23
-  volume: 829336
-  volume_change: 167.21
-  rsi: 78.31
-  price_history: 7.080,6.850,6.550,6.680,6.450,6.930,7.360,7.460,7.550,8.040
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: SKS TECHNOLOGIES GROUP LIMITED
-  industry: Capital Goods
-- symbol: ADX
-  current_price: 0.034
-  market_cap: 28619404
-  pe: -99999.99
-  yield_val: 0.0
-  score: 96.3
-  price_change_1d: 0.002
-  price_diff_1d: 6.25
-  price_change_5d: 0.005
-  price_diff_5d: 17.24
-  momentum: 1.59
-  volatility: 5.14
-  volume: 3146821
-  volume_change: 39.22
-  rsi: 62.41
-  price_history: 0.030,0.030,0.031,0.032,0.030,0.029,0.031,0.031,0.032,0.034
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: ADX ENERGY LTD
-  industry: Energy
-- symbol: ATX
-  current_price: 0.13
-  market_cap: 69264670
-  pe: -99999.99
-  yield_val: 0.0
-  score: 20.8
-  price_change_1d: -0.005
-  price_diff_1d: -3.7
-  price_change_5d: -0.02
-  price_diff_5d: -13.33
-  momentum: -0.37
-  volatility: 12.26
-  volume: 745339
-  volume_change: -69.54
-  rsi: 37.81
-  price_history: 0.165,0.165,0.155,0.150,0.150,0.150,0.140,0.135,0.135,0.130
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: AMPLIA THERAPEUTICS LIMITED
-  industry: Pharmaceuticals, Biotechnology & Life Sciences
-- symbol: WAK
-  current_price: 0.025
-  market_cap: -1
-  pe: -99999.99
-  yield_val: 0.0
-  score: 100.0
-  price_change_1d: 0.0
-  price_diff_1d: 0.0
-  price_change_5d: 0.0125
-  price_diff_5d: 100.0
-  momentum: 0.08
-  volatility: 5.63
-  volume: 0
-  volume_change: -100.0
-  rsi: 2.06
-  price_history: 0.013,0.013,0.013,0.013,0.013,0.013,0.013,0.013,0.013,0.013
-  market_date: '2026-05-08'
-  stock_type: announcement
-  name: WA KAOLIN LIMITED
-  industry: Materials
-- symbol: STV
-  current_price: 0.012
-  market_cap: 11253240
-  pe: -99999.99
-  yield_val: 0.0
-  score: 100.0
-  price_change_1d: 0.002
-  price_diff_1d: 20.0
   price_change_5d: 0.003
-  price_diff_5d: 33.33
-  momentum: 2.29
-  volatility: 8.03
-  volume: 71376129
-  volume_change: 3149.84
-  rsi: 65.81
-  price_history: 0.010,0.009,0.009,0.010,0.009,0.009,0.009,0.009,0.010,0.012
-  market_date: '2026-05-08'
+  price_diff_5d: 15.0
+  momentum: -1.37
+  volatility: 4.36
+  volume: 535387
+  volume_change: 478.3
+  rsi: 49.44
+  price_history: 0.025,0.024,0.021,0.020,0.020,0.020,0.020,0.020,0.019,0.023
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: SWIFT TV LTD
-  industry: Media & Entertainment
-- symbol: EVG
-  current_price: 0.037
-  market_cap: 21539244
+  name: OPENLEARNING LIMITED
+  industry: Software & Services
+- symbol: WR1
+  current_price: 0.53
+  market_cap: 130071779
   pe: -99999.99
   yield_val: 0.0
-  score: 81.2
+  score: 67.4
   price_change_1d: 0.0
   price_diff_1d: 0.0
-  price_change_5d: 0.004
-  price_diff_5d: 12.12
-  momentum: 2.6
-  volatility: 5.32
-  volume: 0
-  volume_change: -100.0
-  rsi: 68.61
-  price_history: 0.030,0.033,0.033,0.034,0.034,0.033,0.036,0.035,0.037,0.037
-  market_date: '2026-05-08'
+  price_change_5d: 0.04
+  price_diff_5d: 8.16
+  momentum: 1.04
+  volatility: 5.92
+  volume: 1213631
+  volume_change: -5.54
+  rsi: 64.55
+  price_history: 0.480,0.480,0.480,0.490,0.500,0.490,0.535,0.520,0.530,0.530
+  market_date: '2026-05-11'
   stock_type: announcement
-  name: EVION GROUP NL
+  name: WINSOME RESOURCES LIMITED
   industry: Materials
+- symbol: ING
+  current_price: 1.82
+  market_cap: 629996924
+  pe: 11.26995
+  yield_val: 7.079646017699115
+  score: 71.0
+  price_change_1d: 0.125
+  price_diff_1d: 7.37
+  price_change_5d: 0.1
+  price_diff_5d: 5.81
+  momentum: -1.5
+  volatility: 2.07
+  volume: 4213709
+  volume_change: 78.73
+  rsi: 43.33
+  price_history: 1.955,1.960,1.885,1.820,1.740,1.720,1.705,1.755,1.695,1.820
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: INGHAMS GROUP LIMITED
+  industry: Food, Beverage & Tobacco
+- symbol: NWS
+  current_price: 43.28
+  market_cap: 23641077621
+  pe: 34.01523
+  yield_val: 0.4799629372249247
+  score: 57.4
+  price_change_1d: 0.11
+  price_diff_1d: 0.25
+  price_change_5d: 1.29
+  price_diff_5d: 3.07
+  momentum: 0.45
+  volatility: 1.74
+  volume: 56304
+  volume_change: -69.82
+  rsi: 61.71
+  price_history: 42.500,42.250,42.450,42.700,42.400,41.990,40.780,42.070,43.170,43.280
+  market_date: '2026-05-11'
+  stock_type: announcement
+  name: NEWS CORPORATION..
+  industry: Media & Entertainment

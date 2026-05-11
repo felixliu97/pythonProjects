@@ -375,7 +375,7 @@
       Share_price: 'A$0.265'
     - Date: '2026-05-05'
       Event: ⚡ 复牌交易：市场对 CIS 中标利好作出反应，政府双重收入保障显著降低项目融资门槛
-      Share_price: 'A$0.285'
+      Share_price: 'A$0.270'
 
 - Ticker: KSN
   Stage: 阶段3-现金流确认期
@@ -556,6 +556,9 @@
     - Date: '2026-05-05'
       Event: Antimony Ridge 项目冶金测试结果进一步确认高回收率，Idaho 本地加工中心路径去风险化
       Share_price: 'A$0.059'
+    - Date: '2026-05-08'
+      Event: 在佛罗里达 Mar-a-Lago 防务创新与基础设施论坛 (Defense, Innovation and Infrastructure Forum) 发布公司演示，强调 Horse Heaven 项目的美国本土高品位锑钨金供应战略价值
+      Share_price: 'A$0.055'
 
 - Ticker: SKK
   Stage: 阶段3-现金流确认期
