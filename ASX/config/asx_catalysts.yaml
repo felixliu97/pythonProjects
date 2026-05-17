@@ -259,20 +259,20 @@
   Company: Cyprium Metals Limited
   Sector: Copper - 铜矿开发与生产 (Nifty 铜项目复产)
   Catalysts:
-    - 2026年9月季度 核心里程碑（已更新）：Nifty 铜项目首批阴极铜投产目标已从mid-2026调整至September quarter 2026
-    - 2026年Q3 SXEW工厂建设完成及试运行；堆浸预调试持续推进
-    - 2026年Q3-Q4 推进 Paterson Province 区域勘探及 Nifty 扩产/硫化物矿石处理研究
+    - 2026年9月季度 核心里程碑：Nifty 铜项目首批阴极铜投产目标 September quarter 2026（5月6日 RIU 演示再次确认）
+    - 2026年Q3 堆浸系统酸引入 → SXEW B Train 完成 → 干调试 → 湿调试（湿调试阶段即开始产铜）
+    - 2026年Q3-Q4 推进 Paterson Province 区域勘探（含 Rainbow 前景）及 Nifty 露天矿氧化物/硫化物阶段扩产研究
     - 2026年H2 Nifty 产能爬坡至稳态；启动区域性扩产及高品位硫化物勘探
   Risks:
     - 首批阴极铜目标已从mid-2026推迟至September quarter 2026，工期延误风险需持续关注
-    - SXEW工厂建设约完成50%，剩余施工与调试仍面临技术风险
+    - SXEW工厂建设约完成50%，剩余施工与调试仍面临技术风险（含酸引入、湿调试阶段的未知数）
     - 铜价波动对高杠杆复产项目的净现值影响
     - 2026年1月 A$41M 增长融资后的筹码消化压力
   CR_Risk: 极低
-  CR_Risk_Reason: 4月30日季报显示季末现金A$96.5M；资金极其充足，复产前无融资压力
+  CR_Risk_Reason: 4月30日季报显示季末现金A$96.5M；资金极其充足，复产前无融资压力；关键消耗品已大量备库（硫酸~5个月、柴油3+个月）
   Breakout_Probability: 高
-  Breakout_Probability_Reason: 现金A$96.5M极其充裕；Glencore binding offtake已锁定（100%阴极铜）；SXEW约50%完成，堆浸预调试推进中；Richard Holmes（前Sandfire）加入担任CDO强化执行团队；纳入All Ordinaries提升机构配置需求
-  Core_Notes: CYM 4月30日发布季报确认：首批阴极铜投产目标已从mid-2026推迟至September quarter 2026。季末现金高达A$96.5M，资金弹药充足。SXEW工厂建设约完成50%，堆浸预调试及现场基础设施升级持续推进。管理层任命Richard Holmes（前Sandfire Resources）为CDO，强化项目执行团队。Glencore已签署100%阴极铜offtake协议（Port Hedland交割）。项目预计产能4,000-6,000吨/年阴极铜，AISC US$2.18/lb。纳入All Ordinaries（2026/03/23）提升流动性。
+  Breakout_Probability_Reason: 现金A$96.5M极其充裕；Glencore binding offtake已锁定（100%阴极铜）；SXEW约50%完成，PPM Global（曾运营Nifty SXEW）协助现场调试；堆浸系统酸引入即将启动；Richard Holmes（前Sandfire）加入担任CDO强化执行团队；纳入All Ordinaries提升机构配置需求；股价从A$0.365季报日已回升至~A$0.44
+  Core_Notes: CYM 4月30日发布季报确认：首批阴极铜投产目标已从mid-2026推迟至September quarter 2026。季末现金高达A$96.5M，资金弹药充足。Phase 1 重启进度约50%（计划工时和预算口径）。SXEW工厂建设推进中，PPM Global（此前运营过 Nifty SXEW 设施）正协助现场调试与运营。下一关键步骤：堆浸系统酸引入 → B Train SXEW 完成 → 干调试 → 湿调试（湿调试阶段即开始产铜）。项目利用现有1,700万吨地面堆浸物料进行再淋洗，配合翻新SXEW设施产出阴极铜。关键消耗品已大量备库：硫酸约5个月、柴油3+个月库存，缓解全球供应链风险。管理层任命Richard Holmes（前Sandfire Resources）为CDO，强化项目执行团队。Glencore已签署100%阴极铜offtake协议（Port Hedland交割）。项目预计产能4,000-6,000吨/年阴极铜，AISC US$2.18/lb。纳入All Ordinaries（2026/03/23）提升流动性。5月6日RIU Resources Round-up演示再次确认September quarter 2026投产目标。
   Rating: 买入
   Timeline:
     - Date: '2026-01-23'
@@ -285,10 +285,10 @@
       Event: 正式纳入 S&P/ASX All Ordinaries 指数
       Share_price: 'A$0.330'
     - Date: '2026-04-30'
-      Event: 发布季报：首批阴极铜目标调整至September quarter 2026；SXEW约50%完成；季末现金A$96.5M；任命Richard Holmes（前Sandfire）为CDO
+      Event: 发布季报：首批阴极铜目标调整至September quarter 2026；SXEW约50%完成；季末现金A$96.5M；任命Richard Holmes（前Sandfire）为CDO；PPM Global协助现场调试
       Share_price: 'A$0.365'
     - Date: '2026-05-06'
-      Event: RIU Resources Round-up 会议演示，强调 Nifty 复产进度与 2026 年 9 月季度投产目标
+      Event: RIU Resources Round-up 会议演示：再次确认 September quarter 2026 投产目标；强调酸引入→干/湿调试序列即将启动；PPM Global协助运营
       Share_price: 'A$0.402'
 
 - Ticker: DEL
@@ -429,14 +429,15 @@
     - 2026年9月 Letlhakane PFS 正式发布
   Risks:
     - ⚠️ 4月6日火灾导致处理厂约3周停产（已于4月中旬恢复），临时面板安装完毕，永久面板交付中
-    - 首发货时间线或从mid-2026推至5-6月具体时间存在不确定性
-    - 股价在火灾消息后承压，近1个月跌幅约12-13%（报约A$1.44）
+    - ⚠️ 5月11日 ASX Aware Query：公司被迫回撤此前披露的Mined Grade/Head Grade/Recovery数据，并下调截至2025年12月31日产量从105,000lb至98,000lb；冶金和解数据精确性存疑
+    - 首发货时间线已推迟至H2 2026，具体时点存在不确定性
+    - 股价从配售价A$2.15显著回落至A$0.86，跌幅约60%，市场信心仍在修复中
     - 2026年2月 A$76M 配售稀释后股价已从高位显著回落
   CR_Risk: 极低
   CR_Risk_Reason: 4月30日季报确认季末现金A$85M；2月完成A$76M配售+A$5M SPP；无近期股权融资需求
-  Breakout_Probability: 高
-  Breakout_Probability_Reason: ✅ 火灾已得到控制并在约2周内恢复生产（管理层确认"combined expertise and critical spares on-site"迅速响应）；采矿全程未受影响；Orano CE已正式确认接受转化；公司明确维持Q2稳态生产目标；唯一剩余不确定性为首发货具体时间点
-  Core_Notes: LOT 的核心逻辑正在从"复产期权"过渡至"现金流生产商"。Kayelekera 具备 10年矿山寿命、23Mlb 矿石储量，AISC 约 US$45/lb。关键更新：2026年4月6日干燥包装车间控制面板火灾后，公司在约2周内（4月中旬）安装临时工程面板并恢复生产，速度超出市场预期。管理层确认："new panels expected to be delivered and installed in the coming weeks"，且 "Kayelekera remains on track to reach steady-state production in Q2 2026"。采矿全程继续运行不受影响。Orano CE 已于4月1日正式确认接受转化，商业物流链已打通。电网接入（Q4 CY26）完成后预计每年额外节省 A$12-14M。
+  Breakout_Probability: 中高
+  Breakout_Probability_Reason: ✅ 火灾已得到控制并在约2周内恢复生产；但⚠️ 5月11日ASX Aware Query揭示产量数据回撤和冶金和解问题，管理层数据披露可信度受损；JPMorgan 5.07%实质性持股提供机构背书；突破概率从"高"下调至"中高"，待稳态生产达成后可重新评估
+  Core_Notes: LOT 的核心逻辑正在从"复产期权"过渡至"现金流生产商"，但过程中暂露数据管理短板。Kayelekera 具备 10年矿山寿命、23Mlb 矿石储量，AISC 约 US$45/lb。关键更新：⚠️ 5月11日 ASX Aware Query 揭示公司回撤了此前多次披露的Mined Grade、Head Grade、Recovery数据，并将截至2025年12月31日产量从105,000lb下调至98,000lb。该问题源于冶金和解、磨机品位测量、回收率估算的不一致性。公司正在实施全面补救计划，包括实验室升级。积极信号：JPMorgan Chase 5月1日成为5.07%实质性持股者，提供机构背书。火灾在约2周内修复，采矿全程未受影响。Orano CE 已于4月1日正式确认接受转化。电网接入（Q4 CY26）完成后预计每年额外节省 A$12-14M。
   Rating: 买入
   Timeline:
     - Date: '2026-01-15'
@@ -463,6 +464,12 @@
     - Date: '2026-05-01'
       Event: 举行投资者研讨会，确认 Kayelekera 复产火灾后的快速修复进度及 Q2 稳态生产目标维持
       Share_price: 'A$0.835'
+    - Date: '2026-05-06'
+      Event: JPMorgan Chase 及其关联方成为实质性持股者（5.07% 投票权），机构背书信号显著
+      Share_price: 'A$0.780'
+    - Date: '2026-05-11'
+      Event: ⚠️ 发布 Response to ASX Aware Query：确认回撤此前披露的 Mined Grade/Head Grade/Recovery 数据；截至2025年12月31日产量从105,000lb下调至98,000lb；冶金和解及回收率精确性存疑；公司正在实施补救计划含实验室升级
+      Share_price: 'A$0.860'
 
 - Ticker: MEI
   Stage: 阶段2-验证突破期

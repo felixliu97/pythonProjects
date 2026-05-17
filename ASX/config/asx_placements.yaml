@@ -1,30 +1,39 @@
+- ASX_Code: GRE
+  Company: GREENTECH METALS LIMITED
+  Headline: oversubscribed $7.5 million placement
+  Date: 2026-05-12
+  CR_Price: 0.075
+  Current_Price: 0.078
+  Price_Diff_Percent: 0.0
+  PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03089108-6A1325077?access_token=83ff96335c2d45a094df02a206a39ff4
+  Price_Diff_%: 4.0
 - ASX_Code: PEB
   Company: PACIFIC EDGE LIMITED
   Headline: pacific edge launches nz$24 million capital raise
   Date: 2026-05-11
   CR_Price: 0.17
-  Current_Price: 0.145
+  Current_Price: 0.21
   Price_Diff_Percent: -14.71
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03088499-2A1671330?access_token=83ff96335c2d45a094df02a206a39ff4
-  Price_Diff_%: -14.71
+  Price_Diff_%: 23.53
 - ASX_Code: SVG
   Company: SAVANNAH GOLDFIELDS LIMITED
   Headline: placement and royalty sale financing raising $3.5m
   Date: 2026-05-08
   CR_Price: 0.015
-  Current_Price: 0.011
+  Current_Price: 0.009000000000000001
   Price_Diff_Percent: -26.67
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03088409-2A1671303?access_token=83ff96335c2d45a094df02a206a39ff4
-  Price_Diff_%: -26.67
+  Price_Diff_%: -40.0
 - ASX_Code: JLL
   Company: JINDALEE LITHIUM LIMITED
   Headline: entitlement offer and options prospectus
   Date: 2026-05-08
   CR_Price: 0.46
-  Current_Price: 0.495
+  Current_Price: 0.41000000000000003
   Price_Diff_Percent: 4.35
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03088182-6A1324696?access_token=83ff96335c2d45a094df02a206a39ff4
-  Price_Diff_%: 7.61
+  Price_Diff_%: -10.87
 - ASX_Code: PAT
   Company: PATRIOT RESOURCES LIMITED
   Headline: completion of strategic placement
@@ -39,76 +48,76 @@
   Headline: successful completion of placement
   Date: 2026-05-08
   CR_Price: 0.4
-  Current_Price: 0.42
+  Current_Price: 0.41000000000000003
   Price_Diff_Percent: 5.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03088095-6A1324641?access_token=83ff96335c2d45a094df02a206a39ff4
-  Price_Diff_%: 5.0
+  Price_Diff_%: 2.5
 - ASX_Code: TR2
   Company: TALI RESOURCES LTD
   Headline: placement to support west arunta exploration
   Date: 2026-05-07
   CR_Price: 0.265
-  Current_Price: 0.32
+  Current_Price: 0.3
   Price_Diff_Percent: 20.75
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03087668-6A1324455?access_token=83ff96335c2d45a094df02a206a39ff4
-  Price_Diff_%: 20.75
+  Price_Diff_%: 13.21
 - ASX_Code: WTM
   Company: WARATAH MINERALS LIMITED
   Headline: $48m placement to fund aggressive drilling program at spur
   Date: 2026-05-07
   CR_Price: 0.62
-  Current_Price: 0.665
+  Current_Price: 0.68
   Price_Diff_Percent: 13.71
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03087650-6A1324513?access_token=83ff96335c2d45a094df02a206a39ff4
-  Price_Diff_%: 7.26
+  Price_Diff_%: 9.68
 - ASX_Code: BWP
   Company: BWP GROUP
   Headline: successful completion of institutional entitlement offer
   Date: 2026-05-07
   CR_Price: 3.77
-  Current_Price: 3.79
+  Current_Price: 3.81
   Price_Diff_Percent: 3.71
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03087678-6A1324496?access_token=83ff96335c2d45a094df02a206a39ff4
-  Price_Diff_%: 0.53
+  Price_Diff_%: 1.06
 - ASX_Code: MCA
   Company: MURRAY COD AUSTRALIA LIMITED
   Headline: mca - anreo completion of institutional entitlement offer
   Date: '2026-05-05'
   CR_Price: 0.15
-  Current_Price: 0.16
-  Price_Diff_%: 6.67
+  Current_Price: 0.17500000000000002
+  Price_Diff_%: 16.67
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086608-2A1670024?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GBR
   Company: GREAT BOULDER RESOURCES LIMITED
   Headline: $40m placement to fund peak hill gold project
   Date: '2026-05-05'
   CR_Price: 0.085
-  Current_Price: 0.11
-  Price_Diff_%: 29.41
+  Current_Price: 0.105
+  Price_Diff_%: 23.53
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086539-6A1324032?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: DAL
   Company: DALAROO METALS LTD
   Headline: dalaroo raises a$1.75m for gold & greenland ree exploration
   Date: '2026-05-05'
   CR_Price: 0.075
-  Current_Price: 0.075
-  Price_Diff_%: 0.0
+  Current_Price: 0.073
+  Price_Diff_%: -2.67
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086530-6A1324020?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: FPC
   Company: FAT PROPHETS GLOBAL CONTRARIAN FUND LTD
   Headline: rights issue offer document
   Date: '2026-05-05'
   CR_Price: 1.8
-  Current_Price: 1.475
-  Price_Diff_%: -18.06
+  Current_Price: 1.47
+  Price_Diff_%: -18.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086516-2A1669909?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: RMI
   Company: RESOURCE MINERALS INTERNATIONAL LTD
   Headline: successful $3.5 million placement to fund tanzania drill pro
   Date: '2026-05-05'
   CR_Price: 0.04
-  Current_Price: 0.056
-  Price_Diff_%: 40.0
+  Current_Price: 0.069
+  Price_Diff_%: 72.5
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086506-6A1324007?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AXN
   Company: ALLIANCE NICKEL LIMITED
@@ -123,16 +132,16 @@
   Headline: equity raising investor presentation
   Date: '2026-05-04'
   CR_Price: 0.01
-  Current_Price: 0.007
-  Price_Diff_%: -30.0
+  Current_Price: 0.008
+  Price_Diff_%: -20.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086144-2A1669753?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CYP
   Company: CYNATA THERAPEUTICS LIMITED
   Headline: cynata secures commitments for $1.5m placement
   Date: '2026-05-04'
   CR_Price: 0.25
-  Current_Price: 0.335
-  Price_Diff_%: 34.0
+  Current_Price: 0.32
+  Price_Diff_%: 28.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03085993-3A692568?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AW1
   Company: AMERICAN WEST METALS LIMITED
@@ -147,40 +156,40 @@
   Headline: $5m placement to drive resource growth at nqcg project
   Date: '2026-05-04'
   CR_Price: 0.17
-  Current_Price: 0.17500000000000002
-  Price_Diff_%: 2.94
+  Current_Price: 0.245
+  Price_Diff_%: 44.12
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086048-2A1669699?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: BTE
   Company: BOTALA ENERGY LTD
   Headline: replacement response to asx price query
   Date: '2026-05-04'
   CR_Price: 0.055
-  Current_Price: 0.056
-  Price_Diff_%: 1.82
+  Current_Price: 0.055
+  Price_Diff_%: 0.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086053-6A1323843?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: NGI
   Company: NAVIGATOR GLOBAL INVESTMENTS LIMITED
   Headline: entitlement offer cleansing statement
   Date: '2026-05-04'
   CR_Price: 2.4
-  Current_Price: 2.66
-  Price_Diff_%: 10.83
+  Current_Price: 2.5300000000000002
+  Price_Diff_%: 5.42
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086103-2A1669774?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: IMR
   Company: IMRICOR MEDICAL SYSTEMS INC.
   Headline: imricor completes successful a$60 million capital raise
   Date: '2026-05-04'
   CR_Price: 1.85
-  Current_Price: 1.8
-  Price_Diff_%: -2.7
+  Current_Price: 1.845
+  Price_Diff_%: -0.27
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086011-3A692571?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: BMR
   Company: BALLYMORE RESOURCES LIMITED
   Headline: entitlement offer prospectus
   Date: '2026-05-04'
   CR_Price: 0.125
-  Current_Price: 0.15
-  Price_Diff_%: 20.0
+  Current_Price: 0.14
+  Price_Diff_%: 12.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03086054-2A1669747?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AUZ
   Company: AUSTRALIAN MINES LIMITED
@@ -195,32 +204,32 @@
   Headline: placement firm bids $1,500,000
   Date: '2026-05-04'
   CR_Price: 0.004
-  Current_Price: 0.004
-  Price_Diff_%: 0.0
+  Current_Price: 0.0045000000000000005
+  Price_Diff_%: 12.5
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03085945-6A1323761?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GT1
   Company: GREEN TECHNOLOGY METALS LIMITED
   Headline: transformational recapitalisation to fund pathway to fid
   Date: '2026-05-01'
   CR_Price: 0.02
-  Current_Price: 0.023
-  Price_Diff_%: 15.0
+  Current_Price: 0.022
+  Price_Diff_%: 10.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03085459-6A1323547?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AQX
   Company: ALICE QUEEN LIMITED
   Headline: entitlement offer
   Date: '2026-05-01'
   CR_Price: 0.009
-  Current_Price: 0.01
-  Price_Diff_%: 11.11
+  Current_Price: 0.008
+  Price_Diff_%: -11.11
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03085464-6A1323581?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: PKP
   Company: PEAK PROCESSING LIMITED
   Headline: successful a$2.4m raise to fund q4fy26 production ramp-up
   Date: '2026-05-01'
   CR_Price: 0.015
-  Current_Price: 0.018000000000000002
-  Price_Diff_%: 20.0
+  Current_Price: 0.017
+  Price_Diff_%: 13.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03085489-3A692477?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: ICE
   Company: ICETANA LIMITED
@@ -235,200 +244,200 @@
   Headline: $2.2m strategic share placement & share purchase plan
   Date: '2026-04-30'
   CR_Price: 0.09
-  Current_Price: 0.08700000000000001
-  Price_Diff_%: -3.33
+  Current_Price: 0.09
+  Price_Diff_%: 0.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03084557-6A1323107?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GRL
   Company: GODOLPHIN RESOURCES LIMITED
   Headline: $2.5m placement to accelerate lewis ponds project
   Date: '2026-04-30'
   CR_Price: 0.017
-  Current_Price: 0.018000000000000002
-  Price_Diff_%: 5.88
+  Current_Price: 0.017
+  Price_Diff_%: 0.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03084445-6A1322992?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: FDR
   Company: FINDER ENERGY HOLDINGS LIMITED
   Headline: successful $27m placement and launch of spp
   Date: '2026-04-30'
   CR_Price: 0.58
-  Current_Price: 0.4
-  Price_Diff_%: -31.03
+  Current_Price: 0.405
+  Price_Diff_%: -30.17
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03084518-6A1322967?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SHN
   Company: SUNSHINE METALS LIMITED
   Headline: mt moss acquisition and successful capital raising
   Date: '2026-04-30'
   CR_Price: 0.027
-  Current_Price: 0.031
-  Price_Diff_%: 14.81
+  Current_Price: 0.028
+  Price_Diff_%: 3.7
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03084587-6A1323122?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SRZ
   Company: STELLAR RESOURCES LIMITED
   Headline: $17 million strategic placement to metals x
   Date: '2026-04-30'
   CR_Price: 0.033
-  Current_Price: 0.037
-  Price_Diff_%: 12.12
+  Current_Price: 0.036000000000000004
+  Price_Diff_%: 9.09
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03084677_PS-3A692337?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GMN
   Company: GOLD MOUNTAIN LIMITED
   Headline: $5.5m raised to fund brazilian accelerated exploration
   Date: '2026-04-29'
   CR_Price: 0.1
-  Current_Price: 0.12
-  Price_Diff_%: 20.0
+  Current_Price: 0.11
+  Price_Diff_%: 10.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03083769-2A1668622?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SNT
   Company: SYNTARA LIMITED
   Headline: $8m placement and share purchase plan
   Date: '2026-04-29'
   CR_Price: 0.027
-  Current_Price: 0.027
-  Price_Diff_%: 0.0
+  Current_Price: 0.026000000000000002
+  Price_Diff_%: -3.7
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03083791-2A1668731?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: USC
   Company: US1 CRITICAL MINERALS LIMITED
   Headline: completes $1 million placement led by snow lake energy
   Date: '2026-04-28'
   CR_Price: 0.025
-  Current_Price: 0.02
-  Price_Diff_%: -20.0
+  Current_Price: 0.021
+  Price_Diff_%: -16.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03083089-6A1322345?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: PAR
   Company: PARADIGM BIOPHARMACEUTICALS LIMITED..
   Headline: upsized $14m placement extends runway post ia
   Date: '2026-04-27'
   CR_Price: 0.19
-  Current_Price: 0.17500000000000002
-  Price_Diff_%: -7.89
+  Current_Price: 0.17
+  Price_Diff_%: -10.53
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03082679-3A692008?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CR9
   Company: CORELLA RESOURCES LTD
   Headline: acquisition of chobe project and capital raise $5m
   Date: '2026-04-27'
   CR_Price: 0.012
-  Current_Price: 0.012
-  Price_Diff_%: 0.0
+  Current_Price: 0.0115
+  Price_Diff_%: -4.17
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03082644_PS-6A1322073?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: ALR
   Company: ALTAIR MINERALS LIMITED
   Headline: $28 million premium placement to endeavour mining
   Date: '2026-04-27'
   CR_Price: 0.043
-  Current_Price: 0.043000000000000003
-  Price_Diff_%: 0.0
+  Current_Price: 0.039
+  Price_Diff_%: -9.3
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03082604-3A691986?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AI1
   Company: ADISYN LTD
   Headline: adisyn secures a$14m placement led by regal and meitav
   Date: '2026-04-23'
   CR_Price: 0.0675
-  Current_Price: 0.27
-  Price_Diff_%: 300.0
+  Current_Price: 0.22
+  Price_Diff_%: 225.93
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03081594-6A1321602?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: HYT
   Company: HYTERRA LTD
   Headline: non-renounceable entitlement offer
   Date: '2026-04-23'
   CR_Price: 0.014
-  Current_Price: 0.015
-  Price_Diff_%: 7.14
+  Current_Price: 0.016
+  Price_Diff_%: 14.29
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03081723-6A1321689?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SNC
   Company: SANDON CAPITAL INVESTMENTS LIMITED
   Headline: placement
   Date: '2026-04-23'
   CR_Price: 0.7625
-  Current_Price: 0.775
-  Price_Diff_%: 1.64
+  Current_Price: 0.78
+  Price_Diff_%: 2.3
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03081848-2A1667960?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: OMA
   Company: OMEGA OIL & GAS LIMITED
   Headline: oma raise a$60m to fund upgraded 26/27 taroom trough program
   Date: '2026-04-23'
   CR_Price: 0.84
-  Current_Price: 0.855
-  Price_Diff_%: 1.79
+  Current_Price: 0.8200000000000001
+  Price_Diff_%: -2.38
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03081755-2A1667914?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CVR
   Company: CAVALIER RESOURCES LIMITED
   Headline: pre-production placement raises $4 million
   Date: '2026-04-23'
   CR_Price: 0.3
-  Current_Price: 0.3
-  Price_Diff_%: 0.0
+  Current_Price: 0.29
+  Price_Diff_%: -3.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03081675-6A1321647?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: RML
   Company: RESOLUTION MINERALS LTD
   Headline: $20m placement to accelerate us critical minerals strategy
   Date: '2026-04-23'
   CR_Price: 0.07
-  Current_Price: 0.067
-  Price_Diff_%: -4.29
+  Current_Price: 0.06
+  Price_Diff_%: -14.29
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03081752-2A1667910?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: MEI
   Company: METEORIC RESOURCES NL
   Headline: strongly supported $40m placement advances caldeira project
   Date: '2026-04-22'
   CR_Price: 0.17
-  Current_Price: 0.20500000000000002
-  Price_Diff_%: 20.59
+  Current_Price: 0.2
+  Price_Diff_%: 17.65
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03081213-6A1321410?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: NXT
   Company: NEXTDC LIMITED
   Headline: successful completion of institutional entitlement offer
   Date: '2026-04-22'
   CR_Price: 12.7
-  Current_Price: 14.84
-  Price_Diff_%: 16.85
+  Current_Price: 14.870000000000001
+  Price_Diff_%: 17.09
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03081163-2A1667595?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: VHM
   Company: VHM LIMITED
   Headline: vhm announces placement
   Date: '2026-04-21'
   CR_Price: 0.26
-  Current_Price: 0.255
-  Price_Diff_%: -1.92
+  Current_Price: 0.295
+  Price_Diff_%: 13.46
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03080822-3A691723?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: IVZ
   Company: INVICTUS ENERGY LTD
   Headline: placement for $10m
   Date: '2026-04-21'
   CR_Price: 0.06
-  Current_Price: 0.055
-  Price_Diff_%: -8.33
+  Current_Price: 0.052000000000000005
+  Price_Diff_%: -13.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03080714-6A1321225?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: XST
   Company: XSTATE RESOURCES LIMITED
   Headline: diona-1 stimulation update and placement
   Date: '2026-04-20'
   CR_Price: 0.033
-  Current_Price: 0.034
-  Price_Diff_%: 3.03
+  Current_Price: 0.033
+  Price_Diff_%: 0.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03080248-6A1321056?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: NMT
   Company: NEOMETALS LTD
   Headline: placement
   Date: '2026-04-20'
   CR_Price: 0.04
-  Current_Price: 0.04
-  Price_Diff_%: 0.0
+  Current_Price: 0.038
+  Price_Diff_%: -5.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03080293-6A1321060?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: LPM
   Company: LITHIUM PLUS MINERALS LTD.
   Headline: a$2.15 m placement to fund development of bynoe lithium proj
   Date: '2026-04-17'
   CR_Price: 0.1
-  Current_Price: 0.125
-  Price_Diff_%: 25.0
+  Current_Price: 0.12
+  Price_Diff_%: 20.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03079870-2A1667026?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: LDR
   Company: LODE RESOURCES LTD
   Headline: completion of $4.5m capital raise
   Date: '2026-04-17'
   CR_Price: 0.13
-  Current_Price: 0.13
-  Price_Diff_%: 0.0
+  Current_Price: 0.135
+  Price_Diff_%: 3.85
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03079814-2A1666978?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: BRU
   Company: BURU ENERGY LIMITED
@@ -443,8 +452,8 @@
   Headline: $4m placement at last traded price for edenshield expansion
   Date: '2026-04-17'
   CR_Price: 0.2
-  Current_Price: 0.24
-  Price_Diff_%: 20.0
+  Current_Price: 0.225
+  Price_Diff_%: 12.5
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03079823-6A1320836?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: ACP
   Company: AUDALIA RESOURCES LIMITED
@@ -459,40 +468,40 @@
   Headline: placement of entitlement offer shortfall
   Date: '2026-04-16'
   CR_Price: 0.08
-  Current_Price: 0.076
-  Price_Diff_%: -5.0
+  Current_Price: 0.07200000000000001
+  Price_Diff_%: -10.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03079411-6A1320698?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CCL
   Company: CUSCAL LIMITED
   Headline: cuscal successfully completes institutional placement
   Date: '2026-04-15'
   CR_Price: 4.0
-  Current_Price: 4.69
-  Price_Diff_%: 17.25
+  Current_Price: 4.5600000000000005
+  Price_Diff_%: 14.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03078874-2A1666525?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: LDX
   Company: LUMOS DIAGNOSTICS HOLDINGS LIMITED
   Headline: SPP - Letter to Eligible Shareholders
   Date: '2026-04-10'
   CR_Price: 0.225
-  Current_Price: 0.15
-  Price_Diff_%: -33.33
+  Current_Price: 0.125
+  Price_Diff_%: -44.44
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03077477-2A1665687?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: BTL
   Company: BEETALOO ENERGY AUSTRALIA LIMITED
   Headline: Beetaloo Energy completes $66M placement and launches SPP
   Date: '2026-04-10'
   CR_Price: 0.28
-  Current_Price: 0.31
-  Price_Diff_%: 10.71
+  Current_Price: 0.3
+  Price_Diff_%: 7.14
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03077531-2A1665715?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AMU
   Company: AMERICAN URANIUM LTD
   Headline: Placement and Rights Issue to Advance Lo Herma Project
   Date: '2026-04-09'
   CR_Price: 0.12
-  Current_Price: 0.095
-  Price_Diff_%: -20.83
+  Current_Price: 0.094
+  Price_Diff_%: -21.67
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03076934-6A1319758?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: TBN
   Company: TAMBORAN RESOURCES CORPORATION
@@ -500,8 +509,8 @@
     of Common Stock | Entitlement Offer Press Release
   Date: '2026-04-08'
   CR_Price: 0.25
-  Current_Price: 0.245
-  Price_Diff_%: -2.0
+  Current_Price: 0.25
+  Price_Diff_%: 0.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03076501-2A1664972?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: RR1
   Company: REACH RESOURCES LIMITED
@@ -516,48 +525,48 @@
   Headline: Firm Commitments Received for a A$3.0M Placement
   Date: '2026-04-02'
   CR_Price: 0.035
-  Current_Price: 0.037
-  Price_Diff_%: 5.71
+  Current_Price: 0.038
+  Price_Diff_%: 8.57
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03075158-6A1319141?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SLS
   Company: SOLSTICE MINERALS LIMITED
   Headline: Successful A$32.6m Placement
   Date: '2026-04-02'
   CR_Price: 1.0
-  Current_Price: 1.47
-  Price_Diff_%: 47.0
+  Current_Price: 1.35
+  Price_Diff_%: 35.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03075106-6A1319145?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: W2V
   Company: WAY 2 VAT LTD.
   Headline: Investor Presentation | Way2VAT completes A$2,600,000 Placement
   Date: '2026-04-02'
   CR_Price: 0.07
-  Current_Price: 0.066
-  Price_Diff_%: -5.71
+  Current_Price: 0.07200000000000001
+  Price_Diff_%: 2.86
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03075157-6A1319167?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: NHE
   Company: NOBLE HELIUM LIMITED
   Headline: Noble Placement $12M for North Rukwa Drilling Program
   Date: '2026-04-02'
   CR_Price: 0.029
-  Current_Price: 0.027
-  Price_Diff_%: -6.9
+  Current_Price: 0.028
+  Price_Diff_%: -3.45
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03075199-6A1319148?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: KMD
   Company: KMD BRANDS LIMITED
   Headline: 1H FY2026 Interim Results and Equity Raising
   Date: '2026-03-31'
   CR_Price: 0.06
-  Current_Price: 0.055
-  Price_Diff_%: -8.33
+  Current_Price: 0.052000000000000005
+  Price_Diff_%: -13.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03073853-2A1663280?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: BNL
   Company: BLUE STAR HELIUM LIMITED
   Headline: Successful Placement Raising A$10.0 Million
   Date: '2026-03-30'
   CR_Price: 0.006
-  Current_Price: 0.007
-  Price_Diff_%: 16.67
+  Current_Price: 0.006500000000000001
+  Price_Diff_%: 8.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03073429-6A1318393?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AT1
   Company: ATOMO DIAGNOSTICS LIMITED
@@ -572,16 +581,16 @@
   Headline: Impact Secures Funding to Advance HPA & Other Opportunities
   Date: '2026-03-30'
   CR_Price: 0.05
-  Current_Price: 0.053
-  Price_Diff_%: 6.0
+  Current_Price: 0.052000000000000005
+  Price_Diff_%: 4.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03073367-6A1318351?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: 4DX
   Company: 4DMEDICAL LIMITED
   Headline: CE Mark for CTVQ and $83M placement to fund EU expansion
   Date: '2026-03-27'
   CR_Price: 5.9
-  Current_Price: 3.44
-  Price_Diff_%: -41.69
+  Current_Price: 4.17
+  Price_Diff_%: -29.32
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03072850-3A690315?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: 88E
   Company: 88 ENERGY LIMITED
@@ -604,8 +613,8 @@
   Headline: Weebit Nano announces A$80.0 million Placement
   Date: '2026-03-26'
   CR_Price: 4.05
-  Current_Price: 4.87
-  Price_Diff_%: 20.25
+  Current_Price: 6.8
+  Price_Diff_%: 67.9
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03072528-3A690218?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SYR
   Company: SYRAH RESOURCES LIMITED
@@ -620,16 +629,16 @@
   Headline: Aurum raises $28.8M via Strategic Placement
   Date: '2026-03-22'
   CR_Price: 0.6
-  Current_Price: 0.67
-  Price_Diff_%: 11.67
+  Current_Price: 0.64
+  Price_Diff_%: 6.67
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070979-6A1317444?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: D3E
   Company: D3 ENERGY LIMITED
   Headline: Substantial excess demand received for $6.12m Placement
   Date: '2026-03-22'
   CR_Price: 0.36
-  Current_Price: 0.39
-  Price_Diff_%: 8.33
+  Current_Price: 0.375
+  Price_Diff_%: 4.17
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070949-6A1317427?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: KLI
   Company: KILLI RESOURCES LIMITED
@@ -644,40 +653,40 @@
   Headline: Successful Completion of Offer and Placement
   Date: '2026-03-19'
   CR_Price: 1.75
-  Current_Price: 1.895
-  Price_Diff_%: 8.29
+  Current_Price: 1.865
+  Price_Diff_%: 6.57
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070435-3A689793?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SGA
   Company: SARYTOGAN GRAPHITE LIMITED
   Headline: $2M Cash Received
   Date: '2026-03-19'
   CR_Price: 0.08
-  Current_Price: 0.08
-  Price_Diff_%: 0.0
+  Current_Price: 0.074
+  Price_Diff_%: -7.5
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070123-6A1317114?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SMI
   Company: SANTANA MINERALS LIMITED
   Headline: Results of the Share Purchase Plan
   Date: '2026-03-19'
   CR_Price: 0.9
-  Current_Price: 0.63
-  Price_Diff_%: -30.0
+  Current_Price: 0.625
+  Price_Diff_%: -30.56
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070491-6A1317261?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GSN
   Company: GREAT SOUTHERN MINING LIMITED
   Headline: $4.6 MILLION PLACEMENT TO DRIVE AGGRESSIVE GOLD DRILLING
   Date: '2026-03-19'
   CR_Price: 0.028
-  Current_Price: 0.021
-  Price_Diff_%: -25.0
+  Current_Price: 0.0205
+  Price_Diff_%: -26.79
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070467-6A1317238?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: BTR
   Company: BRIGHTSTAR RESOURCES LIMITED
   Headline: Funding Package Completed - Fully Funded for Production
   Date: '2026-03-19'
   CR_Price: 0.5
-  Current_Price: 0.365
-  Price_Diff_%: -27.0
+  Current_Price: 0.36
+  Price_Diff_%: -28.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070462-6A1317256?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: NVO
   Company: NOVO RESOURCES CORP
@@ -692,64 +701,64 @@
   Headline: Findi Completes Settlement of T1 of Institutional Placement
   Date: '2026-03-18'
   CR_Price: 0.7
-  Current_Price: 0.6950000000000001
-  Price_Diff_%: -0.71
+  Current_Price: 0.675
+  Price_Diff_%: -3.57
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070089-3A689736?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: TMK
   Company: TMK ENERGY LIMITED
   Headline: TMK Raises $6M in Oversubscribed Placement
   Date: '2026-03-18'
   CR_Price: 0.12
-  Current_Price: 0.15
-  Price_Diff_%: 25.0
+  Current_Price: 0.145
+  Price_Diff_%: 20.83
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070062-6A1317088?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SMS
   Company: STAR MINERALS LIMITED
   Headline: Completion of Agreement with Catalyst Metals
   Date: '2026-03-18'
   CR_Price: 0.062
-  Current_Price: 0.051000000000000004
-  Price_Diff_%: -17.74
+  Current_Price: 0.053
+  Price_Diff_%: -14.52
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03069962-6A1317048?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CXO
   Company: CORE LITHIUM LTD
   Headline: $120 million Institutional Placement Supports Finniss FID
   Date: '2026-03-18'
   CR_Price: 0.21
-  Current_Price: 0.34500000000000003
-  Price_Diff_%: 64.29
+  Current_Price: 0.325
+  Price_Diff_%: 54.76
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03070053-2A1661222?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: VMM
   Company: VIRIDIS MINING AND MINERALS LIMITED
   Headline: Strong Global Institutional Demand Drives A$25M Placement
   Date: '2026-03-17'
   CR_Price: 1.9
-  Current_Price: 2.7800000000000002
-  Price_Diff_%: 46.32
+  Current_Price: 2.65
+  Price_Diff_%: 39.47
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03069608-6A1316902?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: MHC
   Company: MANHATTAN GOLD CORPORATION LIMITED
   Headline: Strongly Supported $3 Million Placement to Advance Hook Lake
   Date: '2026-03-17'
   CR_Price: 0.024
-  Current_Price: 0.024
-  Price_Diff_%: 0.0
+  Current_Price: 0.025
+  Price_Diff_%: 4.17
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03069595-6A1316862?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: ANX
   Company: ANAX METALS LIMITED
   Headline: $10 Million Capital Raising
   Date: '2026-03-17'
   CR_Price: 0.023
-  Current_Price: 0.031
-  Price_Diff_%: 34.78
+  Current_Price: 0.033
+  Price_Diff_%: 43.48
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03069625-6A1316909?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: OSL
   Company: ONCOSIL MEDICAL LTD
   Headline: Results of Entitlement Offer
   Date: '2026-03-16'
   CR_Price: 0.68
-  Current_Price: 0.5
-  Price_Diff_%: -26.47
+  Current_Price: 0.45
+  Price_Diff_%: -33.82
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03069084-2A1660747?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: HRZ
   Company: HORIZON MINERALS LIMITED
@@ -764,8 +773,8 @@
   Headline: Corporate Funding Update
   Date: '2026-03-16'
   CR_Price: 0.277
-  Current_Price: 0.325
-  Price_Diff_%: 17.33
+  Current_Price: 0.315
+  Price_Diff_%: 13.72
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03069208-2A1660820?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: ONE
   Company: ONEVIEW HEALTHCARE PLC
@@ -780,16 +789,16 @@
   Headline: Successful $3 Million Placement
   Date: '2026-03-15'
   CR_Price: 0.063
-  Current_Price: 0.054
-  Price_Diff_%: -14.29
+  Current_Price: 0.053
+  Price_Diff_%: -15.87
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03068645-3A689475?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: EMP
   Company: EMPEROR ENERGY LIMITED
   Headline: Successful $17.5M Placement
   Date: '2026-03-13'
   CR_Price: 0.12
-  Current_Price: 0.125
-  Price_Diff_%: 4.17
+  Current_Price: 0.11750000000000001
+  Price_Diff_%: -2.08
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03067942-2A1660035?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CPN
   Company: CASPIN RESOURCES LIMITED
@@ -804,32 +813,32 @@
   Headline: ADX Secures $4.4 million from a Strongly Supported Placement
   Date: '2026-03-12'
   CR_Price: 0.027
-  Current_Price: 0.029
-  Price_Diff_%: 7.41
+  Current_Price: 0.028
+  Price_Diff_%: 3.7
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03067869-6A1316168?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CY5
   Company: CYGNUS METALS LIMITED
   Headline: Successful A$25m Placement
   Date: '2026-03-12'
   CR_Price: 0.16
-  Current_Price: 0.125
-  Price_Diff_%: -21.88
+  Current_Price: 0.12
+  Price_Diff_%: -25.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03067897-6A1316187?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: IMU
   Company: IMUGENE LIMITED
   Headline: $20M placement and SPP, convertible notes amended
   Date: '2026-03-11'
   CR_Price: 0.18
-  Current_Price: 0.11
-  Price_Diff_%: -38.89
+  Current_Price: 0.095
+  Price_Diff_%: -47.22
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03067034-3A689206?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: MFG
   Company: MAGELLAN FINANCIAL GROUP LIMITED
   Headline: Notice of EGM and Share Purchase Plan Booklet
   Date: '2026-03-10'
   CR_Price: 8.45
-  Current_Price: 8.870000000000001
-  Price_Diff_%: 4.97
+  Current_Price: 8.6
+  Price_Diff_%: 1.78
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03066839-2A1659541?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CRS
   Company: CAPRICE RESOURCES LTD
@@ -844,48 +853,48 @@
   Headline: Completion of $4.5 Million Placement
   Date: '2026-03-05'
   CR_Price: 0.04
-  Current_Price: 0.036000000000000004
-  Price_Diff_%: -10.0
+  Current_Price: 0.039
+  Price_Diff_%: -2.5
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03065341-6A1315082?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CYM
   Company: CYPRIUM METALS LIMITED
   Headline: Results of Entitlement Offer
   Date: '2026-03-04'
   CR_Price: 0.52
-  Current_Price: 0.44
-  Price_Diff_%: -15.38
+  Current_Price: 0.45
+  Price_Diff_%: -13.46
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03064868-6A1314934?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: C1X
   Company: COSMOS EXPLORATION LIMITED
   Headline: C1X advises intention to exercise EAU Lithium Option
   Date: '2026-03-03'
   CR_Price: 0.2
-  Current_Price: 0.215
-  Price_Diff_%: 7.5
+  Current_Price: 0.21
+  Price_Diff_%: 5.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03064394-6A1314731?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AUB
   Company: AUB GROUP LIMITED
   Headline: AUB Group successfully completes Share Purchase Plan
   Date: '2026-03-03'
   CR_Price: 23.62
-  Current_Price: 24.19
-  Price_Diff_%: 2.41
+  Current_Price: 24.34
+  Price_Diff_%: 3.05
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03064261-2A1657751?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AVL
   Company: AUSTRALIAN VANADIUM LIMITED
   Headline: $7.5m Placement to Accelerate Integrated Strategy
   Date: '2026-03-03'
   CR_Price: 0.26
-  Current_Price: 0.19
-  Price_Diff_%: -26.92
+  Current_Price: 0.20500000000000002
+  Price_Diff_%: -21.15
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03064329-6A1314717?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: PYC
   Company: PYC THERAPEUTICS LIMITED
   Headline: Completion of Retail Entitlement Offer
   Date: '2026-03-03'
   CR_Price: 1.5
-  Current_Price: 1.2650000000000001
-  Price_Diff_%: -15.67
+  Current_Price: 1.43
+  Price_Diff_%: -4.67
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03064354-6A1314757?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: HRN
   Company: HORIZON GOLD LIMITED
@@ -893,32 +902,32 @@
     Gold Project
   Date: '2026-03-03'
   CR_Price: 1.2
-  Current_Price: 1.09
-  Price_Diff_%: -9.17
+  Current_Price: 1.03
+  Price_Diff_%: -14.17
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03064384-6A1314752?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: IVR
   Company: INVESTIGATOR SILVER LIMITED
   Headline: A$55M Placement to accelerate Paris
   Date: '2026-03-02'
   CR_Price: 0.086
-  Current_Price: 0.065
-  Price_Diff_%: -24.42
+  Current_Price: 0.064
+  Price_Diff_%: -25.58
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03063884-2A1657479?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GW1
   Company: GREENWING RESOURCES LTD
   Headline: Investor Presentation | Equity Raising
   Date: '2026-03-02'
   CR_Price: 0.042
-  Current_Price: 0.068
-  Price_Diff_%: 61.9
+  Current_Price: 0.061
+  Price_Diff_%: 45.24
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03063813-6A1314524?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: ARL
   Company: ARDEA RESOURCES LIMITED
   Headline: Successful $5M Placement and launch of Share Purchase Plan
   Date: '2026-03-02'
   CR_Price: 0.6
-  Current_Price: 0.72
-  Price_Diff_%: 20.0
+  Current_Price: 0.635
+  Price_Diff_%: 5.83
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03063803-6A1314498?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: NAG
   Company: NAGAMBIE RESOURCES LIMITED
@@ -933,40 +942,40 @@
   Headline: ACW successfully completes $16.8m Placement and SPP
   Date: '2026-02-26'
   CR_Price: 0.042
-  Current_Price: 0.047
-  Price_Diff_%: 11.9
+  Current_Price: 0.041
+  Price_Diff_%: -2.38
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03062510-2A1656756?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: TM1
   Company: TERRA METALS LIMITED
   Headline: $85 Million Institutional Placement to Advance Southwest
   Date: '2026-02-26'
   CR_Price: 0.37
-  Current_Price: 0.29
-  Price_Diff_%: -21.62
+  Current_Price: 0.28500000000000003
+  Price_Diff_%: -22.97
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03062542-6A1314064?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: KCC
   Company: KINCORA COPPER LIMITED
   Headline: Kincora raises $4 million in Strongly Supported Placement
   Date: '2026-02-26'
   CR_Price: 1.05
-  Current_Price: 0.88
-  Price_Diff_%: -16.19
+  Current_Price: 0.91
+  Price_Diff_%: -13.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03062532-6A1314063?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: ENX
   Company: ENEGEX LIMITED
   Headline: $10.2M Placement to Explore Expansive Tenure in Cote DIvoire
   Date: '2026-02-25'
   CR_Price: 0.23
-  Current_Price: 0.24
-  Price_Diff_%: 4.35
+  Current_Price: 0.23
+  Price_Diff_%: 0.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03061723-6A1313822?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: HTG
   Company: HARVEST TECHNOLOGY GROUP LTD
   Headline: Placement Raises A$1.63 million
   Date: '2026-02-25'
   CR_Price: 0.014
-  Current_Price: 0.012
-  Price_Diff_%: -14.29
+  Current_Price: 0.013000000000000001
+  Price_Diff_%: -7.14
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03061803-6A1313851?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: BAP
   Company: BAPCOR LIMITED
@@ -974,56 +983,56 @@
     and Equity Raising
   Date: '2026-02-25'
   CR_Price: 0.6
-  Current_Price: 0.555
-  Price_Diff_%: -7.5
+  Current_Price: 0.395
+  Price_Diff_%: -34.17
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03061710-3A688135?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AAM
   Company: AUMEGA METALS LTD
   Headline: AuMEGA Provides Update on Recent $30M Financing Announcement
   Date: '2026-02-24'
   CR_Price: 0.0413
-  Current_Price: 0.04
-  Price_Diff_%: -3.15
+  Current_Price: 0.041
+  Price_Diff_%: -0.73
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03060571-6A1313555?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CAE
   Company: CANNINDAH RESOURCES LIMITED
   Headline: Share Purchase Plan (SPP) closes oversubscribed
   Date: '2026-02-24'
   CR_Price: 0.045
-  Current_Price: 0.046
-  Price_Diff_%: 2.22
+  Current_Price: 0.049
+  Price_Diff_%: 8.89
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03060811-6A1313583?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: RRR
   Company: REVOLVER RESOURCES HOLDINGS LTD
   Headline: Successful A$2.6M Capital Raising To Advance Dianne
   Date: '2026-02-24'
   CR_Price: 0.07
-  Current_Price: 0.064
-  Price_Diff_%: -8.57
+  Current_Price: 0.059000000000000004
+  Price_Diff_%: -15.71
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03060947-6A1313605?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: EGA
   Company: EASTERN GAS CORPORATION LIMITED
   Headline: Replacement Prospectus
   Date: '2026-02-24'
   CR_Price: 0.2
-  Current_Price: 0.155
-  Price_Diff_%: -22.5
+  Current_Price: 0.1575
+  Price_Diff_%: -21.25
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03060352-2A1655512?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: A4N
   Company: ALPHA HPA LIMITED
   Headline: Completion of Share Purchase Plan
   Date: '2026-02-23'
   CR_Price: 0.64
-  Current_Price: 0.65
-  Price_Diff_%: 1.56
+  Current_Price: 0.685
+  Price_Diff_%: 7.03
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03060166-2A1655410?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: TER
   Company: TERRACOM LIMITED
   Headline: Placement
   Date: '2026-02-23'
   CR_Price: 0.06
-  Current_Price: 0.074
-  Price_Diff_%: 23.33
+  Current_Price: 0.07
+  Price_Diff_%: 16.67
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03059898-2A1655250?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GCI
   Company: GRYPHON CAPITAL INCOME TRUST
@@ -1038,56 +1047,56 @@
   Headline: Genesis completes NZ$100m Placement
   Date: '2026-02-23'
   CR_Price: 1.73
-  Current_Price: 2.0100000000000002
-  Price_Diff_%: 16.18
+  Current_Price: 2.0300000000000002
+  Price_Diff_%: 17.34
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03060044-2A1655260?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AGD
   Company: AUSTRAL GOLD LIMITED
   Headline: Austral Gold Completes A$8.456 million Strategic Placement
   Date: '2026-02-22'
   CR_Price: 0.18
-  Current_Price: 0.15
-  Price_Diff_%: -16.67
+  Current_Price: 0.145
+  Price_Diff_%: -19.44
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03059598-2A1655088?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CLA
   Company: CELSIUS RESOURCES LIMITED
   Headline: Celsius Raises A$9.3m in Strong Institutional Placement
   Date: '2026-02-22'
   CR_Price: 0.02
-  Current_Price: 0.007
-  Price_Diff_%: -65.0
+  Current_Price: 0.009000000000000001
+  Price_Diff_%: -55.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03059496-6A1313109?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: WAA
   Company: WAM ACTIVE LIMITED
   Headline: Oversubscribed Entitlement Offer and Placement raises $70.7
   Date: '2026-02-22'
   CR_Price: 1.0
-  Current_Price: 1.04
-  Price_Diff_%: 4.0
+  Current_Price: 1.01
+  Price_Diff_%: 1.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03059530-2A1655050?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: AR1
   Company: AUSTRAL RESOURCES AUSTRALIA LTD
   Headline: Binding Commitments Received for QIC-led $65m Fundraising
   Date: '2026-02-19'
   CR_Price: 0.09
-  Current_Price: 0.097
-  Price_Diff_%: 7.78
+  Current_Price: 0.094
+  Price_Diff_%: 4.44
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03058457-2A1654525?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: PMT
   Company: PMET RESOURCES INC
   Headline: Closing of Flow-Through Private Placement & Public Offering
   Date: '2026-02-19'
   CR_Price: 0.55
-  Current_Price: 0.755
-  Price_Diff_%: 37.27
+  Current_Price: 0.71
+  Price_Diff_%: 29.09
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03058752-6A1312906?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: FTI
   Company: FORTIFAI LTD
   Headline: FortifAI Raises $5M in Strategic Placement
   Date: '2026-02-19'
   CR_Price: 0.3
-  Current_Price: 0.62
-  Price_Diff_%: 106.67
+  Current_Price: 0.72
+  Price_Diff_%: 140.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03058892-2A1654737?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: TDO
   Company: 3D ENERGI LIMITED
@@ -1103,24 +1112,24 @@
   Headline: Marimaca Copper Completes Bookbuild for A$423 Million
   Date: '2026-02-18'
   CR_Price: 10.35
-  Current_Price: 8.370000000000001
-  Price_Diff_%: -19.13
+  Current_Price: 9.11
+  Price_Diff_%: -11.98
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03058378-6A1312747?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: PHO
   Company: PHOSCO LTD
   Headline: Strongly Supported $5M Placement
   Date: '2026-02-17'
   CR_Price: 0.12
-  Current_Price: 0.115
-  Price_Diff_%: -4.17
+  Current_Price: 0.16
+  Price_Diff_%: 33.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03057831-3A687344?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: QEM
   Company: QEM LIMITED
   Headline: Capital Raising
   Date: '2026-02-17'
   CR_Price: 0.024
-  Current_Price: 0.04
-  Price_Diff_%: 66.67
+  Current_Price: 0.037
+  Price_Diff_%: 54.17
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03057747-6A1312542?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: TKM
   Company: TREK METALS LIMITED
@@ -1135,8 +1144,8 @@
   Headline: $29.5 Million Strategic Placement to L1 Capital
   Date: '2026-02-16'
   CR_Price: 0.34
-  Current_Price: 0.405
-  Price_Diff_%: 19.12
+  Current_Price: 0.41500000000000004
+  Price_Diff_%: 22.06
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03057323-2A1653928?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: 29M
   Company: 29METALS LIMITED
@@ -1152,16 +1161,16 @@
     Capital Raise Commitments of A$45 Million
   Date: '2026-02-16'
   CR_Price: 0.06
-  Current_Price: 0.031
-  Price_Diff_%: -48.33
+  Current_Price: 0.028
+  Price_Diff_%: -53.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03057291-6A1312367?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CEN
   Company: CONTACT ENERGY LIMITED
   Headline: CEN advances investments, $525m equity raise announced
   Date: '2026-02-15'
   CR_Price: 7.43
-  Current_Price: 8.11
-  Price_Diff_%: 9.15
+  Current_Price: 8.22
+  Price_Diff_%: 10.63
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03056520-2A1653607?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SHO
   Company: SPORTSHERO LIMITED
@@ -1176,16 +1185,16 @@
   Headline: Open of Share Purchase Plan and Offer Documents
   Date: '2026-02-15'
   CR_Price: 2.15
-  Current_Price: 0.855
-  Price_Diff_%: -60.23
+  Current_Price: 0.675
+  Price_Diff_%: -68.6
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03056704-6A1312121?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: PSC
   Company: PROSPECT RESOURCES LIMITED
   Headline: A$45M Placement to Advance the Mumbezhi Copper Project
   Date: '2026-02-15'
   CR_Price: 0.38
-  Current_Price: 0.29
-  Price_Diff_%: -23.68
+  Current_Price: 0.295
+  Price_Diff_%: -22.37
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03056757-6A1312116?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GLL
   Company: GALILEE ENERGY LIMITED
@@ -1200,78 +1209,78 @@
   Headline: Cobre Raises $60M to Control World-Class Copper Project
   Date: '2026-02-12'
   CR_Price: 0.15
-  Current_Price: 0.21
-  Price_Diff_%: 40.0
+  Current_Price: 0.245
+  Price_Diff_%: 63.33
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03055827-2A1653287?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: HCH
   Company: HOT CHILI LIMITED
   Headline: Hot Chili Closes A$40 Million Private Placement
   Date: '2026-02-12'
   CR_Price: 1.65
-  Current_Price: 1.9000000000000001
-  Price_Diff_%: 15.15
+  Current_Price: 1.76
+  Price_Diff_%: 6.67
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03056030-6A1311841?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: SKY
   Company: SKY METALS LIMITED
   Headline: $20.5m Capital Raise to Accelerate the Tallebung Tin Project
   Date: '2026-02-12'
   CR_Price: 0.155
-  Current_Price: 0.19
-  Price_Diff_%: 22.58
+  Current_Price: 0.25
+  Price_Diff_%: 61.29
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03056191-2A1653421?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: CYC
   Company: CYCLOPHARM LIMITED
   Headline: Share Purchase Plan Offer Booklet
   Date: '2026-02-11'
   CR_Price: 0.95
-  Current_Price: 0.84
-  Price_Diff_%: -11.58
+  Current_Price: 0.805
+  Price_Diff_%: -15.26
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03055682-2A1653225?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: MEU
   Company: MARMOTA LIMITED
   Headline: Marmota raises $15 million in highly successful placement
   Date: '2026-02-11'
   CR_Price: 0.135
-  Current_Price: 0.11
-  Price_Diff_%: -18.52
+  Current_Price: 0.105
+  Price_Diff_%: -22.22
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03055660-2A1653167?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: ERL
   Company: EMPIRE RESOURCES LIMITED
   Headline: Empire Receives Firm Commitments for A$5 Million Placement
   Date: '2026-02-11'
   CR_Price: 0.008
-  Current_Price: 0.013000000000000001
-  Price_Diff_%: 62.5
+  Current_Price: 0.012
+  Price_Diff_%: 50.0
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03055452-6A1311550?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: GR8
   Company: GREAT DIRT RESOURCES LTD
   Headline: Firm Commitments Received for $1.446 Million - Placement
   Date: '2026-02-10'
   CR_Price: 0.155
-  Current_Price: 0.805
-  Price_Diff_%: 419.35
+  Current_Price: 0.8
+  Price_Diff_%: 416.13
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03055271-6A1311485?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: BPM
   Company: BPM MINERALS LIMITED
   Headline: A$3.5 million placement completed
   Date: '2026-02-10'
   CR_Price: 0.23
-  Current_Price: 0.19
-  Price_Diff_%: -17.39
+  Current_Price: 0.22
+  Price_Diff_%: -4.35
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03055142-6A1311456?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: HCL
   Company: HIGHCOM LIMITED
   Headline: Capital Raise Presentation | Placement and Share Purchase Plan
   Date: '2026-02-10'
   CR_Price: 0.2
-  Current_Price: 0.185
-  Price_Diff_%: -7.5
+  Current_Price: 0.17500000000000002
+  Price_Diff_%: -12.5
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03055293-3A686881?access_token=83ff96335c2d45a094df02a206a39ff4
 - ASX_Code: REV
   Company: REVOLUTION PRIVATE CREDIT INCOME TRUST
   Headline: Placement closing announcement
   Date: '2026-02-10'
   CR_Price: 2.0
-  Current_Price: 1.97
-  Price_Diff_%: -1.5
+  Current_Price: 1.965
+  Price_Diff_%: -1.75
   PDF_Link: https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03055253-2A1652978?access_token=83ff96335c2d45a094df02a206a39ff4

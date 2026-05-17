@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>进阶石头剪刀布</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101418;
+      --panel: #171e24;
+      --panel-2: #1f2931;
+      --text: #f5f7f8;
+      --muted: #aab6bd;
+      --line: #32404a;
+      --accent: #45d6a6;
+      --accent-2: #ffc857;
+      --danger: #ff6b6b;
+      --blue: #6cb7ff;
+      --shadow: 0 18px 45px rgba(0, 0, 0, .32);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(69, 214, 166, .16), transparent 34rem),
+        linear-gradient(135deg, #101418 0%, #131a1f 42%, #1b2026 100%);
+    }
+
+    button, select {
+      font: inherit;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 4.4rem);
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      max-width: 650px;
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, .75fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(23, 30, 36, .92);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .arena {
+      padding: 18px;
+    }
+
+    .scorebar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      min-height: 76px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+    }
+
+    .stat b {
+      display: block;
+      font-size: 1.55rem;
+      line-height: 1.1;
+      margin-top: 6px;
+    }
+
+    .stat span,
+    .label {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .battle {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 14px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .fighter {
+      min-height: 238px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #12191f;
+      padding: 18px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .pick {
+      display: grid;
+      place-items: center;
+      width: min(180px, 45vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2px solid #3b4a55;
+      background: radial-gradient(circle at 35% 25%, #2b3943, #151d23 72%);
+      font-size: clamp(4.2rem, 12vw, 7.2rem);
+      margin-bottom: 12px;
+      transition: transform .2s ease, border-color .2s ease;
+    }
+
+    .pick.pop {
+      transform: scale(1.06) rotate(-2deg);
+      border-color: var(--accent);
+    }
+
+    .versus {
+      display: grid;
+      place-items: center;
+      width: 64px;
+      color: var(--accent-2);
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .result {
+      min-height: 78px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #131a20;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .result h2 {
+      margin: 0 0 6px;
+      font-size: 1.25rem;
+    }
+
+    .result p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .choice {
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      background: #1b242b;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      gap: 4px;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .choice:hover,
+    .choice:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      background: #213039;
+      outline: none;
+    }
+
+    .choice strong {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+
+    .choice span {
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    aside {
+      display: grid;
+      gap: 18px;
+    }
+
+    .side-section {
+      padding: 16px;
+    }
+
+    .side-section h2 {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+    }
+
+    .settings {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    select,
+    .utility,
+    .reset {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      background: #11181e;
+      padding: 10px 12px;
+    }
+
+    .utility,
+    .reset {
+      cursor: pointer;
+      transition: border-color .15s ease, background .15s ease;
+    }
+
+    .utility:hover,
+    .reset:hover {
+      border-color: var(--accent);
+      background: #182229;
+    }
+
+    .power-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .utility {
+      min-height: 76px;
+      text-align: left;
+    }
+
+    .utility:disabled {
+      cursor: not-allowed;
+      opacity: .45;
+    }
+
+    .meter {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #0d1115;
+      border: 1px solid #2c3740;
+      margin: 8px 0 4px;
+    }
+
+    .meter > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .25s ease;
+    }
+
+    .tips {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .history {
+      display: grid;
+      gap: 8px;
+      max-height: 245px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .round {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #11181e;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .round strong {
+      color: var(--text);
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: .82rem;
+      color: #07100d;
+      background: var(--accent);
+      white-space: nowrap;
+    }
+
+    .tag.lose {
+      color: #210b0b;
+      background: var(--danger);
+    }
+
+    .tag.draw {
+      color: #1d1704;
+      background: var(--accent-2);
+    }
+
+    .notice {
+      color: var(--blue);
+      font-size: .9rem;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 880px) {
+      header,
+      .result {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .layout,
+      .battle {
+        grid-template-columns: 1fr;
+      }
+
+      .versus {
+        width: auto;
+        min-height: 34px;
+      }
+
+      .scorebar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        width: min(100% - 20px, 1180px);
+        padding: 16px 0;
+      }
+
+      .choices,
+      .power-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .choice {
+        min-height: 88px;
+        grid-template-columns: auto 1fr;
+        justify-items: start;
+        padding: 12px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>石头剪刀布：进阶版</h1>
+        <p class="subtitle">不只是猜拳。电脑会按难度学习你的习惯，你可以攒能量、偷看、双倍下注，打出更有节奏的十回合赛。</p>
+      </div>
+      <button class="reset" id="resetBtn" type="button">重新开局</button>
+    </header>
+
+    <div class="layout">
+      <section class="panel arena" aria-label="游戏区">
+        <div class="scorebar">
+          <div class="stat"><span>玩家分</span><b id="playerScore">0</b></div>
+          <div class="stat"><span>电脑分</span><b id="cpuScore">0</b></div>
+          <div class="stat"><span>回合</span><b><span id="roundNo">1</span>/10</b></div>
+          <div class="stat"><span>连胜</span><b id="streak">0</b></div>
+        </div>
+
+        <div class="battle">
+          <article class="fighter">
+            <div class="pick" id="playerPick">?</div>
+            <div>
+              <div class="label">你出的</div>
+              <strong id="playerLabel">等待选择</strong>
+            </div>
+          </article>
+
+          <div class="versus">VS</div>
+
+          <article class="fighter">
+            <div class="pick" id="cpuPick">?</div>
+            <div>
+              <div class="label">电脑出的</div>
+              <strong id="cpuLabel">还没亮牌</strong>
+            </div>
+          </article>
+        </div>
+
+        <section class="result">
+          <div>
+            <h2 id="resultTitle">先赢到第十回合结束</h2>
+            <p id="resultText">胜利得 1 分，连胜会额外充能。能量满了可以发动一次技能。</p>
+          </div>
+          <div>
+            <div class="label">能量</div>
+            <div class="meter" aria-label="能量条"><i id="energyBar"></i></div>
+            <strong id="energyText">0/5</strong>
+          </div>
+        </section>
+
+        <div class="choices" aria-label="出拳选择">
+          <button class="choice" type="button" data-move="rock"><strong>石</strong><span>克制剪刀</span></button>
+          <button class="choice" type="button" data-move="paper"><strong>布</strong><span>克制石头</span></button>
+          <button class="choice" type="button" data-move="scissors"><strong>剪</strong><span>克制布</span></button>
+        </div>
+      </section>
+
+      <aside>
+        <section class="panel side-section">
+          <h2>模式</h2>
+          <div class="settings">
+            <label class="field">
+              <span class="label">电脑难度</span>
+              <select id="difficulty">
+                <option value="easy">休闲：电脑随机</option>
+                <option value="normal" selected>标准：会记住你上一手</option>
+                <option value="hard">高手：会分析你的偏好</option>
+              </select>
+            </label>
+            <button class="utility" id="peekBtn" type="button" disabled>
+              <strong>预判</strong><br />
+              <span class="label">花 2 点能量，看见电脑下一手倾向</span>
+            </button>
+            <button class="utility" id="doubleBtn" type="button" disabled>
+              <strong>双倍</strong><br />
+              <span class="label">花 3 点能量，本回合胜负分数翻倍</span>
+            </button>
+          </div>
+          <div class="notice" id="skillNotice">技能需要能量。先打几回合热热手。</div>
+        </section>
+
+        <section class="panel side-section">
+          <h2>规则变化</h2>
+          <ul class="tips">
+            <li>十回合后总分更高的一方获胜。</li>
+            <li>连胜 2 回合开始，每次胜利额外获得 1 点能量。</li>
+            <li>困难模式会统计你最常出的手，并更常出克制它的手。</li>
+            <li>平局不会得分，但会保留你的节奏信息。</li>
+          </ul>
+        </section>
+
+        <section class="panel side-section">
+          <h2>战绩</h2>
+          <div class="history" id="history">
+            <div class="round"><strong>#</strong><span>还没有回合记录</span><span class="tag draw">待开始</span></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const moves = {
+      rock: { label: "石头", mark: "石", beats: "scissors" },
+      paper: { label: "布", mark: "布", beats: "rock" },
+      scissors: { label: "剪刀", mark: "剪", beats: "paper" }
+    };
+
+    const state = {
+      round: 1,
+      maxRounds: 10,
+      playerScore: 0,
+      cpuScore: 0,
+      streak: 0,
+      energy: 0,
+      playerMoves: [],
+      history: [],
+      peek: null,
+      doubleNext: false,
+      gameOver: false
+    };
+
+    const els = {
+      playerScore: document.querySelector("#playerScore"),
+      cpuScore: document.querySelector("#cpuScore"),
+      roundNo: document.querySelector("#roundNo"),
+      streak: document.querySelector("#streak"),
+      playerPick: document.querySelector("#playerPick"),
+      cpuPick: document.querySelector("#cpuPick"),
+      playerLabel: document.querySelector("#playerLabel"),
+      cpuLabel: document.querySelector("#cpuLabel"),
+      resultTitle: document.querySelector("#resultTitle"),
+      resultText: document.querySelector("#resultText"),
+      energyBar: document.querySelector("#energyBar"),
+      energyText: document.querySelector("#energyText"),
+      history: document.querySelector("#history"),
+      difficulty: document.querySelector("#difficulty"),
+      peekBtn: document.querySelector("#peekBtn"),
+      doubleBtn: document.querySelector("#doubleBtn"),
+      resetBtn: document.querySelector("#resetBtn"),
+      skillNotice: document.querySelector("#skillNotice"),
+      choices: document.querySelectorAll(".choice")
+    };
+
+    function randomMove() {
+      return Object.keys(moves)[Math.floor(Math.random() * 3)];
+    }
+
+    function counterTo(move) {
+      return Object.keys(moves).find((key) => moves[key].beats === move);
+    }
+
+    function mostFrequentMove() {
+      if (state.playerMoves.length === 0) return randomMove();
+      const counts = { rock: 0, paper: 0, scissors: 0 };
+      state.playerMoves.forEach((move) => counts[move] += 1);
+      return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+    }
+
+    function chooseCpuMove() {
+      if (state.peek) {
+        const forced = state.peek;
+        state.peek = null;
+        return forced;
+      }
+
+      const difficulty = els.difficulty.value;
+      const roll = Math.random();
+      if (difficulty === "easy") return randomMove();
+
+      if (difficulty === "normal" && state.playerMoves.length > 0 && roll < .48) {
+        return counterTo(state.playerMoves[state.playerMoves.length - 1]);
+      }
+
+      if (difficulty === "hard" && roll < .68) {
+        return counterTo(mostFrequentMove());
+      }
+
+      return randomMove();
+    }
+
+    function judge(player, cpu) {
+      if (player === cpu) return "draw";
+      return moves[player].beats === cpu ? "win" : "lose";
+    }
+
+    function changeEnergy(amount) {
+      state.energy = Math.max(0, Math.min(5, state.energy + amount));
+    }
+
+    function playRound(playerMove) {
+      if (state.gameOver) return;
+
+      const cpuMove = chooseCpuMove();
+      const outcome = judge(playerMove, cpuMove);
+      const multiplier = state.doubleNext ? 2 : 1;
+      let title = "平局";
+      let detail = "你们想到一块去了，本回合无人得分。";
+
+      if (outcome === "win") {
+        state.playerScore += 1 * multiplier;
+        state.streak += 1;
+        changeEnergy(1 + (state.streak >= 2 ? 1 : 0));
+        title = multiplier === 2 ? "双倍拿下" : "你赢了";
+        detail = `${moves[playerMove].label} 克制 ${moves[cpuMove].label}，得 ${multiplier} 分。`;
+      } else if (outcome === "lose") {
+        state.cpuScore += 1 * multiplier;
+        state.streak = 0;
+        changeEnergy(1);
+        title = multiplier === 2 ? "双倍失手" : "电脑赢了";
+        detail = `${moves[cpuMove].label} 克制 ${moves[playerMove].label}，电脑得 ${multiplier} 分。`;
+      } else {
+        changeEnergy(1);
+      }
+
+      state.playerMoves.push(playerMove);
+      state.history.unshift({
+        round: state.round,
+        playerMove,
+        cpuMove,
+        outcome,
+        multiplier
+      });
+
+      state.doubleNext = false;
+      renderPicks(playerMove, cpuMove);
+      state.round += 1;
+
+      if (state.round > state.maxRounds) {
+        state.gameOver = true;
+        title = finalTitle();
+        detail = `最终比分 ${state.playerScore}:${state.cpuScore}。点击重新开局可以再来一局。`;
+      }
+
+      els.resultTitle.textContent = title;
+      els.resultText.textContent = detail;
+      render();
+    }
+
+    function finalTitle() {
+      if (state.playerScore > state.cpuScore) return "整局胜利";
+      if (state.playerScore < state.cpuScore) return "电脑赢下整局";
+      return "整局平手";
+    }
+
+    function renderPicks(playerMove, cpuMove) {
+      els.playerPick.textContent = moves[playerMove].mark;
+      els.cpuPick.textContent = moves[cpuMove].mark;
+      els.playerLabel.textContent = moves[playerMove].label;
+      els.cpuLabel.textContent = moves[cpuMove].label;
+      [els.playerPick, els.cpuPick].forEach((el) => {
+        el.classList.remove("pop");
+        requestAnimationFrame(() => el.classList.add("pop"));
+      });
+    }
+
+    function renderHistory() {
+      if (state.history.length === 0) {
+        els.history.innerHTML = '<div class="round"><strong>#</strong><span>还没有回合记录</span><span class="tag draw">待开始</span></div>';
+        return;
+      }
+
+      els.history.innerHTML = state.history.map((item) => {
+        const text = `${moves[item.playerMove].label} 对 ${moves[item.cpuMove].label}${item.multiplier > 1 ? "，双倍" : ""}`;
+        const label = item.outcome === "win" ? "胜" : item.outcome === "lose" ? "负" : "平";
+        const cls = item.outcome === "win" ? "" : item.outcome === "lose" ? " lose" : " draw";
+        return `<div class="round"><strong>#${item.round}</strong><span>${text}</span><span class="tag${cls}">${label}</span></div>`;
+      }).join("");
+    }
+
+    function render() {
+      els.playerScore.textContent = state.playerScore;
+      els.cpuScore.textContent = state.cpuScore;
+      els.roundNo.textContent = Math.min(state.round, state.maxRounds);
+      els.streak.textContent = state.streak;
+      els.energyText.textContent = `${state.energy}/5`;
+      els.energyBar.style.width = `${state.energy * 20}%`;
+      els.peekBtn.disabled = state.energy < 2 || state.gameOver;
+      els.doubleBtn.disabled = state.energy < 3 || state.doubleNext || state.gameOver;
+      els.choices.forEach((button) => button.disabled = state.gameOver);
+
+      if (state.gameOver) {
+        els.skillNotice.textContent = "本局结束。换个难度或重新开局试试。";
+      } else if (state.doubleNext) {
+        els.skillNotice.textContent = "双倍已启动，下一回合会放大胜负。";
+      } else if (state.peek) {
+        els.skillNotice.textContent = `预判结果：电脑倾向出 ${moves[state.peek].label}。`;
+      } else {
+        els.skillNotice.textContent = state.energy >= 3 ? "能量充足，可以发动技能。" : "技能需要能量。先打几回合热热手。";
+      }
+
+      renderHistory();
+    }
+
+    function resetGame() {
+      Object.assign(state, {
+        round: 1,
+        playerScore: 0,
+        cpuScore: 0,
+        streak: 0,
+        energy: 0,
+        playerMoves: [],
+        history: [],
+        peek: null,
+        doubleNext: false,
+        gameOver: false
+      });
+      els.playerPick.textContent = "?";
+      els.cpuPick.textContent = "?";
+      els.playerLabel.textContent = "等待选择";
+      els.cpuLabel.textContent = "还没亮牌";
+      els.resultTitle.textContent = "先赢到第十回合结束";
+      els.resultText.textContent = "胜利得 1 分，连胜会额外充能。能量满了可以发动一次技能。";
+      render();
+    }
+
+    els.choices.forEach((button) => {
+      button.addEventListener("click", () => playRound(button.dataset.move));
+    });
+
+    els.peekBtn.addEventListener("click", () => {
+      if (state.energy < 2 || state.gameOver) return;
+      changeEnergy(-2);
+      state.peek = chooseCpuMove();
+      render();
+    });
+
+    els.doubleBtn.addEventListener("click", () => {
+      if (state.energy < 3 || state.gameOver) return;
+      changeEnergy(-3);
+      state.doubleNext = true;
+      render();
+    });
+
+    els.resetBtn.addEventListener("click", resetGame);
+    els.difficulty.addEventListener("change", () => {
+      els.resultTitle.textContent = "难度已切换";
+      els.resultText.textContent = "本局继续进行，电脑会从下一回合开始使用新策略。";
+    });
+
+    render();
+  </script>
+</body>
+</html>
