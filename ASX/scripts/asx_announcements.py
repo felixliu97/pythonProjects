@@ -12,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
+import csv
 
 try:
     from pdf_cache import download_pdf, get_cache_dir
@@ -20,6 +21,7 @@ try:
         get_asx_pdf_url,
         get_http_session,
         get_pdf_filename,
+        get_root_dir,
         get_sydney_time,
         load_config,
         load_yaml_data,
@@ -37,6 +39,7 @@ except ImportError:
         get_asx_pdf_url,
         get_http_session,
         get_pdf_filename,
+        get_root_dir,
         get_sydney_time,
         load_config,
         load_yaml_data,
@@ -79,6 +82,15 @@ NOISE_KEYWORDS = _ANNOUNCEMENT_RATING_CFG.get(
         "disclosure notice",
         "shareholder letter",
         "investor presentation",
+        "pause in trading",
+        "trading halt",
+        "response to asx price query",
+        "response to price query",
+        "response to price & volume query",
+        "response to price and volume query",
+        "asx price query",
+        "reinstatement to official quotation",
+        "suspension from official quotation",
     ],
 )
 
@@ -576,6 +588,9 @@ class AnnouncementScanner:
             if sym in catalyst_tickers:
                 is_ps = bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
                 if is_ps:
+                    hl = item.get("headline", "").strip()
+                    if any(nk in hl.lower() for nk in NOISE_KEYWORDS):
+                        continue
                     relevant.append(item)
 
         if not relevant:
@@ -600,6 +615,76 @@ class AnnouncementScanner:
                 print("=" * 50 + "\n")
             else:
                 print(f"Could not download PDF for catalyst: {sym} - {hl}")
+
+    def export_price_sensitive_csv(self, raw_items: list[dict], filename: str = "price_sensitive_today.csv") -> None:
+        """Export a CSV of today's price-sensitive announcements (Symbol, Headline, Datetime)."""
+        if not raw_items:
+            return
+
+        dates = [normalize_date(item.get("date", "")) for item in raw_items]
+        max_date = max(dates) if dates else normalize_date(None)
+        
+        latest_ps = [
+            item for item in raw_items 
+            if normalize_date(item.get("date", "")) == max_date
+            and bool(item.get("isPriceSensitive") or item.get("priceSensitive") or False)
+            and not any(nk in (item.get("headline") or "").strip().lower() for nk in NOISE_KEYWORDS)
+        ]
+        
+        if not latest_ps:
+            logger.info("No price-sensitive announcements found for CSV export.")
+            return
+
+        # Sort chronologically (ascending: oldest first, newest last)
+        import pytz
+        def parse_date_key(item: dict) -> datetime:
+            d = item.get("date", "")
+            if not d:
+                return datetime.min.replace(tzinfo=pytz.timezone("Australia/Sydney"))
+            if isinstance(d, datetime):
+                if d.tzinfo:
+                    return d.astimezone(pytz.timezone("Australia/Sydney"))
+                return d.replace(tzinfo=pytz.timezone("Australia/Sydney"))
+            try:
+                from dateutil import parser
+                dt = parser.isoparse(d)
+                if dt.tzinfo:
+                    return dt.astimezone(pytz.timezone("Australia/Sydney"))
+                return dt.replace(tzinfo=pytz.timezone("Australia/Sydney"))
+            except Exception:
+                return datetime.min.replace(tzinfo=pytz.timezone("Australia/Sydney"))
+
+        latest_ps.sort(key=parse_date_key)
+
+        out_dir = get_root_dir() / "output"
+        out_dir.mkdir(exist_ok=True)
+        out_path = out_dir / filename
+        try:
+            with open(out_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.writer(f, quoting=csv.QUOTE_ALL)
+                writer.writerow(["Datetime", "Symbol", "Headline"])
+                for item in latest_ps:
+                    sym = ticker_clean(item.get("symbol", ""))
+                    hl = item.get("headline", "").strip()
+                    raw_dt = item.get("date", "")
+                    dt_str = raw_dt
+                    if isinstance(raw_dt, str) and "T" in raw_dt:
+                        try:
+                            from dateutil import parser
+                            dt_parsed = parser.isoparse(raw_dt)
+                            if dt_parsed.tzinfo:
+                                dt_parsed = dt_parsed.astimezone(pytz.timezone("Australia/Sydney"))
+                            dt_str = dt_parsed.strftime("%Y-%m-%d %H:%M:%S")
+                        except Exception:
+                            pass
+                    elif isinstance(raw_dt, datetime):
+                        if raw_dt.tzinfo:
+                            raw_dt = raw_dt.astimezone(pytz.timezone("Australia/Sydney"))
+                        dt_str = raw_dt.strftime("%Y-%m-%d %H:%M:%S")
+                    writer.writerow([dt_str, sym, hl])
+            logger.info(f"Exported {len(latest_ps)} price-sensitive announcements to {out_path}")
+        except Exception as e:
+            logger.error(f"Failed to export CSV: {e}")
 
 
 def main():
@@ -635,6 +720,7 @@ def main():
                 logger.info(f"YAML check: Resuming from latest date {start_date.strftime('%Y-%m-%d')}")
 
     raw = scanner.fetch_raw(start_date, price_sensitive_only=not args.all_announcements)
+    scanner.export_price_sensitive_csv(raw)
     if args.recalc_days and args.recalc_days > 0:
         scanner.recalc_and_update(raw)
     scanner.process_and_sync(raw)

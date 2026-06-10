@@ -308,3 +308,37 @@ def test_ticker_filtering_logic():
     assert "SPP" not in passed_syms
     assert "CBAHB" not in passed_syms
     assert "XYZW" not in passed_syms
+
+
+def test_export_price_sensitive_csv_filters_noise(scanner, tmp_path):
+    """Verify that export_price_sensitive_csv filters out noise headlines and sorts chronologically."""
+    raw_items = [
+        {"date": "2026-06-04T14:30:00+1000", "symbol": "BHP", "headline": "Later Assay Results", "isPriceSensitive": True},
+        {"date": "2026-06-04T10:00:00+1000", "symbol": "BHP", "headline": "Trading Halt", "isPriceSensitive": True},
+        {"date": "2026-06-04T09:15:00+1000", "symbol": "BHP", "headline": "Earlier Assay Results", "isPriceSensitive": True},
+        {"date": "2026-06-04T10:00:00+1000", "symbol": "BHP", "headline": "Pause in Trading", "isPriceSensitive": True},
+    ]
+
+    with patch("scripts.asx_announcements.get_root_dir", return_value=tmp_path):
+        scanner.export_price_sensitive_csv(raw_items, "test_output.csv")
+        
+    csv_file = tmp_path / "output" / "test_output.csv"
+    assert csv_file.exists()
+    
+    import csv
+    with open(csv_file, "r", newline="", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        rows = list(reader)
+        
+    # Header: Datetime, Symbol, Headline
+    assert rows[0] == ["Datetime", "Symbol", "Headline"]
+    assert len(rows) == 3  # Header + 2 non-noise rows
+    # First row: Earlier Assay Results (09:15:00)
+    assert rows[1][0] == "2026-06-04 09:15:00"
+    assert rows[1][1] == "BHP"
+    assert rows[1][2] == "Earlier Assay Results"
+    # Second row: Later Assay Results (14:30:00)
+    assert rows[2][0] == "2026-06-04 14:30:00"
+    assert rows[2][1] == "BHP"
+    assert rows[2][2] == "Later Assay Results"
+
