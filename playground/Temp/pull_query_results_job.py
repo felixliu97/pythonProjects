@@ -338,6 +338,22 @@ def _transform_row(row: dict, avro_schema: dict, field_types: dict) -> dict:
 
     return record
 
+def _generate_lines(response):
+    """
+    Safely stream lines from a requests Response.
+    Unlike response.iter_lines(), this yields lines WITH their trailing newlines,
+    which allows csv.reader to correctly parse embedded newlines in double-quoted fields.
+    """
+    buffer = ""
+    for chunk in response.iter_content(chunk_size=65536, decode_unicode=True):
+        if chunk:
+            buffer += chunk
+            while "\n" in buffer:
+                line, buffer = buffer.split("\n", 1)
+                yield line + "\n"
+    if buffer:
+        yield buffer
+
 def stream_response_to_avro(
     response, avro_path: str, avro_schema: dict, metadata: dict,
     expected_total: int = 0, rows_before: int = 0,
@@ -367,13 +383,7 @@ def stream_response_to_avro(
     with open(avro_path, "wb") as out:
         writer = fastavro.write.Writer(out, parsed_schema)
         try:
-            # Set decode_content to decompress gzip/deflate if needed
-            if hasattr(response.raw, "decode_content"):
-                response.raw.decode_content = True
-            
-            # Wrap the raw stream in TextIOWrapper for line/CSV parsing
-            text_stream = io.TextIOWrapper(response.raw, encoding="utf-8")
-            csv_reader = csv.reader(text_stream)
+            csv_reader = csv.reader(_generate_lines(response))
 
             # First line is the CSV header
             fieldnames = next(csv_reader, None)
@@ -590,7 +600,7 @@ def main():
         logger.info("=" * 60)
 
     except Exception as e:
-        logger.error(f"Execution failed: {e}")
+        logger.error(f"Execution failed: {e}", exc_info=True)
         try:
             update_and_upload_manifest(
                 bucket=bucket,

@@ -123,9 +123,16 @@ class MockStreamingResponse:
             if line:
                 yield line
 
-    def iter_content(self, chunk_size=None):
-        """Fallback for non-streaming reads."""
-        yield self._csv_text.encode("utf-8")
+    def iter_content(self, chunk_size=8192, decode_unicode=False):
+        """Mock chunked streaming, respecting the chunk size if we wanted to be rigorous."""
+        while True:
+            chunk = self.raw.read(chunk_size)
+            if not chunk:
+                break
+            if decode_unicode and isinstance(chunk, bytes):
+                yield chunk.decode('utf-8')
+            else:
+                yield chunk
 
 
 class MockJsonResponse:

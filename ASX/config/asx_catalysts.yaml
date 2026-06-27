@@ -3,21 +3,22 @@
   Company: Ardea Resources Limited
   Sector: Nickel & Cobalt - 澳大利亚镍钴开发商 (Goongarrie Hub / Kalgoorlie 镍矿项目)
   Catalysts:
-    - 2026年6月季度 核心催化：Goongarrie Hub DFS 正式发布
-    - DFS完成后 与住友/三菱战略合作伙伴的合资协议 (JV) 细节最终敲定（联合体权益从17.5%升至35%）
-    - 2026年H2 触发最终投资决策 (FID) 路线图及融资包公告
-    - 2026年内 潜在获得WA州政府Lead Agency Status认定（管理层已申请，预计数月内有结果）
+    - 2026年10月前 核心催化：Goongarrie Hub DFS 进展更新公告（6月3日公告确认DFS将延至Q2 2026之后完成，因Q1价值工程优化机会）
+    - 2026年6月4日 ✅ 已兑现：获得WA州政府Lead Agency Status认定，政府行政支持路径已打通
+    - DFS完成后 与住友/三菱战略合作伙伴的合资协议 (JV) 细节最终敲定（联合体权益已升至35%）
+    - 2026年H2-2027 触发最终投资决策 (FID) 路线图及融资包公告（时间表因DFS延期相应后移）
+    - 2026年H2 钪及其他关键矿产副产品回收范围研究（Ardea独立资助，非DFS基础案例）
     - 联邦政府生产税收激励——DFS完成后约10%运营成本可获返还
   Risks:
     - 镍价长期低迷对DFS融资可行性的边际侵蚀风险
     - HPAL工艺在建设和运行初期的高技术/故障风险
     - 巨量建设资本支出 (Capex) 筹集过程中的股权稀释风险
-    - DFS已从2025年12月推迟至2026年H1，再次延期风险不可排除
+    - DFS已从2025年12月推迟至2026年H1，6月3日再次确认将超出June 30目标，延期模式需警惕
   CR_Risk: 中低
   CR_Risk_Reason: DFS由住友/三菱联合体资助至A$98.5M；IFD认定强化官方融资支持路径；近期运营资金有保障
-  Breakout_Probability: 高
-  Breakout_Probability_Reason: 2026年4月9日获得联邦政府IFD战略背书；Sumitomo/Mitsubishi深度参与DFS资助（已达A$98.5M）；管理层公开确认DFS目标2026年6月季度完成；融资支持总额已达A$10亿级别（EFA+US EXIM+Consortium）；DFS产品已从MHP升级为MSP，改善市场灵活性和回报
-  Core_Notes: Ardea拥有澳洲最大镍钴资源：Goongarrie Hub 854Mt @ 0.71% Ni + 0.045% Co，含镍610万吨。DFS由住友金属矿山与三菱商事联合体资助，已拨付至A$98.5M，约45人团队推进中，目标2026年6月季度完成。关键工艺更新：DFS已确认产品从MHP（混合氢氧化物沉淀）改为MSP（混合硫化物沉淀），MSP具有更高回报率、更广的市场灵活性，可作为全球镍硫化矿冶炼厂和精炼厂的适合原料。流程亦简化为纯HPAL（取消AL电路），提高回收率并降低酸耗。联合体已赚取17.5%权益，DFS完成后升至35%，FID后升至50%。
+  Breakout_Probability: 中高
+  Breakout_Probability_Reason: 6月3日确认DFS将延至October 2026前更新，价值工程优化是延期主因（正面解读：提升项目质量）；但延期模式已形成第三次推迟，市场耐心可能被消耗；积极面：6月4日获WA Lead Agency Status（政府支持路径打通）；DFS已支出A$84.5M/A$98.5M，完成度高；钪副产品回收范围研究启动拓展估值天花板
+  Core_Notes: Ardea拥有澳洲最大镍钴资源：Goongarrie Hub 854Mt @ 0.71% Ni + 0.045% Co，含镍610万吨。DFS由住友金属矿山与三菱商事联合体资助，预算A$98.5M中已支出约A$84.5M。6月3日公告确认DFS完成将延至June 30之后，因Q1 2026识别出"价值工程"优化机会，公司与联合体决定纳入这些改进以确保研究提供最强基础；预计October 2026前向市场提供进展更新。6月4日获WA州Lead Agency Status，政府行政协调路径打通。额外启动独立资助的钪及关键矿产副产品回收范围研究（非DFS基础案例）。关键工艺：MSP（混合硫化物沉淀）+纯HPAL流程不变。联合体已赚取35%权益，FID后升至50%。
   Rating: 买入
   Timeline:
     - Date: '2026-02-04'
@@ -47,14 +48,22 @@
     - Date: '2026-05-04'
       Event: KNP Goongarrie Hub 纳入澳日关于加强关键矿产供应链合作的联合声明，获国际战略地位背书
       Share_price: 'A$0.740'
+    - Date: '2026-06-03'
+      Event: 公告确认 Goongarrie Hub DFS 完成将延至 June 30, 2026 之后；因Q1价值工程优化机会纳入研究；DFS已支出约A$84.5M/A$98.5M；公司预计10月前提供进展更新；同时启动钪及关键矿产副产品回收范围研究
+      Share_price: 'A$0.650'
+    - Date: '2026-06-04'
+      Event: ✅ Goongarrie Hub 获得WA州政府 Lead Agency Status 认定；政府行政协调支持路径正式打通
+      Share_price: 'A$0.650'
 
 - Ticker: BCM
   Stage: 阶段2-验证突破期
   Company: Brazilian Critical Minerals Limited
   Sector: Rare Earths - Ema Ionic Adsorption Clay Project (Brazil)
   Catalysts:
-    - 2026年Q2 极高催化：发布 Ema 稀土项目 Bankable Feasibility Study (BFS)（公司确认目标Q2 2026完成）
-    - 2026年Q2-Q3 推进试验采矿许可 (Trial Mining License) 及环境审批
+    - 2026年6月 极高催化：发布 Ema 稀土项目 Bankable Feasibility Study (BFS)（公司确认目标2026年6月完成）
+    - 2026年6月 ✅ 已兑现：ANM（国家矿业局）批准Ema项目两块租地最终勘探报告，进入正式采矿许可申请通道（1年窗口期）
+    - 2026年6月初 ✅ 已兑现：硫酸镁浸出结果验证（48% TREO、62% MREO回收率）与SS假设完全匹配，为BFS提供技术基础
+    - 2026年Q2-Q3 推进试验采矿许可 (Trial Mining License) 及环境审批（已提交环评申请，IPAAM审核中）
     - 2026年Q2-Q3 与 Southern Alliance Mining (SAM) 推进商业包销/合资条款谈判（从非约束性合作升级为正式协议）
     - 2026年H2 若 BFS 完成并维持低成本 ISR 路线，潜在触发更正式的融资/包销/战略合作升级
   Risks:
@@ -80,6 +89,12 @@
       Share_price: 'A$0.034'
     - Date: '2026-05-04'
       Event: Ema 项目获得研发退税及海外研发资质认定 (Advance and Overseas R&D findings)，补强项目前期资金
+      Share_price: 'A$0.036'
+    - Date: '2026-06-15'
+      Event: ANM（国家矿业局）批准Ema项目两块租地的最终勘探报告，项目正式进入采矿许可申请通道（1年提交窗口）；监管里程碑显著
+      Share_price: 'A$0.036'
+    - Date: '2026-06-06'
+      Event: 发布强劲硫酸镁浸出结果：平坈48% TREO、62% MREO回收率，与2025年2月SS假设完全匹配，为即将发布的BFS提供关键技术验证
       Share_price: 'A$0.036'
 
 - Ticker: BOT
@@ -126,9 +141,8 @@
   Company: Brightstar Resources Limited
   Sector: Gold - 西澳黄金生产商兼开发商 (Laverton + Menzies + Sandstone 三中心)
   Catalysts:
-    - 2026年5月 ✅ 已兑现：Goldfields Project建设正式宣布动工（5月20日公告），FID目标5月内完成
-    - 2026年5月底 FID正式完成 → 触发与GR Engineering的全EPC合同执行（60%详细设计目标5月底完成）
-    - 2026年5月 Sandstone资源量更新（从Inferred升至M&I）；目标升级规模至2.5Moz以上
+    - 2026年5月26日 ✅ 已兑现：FID正式批准，Goldfields Project全面建设启动（1.5Mtpa处理厂在Laverton动工）
+    - 2026年5-6月 Sandstone Hub钻探发现可见金，资源量升级与PFS推进中
     - 2026年6月季度 Lord Byron钻爆服务正式启动（Drillforce合同约A$48M，2026年9月起）
     - 2026年H2 Menzies及Laverton核心矿区建设动员与投产倒计时
     - 2027年6月季度 首金目标（First Gold）
@@ -139,9 +153,9 @@
     - 债券利息12.5%年息，在建设期构成持续财务成本压力
   CR_Risk: 极低
   CR_Risk_Reason: A$383M融资包（A$193M股权+US$120M债券）已全额落地，首金前无融资需求；当前现金A$212M + 未动用债务设施A$171M
-  Breakout_Probability: 高
-  Breakout_Probability_Reason: 5月20日正式宣布Goldfields Project建设动工，FID目标5月内完成；资金全额锁定（A$383M），核心风险已收窄至工程执行；DFS 2.0 NPV A$606M/IRR 74%（现货价格下接近A$1B NPV）；GR Engineering EPC合同即将全面执行，60%详细设计目标5月底完成；首金目标维持2027年6月季度
-  Core_Notes: BTR已通过A$383M巨额融资锁定投产资金。DFS 2.0（1月发布）显示Goldfields Hub年均产量约75,000-80,000oz（1.5Mtpa处理厂），6年矿山寿命，现货价格下NPV近A$10亿，年度FCF约A$200-230M。5月20日正式宣布Goldfields Project建设动工，FID目标5月内完成并触发与GR Engineering的全EPC合同。早期工程协议（EWA）已延展至5月31日以维持工程节奏，60%详细设计目标5月底完成，长周期设备采购推进中。首金目标2027年6月季度。Sandstone Hub（约2.4-2.5Moz资源，4台钻机，资源更新中）为长期扩产期权。
+  Breakout_Probability: 极高
+  Breakout_Probability_Reason: 5月26日FID正式批准，Goldfields Project全面建设启动，从dev转入builder阶段；资金全额锁定（A$383M），核心风险已收窄至工程执行；DFS 2.0 NPV A$606M/IRR 74%（现货价格下接近A$1B NPV）；Sandstone Hub钻探发现可见金，资源升级与PFS推进中；首金目标维持2027年6月季度
+  Core_Notes: BTR已通过A$383M巨额融资锁定投产资金，并于5月26日正式批准FID，标志着公司从开发商转向建设商。Goldfields Project 1.5Mtpa处理厂在Laverton全面动工。DFS 2.0（1月发布）显示年均产量约75,000-80,000oz，6年矿山寿命，现货价格下NPV近A$10亿，年度FCF约A$200-230M。所有关键监管审批已获得。GR Engineering EPC合同全面执行中。首金目标2027年6月季度。Sandstone Hub（约2.4-2.5Moz资源）钻探发现可见金，资源升级与PFS推进中，为长期扩产期权。
   Rating: 买入
   Timeline:
     - Date: '2026-01-31'
@@ -168,15 +182,25 @@
     - Date: '2026-05-20'
       Event: ⚡ 正式宣布 Goldfields Project 建设动工；FID 目标5月内完成并触发与 GR Engineering 的全 EPC 合同；EWA延展至5月31日；60%详细设计目标5月底完成；首金维持2027年6月季度目标
       Share_price: 'A$0.365'
+    - Date: '2026-05-26'
+      Event: ✅ FID正式批准；Goldfields Project 1.5Mtpa处理厂全面建设启动；所有关键监管审批已获得；年产约75,000oz黄金，首金目标2027年6月季度；公司从开发商正式转型为建设商
+      Share_price: 'A$0.350'
+    - Date: '2026-05-28'
+      Event: Sandstone Hub钻探报告多个钻孔发现可见金，资源量升级与PFS推进中
+      Share_price: 'A$0.350'
+    - Date: '2026-06-03'
+      Event: 发布 Change of Director's Interest Notice，董事在市场上增持股份，内部人信心信号
+      Share_price: 'A$0.350'
 
 - Ticker: CNB
   Stage: 阶段2-验证突破期
   Company: Carnaby Resources Limited
   Sector: Copper & Gold - 昆士兰高品位铜金开发商 (Greater Duchess 项目)
   Catalysts:
-    - 2026年Q2 FS（Feasibility Study 正式可行性研究）完成，公司目标2026年Q2完成
+    - 2026年Q2 FS（Feasibility Study 正式可行性研究）完成，公司目标2026年mid-2026完成
     - 2026年6月30日 FID（最终投资决策）目标截止日
-    - 2026年H2 Trek 1 Footwall Lode 及 Main Lode 新结果纳入更新的 MRE 公告；加上露天坑优化及地下开采范围研究
+    - 2026年6月 ⚡ 重大新发现：Mount Hope Central "Miniboom" 高品位铜金矿化（232m @ 1.3% CuEq，含65m @ 2.9% CuEq）
+    - 2026年H2 Trek 1 Footwall Lode、Miniboom及 Main Lode 新结果纳入更新的 MRE 公告；加上露天坑优化及地下开采范围研究
     - 2026年H2 目标实现首矿生产（binding offtake 已与 Glencore 签署）
     - 2026年Q2-Q3 3,000m RC 钻探计划结果回收，重点观察 Trekelano 高优先级区的加密验证
   Risks:
@@ -186,8 +210,8 @@
   CR_Risk: 低
   CR_Risk_Reason: 季末现金A$13M；pre-production Capex 仅需约 A$15M；Glencore 协议支持下的低门槛投产能力；Glencore binding offtake 已签署
   Breakout_Probability: 极高
-  Breakout_Probability_Reason: 5月13日 Trek 1 Footwall Lode 重大新发现：19m @ 7.1% CuEq（4.4% Cu + 3.1g/t Au），股价当日涨10.9%创12个月新高；5月21日 Footwall Lode 继续扩展，矿化沿走向和下倾方向仍然完全开放；所有新结果均位于现有MRE之外，有潜力显著扩大露天坑设计；FS 目标 Q2 完成，FID 目标6月30日，首矿目标 H2 2026
-  Core_Notes: CNB（现名 Carnaby Resources）的 Greater Duchess 项目在5月迎来重大发现突破。5月13日发布 Trek 1 Footwall Lode 重大新发现：CBRC085 19m @ 7.1% CuEq（4.4% Cu、3.1g/t Au），其他包括 24m @ 2.0% CuEq 和 16m @ 2.4% CuEq；股价当日涨10.9%创12个月新高。关键要点：Footwall Lode 为一个连续的板状矿化结构，连接 Main Lode，沿走向和下倾方向完全开放；所有新报告结果均位于现有 MRE 之外，有潜力显著扩大露天坑设计；同时 Main Lode 已在现有 MRE 以下约400m处实现延伸。5月21日跟进公告确认 Footwall Lode 继续增长，矿化体系规模进一步扩大。公司计划 H2 2026 将新结果纳入更新的 MRE，并进行露天坑优化及地下开采范围研究。FS 目标 Q2 2026 完成，FID 目标6月30日，首矿生产目标 H2 2026。季报显示现金A$13M。
+  Breakout_Probability_Reason: 6月Miniboom新发现进一步强化项目规模：MHWB007 232m @ 1.3% CuEq（含65m @ 2.9% CuEq），6月9日确认钻探MHRC295 26m @ 3.2% CuEq、MHRC298 50m @ 2.7% CuEq（含31m @ 4.0%）；Miniboom位于计划露天坑边缘，有潜力显著影响矿山设计与矿石储量；叠加5月13日Trek 1 Footwall Lode重大新发现；多线发现持续扩大项目规模；FS目标mid-2026完成，FID目标6月30日，首矿目标H2 2026
+  Core_Notes: CNB（现名 Carnaby Resources）的 Greater Duchess 项目在5-6月迎来双重发现突破。5月13日发布 Trek 1 Footwall Lode 重大新发现：CBRC085 19m @ 7.1% CuEq（4.4% Cu、3.1g/t Au），股价当日涨10.9%创12个月新高。6月新增重大发现：Mount Hope Central "Miniboom"高品位铜金矿化，水井钻孔MHWB007意外发现232m @ 1.3% CuEq（含65m @ 2.9% CuEq from 25m）；6月9日确认钻探进一步验证：MHRC295 26m @ 3.2% CuEq、MHRC298 50m @ 2.7% CuEq（含31m @ 4.0% CuEq from 98m）。Miniboom位于Boomerang Lode扩展结构的扩张弯曲处，紧邻Mount Hope Central计划露天坑，有潜力显著影响矿山设计与矿石储量。公司正在将这些结果纳入MRE更新。FS 目标 mid-2026 完成，FID 目标6月30日，首矿生产目标 H2 2026。季报显示现金A$13M。
   Rating: 买入
   Timeline:
     - Date: '2026-01-27'
@@ -211,6 +235,12 @@
     - Date: '2026-05-21'
       Event: Trek 1 Footwall Lode Discovery Continues To Grow：确认 Footwall Lode 继续增长，矿化体系规模进一步扩大；有潜力显著扩大露天坑设计；FS维持Q2完成，FID目标6月30日，首矿目标H2 2026
       Share_price: 'A$0.550'
+    - Date: '2026-06-03'
+      Event: ⚡ Mount Hope Central "Miniboom" 高品位铜金新发现：水井钻孔MHWB007意外发现 232m @ 1.3% CuEq from surface（含 65m @ 2.9% CuEq from 25m）；Miniboom Lode位于Boomerang Lode扩张弯曲处，紧邻计划露天坑，有潜力显著影响矿山设计
+      Share_price: 'A$0.600'
+    - Date: '2026-06-09'
+      Event: Miniboom发现确认钻探：MHRC295 26m @ 3.2% CuEq from 59m；MHRC298 50m @ 2.7% CuEq from 83m（含31m @ 4.0% CuEq from 98m）；显著宽度高品位矿化进一步验证发现规模
+      Share_price: 'A$0.620'
 
 - Ticker: CU6
   Stage: 阶段2-验证突破期
@@ -315,20 +345,21 @@
   Company: Delorean Corporation Limited
   Sector: Bioenergy / Renewable Gas - BOO 模式生物天然气基础设施运营商
   Catalysts:
-    - 2026年Q2 ⚡ 极高催化：SA1 Salisbury 首气（First Gas）正式注入 Adelaide 天然气网络公告；当前最高优先级催化事件
+    - 2026年8月 SA1 Salisbury 开始接收有机废物（公司5月25日确认）
+    - 2026年11月 ⚡ 核心催化：SA1 首批可再生天然气（生物甲烷）正式注入Adelaide天然气网络（时间表已从原Q2 2026大幅后移）
+    - 2026年6月10日 ✅ 已兑现：SA1获得GreenPower可再生天然气认证（RGGO），可创建可再生气体来源保证证书
     - 2026年H2 NSW1 剩余 A$31.6M 建设资金融资闭环（银行贷款或股权，需在6个月内完成）
     - 2026年H2 VIC1 项目融资方案确认及建设启动
-    - 2026年内 SA1 稳定运营后的首月盈利数据及 ACCUs 碳信用签发量披露
   Risks:
-    - ⚠️ SA1首气已超出原定April 2026时点，延迟触发Origin take-or-pay合同计时，需密切关注是否存在违约条款或合同调整风险
+    - ⚠️ SA1首气已从原April 2026大幅后移至November 2026，延迟约7个月；需密切关注Origin take-or-pay合同触发时点是否受影响
     - NSW1 仍需在6个月内锁定剩余A$31.6M建设融资
-    - SA1 首气项目调试期的技术风险及运营稳定性风险
+    - SA1 调试期的技术风险及运营稳定性风险
     - 公司规模小，融资能力有限，若SA1收入期进一步推迟将增加现金压力
   CR_Risk: 中
-  CR_Risk_Reason: SA1首气已超出原合同约定的April 2026时点但尚无公告确认；5月13日收到R&D税收返还A$5.76M（FY2025研发支出）提供现金补强；NSW1融资仍需完成；若SA1进入收入期延迟，现金压力将上升，但R&D返还显著缓解短期压力
-  Breakout_Probability: 高
-  Breakout_Probability_Reason: SA1建设硬件进度"on schedule"（管理层确认），官网完工时间调整至Q2 2026，Origin Energy 8年/200TJ/年take-or-pay合同商业逻辑未变；NSW1 FID 4月8日已达成并锁定A$30.5M政府补助；两大主线商业基础坚实，核心催化仅差首气正式注入公告
-  Core_Notes: DEL迎来重要转折：SA1 Salisbury（澳洲首个从C&I有机废物生产主干网级生物甲烷及生物源CO2的设施）的首气注入Adelaide天然气网络是公司从"建设期"正式转入"收入期"的历史性时刻。原合同约定首气为"April 2026"，但截至2026年4月29日，ASX尚未出现首气公告，公司官网已将SA1完工日期更新为"Q2 2026"。管理层在3月6日第二笔ARENA里程碑付款公告中仍确认建设"on schedule"，但首气时间窗口已实质性后移。NSW1 Horsley Park（4月8日FID）锁定A$30.5M政府补助（NSW政府$20M + ARENA $10.5M），建设总额$62.1M，需在6个月内锁定剩余$31.6M融资。⚠️ SA1首气公告是当前最高优先级观察事项，任何进一步延迟都将影响Origin合同触发时点和投资者信心。
+  CR_Risk_Reason: SA1首气已后移至November 2026；5月13日收到R&D税收返还A$5.76M缓解短期压力；6月10日RGGO认证增强商业路径；NSW1融资仍需完成
+  Breakout_Probability: 中高
+  Breakout_Probability_Reason: SA1建设已达75%完工（5月25日确认），废物接收目标8月，首气目标11月；但时间表已从原Q2大幅后移约7个月，市场耐心可能被消耗；积极面：6月10日获GreenPower RGGO认证（可创建可再生气体来源保证证书），Origin 8年take-or-pay合同商业逻辑未变；NSW1 FID已达成并锁定A$30.5M政府补助
+  Core_Notes: DEL迎来重要进展但时间表显著后移。5月25日发布的建设更新确认SA1 Salisbury已完工75%，有机废物接收目标为2026年8月，首批可再生天然气（生物甲烷）注入Adelaide网络目标为2026年11月。这意味着首气时间已从原定April 2026大幅后移约7个月。6月10日，SA1获得GreenPower可再生天然气认证（RGGO），允许设施在投产后创建Renewable Gas Guarantee of Origin证书，进一步降低商业化风险。NSW1 Horsley Park（4月8日FID）锁定A$30.5M政府补助，需團6个月内锁定剩余$31.6M融资。Origin Energy 8年/200TJ/年take-or-pay合同商业逻辑未变。
   Rating: 买入
   Timeline:
     - Date: '2026-01-30'
@@ -355,14 +386,20 @@
     - Date: '2026-05-13'
       Event: 收到联邦政府 R&D 税收现金返还 A$5.76M（关联FY2025年度合格研发支出）；显著缓解短期现金压力；公司预计FY2027将再次获得R&D返还
       Share_price: 'A$0.094'
+    - Date: '2026-05-25'
+      Event: 发布SA1建设更新：建设已完成75%；有机废物接收目标2026年8月；首批可再生天然气注入Adelaide网络目标2026年11月；零工时损失伤害记录；时间表已从原Q2大幅后移
+      Share_price: 'A$0.094'
+    - Date: '2026-06-10'
+      Event: ✅ SA1 Salisbury 获得 GreenPower 可再生天然气认证（Renewable Gas Certification）；可创建 RGGO（Renewable Gas Guarantee of Origin）证书；商业化路径进一步去风险化
+      Share_price: 'A$0.094'
 
 - Ticker: FHE
   Stage: 阶段2-验证突破期
   Company: Frontier Energy Limited
   Sector: Renewable Energy - 西澳可再生能源及绿氢 (Waroona 项目)
   Catalysts:
-    - 2026年5月5日 ⚡ 复牌后市场定价CIS中标利好；股价或显著跳升（trading halt中，5月5日恢复交易）
-    - 2026年Q2-Q3 核心里程碑：Waroona Stage 1 约A$2.2亿 senior debt 融资推进至 credit-approved / financial close（CIS中标大幅强化银行信用审批基础）
+    - 2026年6月4日 ✅ 已兑现：获得$110M股权融资承诺（550M新股@A$0.20），为债务融资闭环奠定基础
+    - 2026年7月 核心里程碑：预期收到约束性、信用审批的债务承诺（binding credit-approved debt commitments）
     - 2026年Q3 现场全面动工及主要 EPC 合同正式动员（tier-one供应商合同已实质性敲定）
     - 2026年H2 容量积分（WA州A$32M/年）+ CIS合同（联邦）双重收入锁定后的长期现金流可见性
   Risks:
@@ -371,10 +408,10 @@
     - EPC 成本受劳动力和材料价格波动的超支风险
     - 若 senior debt 与 mezzanine 方案未能按计划收敛，仍可能倒逼项目重新调整融资结构
   CR_Risk: 低
-  CR_Risk_Reason: 5月2日CIS中标为联邦级收入合同背书，叠加WA州88.06MW容量积分（约A$32M/年），双重政府级收入锁定大幅强化银行融资信用基础；senior debt indicative terms已获（约A$220M）；季末现金A$2.7M较低但AEMO保证金A$7.9M另计，CIS中标后融资闭环概率显著提升
+  CR_Risk_Reason: 6月4日获$110M股权融资承诺（@A$0.20，550M新股）；CIS中标+WA州容量积分双重政府级收入锁定；senior debt约束性承诺预期7月到位；Stage 1资本估算约$326.9M；股权融资为债务闭环的前置条件已满足
   Breakout_Probability: 极高
-  Breakout_Probability_Reason: 5月2日CIS Tender 6中标是决定性催化！Waroona现已同时锁定WA州容量积分（A$32M/年）+ 联邦CIS合同双重政府级收入保障，项目从"融资验证期"跃升至"政府双重背书+融资闭环冲刺"阶段；Jamie Cullen执行主席+tier-one EPC合同敲定+法律尽调完成=执行团队与基础设施齐备；分析师目标价A$0.50（当前A$0.265，上行空间约89%）
-  Core_Notes: FHE迎来决定性催化：5月2日联邦政府宣布Waroona Stage 1（82MW/565MWh dispatchable capacity）成功中标Capacity Investment Scheme (CIS) Tender 6。这意味着项目同时拥有WA州容量积分（88.06MW，约A$32M/年至2032年）和联邦CIS合同的双重政府级收入锁定，显著降低了银行融资的信用审批风险。公司5月1日申请trading halt，预计5月5日恢复交易。此前4月30日季报已确认：Jamie Cullen出任执行主席；Pick Lake出售聚焦Waroona；tier-one EPC合同实质敲定；法律/税务/风险尽调完成。季末现金A$2.7M（另有AEMO保证金A$7.9M）。当前股价A$0.265，市值约A$150M，分析师目标价A$0.50。
+  Breakout_Probability_Reason: 6月4日$110M股权融资完成（@A$0.20、550M新股），为债务融资闭环奠定基础；约束性债务承诺预期7月到位；CIS中标+WA州容量积分双重政府级收入锁定；Stage 1资本估算约$326.9M；CIS合同提供收入地板至2042年；项目即将全额融资并向FID推进
+  Core_Notes: FHE融资闭环接近完成：6月4日宣布获得$110M股权融资承诺（550M新股@A$0.20），这是债务融资闭环的前置条件。债务融资方面：已收到tier-one银行详细条款（期限、利率、金额均符合预期），独立技术/法律/税务尽调已完成，预期7月6月收到约束性credit-approved债务承诺。Stage 1更新资本估算约$326.9M。CIS合同提供收入地板至2042年，叠加WA州容量积分（约A$32M/年），双重政府级收入保障。债务融资完成后，项目将全额融资，董事会将推进FID。
   Rating: 买入
   Timeline:
     - Date: '2026-01-30'
@@ -398,28 +435,32 @@
     - Date: '2026-05-05'
       Event: ⚡ 复牌交易：市场对 CIS 中标利好作出反应，政府双重收入保障显著降低项目融资门槛
       Share_price: 'A$0.270'
+    - Date: '2026-06-04'
+      Event: ✅ 宣布获得$110M股权融资承诺（550M新股@A$0.20）；为债务融资闭环的前置条件；已收到tier-one银行详细条款，尽调完成；约束性债务承诺预期7月到位；Stage 1资本估算约$326.9M
+      Share_price: 'A$0.200'
 
 - Ticker: KSN
-  Stage: 阶段3-现金流确认期
+  Stage: 阶段2-验证突破期
   Company: Kingston Resources Limited
   Sector: Gold & Copper - 澳大利亚生产商 (NSW Cobar Basin Mineral Hill Mine 多产品运营)
   Catalysts:
-    - 2026年5月-6月 铜精矿持续销售与offtake协议进展
-    - 2026年6月3日 下一季报发布（公司官方预告）；关键：地下矿持续供矿、长孔采场爬坡与连续铜销售兑现
-    - 2026年Q3 地下长孔采矿（Long-hole Stoping）正式规模化，向更高品位阶段过渡
+    - 2026年6月11日 ⚠️ 重大负面：Pearse South露天坑墙壁失败（6月1日发现）导致永久停止采矿；约120人裁员；估算成本A$5M、收入影响约A$39M
+    - 2026年6月11日 A$11.6M资本募集（~A$2.6M配售 + ~A$9.1M全额承销配股@A$0.07）
+    - 2026年H2 战略转向：25,000米近矿钻探计划，目标资源与储量扩展
     - 2026年7月11日 Ok Tedi A$10M 第二笔递延款到账（关键现金补强点）
-    - 2026年9月 全年报披露首年铜精矿收入贡献及新 AISC 曲线定位
+    - 2026年9月 全年报披露运营影响及新战略方向
   Risks:
-    - 2026年7月7日 A$5M 债务首笔到期处理的流动性调配
-    - 地下长孔作业爬坡成本超支风险
-    - 金/铜价回调对Mineral Hill小规模生产商的成本边际压缩
-    - 开采向全地下切换后运营稳定性验证
-  CR_Risk: 极低
-  CR_Risk_Reason: Q3 FY26净销售收入A$2,480万，营业现金流季环比+264%达A$1,100万；现金A$2,540万+零负债；A$10M第二笔递延款7月到账
-  Breakout_Probability: 高
-  Breakout_Probability_Reason: 4月29日季报确认：净收入A$2,480万（环比大幅提升），现金流+264%；铜精矿（>20% Cu）已提前一季度产出，铜回收率88%、金74%；Pearse South金品位2.4g/t、银93g/t推动大幅增收；地下基础设施完成；已从"即将产铜"的预期阶段转入"铜产品已验证"阶段
-  Core_Notes: KSN在2025-2026年完成了从"资源勘探商"到"现金流正多产品生产商"的转型。2026年4月29日发布Q3 FY26季报：净销售收入A$2,480万，营业现金流季度环比+264%达A$1,100万，期末现金A$2,540万（含受限现金A$740万），零负债。关键里程碑：通过约6,000吨地下矿石试处理，已提前一季度（比原计划mid-2026提前）产出首批可销售铜精矿（>20% Cu），铜回收率88%、金回收率74%，样品已用于offtake讨论。Pearse South开采金品位2.4g/t、银93g/t推动大幅增收（银产量75,578盎司）。地下通风基础设施已完成，长孔采场（Long-hole Stoping）预计本季度晚些启动。Misima出售款：A$50M已收+A$10M递延2026年7月11日。
-  Rating: 买入
+    - ⚠️ Pearse South露天坑已永久关闭，约A$39M收入影响及约A$5M关闭成本
+    - 约120人裁员带来运营与士气冲击
+    - 地下开发已暂停，地下生产启动延迟
+    - A$11.6M融资@A$0.07的摑薄效应
+    - 金/铜价回调对小规模生产商的成本边际压缩
+  CR_Risk: 中
+  CR_Risk_Reason: Pearse South关闭导致收入影响A$39M；A$11.6M融资补充资金；但此前季末现金A$25.4M+零负债，叠加7月A$10M递延款，短期生存无虑；但中期现金流受损需关注
+  Breakout_Probability: 低
+  Breakout_Probability_Reason: ⚠️ Pearse South露天坑壁失败导致永久关闭，约120人裁员，估算收入影响A$39M；地下开发已暂停；战略转向25,000米钻探以扩展资源，但省略了近期生产与现金流；A$11.6M融资@A$0.07显示市场对估值的重新定价；需等待钻探结果重建投资逻辑
+  Core_Notes: KSN在6月遭遇重大运营挑战。6月1日发现Pearse South露天坑壁发生失败，拉伸裂缝导致唯一进入斜坡垂直下沉，无法安全使用。外部岩土专家评估后，归因于坑底新暴露的软质石墨页岩与地质结构相互作用，加上近期降雨加剧。这是12个月内第二次岩土事故。公司决定永久关闭Pearse South（剩余约10万吨矿石放弃），因修复成本与风险超过收益。关闭的关联成本（裁员~120人、设备退场）估计A$5M，收入影响约A$39M。6月11日宣布A$11.6M融资（~A$2.6M配售 + ~A$9.1M全额承销配股@A$0.07）。战略转向：暂停地下开发，启动25,000米近矿钻探计划以扩展资源与储量。等待Ok Tedi A$10M递延款7月11日到账。
+  Rating: 观望
   Timeline:
     - Date: '2026-01-30'
       Event: 发布2025年12月季度业绩更新：净收入环比增长14%；Mineral Hill转型生产商进度向好
@@ -439,6 +480,12 @@
     - Date: '2026-05-04'
       Event: 发布季报更新视频采访，管理层强调 SOZ 地下矿试产成功及首批铜精矿已产出的里程碑意义
       Share_price: 'A$0.091'
+    - Date: '2026-06-01'
+      Event: ⚠️ Pearse South露天坑壁发生失败，拉伸裂缝导致唯一进入斜坡垂直下沉；归因于坑底软质石墨页岩+地质结构+降雨；12个月内第二次岩土事故；股票停牌
+      Share_price: 'A$0.091'
+    - Date: '2026-06-11'
+      Event: ⚠️ 发布运营更新：Pearse South永久关闭；约120人裁员；关闭成本约A$5M；收入影响A$39M；地下开发暂停；转吥25,000m近矿钻探；A$11.6M融资（~A$2.6M配售 + ~A$9.1M配股@A$0.07）；复牌交易
+      Share_price: 'A$0.070'
 
 - Ticker: LOT
   Stage: 阶段2-验证突破期
@@ -446,6 +493,7 @@
   Sector: Uranium - 非洲聚焦铀生产商 (马拉维 Kayelekera 复产 + 博茨瓦纳 Letlhakane 开发)
   Catalysts:
     - 2026年Q2 稳态生产达成及产量爬坡验证
+    - 2026年5月22日 任命 Sam Penglis 为临时COO（前BHP 20+年经验），强化现场领导力
     - 2026年H2 首批铀精矿装船发货（许可及物流规划推进中）
     - 2026年Q4 马拉维国家电网接入完成，年节省电力成本 A$12-14M
     - 2026年9月 Letlhakane PFS 正式发布
@@ -492,6 +540,12 @@
     - Date: '2026-05-11'
       Event: ⚠️ 发布 Response to ASX Aware Query：确认回撤此前披露的 Mined Grade/Head Grade/Recovery 数据；截至2025年12月31日产量从105,000lb下调至98,000lb；冶金和解及回收率精确性存疑；公司正在实施补救计划含实验室升级
       Share_price: 'A$0.860'
+    - Date: '2026-05-15'
+      Event: 前COO Mike Da Costa离职
+      Share_price: 'A$0.860'
+    - Date: '2026-05-22'
+      Event: 任命 Sam Penglis 为临时COO（前BHP 20+年经验，涵盖生产、规划、运营就绪、综合运营）；强化Kayelekera现场领导力与技术能力
+      Share_price: 'A$0.860'
 
 - Ticker: MEI
   Stage: 阶段2-验证突破期
@@ -532,6 +586,9 @@
     - Date: '2026-04-29'
       Event: 与Togni S/A执行JV地块转让协议：Capão do Mel、Soberbo、Figueira等关键产权完整转让至Meteoric；Togni获30%产品包销期权及董事会提名权；简化开发路径并推进全额项目融资
       Share_price: 'A$0.190'
+    - Date: '2026-06-11'
+      Event: 发布 Caldeira Pilot Plant 卓越性能更新：Pilot Plant已稳定运行5个月，处理约43吨CDM矿石，MREC产量持续超过预测的2kg/天；NdPr和DyTb回收率平坈71%；最近一个月MREO回收率80%、TREO 74%，远超PFS估算；为DFS和offtake谈判提供关键数据支持
+      Share_price: 'A$0.175'
 
 - Ticker: RML
   Stage: 阶段2-验证突破期
@@ -600,11 +657,10 @@
   Company: Stakk Limited (前身 Douugh Limited)
   Sector: Information Technology - AI 信任基础设施 SaaS (嵌入式金融 / 身份验证 / 受监管行业执行层)
   Catalysts:
-    - 2026年Q3-Q4 持续验证季度收入增长趋势（Q3 revenue A$5.52M，环比+186%），关注ARR向经常性现金流转化的可持续性
-    - 2026年5月 Robinhood Mobile IQ SDK 正式上线后用户激活；ARR 向 $15M 冲刺
-    - 2026年6月30日 $15M ARR 目标截止日：触发规模化商业证明 (年内最核心事件)
+    - 2026年6月2日 ✅ 已兑现：新美国医疗科技客户签约（约A$3.85M ARR），ARR跳升至A$26.0M
+    - 2026年6月30日 $15M ARR 目标已大幅超越，当前ARR已达A$26M；关注持续业绩转化为现金流
     - 2026年8月 年度业绩报告：首年 SaaS 转型后全年 ARR、EBITDA 趋势
-    - 2026年H2 新企业级大单复制与产品线扩张 (医疗健康 IDC 模式化输出)
+    - 2026年H2 新企业级大单复制与产品线扩张
   Risks:
     - A$7.85M 大单系单一客户集中度风险
     - $15M ARR 目标需要在6个月内将 ARR 翻近一倍，执行节奏高度依赖已签约未上线合同的激活速度
@@ -612,9 +668,9 @@
     - A$3.93M 尾款到账 (预计2026年10月31日前) 的执行节点风险
   CR_Risk: 低
   CR_Risk_Reason: 4月24日 4C 已确认季度 receipts 达 A$5.36M、净现金贡献转正约 A$2.25M，4月28日进一步披露季度 revenue 达 A$5.52M、毛利率超过85%、期末现金约 A$17.34M；说明公司已进入收入与现金流双验证阶段，短期融资压力显著低于此前判断
-  Breakout_Probability: 高
-  Breakout_Probability_Reason: SaaS 转型获大额合同背书；Robinhood SDK 供货具有极强技术背书信号；4月24日 4C 已确认 receipts 与净现金贡献转正，而 4月28日 又进一步披露季度 revenue 达 A$5.52M、同比/环比显著跳升且毛利率超过85%，说明公司不只是“ARR 好看”，而是已进入真实收入、现金流和高毛利模型同步验证阶段
-  Core_Notes: SKK (前 Douugh) 的 SaaS 转型在2025年完成了根本性重塑：从消费金融 APP 转型为 AI 原生信任基础设施提供商。2026年3月24日的双重公告——A$7.85M 医疗健康 IDC 大单 + 9家新金融机构（新增 A$1.67M ARR）——标志着公司同时在"大型企业"和"中型机构批量获客"两条跑道上实现突破。Robinhood 的 Mobile IQ SDK 选择具有重大信号意义。最新关键变化是，4月24日 4C 已确认 receipts 达 A$5.36M、净现金贡献约 A$2.25M，而 4月28日 公司进一步披露未经审计季度 revenue 达 A$5.52M、毛利率超过85%，并有约 A$2.7M ARR 仍在实施中、预计未来120天转为 active billing。这意味着 SKK 已从“签单/ARR 验证期”进一步进入“收入与现金流确认期”，更符合阶段3-现金流确认期的定义。
+  Breakout_Probability: 极高
+  Breakout_Probability_Reason: 6月2日新美国医疗科技客户签约约A$3.85M ARR，ARR跳升至A$26.0M（从2024年12月的A$1.2M大幅增长）；$15M ARR目标已大幅超越；季度revenue A$5.52M、毛利率超85%、净现金贡献转正；Robinhood SDK供货具有极强技术背书信号；已从“签单验证”进入“收入与现金流确认”阶段
+  Core_Notes: SKK (前 Douugh) 在2026年实现了SaaS转型的决定性突破。6月2日宣布新美国医疗健康科技客户签约，贡献约A$3.85M（US$2.75M）年化收入，将ARR推升至约A$26.0M（从4月28日的A$22.08M上升）。这一增长从2024年12月的A$1.2M ARR起步，实现了约21倍的跳升。新合同为2年期，首笔季度付款预计6月30日前收到。此前4月28日披露季度revenue A$5.52M、毛利率超85%、净现金贡献约A$2.25M。Robinhood Mobile IQ SDK供货具有极强技术背书信号。市场关注焦点已从"能ARR增长吗"转向"大规模客户获取能否持续"。
   Rating: 买入
   Timeline:
     - Date: '2026-01-30'
@@ -632,17 +688,20 @@
     - Date: '2026-04-28'
       Event: 披露未经审计季度 revenue 达 A$5.52M（环比+186%），毛利率超过85%，约 A$2.7M ARR 仍在实施中待转化；收入、现金流与高毛利模型同步验证
       Share_price: 'A$0.020'
+    - Date: '2026-06-02'
+      Event: ⚡ 新美国医疗健康科技客户签约，贡献约A$3.85M（US$2.75M）年化收入；ARR跳升至约A$26.0M（从4月28日A$22.08M上升）；合同2年期，首笔季度付款预计6月30日前收到；证券短暂停牌
+      Share_price: 'A$0.025'
 
 - Ticker: TBN
   Stage: 阶段2-验证突破期
   Company: Tamboran Resources Corporation
   Sector: Natural Gas - 澳洲 Beetaloo Basin 页岩气开发商（Pilot + NYSE/ASX 双上市）
   Catalysts:
-    - 2026年Q2 SS-3H/4H/5H 三口井压裂与完井推进（三口并行，2026年H1完成）
+    - 2026年5月底 ✅ 已兑现：2026年压裂计划正式启动（SS-3H/4H/5H三口井，Liberty Energy设备，SS-4H和SS-5H计划zipper frac）
     - 2026年Q2 SS-7H和SS-8H两口回填承诺井钻探（目标支持40 MMcf/d高峰产量）
     - 2026年Q3 五口井全部与SPCF连接并投产，达到Pilot阶段满产；首气销售目标Q3 2026
     - 2026年Q3 Jibera South 1H和Newcastle South 1H在EP 161钻探
-    - 2026年H2 Falcon Oil & Gas收购完成最终交割（法院已于3月27日批准）
+    - 2026年6月 ✅ Falcon Oil & Gas收购完成最终交割，股份已发行给原Falcon股东
     - 2026年年底 启动Phase 2扩张的最终投资决定 (FID)
   Risks:
     - 摊薄压力：US$198M双重上市融资（4月完成）新股消化压力
@@ -684,15 +743,20 @@
     - Date: '2026-05-13'
       Event: 发布 Q3 FY26 季报及业绩演示：SPCF 建设已完成88%（截至4月底），维持Q3 2026首气目标；SS-6H IP20记录10.3 MMcf/d；备考现金约US$298M；维持SS-3H/4H/5H压裂及SS-7H/8H钻探计划
       Share_price: 'A$0.250'
+    - Date: '2026-05-28'
+      Event: ✅ 宣布 2026年压裂计划正式启动（SS-3H/4H/5H三口井，Liberty Energy设备）；SS-4H和SS-5H计划zipper frac以优化效率
+      Share_price: 'A$0.250'
+    - Date: '2026-06-05'
+      Event: Falcon Oil & Gas收购完成最终交割，股份已发行给原Falcon股东；Beetaloo总权益扩展至290万英亩；发布CDI与普通股份额变动公告
+      Share_price: 'A$0.245'
 
 - Ticker: TM1
   Stage: 阶段2-验证突破期
   Company: Terra Metals Limited
   Sector: PGM - Cu - Ni - Ti - V (多金属战略矿产)
   Catalysts:
-    - 2026年5月-7月 Phase 4 五台钻机钻探结果Assay回收（预计5月底至7月初）
-    - 2026年5月至7月初 ⚡ SWDD011 (SW6) Assay 结果回收窗口（4月2日发布时预计"8-12周内"，即约5月底至7月初）
-    - 2026年5月至6月 106 个钻孔的密集 Assay 批量释放窗口
+    - 2026年6月10日 ⚡ 已兑现：SWDD011 (SW6) 首批Assay结果发布：100m @ 1.06 g/t PGE3，含高品位核心16.3m @ 2.56 g/t PGE3 + 0.25% Cu + 0.36% Ni
+    - 2026年6-7月 Phase 4 其余钻孔（含SWRD051等）Assay结果持续回收
     - 2026年6月 核心里程碑：发布 SW3-SW4 MRE 公告，目标确立全球级大吨位多金属体系（Ti-V-Ga为主+PGM-Cu-Ni）
   Risks:
     - A$85M 配售后的新股筹码（229.74M股，SOL入场价A$0.37）在高位可能带来的获利回吐压力
@@ -701,8 +765,8 @@
   CR_Risk: 极低
   CR_Risk_Reason: A$85M 资金在场，SOL (Soul Patts) 作为战略股东，钻探资金弹药极其充足
   Breakout_Probability: 极高
-  Breakout_Probability_Reason: SW6 (SWDD011) 于4月2日再次确认块状硫化物物理拦截（与DHEM导体100%吻合），紧邻已报31.1g/t PGE3的SWDD006；系统规模已达至少850m走向；同时新确认SW3-SW4为"world-class"级别Ti-V-Ga体系（矿化覆盖800m走向×400m宽度，单个高品位氧化物矿脉厚度达60m，约为现有MRE基础矿脉厚度的11倍）；Phase 4 五台钻机全面推进中，Assay密集释放窗口即将开启
-  Core_Notes: TM1 实现了从地质学概念到物理发现的跨越，且发现体系已从PGM-Cu-Ni硫化物拓展为包含Ti-V-Ga-PGM-Cu-Ni的多维多商品体系。2026年4月2日 SWDD011 (SW6) 成功确认多个块状硫化物带，嵌入320米主矿化区间，与DHEM导体100%吻合，assay预计8-12周内回收（约5月底至7月初）。同时，SW3-SW4 Ti-V-Ga体系已确认超过800m走向+400m宽度，礁体厚达60m，是现有148Mt MRE基础矿脉厚度的约11倍，Ti-V-Ga maiden MRE目标2026年6月发布。矿化贵金属组合包含Pt（最高17.8g/t）、Pd、Au、Rh、Os，印证高端PGM品质。当前股价约A$0.275-0.28，较SOL入场价A$0.37仍有折价。
+  Breakout_Probability_Reason: 6月10日SWDD011首批Assay确认高品位多金属矿化：100m @ 1.06 g/t PGE3、含16.3m @ 2.56 g/t PGE3 + 0.25% Cu + 0.36% Ni + 285ppm Co，以及1.12m @ 8.76 g/t PGE3；确认了Southwest系统的高品位块状和半块状硫化物矿化；地质模型验证成功；SW3-SW4 Ti-V-Ga MRE目标6月发布；更多Assay持续回收中
+  Core_Notes: TM1 在6月10日迎来SWDD011首批Assay结果，确认了Southwest系统的高品位多金属矿化。核心结果：100.0m @ 1.06 g/t PGE3、含0.11% Cu、0.19% Ni、169ppm Co from 200m；高品位核心16.3m @ 2.56 g/t PGE3、含0.25% Cu、0.36% Ni、285ppm Co from 281.7m；极高品位1.12m @ 8.76 g/t PGE3、含1.54% Ni、1,068ppm Co。还查24.3m @ 0.52 g/t PGE3 from 313.7m。这些是Southwest Prospect历史上最高品位的铜镍钴硫化物结果。SWDD011成功验证了DHEM导体与地质模型，显示SW5和SW6发现区之间的规模与连续性潜力。其余钻孔（如SWRD051）及更深部分的Assay仍在回收中。SW3-SW4 Ti-V-Ga MRE目标2026年6月发布。矿化体系已从PGM-Cu-Ni硫化物拓展为包含Ti-V-Ga-PGM-Cu-Ni的多维多商品体系。
   Rating: 强力买入
   Timeline:
     - Date: '2026-01-20'
@@ -723,3 +787,6 @@
     - Date: '2026-05-07'
       Event: 申请 3,642.8 万股普通股挂牌上市（Cleansing Notice），配售筹码进一步入场；市场高度关注 5 月底 SW6 高品位 Assay 释放
       Share_price: 'A$0.330'
+    - Date: '2026-06-10'
+      Event: ⚡ SWDD011 (SW6) 首批Assay结果发布：100.0m @ 1.06 g/t PGE3、含0.11% Cu、0.19% Ni、169ppm Co from 200m；高品位核心 16.3m @ 2.56 g/t PGE3 + 0.25% Cu + 0.36% Ni + 285ppm Co from 281.7m；极高品位 1.12m @ 8.76 g/t PGE3 + 1.54% Ni + 1,068ppm Co；另有 24.3m @ 0.52 g/t PGE3 from 313.7m；历史最高品位铜镍钴硫化物结果；DHEM导体与地质模型验证成功
+      Share_price: 'A$0.285'
