@@ -258,7 +258,38 @@ def main(session, min_spend):
     return df
 $$;
 
--- 4. Cortex AI / LLM Functions
+-- 4. Snowflake Notebooks & Orchestration (Run / Schedule via SQL)
+-- A. Connect from external Jupyter/VSCode Notebook
+-- from snowflake.snowpark import Session
+-- session = Session.builder.configs({
+--     "account": "<account_identifier>",
+--     "user": "<username>",
+--     "password": "<password>",
+--     "role": "sysadmin",
+--     "warehouse": "compute_wh",
+--     "database": "my_db",
+--     "schema": "my_schema"
+-- }).create()
+
+-- B. Execute Notebook directly via SQL (Runs all cells top-to-bottom)
+EXECUTE NOTEBOOK my_db.my_schema.my_notebook('arg1', 'arg2');
+
+-- C. Access parameters in Python Notebook cells
+-- import sys
+-- arg1 = sys.argv[1] # 'arg1'
+-- arg2 = sys.argv[2] # 'arg2'
+
+-- D. Orchestrate Notebook via Snowflake Tasks (Native Orchestration)
+CREATE OR REPLACE TASK my_notebook_task
+  WAREHOUSE = compute_wh
+  SCHEDULE = 'USING CRON 0 9 * * * UTC' -- Daily at 9 AM UTC
+AS
+  EXECUTE NOTEBOOK my_db.my_schema.my_notebook('scheduled_run');
+
+-- Resume the scheduled task
+ALTER TASK my_notebook_task RESUME;
+
+-- 5. Cortex AI / LLM Functions
 -- Complete/Generate Text (Supports llama3.1-70b, mistral-large2, etc.)
 SELECT SNOWFLAKE.CORTEX.COMPLETE('llama3.1-70b', 'Write a SQL query tutorial in 3 bullet points.');
 
@@ -276,6 +307,24 @@ SELECT SNOWFLAKE.CORTEX.EXTRACT_ANSWER(contract_text, 'What is the expiration da
 
 -- Embed Text (Generate vectors for semantic search)
 SELECT SNOWFLAKE.CORTEX.EMBED_TEXT_768('snowflake-arctic-embed-m-v1.5', 'Text to embed');
+
+-- 6. Cortex Analyst (Conversational Natural Language to SQL REST API)
+-- Translates user queries into accurate SQL using a YAML Semantic Model on a stage.
+-- A. Streamlit in Snowflake (SiS) Python code using _snowflake helper:
+-- import _snowflake, json
+-- request_body = {
+--     "messages": [{"role": "user", "content": [{"type": "text", "text": "What is the monthly revenue trend?"}]}],
+--     "semantic_model_file": "@my_db.my_schema.my_stage/revenue_timeseries.yaml"
+-- }
+-- resp = _snowflake.send_snow_api_request("POST", "/api/v2/cortex/analyst/message", {}, {}, request_body, None, 50000)
+-- content = json.loads(resp["content"]) # Contains generated SQL query
+
+-- B. External Python API call (using REST endpoint):
+-- import requests, json
+-- url = "https://<account_id>.snowflakecomputing.com/api/v2/cortex/analyst/message"
+-- headers = {"Authorization": "Snowflake Token=\"<session_or_oauth_token>\"", "Content-Type": "application/json"}
+-- response = requests.post(url, headers=headers, json=request_body)
+-- result = response.json()
 ```
 
 ## 14. SECURITY & GOVERNANCE
